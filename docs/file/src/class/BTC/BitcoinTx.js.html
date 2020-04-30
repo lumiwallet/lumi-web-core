@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">src/class/BTC/BitcoinTx.js | lumi-web-core</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Lumi Wallet Core - Web Version"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="lumi-web-core"><meta property="twitter:description" content="Lumi Wallet Core - Web Version"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lumiwallet/lumi-web-core"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-requestHandleErrors">requestHandleErrors</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toFormatDecimal">toFormatDecimal</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/class/BTC/BitcoinTx.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import converter from &apos;@/helpers/converters&apos;
+import {calcBtcTxSize, makeRawBtcTx} from &apos;@/helpers/coreHelper&apos;
+import CustomError from &apos;@/helpers/handleErrors&apos;
+
+/**
+ * Class BitcoinTx.
+ * This class is responsible for calculating the fee,
+ * calculating the available amount to send, and generating and signing a Bitcoin transaction
+ * @class
+ */
+
+export default class BitcoinTx {
+  /**
+   * Create a BitcoinTx
+   * @param {Object} data - Input data for generating a transaction or calculating a fee or available amount
+   * @param {Array} data.unspent - Array of unspent addresses
+   * @param {string} data.internalAddress - Address for change
+   * @param {number} data.amount - Transaction amount
+   * @param {number} data.balance - Bitcoin wallet balance
+   * @param {Array} data.feeList - Set of bitcoin fees
+   * @param {Object} data.customFee - Custom fee entered by the user
+   */
+  constructor (data) {
+    this.unspent = data.unspent
+    this.internalAddress = data.internalAddress
+    this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
+    this.balance = data.balance
+    this.dust = 1000
+    this.fee = data.feeList
+    this.customFee = +data.customFee ? +data.customFee : 0
+    this.feeList = []
+  }
+  
+  /**
+   * Calculating the fee amount
+   * @param {number} size - Transaction size
+   * @returns {Promise&lt;Array&gt;} Returns a set of fees for a specific transaction amount
+   */
+  
+  // TODO check size
+  async calcFee (size = 0) {
+    if (this.amount &lt;= 0 || this.balance &lt; this.amount) {
+      return this.calcEmptyFee()
+    }
+    
+    let fast = this.fee[2].feePerByte
+    let regular = this.fee[1].feePerByte
+    let cheap = this.fee[0].feePerByte
+    let custom = this.customFee
+    
+    this.dust = size ? 0 : 1000
+
+    let fastResult = await this.getInputs(fast, size)
+    let regularResult = await this.getInputs(regular, size)
+    let cheapResult = await this.getInputs(cheap, size)
+    let customResult = await this.getInputs(custom, size)
+    
+    this.feeList = [
+      {
+        name: &apos;Fast&apos;,
+        SAT: fastResult.fee,
+        BTC: converter.sat_to_btc(fastResult.fee),
+        fee: this.fee[2].feePerByte,
+        feeInBTC: converter.sat_to_btc(this.fee[2].feePerByte),
+        inputs: fastResult.inputs,
+        inputsAmount: fastResult.inputsAmount,
+        title: &apos;Fast 30-60 mins&apos;,
+        addText: &apos;per byte&apos;
+      },
+      {
+        name: &apos;Regular&apos;,
+        SAT: regularResult.fee,
+        BTC: converter.sat_to_btc(regularResult.fee),
+        fee: this.fee[1].feePerByte,
+        feeInBTC: converter.sat_to_btc(this.fee[1].feePerByte),
+        inputs: regularResult.inputs,
+        inputsAmount: regularResult.inputsAmount,
+        title: &apos;Regular 1-24 hours&apos;,
+        addText: &apos;per byte&apos;
+      },
+      {
+        name: &apos;Cheap&apos;,
+        SAT: cheapResult.fee,
+        BTC: converter.sat_to_btc(cheapResult.fee),
+        fee: this.fee[0].feePerByte,
+        feeInBTC: converter.sat_to_btc(this.fee[0].feePerByte),
+        inputs: cheapResult.inputs,
+        inputsAmount: cheapResult.inputsAmount,
+        title: &apos;Cheap but takes time...&apos;,
+        addText: &apos;per byte&apos;
+      },
+      {
+        custom: true,
+        name: &apos;Custom&apos;,
+        SAT: customResult.fee,
+        BTC: converter.sat_to_btc(customResult.fee),
+        fee: this.customFee,
+        feeInBTC: converter.sat_to_btc(this.customFee),
+        inputs: customResult.inputs,
+        inputsAmount: customResult.inputsAmount,
+        title: &apos;Custom amount&apos;,
+        addText: &apos;Minimum 1 SAT per byte&apos;
+      }
+    ]
+    
+    return this.feeList
+  }
+  
+  /**
+   * Sets an array of zero fees.
+   * Used when the user does not have enough funds for the transaction
+   * @returns {Array} Returns an array with zero fees
+   */
+  
+  calcEmptyFee () {
+    this.feeList = [
+      {
+        name: &apos;Fast&apos;,
+        SAT: 0,
+        BTC: 0,
+        fee: this.fee[2].feePerByte,
+        feeInBTC: converter.sat_to_btc(this.fee[2].feePerByte),
+        inputs: [],
+        inputsAmount: 0,
+        title: &apos;Fast 30-60 mins&apos;,
+        addText: &apos;per byte&apos;
+      },
+      {
+        name: &apos;Regular&apos;,
+        SAT: 0,
+        BTC: 0,
+        fee: this.fee[1].feePerByte,
+        feeInBTC: converter.sat_to_btc(this.fee[1].feePerByte),
+        inputs: [],
+        inputsAmount: 0,
+        title: &apos;Regular 1-24 hours&apos;,
+        addText: &apos;per byte&apos;
+      },
+      {
+        name: &apos;Cheap&apos;,
+        SAT: 0,
+        BTC: 0,
+        fee: this.fee[0].feePerByte,
+        feeInBTC: converter.sat_to_btc(this.fee[0].feePerByte),
+        inputs: [],
+        inputsAmount: 0,
+        title: &apos;Cheap but takes time...&apos;,
+        addText: &apos;per byte&apos;
+      },
+      {
+        custom: true,
+        name: &apos;Custom&apos;,
+        feePerByte: this.customFee,
+        fee: 0,
+        feeInSat: 0,
+        inputs: [],
+        inputsAmount: 0,
+        title: &apos;Custom amount&apos;,
+        addText: &apos;Minimum 1 SAT per byte&apos;
+      }
+    ]
+    
+    return this.feeList
+  }
+  
+  /**
+   * Finds a list of inputs for a specific transaction
+   * @param {number} fee - Fee size
+   * @param {number} size - Transaction size
+   * @returns {Promise&lt;Object&gt;} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
+   */
+  
+  async getInputs (fee, size) {
+    let index = 0
+    let inputsAmount = 0
+    let inputs = []
+    let res = {}
+    
+    let req = async () =&gt; {
+      let item = this.unspent[index]
+      let defaultSize = calcBtcTxSize(index + 1, 2)
+      let calcFee = size ? size * fee : defaultSize * fee
+      
+      inputsAmount += item.value
+      inputs.push(item)
+      
+      let total = this.amount + calcFee + this.dust
+      
+      if (inputsAmount &lt; total) {
+        index++
+        
+        if (index &gt;= this.unspent.length) {
+          res = {
+            fee: 0,
+            inputs: [],
+            inputsAmount: 0
+          }
+        } else {
+          await req()
+        }
+      } else {
+        if (inputsAmount &gt;= total) {
+          res = {
+            fee: calcFee,
+            inputs: inputs,
+            inputsAmount: inputsAmount
+          }
+        } else {
+          res = {
+            fee: 0,
+            inputs: [],
+            inputsAmount: 0
+          }
+        }
+      }
+    }
+    await req()
+    return res
+  }
+  
+  /**
+   * Creating a transaction
+   * @param {Object} data - Input data for a transaction
+   * @param {string} data.addressTo - Recipient address
+   * @param {Object} data.fee - The transaction fee and list of inputs
+   * @param {Object} data.inputsAmount - The amount of inputs involved in the transaction
+   * @returns {Promise&lt;Object&gt;} Returns the raw transaction and transaction hash if sent successfully
+   */
+  
+  async make (data) {
+    const {addressTo, fee} = data
+    
+    if (isNaN(this.amount)) {
+      throw new CustomError(&apos;err_tx_btc_amount&apos;)
+    }
+    
+    if (isNaN(fee.SAT)) {
+      throw new CustomError(&apos;err_tx_btc_fee&apos;)
+    }
+    
+    let change = +fee.inputsAmount - +this.amount - +fee.SAT
+    
+    if (change &gt;= 0) {
+      let params = {
+        inputs: fee.inputs,
+        outputs: [
+          {
+            address: addressTo,
+            value: this.amount
+          }
+        ]
+      }
+      
+      if (change !== 0) {
+        params.outputs[1] = {
+          address: this.internalAddress,
+          value: change
+        }
+      }
+      
+      return makeRawBtcTx(params)
+    } else {
+      throw new CustomError(&apos;err_tx_btc_balance&apos;)
+    }
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

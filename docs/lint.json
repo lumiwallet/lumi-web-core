@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Wallet#setApiEndpoint",
+    "filePath": "src/index.js",
+    "lines": [
+      {
+        "lineNumber": 295,
+        "line": "  /**"
+      },
+      {
+        "lineNumber": 296,
+        "line": "   * Sets the API Endpoint"
+      },
+      {
+        "lineNumber": 297,
+        "line": "   *"
+      },
+      {
+        "lineNumber": 298,
+        "line": "   * @type {Object} api"
+      },
+      {
+        "lineNumber": 299,
+        "line": "   * @param {string} api.bitcoin - Url address of bitcoin endpoint"
+      },
+      {
+        "lineNumber": 300,
+        "line": "   * @param {string} api.bitcoinFee - Url address of bitcoin fee endpoint"
+      },
+      {
+        "lineNumber": 301,
+        "line": "   * @param {string} api.ethereum - Url address of ethereum endpoint"
+      },
+      {
+        "lineNumber": 302,
+        "line": "   */"
+      },
+      {
+        "lineNumber": 303,
+        "line": ""
+      },
+      {
+        "lineNumber": 304,
+        "line": "  setApiEndpoint (api) {"
+      }
+    ],
+    "codeParams": [
+      "api"
+    ],
+    "docParams": []
+  }
+]

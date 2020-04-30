@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/class/Core.js | lumi-web-core</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Lumi Wallet Core - Web Version"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="lumi-web-core"><meta property="twitter:description" content="Lumi Wallet Core - Web Version"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lumiwallet/lumi-web-core"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-requestHandleErrors">requestHandleErrors</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toFormatDecimal">toFormatDecimal</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/class/Core.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {validateMnemonic} from &apos;bip39&apos;
+import {normalize, checkWords} from &apos;bip39-checker&apos;
+import CustomError from &apos;@/helpers/handleErrors&apos;
+import * as core from &apos;@/helpers/coreHelper&apos;
+
+/**
+ * Class Wallet
+ * @class
+ */
+
+export default class Core {
+  /**
+   * Create a core
+   * @param {Object} data
+   * @param {string} data.from - A type new wallet creating: new, mnemonic or xprv
+   * @param {number} data.count - Number of words for the new mnemonic. Is used when parameter from is &apos;new&apos;
+   * @param {string} data.mnemonic - The mnemonic phrase. It used when parameter from is &apos;mnemonic&apos;
+   * @param {string} data.key - BIP32 Root Key. It used when parameter from is &apos;mnemonic&apos;
+   */
+  constructor (data) {
+    const {from, count, mnemonic, key} = data
+    this.from = from
+    this.count = count
+    this.mnemonic = mnemonic
+    this.xprv = key
+    this.seed = null
+    this.hdkey = null
+    this.BTC = {
+      node: null,
+      internalNode: null,
+      privateKey: null,
+      publicKey: null
+    }
+    this.ETH = {
+      node: null,
+      privateKey: null,
+      publicKey: null
+    }
+
+    this.generateWallet()
+  }
+  
+  /**
+   * The main method that starts the generation of the core.
+   * The type of generation depends on the parameter &apos;from&apos;
+   */
+  
+  generateWallet () {
+    switch (this.from) {
+      case &apos;new&apos;:
+        this._generateNewMnemonic()
+        break
+      case &apos;mnemonic&apos;:
+        this._importByMnemonic()
+        break
+      case &apos;xprv&apos;:
+        this._importByKey()
+        break
+      default:
+        this._generateNewMnemonic()
+    }
+    
+    this._generateBTCcore()
+    this._generateETHcore()
+  }
+  
+  /**
+   * Generating a new mnemonic.
+   * The number of words in a mnemonic depends on the parameter &apos;count&apos;
+   * @private
+   */
+  
+  _generateNewMnemonic () {
+    const entropy = this._getEntropyLength(this.count)
+    this.mnemonic = core.generateMnemonic(entropy)
+    this.seed = core.mnemonicToSeed(this.mnemonic)
+    this.hdkey = core.hdFromSeed(this.seed)
+    this.xprv = core.getXprv(this.hdkey)
+  }
+  
+  /**
+   * Importing a wallet by mnemonic
+   * @private
+   */
+  
+  _importByMnemonic () {
+    this.mnemonic = normalize(this.mnemonic)
+    
+    if (!this.checkMnemonic(this.mnemonic)) {
+      throw new CustomError(&apos;err_core_mnemonic&apos;)
+    }
+    
+    this.seed = core.mnemonicToSeed(this.mnemonic)
+    this.hdkey = core.hdFromSeed(this.seed)
+    this.xprv = core.getXprv(this.hdkey)
+  }
+  
+  /**
+   * Importing a wallet by key
+   * @private
+   */
+
+  _importByKey () {
+    this.hdkey = core.hdFromXprv(this.xprv)
+  }
+  
+  /**
+   * Creating a core for Bitcoin.
+   * At the output, we get a external and internal node,
+   * a private and public key, and the first address of the external core
+   * @private
+   */
+  
+  _generateBTCcore () {
+    const bitcoin_internal_path = &quot;m/44&apos;/0&apos;/0&apos;/0&quot;
+    const bitcoin_external_path = &quot;m/44&apos;/0&apos;/0&apos;/1&quot;
+    this.BTC.node = core.derive(this.hdkey, bitcoin_internal_path)
+    this.BTC.internalNode = core.derive(this.hdkey, bitcoin_external_path)
+    this.BTC.privateKey = this.hdkey.privateKey
+    this.BTC.publicKey = this.hdkey.publicKey
+    this.BTC.address = core.getBtcAddress(this.BTC.node, 0)
+  }
+  
+  /**
+   * Creating a core for Ethereum.
+   * At the output, we get a Ethereum node,
+   * a private and public key, and the Ethereum address
+   * @private
+   */
+
+  _generateETHcore () {
+    const ethereum_path = &quot;m/44&apos;/60&apos;/0&apos;/0/0&quot;
+    this.ETH.node = core.derive(this.hdkey, ethereum_path)
+    this.ETH.privateKey = core.getEthPrivateKey(this.ETH.node)
+    this.ETH.privateKeyHex = &apos;0x&apos; + this.ETH.privateKey.toString(&apos;hex&apos;)
+    this.ETH.publicKey = core.getEthPublicKey(this.ETH.privateKey)
+    this.ETH.address = core.getEthAddress(this.ETH.publicKey)
+  }
+  
+  /**
+   * The method returns information about child nodes by the derivation path and range
+   * @param {Object} data
+   * @param {number} data.from - Top of the derivation range
+   * @param {number} data.to - End of the derivation range
+   * @param {string} data.path - Derivation path
+   * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}}
+   */
+  
+  getChildNodes (data = {}) {
+    let {from, to, path} = data
+  
+    from = +from
+    to = +to
+  
+    if (!Number.isInteger(from) || !Number.isInteger(to) || from &gt; to) {
+      throw new CustomError(&apos;err_core_derivation_range&apos;)
+    }
+    
+    try {
+      const node = core.derive(this.hdkey, path)
+      
+      let info = {
+        node: {
+          privateExtendedKey: node.privateExtendedKey,
+          publicExtendedKey: node.publicExtendedKey
+        },
+        list: []
+      }
+  
+      for (let i = from; i &lt;= to; i++) {
+        const child = {}
+        const deriveChild = node.deriveChild(i)
+        child.path = `${path}/${i}`
+        child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)
+        child.publicKey = deriveChild.publicKey.toString(&apos;hex&apos;)
+        child.btcAddress = core.getBtcAddress(node, i)
+        child.ethAddress = core.getEthAddressByNode(deriveChild)
+        info.list.push(child)
+      }
+  
+      return info
+    } catch (e) {
+      throw new CustomError(&apos;err_core_derivation&apos;)
+    }
+  }
+  
+  /**
+   * Checking the mnemonic for validity
+   * @param mnemonic
+   * @returns {boolean}
+   */
+
+  checkMnemonic (mnemonic) {
+    let words = mnemonic.split(&apos; &apos;)
+    let withTypo = []
+
+    words.forEach((word, index) =&gt; {
+      if (!checkWords(word, &apos;english&apos;)) {
+        withTypo.push(index)
+      }
+    })
+
+    if (withTypo.length) {
+      throw new CustomError(&apos;err_core_mnemonic&apos;)
+    }
+
+    return validateMnemonic(mnemonic)
+  }
+  
+  /**
+   * Getting the entropy size by the number of words in a mnemonic
+   * @param words
+   * @returns {number} Bits of entropy
+   * @private
+   */
+
+  _getEntropyLength (words) {
+    let bitsOfEntropy = {
+      12: 128,
+      15: 160,
+      18: 192,
+      21: 224,
+      24: 256
+    }
+
+    if (!bitsOfEntropy.hasOwnProperty(+words)) {
+      throw new CustomError(&apos;err_core_7&apos;)
+    }
+  
+    return bitsOfEntropy[words]
+  }
+
+  get DATA () {
+    return {
+      mnemonic: this.mnemonic,
+      xprv: this.xprv,
+      from: this.from,
+      hdkey: this.hdkey,
+      seed: this.seed,
+      seedInHex: this.seed ? this.seed.toString(&apos;hex&apos;) : null,
+      BTC: this.BTC,
+      ETH: this.ETH
+    }
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

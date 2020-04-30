@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Home | lumi-web-core</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Lumi Wallet Core - Web Version"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="lumi-web-core"><meta property="twitter:description" content="Lumi Wallet Core - Web Version"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lumiwallet/lumi-web-core"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-requestHandleErrors">requestHandleErrors</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toFormatDecimal">toFormatDecimal</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://mit-license.org"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat" alt="License"></a>
+<a href><img src="https://img.shields.io/badge/Version-1.0-orange.svg" alt="Version"></a></p>
+<p><img src="https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png" alt="lumicore"></p>
+<h1 id="lumicore">LumiCore</h1><p>The LumiCore library is an implementation of tools for working with Bitcoin and Ethereum. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.</p>
+<blockquote>
+<p>Work of this module has been tested in applications at the Vue.js. You can find it <a href="https://github.com/lumiwallet/lumi-web-core-app">here</a>.</p>
+</blockquote>
+<p><strong>Note</strong>: Node version &gt;= 10.19.0</p>
+<h2 id="installation">Installation</h2><p>You can install the package via npm</p>
+<pre><code class="lang-console"><code class="source-code prettyprint">npm install lumi-web-core</code>
+</code></pre>
+<p>Or via yarn:</p>
+<pre><code class="lang-console"><code class="source-code prettyprint">yarn add lumi-web-core</code>
+</code></pre>
+<h2 id="usage">Usage</h2><blockquote>
+<p><strong>Warning!</strong> Do not use the mnemonic, keys, and addresses provided in this readme for real transactions!</p>
+</blockquote>
+<h3 id="create-import">Create/import</h3><p>Import the module and create a new class:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// typical import
+import Wallet from &apos;lumi-web-core&apos;
+
+const WALLET = new Wallet()</code>
+</code></pre>
+<p>You can create a new wallet by calling the method createNew(count). Count is the number of words for the new mnemonic.
+By default it is 12. It can be also  12, 15, 18, 21, and 24 words.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// Create a new wallet
+const CORE = await WALLET.createNew(15)</code>
+</code></pre>
+<p>You can create a wallet based on an existing mnemonic, where mnemonic is a string consisting of words and spaces:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// Create wallet by new mnemonic
+    const CORE = await WALLET.createByMnemonic(&apos;ramp grief anger ... olive main into throw&apos;)</code>
+</code></pre>
+<p>Or xprv key: </p>
+<pre><code class="lang-js"><code class="source-code prettyprint">// Create wallet by xprv key
+const CORE = await WALLET.createByKey(&apos;xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ&apos;)</code>
+</code></pre>
+<p>Example of the returned core:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">{
+    mnemonic: &quot;ramp grief anger ... olive main into throw&quot;,
+    xprv: &quot;xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ&quot;,
+    from: &quot;mnemonic&quot;,
+    hdkey: Object,
+    seed: Uint8Array(64),
+    seedInHex: &quot;1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39&quot;,
+    BTC: {
+        node: Object,
+        internalNode: Object,
+        privateKey: Uint8Array(32),
+        publicKey: Uint8Array(33),
+        address: &quot;1MS1SjQ1...vrLhajoGLfiV&quot;
+    },
+    ETH: {
+        node: Object,
+        privateKey: Uint8Array(32),
+        publicKey: Uint8Array(64),
+        address: &quot;0x06c019a17...aa6d949c947a02&quot;
+    }
+}</code>
+</code></pre>
+<h3 id="derivation">Derivation</h3><p>You can get information about a child node using the method <code>getChildNodes</code>.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const data = {
+  path: &apos;m/44&apos;/0&apos;/0&apos;/0&apos;,
+  from: 0,
+  to: 20
+}
+
+const info = await WALLET.getChildNodes(data)
+=&gt; {
+    node: {
+        privateExtendedKey: &quot;xprvA1CHKT9koKiKuhkeZ6XJxWXEQ1r...va4RtZfFmdYaQeNW72vX9q2DjMo3fsJwxCtkrVXyo2QP8&quot;,
+        publicExtendedKey: &quot;xpub6EBdixgedhGd8Bq7f84KKeTxx3gYWQ...bn9YVZ8PVXb6tTnCWTorLQPKqRggvdzyHH1TkoR7vuz&quot;
+    },
+    list: [
+        {
+            path: &quot;m/44&apos;/0&apos;/0&apos;/0/0&quot;,
+            privateKey: &quot;KzwMNQ93Dt96Qg...mRpaBCmEXGH2Lpgr2dGZsV&quot;,
+            publicKey: &quot;023b693fa7fa22e505...4cc450a463c024ab1e3ec526ba&quot;,
+            btcAddress: &quot;1aVZBbZW...U6WvQF6w36H7&quot;,
+            ethAddress: &quot;0xcd1594ae...a74ceb13d889d&quot;
+        },
+        ...
+    ]
+}
+</code>
+</code></pre>
+<p><code>path</code> this is a string with a derivation path. The path should begin with <code>m/44&apos;</code>.
+<code>from</code> is top of the range derivation
+<code>to</code> is end of the range derivation</p>
+<h3 id="creating-a-btc-transaction">Creating a BTC transaction</h3><p>To create a Bitcoin transaction you need to send a set of inputs and outputs to the <code>makeRawBtcTx</code> method:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const data = {
+    inputs: [
+        {
+            addr: &quot;1BYRALP...ypWzTQE8BkEL&quot;,
+            value: 10000,
+            n: 0,
+            script: &quot;76a91473a2...07d0bff2aee345ac88ac&quot;,
+            hash: &quot;de06df091735...afd145eecfcd5649634e1d5221&quot;,
+            key: &apos;L3YFJ4cBDYhZ...bzqgSUxLjTAorR5Kc47mP6x1D&apos;
+        },
+        {
+            addr: &quot;1BYRALPU...kLypWzTQE8BkEL&quot;,
+            value: 10000,
+            n: 0,
+            script: &quot;76a91473a2...7d0bff2aee345ac88ac&quot;,
+            hash: &quot;47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9&quot;,
+            key: &apos;L3YFJ4cBDYhZ...xLjTAorR5Kc4AorR5K7mP6x1D&apos;
+        }
+      ],
+      outputs: [
+        {
+          address: &apos;1NuABwx...5V5tiXpshAWb8W&apos;,
+          value: 15000
+        }
+        {
+          address: &apos;1PbQ36GvG...nimPD7gHPQFk3Nu&apos;,
+          value: 5000
+        }
+      ]
+}
+
+const btc_tx = await WALLET.makeRawBtcTx(data)</code>
+</code></pre>
+<p>When the transaction is created successfully, an object with the transaction hash and raw tx data is returned</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">btc_tx =&gt; {
+    hash: &apos;6b4a00f9fd4e5c263b5af65fed0...14cafb97e0f5738cb4a8717&apos;,
+    tx: &apos;010000000221521d4e634956cdcfee45d1afbe79080a...04f3d76f2c65501976a914fbf7f38b23308227a308fffff88ac00000000&apos;
+}</code>
+</code></pre>
+<h3 id="creating-an-eth-transaction">Creating an ETH transaction</h3><p>To make a Ethereum transaction you need to fill in the following params:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const data = {
+  nonce: 280,
+  amount: 100000000000000,
+  address: &apos;0x1e8d99d2278...d89983e2920df33b485&apos;,
+  gasPrice: 19950000002,
+  gasLimit: 21000,
+  privateKey: &apos;0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313&apos;
+}
+
+const eth_tx = await WALLET.makeRawEthTx(data)</code>
+</code></pre>
+<p>When the transaction is created successfully, an object with the transaction hash and raw tx data is returned</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">eth_tx =&gt; {
+    hash: &apos;0xcb3869c19f2462a572a5ff13...d67ca71c181452e52a698d035209&apos;,
+    tx: &apos;0xf86c8201188504a51cd782825208...6df4207768a01789b726296195a956ceb3dbe73798&apos;
+}</code>
+</code></pre>
+<p>For more information, see the <a href="https://lumiwallet.github.io/lumi-web-core/">docs</a>.</p>
+<h2 id="nist-testing">Nist testing</h2><p>Testing <a href="./nist/README.md">documentation</a>.</p>
+<h2 id="created-using">Created using</h2><ul>
+<li><a href="https://github.com/bitcoinjs/bip39">bip39</a></li>
+<li><a href="https://github.com/jcalfee/bip39-checker">bip39-checker</a></li>
+<li><a href="https://github.com/bitcoinjs/bitcoinjs-lib">bitcoinjs-lib</a></li>
+<li><a href="https://github.com/ethereumjs/ethereumjs-vm/tree/master/packages/tx">ethereumjs-tx</a></li>
+<li><a href="https://github.com/ethereumjs/ethereumjs-util">ethereumjs-util</a></li>
+<li><a href="https://github.com/cryptocoinjs/hdkey">hdkey</a></li>
+<li><a href="https://github.com/ethereum/web3.js">web3-utils</a></li>
+<li><a href="https://github.com/bitcoinjs/wif">wif</a></li>
+<li><a href="https://github.com/webpack-contrib/worker-loader">worker-loader</a><h2 id="license">License</h2></li>
+</ul>
+<p>LumiCore is available under the MIT license. See the <a href="LICENSE">LICENSE</a> file for more info.</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
