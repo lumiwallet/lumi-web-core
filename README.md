@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://mit-license.org)
-[![Version](https://img.shields.io/badge/Version-1.0-orange.svg)]()
+[![NPM](https://img.shields.io/npm/v/lumi-web-core.svg)](https://www.npmjs.org/package/lumi-web-core)
 
 ![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)
 
