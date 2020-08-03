@@ -37,7 +37,6 @@ export default class BitcoinTx {
    * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
    */
   
-  // TODO check size
   async calcFee (size = 0) {
     if (this.amount <= 0 || this.balance < this.amount) {
       return this.calcEmptyFee()
@@ -57,49 +56,41 @@ export default class BitcoinTx {
     
     this.feeList = [
       {
-        name: 'Fast',
+        id: 'fast',
         SAT: fastResult.fee,
         BTC: converter.sat_to_btc(fastResult.fee),
         fee: this.fee[2].feePerByte,
         feeInBTC: converter.sat_to_btc(this.fee[2].feePerByte),
         inputs: fastResult.inputs,
         inputsAmount: fastResult.inputsAmount,
-        title: 'Fast 30-60 mins',
-        addText: 'per byte'
       },
       {
-        name: 'Regular',
+        id: 'regular',
         SAT: regularResult.fee,
         BTC: converter.sat_to_btc(regularResult.fee),
         fee: this.fee[1].feePerByte,
         feeInBTC: converter.sat_to_btc(this.fee[1].feePerByte),
         inputs: regularResult.inputs,
-        inputsAmount: regularResult.inputsAmount,
-        title: 'Regular 1-24 hours',
-        addText: 'per byte'
+        inputsAmount: regularResult.inputsAmount
       },
       {
-        name: 'Cheap',
+        id: 'cheap',
         SAT: cheapResult.fee,
         BTC: converter.sat_to_btc(cheapResult.fee),
         fee: this.fee[0].feePerByte,
         feeInBTC: converter.sat_to_btc(this.fee[0].feePerByte),
         inputs: cheapResult.inputs,
         inputsAmount: cheapResult.inputsAmount,
-        title: 'Cheap but takes time...',
-        addText: 'per byte'
       },
       {
         custom: true,
-        name: 'Custom',
+        id: 'custom',
         SAT: customResult.fee,
         BTC: converter.sat_to_btc(customResult.fee),
         fee: this.customFee,
         feeInBTC: converter.sat_to_btc(this.customFee),
         inputs: customResult.inputs,
         inputsAmount: customResult.inputsAmount,
-        title: 'Custom amount',
-        addText: 'Minimum 1 SAT per byte'
       }
     ]
     
@@ -115,29 +106,25 @@ export default class BitcoinTx {
   calcEmptyFee () {
     this.feeList = [
       {
-        name: 'Fast',
+        id: 'fast',
         SAT: 0,
         BTC: 0,
         fee: this.fee[2].feePerByte,
         feeInBTC: converter.sat_to_btc(this.fee[2].feePerByte),
         inputs: [],
-        inputsAmount: 0,
-        title: 'Fast 30-60 mins',
-        addText: 'per byte'
+        inputsAmount: 0
       },
       {
-        name: 'Regular',
+        id: 'regular',
         SAT: 0,
         BTC: 0,
         fee: this.fee[1].feePerByte,
         feeInBTC: converter.sat_to_btc(this.fee[1].feePerByte),
         inputs: [],
-        inputsAmount: 0,
-        title: 'Regular 1-24 hours',
-        addText: 'per byte'
+        inputsAmount: 0
       },
       {
-        name: 'Cheap',
+        id: 'cheap',
         SAT: 0,
         BTC: 0,
         fee: this.fee[0].feePerByte,
@@ -149,14 +136,12 @@ export default class BitcoinTx {
       },
       {
         custom: true,
-        name: 'Custom',
+        id: 'custom',
         feePerByte: this.customFee,
         fee: 0,
         feeInSat: 0,
         inputs: [],
-        inputsAmount: 0,
-        title: 'Custom amount',
-        addText: 'Minimum 1 SAT per byte'
+        inputsAmount: 0
       }
     ]
     
