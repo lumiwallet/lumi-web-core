@@ -61,14 +61,28 @@ export default class BitcoinSync {
    */
   
   async getAddresses () {
-    this.addresses.external = await this.getAddressesByNode(
-      this.node,
-      'external'
-    )
-    this.addresses.internal = await this.getAddressesByNode(
-      this.internalNode,
-      'internal'
-    )
+    const nodeData = [
+      {
+        node: this.node,
+        type: 'external'
+      }, {
+        node: this.internalNode,
+        type: 'internal'
+      }
+    ]
+    
+    const pArray = nodeData.map(async item => {
+      return await this.getAddressesByNode(
+        item.node,
+        item.type
+      )
+    })
+    
+    const addresses = await Promise.all(pArray)
+    
+    this.addresses.external = addresses[0]
+    this.addresses.internal = addresses[1]
+    
     this.addresses.empty = {
       external: this.addresses.external[this.addresses.external.length - 1],
       internal: this.addresses.internal[this.addresses.internal.length - 1]
@@ -211,7 +225,6 @@ export default class BitcoinSync {
       }
       catch (e) {
         console.log('BTC SyncPromise', e)
-        //TODO: error handler
       }
     }
     
@@ -270,7 +283,6 @@ export default class BitcoinSync {
           tx.action = 'outgoing'
         }
         
-        // TODO
         tx.to = tx.out[0].addr
         tx.from = tx.inputs[0].prev_out.addr
         tx.value = tx.out[0].value
@@ -335,16 +347,14 @@ export default class BitcoinSync {
    */
   
   getPrivateKey (address) {
-    let finded = this.addresses.internal.find(
-      (item) => item.address === address
-    )
+    let finded = this.addresses.internal.find(item => item.address === address)
     let key, wif = null
     
     if (finded) {
       key = this.internalNode.deriveChild(finded.derive_index).privateKey
       wif = privateKeyToWIF(key)
     } else {
-      finded = this.addresses.external.find((item) => item.address === address)
+      finded = this.addresses.external.find(item => item.address === address)
       key = this.node.deriveChild(finded.derive_index).privateKey
       wif = privateKeyToWIF(key)
     }
@@ -442,7 +452,6 @@ export default class BitcoinSync {
     
     let length = 100
     let arraysCount = Math.ceil(addresses.length / length)
-    let list = []
     let arrays = []
     
     for (let i = 0; i < arraysCount; i++) {
@@ -450,29 +459,27 @@ export default class BitcoinSync {
       arrays.push(arr)
     }
     
-    return new Promise(resolve => {
-      Promise.all(arrays.map((array) => {
-        return new Promise((resolve) => {
-          let params = {
-            method: 'unspent',
-            active: array
+    const res = await Promise.all(arrays.map((array) => {
+      return new Promise((resolve) => {
+        let params = {
+          method: 'unspent',
+          active: array
+        }
+        
+        this.request.send(params).then(res => {
+          if (res.status === 'success') {
+            resolve(res.data.unspent_outputs)
           }
           
-          this.request.send(params).then(res => {
-            if (res.status === 'success') {
-              list = [...res.data.unspent_outputs, ...list]
-            }
-            
-            resolve()
-          }).catch(err => {
-            console.log('BTC getUnspentOutputsRequest', err)
-            resolve()
-          })
+          resolve([])
+        }).catch(err => {
+          console.log('BTC getUnspentOutputsRequest', err)
+          resolve([])
         })
-      })).then(() => {
-        resolve(list)
       })
-    })
+    }))
+    
+    return [].concat.apply([], res)
   }
   
   /**
