@@ -26,13 +26,19 @@ export default class Core {
     this.seed = null
     this.hdkey = null
     this.BTC = {
-      node: null,
       internalNode: null,
+      externalNode: null,
       privateKey: null,
       publicKey: null
     }
     this.ETH = {
       node: null,
+      privateKey: null,
+      publicKey: null
+    }
+    this.BCH = {
+      internalNode: null,
+      externalNode: null,
       privateKey: null,
       publicKey: null
     }
@@ -62,6 +68,7 @@ export default class Core {
     
     this._generateBTCcore()
     this._generateETHcore()
+    this._generateBCHcore()
   }
   
   /**
@@ -112,13 +119,13 @@ export default class Core {
    */
   
   _generateBTCcore () {
-    const bitcoin_internal_path = "m/44'/0'/0'/0"
-    const bitcoin_external_path = "m/44'/0'/0'/1"
-    this.BTC.node = core.derive(this.hdkey, bitcoin_internal_path)
-    this.BTC.internalNode = core.derive(this.hdkey, bitcoin_external_path)
+    const bitcoin_external_path = "m/44'/0'/0'/0"
+    const bitcoin_internal_path = "m/44'/0'/0'/1"
+    this.BTC.externalNode = core.derive(this.hdkey, bitcoin_external_path)
+    this.BTC.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
     this.BTC.privateKey = this.hdkey.privateKey
     this.BTC.publicKey = this.hdkey.publicKey
-    this.BTC.address = core.getBtcAddress(this.BTC.node, 0)
+    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0)
   }
   
   /**
@@ -135,6 +142,19 @@ export default class Core {
     this.ETH.privateKeyHex = '0x' + this.ETH.privateKey.toString('hex')
     this.ETH.publicKey = core.getEthPublicKey(this.ETH.privateKey)
     this.ETH.address = core.getEthAddress(this.ETH.publicKey)
+  }
+  
+  /**
+   * TODO: docs
+   * */
+  
+  _generateBCHcore () {
+    const bitcoincash_external_path = "m/44'/145'/0'/0"
+    const bitcoincash_internal_path = "m/44'/145'/0'/1"
+    this.BCH.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
+    this.BCH.intenalNode = core.derive(this.hdkey, bitcoincash_internal_path)
+    
+    console.log(this.BCH)
   }
   
   /**
@@ -239,7 +259,8 @@ export default class Core {
       seed: this.seed,
       seedInHex: this.seed ? this.seed.toString('hex') : null,
       BTC: this.BTC,
-      ETH: this.ETH
+      ETH: this.ETH,
+      BCH: this.BCH
     }
   }
 }

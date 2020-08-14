@@ -71,7 +71,7 @@ export default class WalletWrapper {
   
   async SyncBTC () {
     this.Sync.BTC = new BitcoinSync(
-      this.core.DATA.BTC.node,
+      this.core.DATA.BTC.externalNode,
       this.core.DATA.BTC.internalNode,
       this.api
     )

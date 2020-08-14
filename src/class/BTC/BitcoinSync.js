@@ -11,12 +11,12 @@ import {getBtcAddress, privateKeyToWIF} from '@/helpers/coreHelper'
 export default class BitcoinSync {
   /**
    * Create a BitcoinSync
-   * @param {Object} node - External Bitcoin node
+   * @param {Object} externalNode - External Bitcoin node
    * @param {Object} internalNode - Internal Bitcoin node
    * @param {Object} api - A set of URLs for getting information about bitcoin addresses
    */
-  constructor (node, internalNode, api) {
-    this.node = node
+  constructor (externalNode, internalNode, api) {
+    this.externalNode = externalNode
     this.internalNode = internalNode
     this.api = api
     this.balance = 0
@@ -61,7 +61,7 @@ export default class BitcoinSync {
   
   async getAddresses () {
     this.addresses.external = await this.getAddressesByNode(
-      this.node,
+      this.externalNode,
       'external'
     )
     this.addresses.internal = await this.getAddressesByNode(
@@ -168,7 +168,7 @@ export default class BitcoinSync {
                 item.type = type
                 item.derive_index = derive_index
                 if (type === 'external') {
-                  item.address = getBtcAddress(this.node, derive_index)
+                  item.address = getBtcAddress(this.externalNode, derive_index)
                 } else {
                   item.address = getBtcAddress(this.internalNode, derive_index)
                 }
@@ -193,7 +193,7 @@ export default class BitcoinSync {
           }
   
           if (type === 'external') {
-            data.address = getBtcAddress(this.node, derive_index)
+            data.address = getBtcAddress(this.externalNode, derive_index)
           } else {
             data.address = getBtcAddress(this.internalNode, derive_index)
           }
@@ -345,7 +345,7 @@ export default class BitcoinSync {
       wif = privateKeyToWIF(key)
     } else {
       finded = this.addresses.external.find((item) => item.address === address)
-      key = this.node.deriveChild(finded.derive_index).privateKey
+      key = this.externalNode.deriveChild(finded.derive_index).privateKey
       wif = privateKeyToWIF(key)
     }
 
