@@ -61,10 +61,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/class/ETH/EthereumTx.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import converter from &apos;@/helpers/converters&apos;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import converter       from &apos;@/helpers/converters&apos;
 import toFormatDecimal from &apos;@/helpers/toFormatDecimal&apos;
-import {makeRawEthTx} from &apos;@/helpers/coreHelper&apos;
-import CustomError from &apos;@/helpers/handleErrors&apos;
+import {makeRawEthTx}  from &apos;@/helpers/coreHelper&apos;
+import CustomError     from &apos;@/helpers/handleErrors&apos;
 
 /**
  * Class EthereumTx.
@@ -100,27 +100,24 @@ export default class EthereumTx {
   calcFee (customGasPrice = 0, customGasLimit = 0) {
     this.feeList = [
       {
-        name: &apos;Optimal&apos;,
+        id: &apos;optimal&apos;,
         gasPrice: this.gasPrice,
         gasLimit: this.defaultGasLimit,
         fee: toFormatDecimal(
           converter.wei_to_eth(this.gasPrice * this.defaultGasLimit)
-        ),
-        title: &apos;Optimal fee&apos;
+        )
       },
       {
         custom: true,
-        name: &apos;Custom&apos;,
+        id: &apos;custom&apos;,
         gasPrice: customGasPrice,
         gasLimit: customGasLimit,
         fee: toFormatDecimal(
           converter.wei_to_eth(customGasPrice * customGasLimit)
-        ),
-        title: &apos;For advanced: custom fee&apos;,
-        addText: &apos;Not recommended&apos;
+        )
       }
     ]
-
+    
     return this.feeList
   }
   
@@ -154,7 +151,7 @@ export default class EthereumTx {
     
     return makeRawEthTx(params)
   }
-
+  
   get DATA () {
     return {
       fee: this.feeList
