@@ -826,7 +826,7 @@
     "__docId__": 58,
     "kind": "file",
     "name": "src/class/BTC/BitcoinSync.js",
-    "content": "import Request from '@/helpers/Request'\nimport {getBtcAddress, privateKeyToWIF} from '@/helpers/coreHelper'\n\n/**\n * Class BitcoinSync.\n * This class allows you to get information about the balance on a bitcoin wallet,\n * the list of unspent, a set of addresses that participated in transactions, and a list of transactions\n * @class\n */\n\nexport default class BitcoinSync {\n  /**\n   * Create a BitcoinSync\n   * @param {Object} node - External Bitcoin node\n   * @param {Object} internalNode - Internal Bitcoin node\n   * @param {Object} api - A set of URLs for getting information about bitcoin addresses\n   */\n  constructor (node, internalNode, api) {\n    this.node = node\n    this.internalNode = internalNode\n    this.api = api\n    this.balance = 0\n    this.latestBlock = 0\n    this.unspent = []\n    this.addresses = {\n      external: [],\n      internal: [],\n      empty: {},\n      fullList: [],\n      all: []\n    }\n    this.deriveAddress = {\n      internal: {},\n      external: {}\n    }\n    this.transactions = {\n      all: [],\n      unique: []\n    }\n    this.fee = []\n    this.checked200 = false\n    this.request = new Request(this.api.bitcoin)\n  }\n  \n  /**\n   * The method that starts the synchronization Bitcoin part of wallet\n   * @returns {Promise<boolean>}\n   * @constructor\n   */\n  \n  async Start () {\n    await this.getAddresses()\n    await this.processTransactions()\n    await this.getFeesRequest()\n  }\n  \n  /**\n   * Getting internal and external addresses that were involved in transactions\n   * @returns {Promise<boolean>}\n   */\n  \n  async getAddresses () {\n    this.addresses.external = await this.getAddressesByNode(\n      this.node,\n      'external'\n    )\n    this.addresses.internal = await this.getAddressesByNode(\n      this.internalNode,\n      'internal'\n    )\n    this.addresses.empty = {\n      external: this.addresses.external[this.addresses.external.length - 1],\n      internal: this.addresses.internal[this.addresses.internal.length - 1]\n    }\n\n    await this.additionalCheckAddress()\n\n    this.addresses.fullList = [\n      ...this.addresses.external,\n      ...this.addresses.internal\n    ]\n    this.addresses.all = this.addresses.fullList.map((item) => item.address)\n\n    await this.getUnspent()\n    this.balance = this.getBalance(this.unspent)\n  }\n  \n  /**\n   * Auxiliary method that gets the bitcoin address by node and index\n   * @param {Object} node - Bitcoin node\n   * @param {string} type - Node type (external or internal)\n   * @param {number} from - The index that the derivation starts from\n   * @param {number} to - Index to which deprivation occurs\n   * @returns {Promise<Array>} Returns array of addresses\n   * @private\n   */\n  \n  async _getArrayOfAddresses (node, type, from, to) {\n    let addresses = []\n\n    for (let i = from; i < to; i++) {\n      let address = ''\n      \n      if (this.deriveAddress[type].hasOwnProperty(i)) {\n        address = this.deriveAddress[type][i]\n      } else {\n        address = getBtcAddress(node, i)\n      }\n      addresses.push(address)\n    }\n\n    return addresses\n  }\n  \n  /**\n   * Getting information about addresses and forming an array of addresses.\n   * Makes a request for a bundle of addresses and gets a list of transactions\n   * @param node - Bitcoin node\n   * @param type - Node type (external or internal)\n   * @returns {Promise<Array>} A list of addresses with transactions\n   */\n\n  async getAddressesByNode (node, type) {\n    const CONTROL_COUNT = 100\n    let list = []\n    let counter = 0\n    let derive_index = 0\n    let empty = {\n      status: false,\n      data: null\n    }\n    let data = {\n      from: 0,\n      to: CONTROL_COUNT\n    }\n\n    const req = async () => {\n      let addresses = await this._getArrayOfAddresses(\n        node,\n        type,\n        data.from,\n        data.to\n      )\n      \n      try {\n        let res = await this.getMultiAddressRequest(addresses)\n  \n        if (res.hasOwnProperty('txs')) {\n          this.transactions.all = [...this.transactions.all, ...res.txs]\n        }\n        \n        if (res.hasOwnProperty('addresses')) {\n          for (let i = data.from; i < data.to; i++) {\n            if (counter >= CONTROL_COUNT) break\n    \n            let item = res.addresses.find((itm) => itm.address === addresses[i])\n    \n            if (item && item.n_tx) {\n              counter = 0\n              empty.status = false\n              item.type = type\n              item.derive_index = derive_index\n              list.push(item)\n            } else {\n              counter++\n              if (!empty.status) {\n                item = {}\n                item.type = type\n                item.derive_index = derive_index\n                if (type === 'external') {\n                  item.address = getBtcAddress(this.node, derive_index)\n                } else {\n                  item.address = getBtcAddress(this.internalNode, derive_index)\n                }\n                empty.status = true\n                empty.data = item\n              }\n            }\n            derive_index++\n          }\n  \n          if (counter < CONTROL_COUNT) {\n            data.from += CONTROL_COUNT\n            data.to += CONTROL_COUNT\n            await req()\n          } else {\n            list.push(empty.data)\n          }\n        } else {\n          let data = {\n            type: type,\n            derive_index: derive_index\n          }\n  \n          if (type === 'external') {\n            data.address = getBtcAddress(this.node, derive_index)\n          } else {\n            data.address = getBtcAddress(this.internalNode, derive_index)\n          }\n          \n          list.push(data)\n        }\n      }\n      catch (e) {\n        console.log('BTC SyncPromise', e)\n        //TODO: error handler\n      }\n    }\n\n    await req()\n    \n    return list\n  }\n\n  async additionalCheckAddress () {\n    if (!this.checked200 && !this.deriveAddress.internal.hasOwnProperty(200)) {\n      let address = getBtcAddress(this.internalNode, 200)\n      this.deriveAddress.internal[200] = address\n      this.checked200 = true\n      \n      let res = await this.getMultiAddressRequest([address])\n  \n      if (res.hasOwnProperty('txs')) {\n        this.transactions.all = [...this.transactions.all, ...res.txs]\n      }\n    \n      if (res.hasOwnProperty('addresses')) {\n        let item = res.addresses.find((itm) => itm.address === address)\n\n        if (item && item.n_tx) {\n          item.type = 'internal'\n          item.derive_index = 200\n\n          let lastEmptyAddress = this.addresses.internal.pop()\n          this.addresses.internal.push(item)\n          this.addresses.internal.push(lastEmptyAddress)\n        }\n      }\n    }\n  }\n  \n  /**\n   * Processing transaction information: setting the type (incoming or outgoing),\n   * getting addresses from and to, getting a transaction amount\n   * @returns {Promise<Boolean>}\n   */\n\n  async processTransactions () {\n    this.transactions.unique = this.transactions.all.filter(\n      (value, index, self) =>\n        self.findIndex((tx) => tx.hash === value.hash) === index\n    )\n\n    try {\n      this.transactions.unique.forEach((tx) => {\n        let isMyOutAddress = this.addresses.all.indexOf(tx.out[0].addr) >= 0\n        let isMyInAddress =\n          this.addresses.all.indexOf(tx.inputs[0].prev_out.addr) >= 0\n\n        tx.action = isMyOutAddress ? 'incoming' : 'outgoing'\n        tx.self = isMyOutAddress && isMyInAddress\n        tx.to = tx.out[0].addr\n        tx.from = tx.inputs[0].prev_out.addr\n        tx.value = tx.out[0].value\n      })\n    }\n    catch (e) {\n      console.log('BTC processTransactions', e)\n    }\n  }\n  \n  /**\n   * Getting a unspent transaction output for all addresses in the wallet with the transaction\n   * @returns {Promise<boolean>}\n   */\n\n  async getUnspent () {\n    let res = await this.getUnspentOutputsRequest(this.addresses.all)\n    let unspentHash = []\n    let unspent = []\n    \n    res.forEach((item) => {\n      if (unspentHash.indexOf(item.tx_hash_big_endian) < 0) {\n        unspentHash.push(item.tx_hash_big_endian)\n      }\n    })\n\n    for (let hash of unspentHash) {\n      let tx = await this.getRawTxRequest(hash)\n\n      if (tx.hasOwnProperty('out')) {\n        tx.out.forEach((item) => {\n          if (\n            !item.spent &&\n            item.addr &&\n            this.addresses.all.indexOf(item.addr) >= 0\n          ) {\n            item.hash = tx.hash\n            item.key = this.getPrivateKey(item.addr)\n            unspent.push(item)\n          }\n        })\n      }\n    }\n\n    this.unspent = unspent.sort((a, b) => b.value - a.value)\n  }\n  \n  /**\n   * Getting a balance of Bitcoin wallet from a list of unspent\n   * @param {Array} unspent - The list of unspent transaction output\n   * @returns {number} The balance of the bitcoin wallet\n   */\n  \n  getBalance (unspent) {\n    if (!Array.isArray(unspent)) {\n      return 0\n    }\n    \n    let balance = 0\n    \n    unspent.forEach((item) => {\n      if (item && item.hasOwnProperty('value')) {\n        balance += +item.value\n      }\n    })\n    \n    return balance\n  }\n  \n  /**\n   * Getting a private key at a bitcoin address\n   * @param {string} address - Bitcoin address\n   * @returns {Object} - Bitcoin private key\n   */\n  \n  getPrivateKey (address) {\n    let finded = this.addresses.internal.find(\n      (item) => item.address === address\n    )\n    let key, wif = null\n\n    if (finded) {\n      key = this.internalNode.deriveChild(finded.derive_index).privateKey\n      wif = privateKeyToWIF(key)\n    } else {\n      finded = this.addresses.external.find((item) => item.address === address)\n      key = this.node.deriveChild(finded.derive_index).privateKey\n      wif = privateKeyToWIF(key)\n    }\n\n    return wif\n  }\n  \n  /**\n   * Getting a raw transaction from the transaction hash\n   * @param {string} txHash - Transaction hash\n   * @returns {Promise<Object>} - Raw transaction\n   */\n\n  async getRawTxRequest (txHash) {\n    let params = {\n      method: 'rawtx',\n      tx_hash: txHash\n    }\n\n    try {\n      let res = await this.request.send(params)\n  \n      if (res.status === 'success') {\n        return res.data\n      } else {\n        console.log(res.error)\n        return {}\n      }\n    }\n    catch (e) {\n      console.log('BTC getLatestBlock', e)\n    }\n  }\n  \n  /**\n   * Request for information at multiple addresses\n   * @param {Array} addresses - List of addresses to get data from\n   * @returns {Promise<Object>} Address information, including a list of transactions\n   */\n\n  async getMultiAddressRequest (addresses) {\n    if (!addresses) return false\n    \n    let params = {\n      method: 'multiaddr',\n      active: addresses\n    }\n\n    try {\n      let res = await this.request.send(params)\n  \n      if (res.status === 'success') {\n        if (\n          res.data.hasOwnProperty('info') &&\n          res.data.info.hasOwnProperty('latest_block')\n        ) {\n          this.latestBlock = res.data.info.latest_block.height\n        }\n        return res.data\n      } else {\n        console.log(res.error)\n        return {}\n      }\n    }\n    catch (err) {\n      console.log('BTC getMultiAddressRequest', err)\n    }\n  }\n  \n  /**\n   * Request to receive unspent outputs\n   * @param {Array} addresses - A set of addresses to get the unspent output from\n   * @returns {Promise<Array>} - Information about unspent output\n   */\n\n  async getUnspentOutputsRequest (addresses) {\n    if (!addresses) return []\n    \n    let length = 100\n    let arraysCount = Math.ceil(addresses.length / length)\n    let list = []\n    let arrays = []\n    \n    for (let i = 0; i < arraysCount; i++) {\n      let arr = addresses.slice(i * length, (i + 1) * length)\n      arrays.push(arr)\n    }\n    \n    return new Promise(resolve => {\n      Promise.all(arrays.map((array) => {\n        return new Promise ((resolve) => {\n          let params = {\n            method: 'unspent',\n            active: array\n          }\n      \n          this.request.send(params).then(res => {\n            if (res.status === 'success') {\n              list = [...res.data.unspent_outputs, ...list]\n            }\n            \n            resolve()\n          }).catch(err => {\n            console.log('BTC getUnspentOutputsRequest', err)\n          })\n        })\n      })).then(() => {\n        resolve(list)\n      })\n    })\n  }\n  \n  /**\n   * Request to receive a recommended set of bitcoin fees\n   * @returns {Promise<Array>} Set of bitcoin fees\n   */\n\n  async getFeesRequest () {\n    try {\n      let res = await fetch(this.api.bitcoinFee)\n      this.fee = await res.json()\n    }\n    catch (err) {\n      console.log('BTC getFeesRequest', err)\n    }\n  }\n  \n  /**\n   * Full information about the bitcoin wallet\n   * @returns {Object}\n   * @constructor\n   */\n\n  get DATA () {\n    return {\n      addresses: this.addresses,\n      transactions: this.transactions,\n      unspent: this.unspent,\n      balance: this.balance,\n      latestBlock: this.latestBlock,\n      fee: this.fee\n    }\n  }\n}\n",
+    "content": "import Request from '@/helpers/Request'\nimport {getBtcAddress, privateKeyToWIF} from '@/helpers/coreHelper'\nimport * as bitcoin from 'bitcoinjs-lib'\n\n/**\n * Class BitcoinSync.\n * This class allows you to get information about the balance on a bitcoin wallet,\n * the list of unspent, a set of addresses that participated in transactions, and a list of transactions\n * @class\n */\n\nexport default class BitcoinSync {\n  /**\n   * Create a BitcoinSync\n   * @param {Object} node - External Bitcoin node\n   * @param {Object} internalNode - Internal Bitcoin node\n   * @param {Object} api - A set of URLs for getting information about bitcoin addresses\n   */\n  constructor (node, internalNode, api) {\n    this.node = node\n    this.internalNode = internalNode\n    this.api = api\n    this.balance = 0\n    this.latestBlock = 0\n    this.unspent = []\n    this.addresses = {\n      external: [],\n      internal: [],\n      empty: {},\n      fullList: [],\n      all: []\n    }\n    this.deriveAddress = {\n      internal: {},\n      external: {}\n    }\n    this.transactions = {\n      all: [],\n      unique: []\n    }\n    this.fee = []\n    this.checked200 = false\n    this.request = new Request(this.api.bitcoin)\n  }\n  \n  /**\n   * The method that starts the synchronization Bitcoin part of wallet\n   * @returns {Promise<boolean>}\n   * @constructor\n   */\n  \n  async Start () {\n    await this.getAddresses()\n    await this.processTransactions()\n    await this.getFeesRequest()\n  }\n  \n  /**\n   * Getting internal and external addresses that were involved in transactions\n   * @returns {Promise<boolean>}\n   */\n  \n  async getAddresses () {\n    const nodeData = [\n      {\n        node: this.node,\n        type: 'external'\n      }, {\n        node: this.internalNode,\n        type: 'internal'\n      }\n    ]\n    \n    const pArray = nodeData.map(async item => {\n      return await this.getAddressesByNode(\n        item.node,\n        item.type\n      )\n    })\n    \n    const addresses = await Promise.all(pArray)\n    \n    this.addresses.external = addresses[0]\n    this.addresses.internal = addresses[1]\n    \n    this.addresses.empty = {\n      external: this.addresses.external[this.addresses.external.length - 1],\n      internal: this.addresses.internal[this.addresses.internal.length - 1]\n    }\n    \n    await this.additionalCheckAddress()\n    \n    this.addresses.fullList = [\n      ...this.addresses.external,\n      ...this.addresses.internal\n    ]\n    this.addresses.all = this.addresses.fullList.map((item) => item.address)\n    \n    await this.getUnspent()\n    this.balance = this.getBalance(this.unspent)\n  }\n  \n  /**\n   * Auxiliary method that gets the bitcoin address by node and index\n   * @param {Object} node - Bitcoin node\n   * @param {string} type - Node type (external or internal)\n   * @param {number} from - The index that the derivation starts from\n   * @param {number} to - Index to which deprivation occurs\n   * @returns {Promise<Array>} Returns array of addresses\n   * @private\n   */\n  \n  async _getArrayOfAddresses (node, type, from, to) {\n    let addresses = []\n    \n    for (let i = from; i < to; i++) {\n      let address = ''\n      \n      if (this.deriveAddress[type].hasOwnProperty(i)) {\n        address = this.deriveAddress[type][i]\n      } else {\n        address = getBtcAddress(node, i)\n      }\n      addresses.push(address)\n    }\n    \n    return addresses\n  }\n  \n  /**\n   * Getting information about addresses and forming an array of addresses.\n   * Makes a request for a bundle of addresses and gets a list of transactions\n   * @param node - Bitcoin node\n   * @param type - Node type (external or internal)\n   * @returns {Promise<Array>} A list of addresses with transactions\n   */\n  \n  async getAddressesByNode (node, type) {\n    const CONTROL_COUNT = 100\n    let list = []\n    let counter = 0\n    let derive_index = 0\n    let empty = {\n      status: false,\n      data: null\n    }\n    let data = {\n      from: 0,\n      to: CONTROL_COUNT\n    }\n    \n    const req = async () => {\n      let addresses = await this._getArrayOfAddresses(\n        node,\n        type,\n        data.from,\n        data.to\n      )\n      \n      try {\n        let res = await this.getMultiAddressRequest(addresses)\n        \n        if (res.hasOwnProperty('txs')) {\n          this.transactions.all = [...this.transactions.all, ...res.txs]\n        }\n        \n        if (res.hasOwnProperty('info') &&\n          res.info.hasOwnProperty('latest_block')) {\n          this.latestBlock = res.info.latest_block.height\n        }\n        \n        if (res.hasOwnProperty('addresses')) {\n          for (let i = data.from; i < data.to; i++) {\n            if (counter >= CONTROL_COUNT) break\n            \n            const index = i <= CONTROL_COUNT ? i : i - CONTROL_COUNT\n            let item = res.addresses.find((itm) => itm.address === addresses[index])\n            \n            if (item && item.n_tx) {\n              counter = 0\n              item.type = type\n              item.derive_index = derive_index\n              list.push(item)\n            } else {\n              counter++\n              if (!empty.status) {\n                item = {}\n                item.type = type\n                item.derive_index = derive_index\n                \n                if (type === 'external') {\n                  item.address = getBtcAddress(this.node, derive_index)\n                } else {\n                  item.address = getBtcAddress(this.internalNode, derive_index)\n                }\n                \n                empty.status = true\n                empty.data = item\n              }\n            }\n            derive_index++\n          }\n          \n          if (counter < CONTROL_COUNT) {\n            data.from += CONTROL_COUNT\n            data.to += CONTROL_COUNT\n            await req()\n          } else {\n            list.push(empty.data)\n          }\n        } else {\n          let data = {\n            type: type,\n            derive_index: derive_index\n          }\n          \n          if (type === 'external') {\n            data.address = getBtcAddress(this.node, derive_index)\n          } else {\n            data.address = getBtcAddress(this.internalNode, derive_index)\n          }\n          \n          list.push(data)\n        }\n      }\n      catch (e) {\n        console.log('BTC SyncPromise', e)\n      }\n    }\n    \n    await req()\n    \n    return list\n  }\n  \n  async additionalCheckAddress () {\n    if (!this.checked200 && !this.deriveAddress.internal.hasOwnProperty(200)) {\n      let address = getBtcAddress(this.internalNode, 200)\n      this.deriveAddress.internal[200] = address\n      this.checked200 = true\n      \n      let res = await this.getMultiAddressRequest([address])\n      \n      if (res.hasOwnProperty('txs')) {\n        this.transactions.all = [...this.transactions.all, ...res.txs]\n      }\n      \n      if (res.hasOwnProperty('addresses')) {\n        let item = res.addresses.find((itm) => itm.address === address)\n        \n        if (item && item.n_tx) {\n          item.type = 'internal'\n          item.derive_index = 200\n          \n          let lastEmptyAddress = this.addresses.internal.pop()\n          this.addresses.internal.push(item)\n          this.addresses.internal.push(lastEmptyAddress)\n        }\n      }\n    }\n  }\n  \n  /**\n   * Processing transaction information: setting the type (incoming or outgoing),\n   * getting addresses from and to, getting a transaction amount\n   * @returns {Promise<Boolean>}\n   */\n  \n  async processTransactions () {\n    this.transactions.unique = this.transactions.all.filter(\n      (value, index, self) =>\n        self.findIndex((tx) => tx.hash === value.hash) === index\n    )\n    \n    try {\n      this.transactions.unique.forEach((tx) => {\n        let isMyInAddress = this.addresses.all.includes(tx.inputs[0].prev_out.addr)\n        \n        tx.action = isMyInAddress ? 'outgoing' : 'incoming'\n        tx.self = isMyInAddress ? tx.out.every(item => this.addresses.all.includes(item.addr)) : false\n        \n        if (tx.self) {\n          tx.action = 'outgoing'\n        }\n        \n        tx.to = tx.out[0].addr\n        tx.from = tx.inputs[0].prev_out.addr\n        tx.value = tx.out[0].value\n      })\n    }\n    catch (e) {\n      console.log('BTC processTransactions', e)\n    }\n  }\n  \n  /**\n   * Getting a unspent transaction output for all addresses in the wallet with the transaction\n   * @returns {Promise<boolean>}\n   */\n  \n  async getUnspent () {\n    let res = await this.getUnspentOutputsRequest(this.addresses.all)\n    let unspent = []\n    \n    res.forEach(item => {\n      const buffer = Buffer.from(item.script, 'hex')\n      \n      try {\n        item.address = bitcoin.address.fromOutputScript(buffer)\n        item.key = this.getPrivateKey(item.address)\n        unspent.push(item)\n      }\n      catch (e) {\n        console.log('getUnspent e', e)\n      }\n    })\n    \n    this.unspent = unspent.sort((a, b) => b.value - a.value)\n  }\n  \n  /**\n   * Getting a balance of Bitcoin wallet from a list of unspent\n   * @param {Array} unspent - The list of unspent transaction output\n   * @returns {number} The balance of the bitcoin wallet\n   */\n  \n  getBalance (unspent) {\n    if (!Array.isArray(unspent)) {\n      return 0\n    }\n    \n    let balance = 0\n    \n    unspent.forEach((item) => {\n      if (item && item.hasOwnProperty('value')) {\n        balance += +item.value\n      }\n    })\n    \n    return balance\n  }\n  \n  /**\n   * Getting a private key at a bitcoin address\n   * @param {string} address - Bitcoin address\n   * @returns {Object} - Bitcoin private key\n   */\n  \n  getPrivateKey (address) {\n    let finded = this.addresses.internal.find(item => item.address === address)\n    let key, wif = null\n    \n    if (finded) {\n      key = this.internalNode.deriveChild(finded.derive_index).privateKey\n      wif = privateKeyToWIF(key)\n    } else {\n      finded = this.addresses.external.find(item => item.address === address)\n      key = this.node.deriveChild(finded.derive_index).privateKey\n      wif = privateKeyToWIF(key)\n    }\n    \n    return wif\n  }\n  \n  /**\n   * Getting a raw transaction from the transaction hash\n   * @param {string} txHash - Transaction hash\n   * @returns {Promise<Object>} - Raw transaction\n   */\n  \n  async getRawTxRequest (txHash) {\n    let params = {\n      method: 'rawtx',\n      tx_hash: txHash\n    }\n    \n    try {\n      let res = await this.request.send(params)\n      \n      if (res.status === 'success') {\n        return res.data\n      } else {\n        console.log(res.error)\n        return {}\n      }\n    }\n    catch (e) {\n      console.log('BTC getLatestBlock', e)\n    }\n  }\n  \n  /**\n   * Request for information at multiple addresses\n   * @param {Array} addresses - List of addresses to get data from\n   * @returns {Promise<Object>} Address information, including a list of transactions\n   */\n  \n  async getMultiAddressRequest (addresses) {\n    if (!addresses) return false\n    \n    const OFFSET_STEP = 100\n    let offset = 0\n    let data = {}\n    let txs = []\n    \n    const req = async () => {\n      let params = {\n        method: 'multiaddr',\n        active: addresses,\n        n: 100,\n        offset: offset\n      }\n      \n      try {\n        let res = await this.request.send(params)\n        \n        if (res.status === 'success') {\n          data = res.data || {}\n          \n          if (res.data.hasOwnProperty('txs')) {\n            txs = [...txs, ...res.data.txs]\n            \n            if (res.data.txs.length === 100) {\n              offset += OFFSET_STEP\n              await req()\n            }\n          }\n          \n          data.txs = txs\n        } else {\n          console.log('BTC getMultiAddressRequest', res.error)\n        }\n      }\n      catch (err) {\n        console.log('BTC getMultiAddressRequest', err)\n      }\n    }\n    \n    await req()\n    \n    return data\n  }\n  \n  /**\n   * Request to receive unspent outputs\n   * @param {Array} addresses - A set of addresses to get the unspent output from\n   * @returns {Promise<Array>} - Information about unspent output\n   */\n  \n  async getUnspentOutputsRequest (addresses) {\n    if (!addresses) return []\n    \n    let length = 100\n    let arraysCount = Math.ceil(addresses.length / length)\n    let arrays = []\n    \n    for (let i = 0; i < arraysCount; i++) {\n      let arr = addresses.slice(i * length, (i + 1) * length)\n      arrays.push(arr)\n    }\n    \n    const res = await Promise.all(arrays.map((array) => {\n      return new Promise((resolve) => {\n        let params = {\n          method: 'unspent',\n          active: array\n        }\n        \n        this.request.send(params).then(res => {\n          if (res.status === 'success') {\n            resolve(res.data.unspent_outputs)\n          }\n          \n          resolve([])\n        }).catch(err => {\n          console.log('BTC getUnspentOutputsRequest', err)\n          resolve([])\n        })\n      })\n    }))\n    \n    return [].concat.apply([], res)\n  }\n  \n  /**\n   * Request to receive a recommended set of bitcoin fees\n   * @returns {Promise<Array>} Set of bitcoin fees\n   */\n  \n  async getFeesRequest () {\n    try {\n      let res = await fetch(this.api.bitcoinFee)\n      this.fee = await res.json()\n    }\n    catch (err) {\n      console.log('BTC getFeesRequest', err)\n    }\n  }\n  \n  /**\n   * Full information about the bitcoin wallet\n   * @returns {Object}\n   * @constructor\n   */\n  \n  get DATA () {\n    return {\n      addresses: this.addresses,\n      transactions: this.transactions,\n      unspent: this.unspent,\n      balance: this.balance,\n      latestBlock: this.latestBlock,\n      fee: this.fee\n    }\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/class/BTC/BitcoinSync.js",
     "access": "public",
@@ -845,7 +845,7 @@
     "importPath": "lumi-web-core/src/class/BTC/BitcoinSync.js",
     "importStyle": "BitcoinSync",
     "description": "Class BitcoinSync.\nThis class allows you to get information about the balance on a bitcoin wallet,\nthe list of unspent, a set of addresses that participated in transactions, and a list of transactions",
-    "lineNumber": 11,
+    "lineNumber": 12,
     "unknown": [
       {
         "tagName": "@class",
@@ -865,7 +865,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#constructor",
     "access": "public",
     "description": "Create a BitcoinSync",
-    "lineNumber": 18,
+    "lineNumber": 19,
     "params": [
       {
         "nullable": null,
@@ -908,7 +908,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#node",
     "access": "public",
     "description": null,
-    "lineNumber": 19,
+    "lineNumber": 20,
     "undocument": true,
     "type": {
       "types": [
@@ -925,7 +925,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#internalNode",
     "access": "public",
     "description": null,
-    "lineNumber": 20,
+    "lineNumber": 21,
     "undocument": true,
     "type": {
       "types": [
@@ -942,7 +942,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#api",
     "access": "public",
     "description": null,
-    "lineNumber": 21,
+    "lineNumber": 22,
     "undocument": true,
     "type": {
       "types": [
@@ -959,7 +959,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#balance",
     "access": "public",
     "description": null,
-    "lineNumber": 22,
+    "lineNumber": 23,
     "undocument": true,
     "type": {
       "types": [
@@ -976,7 +976,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#latestBlock",
     "access": "public",
     "description": null,
-    "lineNumber": 23,
+    "lineNumber": 24,
     "undocument": true,
     "type": {
       "types": [
@@ -993,7 +993,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#unspent",
     "access": "public",
     "description": null,
-    "lineNumber": 24,
+    "lineNumber": 25,
     "undocument": true,
     "type": {
       "types": [
@@ -1010,7 +1010,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#addresses",
     "access": "public",
     "description": null,
-    "lineNumber": 25,
+    "lineNumber": 26,
     "undocument": true,
     "type": {
       "types": [
@@ -1027,7 +1027,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#deriveAddress",
     "access": "public",
     "description": null,
-    "lineNumber": 32,
+    "lineNumber": 33,
     "undocument": true,
     "type": {
       "types": [
@@ -1044,7 +1044,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#transactions",
     "access": "public",
     "description": null,
-    "lineNumber": 36,
+    "lineNumber": 37,
     "undocument": true,
     "type": {
       "types": [
@@ -1061,7 +1061,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#fee",
     "access": "public",
     "description": null,
-    "lineNumber": 40,
+    "lineNumber": 41,
     "undocument": true,
     "type": {
       "types": [
@@ -1078,7 +1078,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#checked200",
     "access": "public",
     "description": null,
-    "lineNumber": 41,
+    "lineNumber": 42,
     "undocument": true,
     "type": {
       "types": [
@@ -1095,7 +1095,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#request",
     "access": "public",
     "description": null,
-    "lineNumber": 42,
+    "lineNumber": 43,
     "undocument": true,
     "type": {
       "types": [
@@ -1114,7 +1114,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#Start",
     "access": "public",
     "description": "The method that starts the synchronization Bitcoin part of wallet",
-    "lineNumber": 51,
+    "lineNumber": 52,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1146,7 +1146,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getAddresses",
     "access": "public",
     "description": "Getting internal and external addresses that were involved in transactions",
-    "lineNumber": 62,
+    "lineNumber": 63,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1174,7 +1174,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#_getArrayOfAddresses",
     "access": "private",
     "description": "Auxiliary method that gets the bitcoin address by node and index",
-    "lineNumber": 98,
+    "lineNumber": 113,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1243,7 +1243,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getAddressesByNode",
     "access": "public",
     "description": "Getting information about addresses and forming an array of addresses.\nMakes a request for a bundle of addresses and gets a list of transactions",
-    "lineNumber": 123,
+    "lineNumber": 138,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1282,7 +1282,7 @@
     }
   },
   {
-    "__docId__": 78,
+    "__docId__": 79,
     "kind": "method",
     "name": "additionalCheckAddress",
     "memberof": "src/class/BTC/BitcoinSync.js~BitcoinSync",
@@ -1292,13 +1292,13 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#additionalCheckAddress",
     "access": "public",
     "description": null,
-    "lineNumber": 215,
+    "lineNumber": 236,
     "undocument": true,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 80,
+    "__docId__": 81,
     "kind": "method",
     "name": "processTransactions",
     "memberof": "src/class/BTC/BitcoinSync.js~BitcoinSync",
@@ -1308,7 +1308,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#processTransactions",
     "access": "public",
     "description": "Processing transaction information: setting the type (incoming or outgoing),\ngetting addresses from and to, getting a transaction amount",
-    "lineNumber": 248,
+    "lineNumber": 269,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1326,7 +1326,7 @@
     "params": []
   },
   {
-    "__docId__": 81,
+    "__docId__": 82,
     "kind": "method",
     "name": "getUnspent",
     "memberof": "src/class/BTC/BitcoinSync.js~BitcoinSync",
@@ -1336,7 +1336,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getUnspent",
     "access": "public",
     "description": "Getting a unspent transaction output for all addresses in the wallet with the transaction",
-    "lineNumber": 277,
+    "lineNumber": 301,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1354,7 +1354,7 @@
     "params": []
   },
   {
-    "__docId__": 83,
+    "__docId__": 84,
     "kind": "method",
     "name": "getBalance",
     "memberof": "src/class/BTC/BitcoinSync.js~BitcoinSync",
@@ -1364,7 +1364,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getBalance",
     "access": "public",
     "description": "Getting a balance of Bitcoin wallet from a list of unspent",
-    "lineNumber": 315,
+    "lineNumber": 327,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1393,7 +1393,7 @@
     }
   },
   {
-    "__docId__": 84,
+    "__docId__": 85,
     "kind": "method",
     "name": "getPrivateKey",
     "memberof": "src/class/BTC/BitcoinSync.js~BitcoinSync",
@@ -1403,7 +1403,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getPrivateKey",
     "access": "public",
     "description": "Getting a private key at a bitcoin address",
-    "lineNumber": 337,
+    "lineNumber": 349,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1432,7 +1432,7 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 86,
     "kind": "method",
     "name": "getRawTxRequest",
     "memberof": "src/class/BTC/BitcoinSync.js~BitcoinSync",
@@ -1442,7 +1442,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getRawTxRequest",
     "access": "public",
     "description": "Getting a raw transaction from the transaction hash",
-    "lineNumber": 361,
+    "lineNumber": 371,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1471,7 +1471,7 @@
     }
   },
   {
-    "__docId__": 86,
+    "__docId__": 87,
     "kind": "method",
     "name": "getMultiAddressRequest",
     "memberof": "src/class/BTC/BitcoinSync.js~BitcoinSync",
@@ -1481,7 +1481,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getMultiAddressRequest",
     "access": "public",
     "description": "Request for information at multiple addresses",
-    "lineNumber": 388,
+    "lineNumber": 398,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1520,7 +1520,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getUnspentOutputsRequest",
     "access": "public",
     "description": "Request to receive unspent outputs",
-    "lineNumber": 423,
+    "lineNumber": 450,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1559,7 +1559,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#getFeesRequest",
     "access": "public",
     "description": "Request to receive a recommended set of bitcoin fees",
-    "lineNumber": 465,
+    "lineNumber": 490,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1587,7 +1587,7 @@
     "longname": "src/class/BTC/BitcoinSync.js~BitcoinSync#DATA",
     "access": "public",
     "description": "Full information about the bitcoin wallet",
-    "lineNumber": 481,
+    "lineNumber": 506,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2543,7 +2543,7 @@
     "__docId__": 140,
     "kind": "file",
     "name": "src/class/ETH/EthereumSync.js",
-    "content": "import Request from '@/helpers/Request'\n\n/**\n * Class EthereumSync\n * This class allows you to get information about the balance on a ethereum wallet,\n * the list of transactions and optimal gas price\n * @class\n */\n\nexport default class EthereumSync {\n  /**\n   * Create a EthereumSync\n   * @param {string} address - Ethereum wallet address\n   * @param {Object} api - A set of URLs for getting information about ethereum address\n   */\n  constructor (address, api) {\n    this.address = address\n    this.api = api\n    this.balance = 0\n    this.transactions = []\n    this.gasPrice = 0\n    this.request = new Request(this.api.ethereum)\n  }\n  \n  /**\n   * The method that starts the synchronization Ethereum part of the wallet\n   * @returns {Promise<number>}\n   * @constructor\n   */\n  \n  async Start () {\n    this.balance = await this.getBalance()\n    this.transactions = await this.getTransactions()\n    this.gasPrice = await this.getGasPrice()\n  }\n  \n  /**\n   * Request to receive a balance of Ethereum wallet\n   * @returns {Promise<void>}\n   */\n  \n  async getBalance () {\n    this.balance = 0\n\n    let params = {\n      module: 'account',\n      action: 'balance',\n      address: this.address,\n      tag: 'latest'\n    }\n\n    let res = await this.request.send(params)\n    \n    if (!res || !res.hasOwnProperty('result')) {\n      // todo throw warning\n      return 0\n    }\n    \n    return +res.result\n  }\n  \n  /**\n   * Request to receive Ethereum transaction list\n   * @returns {Promise<Array>}\n   */\n\n  async getTransactions () {\n    this.transactions = []\n\n    let params = {\n      module: 'account',\n      action: 'txlist',\n      address: this.address,\n      sort: 'asc'\n    }\n\n    let res = await this.request.send(params)\n  \n    if (!res || !res.hasOwnProperty('result')) {\n      // todo throw warning\n      return []\n    }\n    \n    return res.result\n  }\n  \n  /**\n   * Request to receive a amount of gas price\n   * @returns {Promise<number>}\n   */\n\n  async getGasPrice () {\n    let params = {\n      module: 'proxy',\n      action: 'eth_gasPrice'\n    }\n\n    let res = await this.request.send(params)\n  \n    if (!res || !res.hasOwnProperty('result')) {\n      // todo throw warning\n      return 0\n    }\n    \n    return parseInt(res.result, 16)\n  }\n\n  get DATA () {\n    return {\n      address: this.address,\n      balance: this.balance,\n      transactions: this.transactions,\n      gasPrice: this.gasPrice\n    }\n  }\n}\n",
+    "content": "import Request from '@/helpers/Request'\n\n/**\n * Class EthereumSync\n * This class allows you to get information about the balance on a ethereum wallet,\n * the list of transactions and optimal gas price\n * @class\n */\n\nexport default class EthereumSync {\n  /**\n   * Create a EthereumSync\n   * @param {string} address - Ethereum wallet address\n   * @param {Object} api - A set of URLs for getting information about ethereum address\n   */\n  constructor (address, api) {\n    this.address = address\n    this.api = api\n    this.balance = 0\n    this.transactions = []\n    this.gasPrice = 0\n    this.request = new Request(this.api.ethereum)\n  }\n  \n  /**\n   * The method that starts the synchronization Ethereum part of the wallet\n   * @returns {Promise<number>}\n   * @constructor\n   */\n  \n  async Start () {\n    this.balance = await this.getBalance()\n    this.transactions = await this.getTransactions()\n    this.gasPrice = await this.getGasPrice()\n  }\n  \n  /**\n   * Request to receive a balance of Ethereum wallet\n   * @returns {Promise<number>}\n   */\n  \n  async getBalance () {\n    this.balance = 0\n\n    let params = {\n      module: 'account',\n      action: 'balance',\n      address: this.address,\n      tag: 'latest'\n    }\n\n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') ? +res.result : 0\n  }\n  \n  /**\n   * Request to receive Ethereum transaction list\n   * @returns {Promise<Array>}\n   */\n\n  async getTransactions () {\n    this.transactions = []\n\n    let params = {\n      module: 'account',\n      action: 'txlist',\n      address: this.address,\n      sort: 'asc'\n    }\n\n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') ? res.result : []\n  }\n  \n  /**\n   * Request to receive a amount of gas price\n   * @returns {Promise<number>}\n   */\n\n  async getGasPrice () {\n    let params = {\n      module: 'proxy',\n      action: 'eth_gasPrice'\n    }\n\n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 0\n  }\n\n  get DATA () {\n    return {\n      address: this.address,\n      balance: this.balance,\n      transactions: this.transactions,\n      gasPrice: this.gasPrice\n    }\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/class/ETH/EthereumSync.js",
     "access": "public",
@@ -2755,13 +2755,13 @@
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "{Promise<void>}"
+        "tagValue": "{Promise<number>}"
       }
     ],
     "return": {
       "nullable": null,
       "types": [
-        "Promise<void>"
+        "Promise<number>"
       ],
       "spread": false,
       "description": ""
@@ -2779,7 +2779,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#getTransactions",
     "access": "public",
     "description": "Request to receive Ethereum transaction list",
-    "lineNumber": 67,
+    "lineNumber": 62,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2807,7 +2807,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#getGasPrice",
     "access": "public",
     "description": "Request to receive a amount of gas price",
-    "lineNumber": 92,
+    "lineNumber": 82,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2835,7 +2835,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#DATA",
     "access": "public",
     "description": null,
-    "lineNumber": 108,
+    "lineNumber": 93,
     "undocument": true,
     "type": {
       "types": [
@@ -2847,7 +2847,7 @@
     "__docId__": 159,
     "kind": "file",
     "name": "src/class/ETH/EthereumTx.js",
-    "content": "import converter from '@/helpers/converters'\nimport toFormatDecimal from '@/helpers/toFormatDecimal'\nimport {makeRawEthTx} from '@/helpers/coreHelper'\nimport CustomError from '@/helpers/handleErrors'\n\n/**\n * Class EthereumTx.\n * This class is responsible for calculating the fee and generating and signing a Ethereum transaction\n * @class\n */\n\nexport default class EthereumTx {\n  /**\n   * Create a EthereumTx\n   * @param {Object} data - Input data for generating a transaction or calculating a fee\n   * @param {string} data.address - Ethereum wallet address\n   * @param {Array} data.privateKey - Ethereum private key in Uint8Array format\n   * @param {number} data.balance - Ethereum wallet balance\n   * @param {number} data.gasPrice - Gas price for transaction\n   */\n  constructor (data) {\n    this.address = data.address\n    this.privateKey = data.privateKey\n    this.balance = data.balance\n    this.gasPrice = data.gasPrice\n    this.defaultGasLimit = 21000\n    this.feeList = []\n  }\n  \n  /**\n   * Calculating the fee amount\n   * @param {number} customGasPrice - Amount of custom gas price\n   * @param {number} customGasLimit - Amount of custom gas limit\n   * @returns {Array} A list with the optimal and custom fee\n   */\n  \n  calcFee (customGasPrice = 0, customGasLimit = 0) {\n    this.feeList = [\n      {\n        name: 'Optimal',\n        gasPrice: this.gasPrice,\n        gasLimit: this.defaultGasLimit,\n        fee: toFormatDecimal(\n          converter.wei_to_eth(this.gasPrice * this.defaultGasLimit)\n        ),\n        title: 'Optimal fee'\n      },\n      {\n        custom: true,\n        name: 'Custom',\n        gasPrice: customGasPrice,\n        gasLimit: customGasLimit,\n        fee: toFormatDecimal(\n          converter.wei_to_eth(customGasPrice * customGasLimit)\n        ),\n        title: 'For advanced: custom fee',\n        addText: 'Not recommended'\n      }\n    ]\n\n    return this.feeList\n  }\n  \n  /**\n   * Creating a transaction\n   * @param {Object} data - Input data for a transaction\n   * @param {string} data.addressTo - Recipient address\n   * @param {number} data.amount - Transaction amount in ETH\n   * @param {Object} data.fee - Object with amount of gas price and gas limit\n   * @param {number} data.nonce - Nonce, transaction count of an account\n   * @returns {Promise<Object>} Return a raw transaction in hex to send and transaction hash\n   */\n  \n  async make (data) {\n    const {addressTo, value, fee, nonce} = data\n    const amountInWei = converter.eth_to_wei(value)\n    const surrender = this.balance - (amountInWei + fee.gasPrice * fee.gasLimit)\n    \n    if (surrender < 0) {\n      throw new CustomError('err_tx_eth_balance')\n    }\n    \n    let params = {\n      to: addressTo,\n      value: amountInWei,\n      nonce,\n      gasPrice: fee.gasPrice,\n      gasLimit: fee.gasLimit,\n      privateKey: this.privateKey\n    }\n    \n    return makeRawEthTx(params)\n  }\n\n  get DATA () {\n    return {\n      fee: this.feeList\n    }\n  }\n}\n",
+    "content": "import converter       from '@/helpers/converters'\nimport toFormatDecimal from '@/helpers/toFormatDecimal'\nimport {makeRawEthTx}  from '@/helpers/coreHelper'\nimport CustomError     from '@/helpers/handleErrors'\n\n/**\n * Class EthereumTx.\n * This class is responsible for calculating the fee and generating and signing a Ethereum transaction\n * @class\n */\n\nexport default class EthereumTx {\n  /**\n   * Create a EthereumTx\n   * @param {Object} data - Input data for generating a transaction or calculating a fee\n   * @param {string} data.address - Ethereum wallet address\n   * @param {Array} data.privateKey - Ethereum private key in Uint8Array format\n   * @param {number} data.balance - Ethereum wallet balance\n   * @param {number} data.gasPrice - Gas price for transaction\n   */\n  constructor (data) {\n    this.address = data.address\n    this.privateKey = data.privateKey\n    this.balance = data.balance\n    this.gasPrice = data.gasPrice\n    this.defaultGasLimit = 21000\n    this.feeList = []\n  }\n  \n  /**\n   * Calculating the fee amount\n   * @param {number} customGasPrice - Amount of custom gas price\n   * @param {number} customGasLimit - Amount of custom gas limit\n   * @returns {Array} A list with the optimal and custom fee\n   */\n  \n  calcFee (customGasPrice = 0, customGasLimit = 0) {\n    this.feeList = [\n      {\n        id: 'optimal',\n        gasPrice: this.gasPrice,\n        gasLimit: this.defaultGasLimit,\n        fee: toFormatDecimal(\n          converter.wei_to_eth(this.gasPrice * this.defaultGasLimit)\n        )\n      },\n      {\n        custom: true,\n        id: 'custom',\n        gasPrice: customGasPrice,\n        gasLimit: customGasLimit,\n        fee: toFormatDecimal(\n          converter.wei_to_eth(customGasPrice * customGasLimit)\n        )\n      }\n    ]\n    \n    return this.feeList\n  }\n  \n  /**\n   * Creating a transaction\n   * @param {Object} data - Input data for a transaction\n   * @param {string} data.addressTo - Recipient address\n   * @param {number} data.amount - Transaction amount in ETH\n   * @param {Object} data.fee - Object with amount of gas price and gas limit\n   * @param {number} data.nonce - Nonce, transaction count of an account\n   * @returns {Promise<Object>} Return a raw transaction in hex to send and transaction hash\n   */\n  \n  async make (data) {\n    const {addressTo, value, fee, nonce} = data\n    const amountInWei = converter.eth_to_wei(value)\n    const surrender = this.balance - (amountInWei + fee.gasPrice * fee.gasLimit)\n    \n    if (surrender < 0) {\n      throw new CustomError('err_tx_eth_balance')\n    }\n    \n    let params = {\n      to: addressTo,\n      value: amountInWei,\n      nonce,\n      gasPrice: fee.gasPrice,\n      gasLimit: fee.gasLimit,\n      privateKey: this.privateKey\n    }\n    \n    return makeRawEthTx(params)\n  }\n  \n  get DATA () {\n    return {\n      fee: this.feeList\n    }\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/class/ETH/EthereumTx.js",
     "access": "public",
@@ -3102,7 +3102,7 @@
     "longname": "src/class/ETH/EthereumTx.js~EthereumTx#make",
     "access": "public",
     "description": "Creating a transaction",
-    "lineNumber": 74,
+    "lineNumber": 71,
     "unknown": [
       {
         "tagName": "@returns",
@@ -3181,7 +3181,7 @@
     "longname": "src/class/ETH/EthereumTx.js~EthereumTx#DATA",
     "access": "public",
     "description": null,
-    "lineNumber": 95,
+    "lineNumber": 92,
     "undocument": true,
     "type": {
       "types": [
@@ -3648,7 +3648,7 @@
     "__docId__": 188,
     "kind": "file",
     "name": "src/helpers/coreHelper.js",
-    "content": "import * as bip39 from 'bip39'\nimport * as bitcoin from 'bitcoinjs-lib'\nimport {Transaction} from 'ethereumjs-tx'\nimport * as ethUtil from 'ethereumjs-util'\nimport * as HDkey from 'hdkey'\nimport * as utils from 'web3-utils'\nimport wif from 'wif'\nimport CustomError from '@/helpers/handleErrors'\n\n/**\n * Generation of mnemonics.\n * The number of words in a mnemonic depends on the length of the entropy\n * @param {number} entropyLength - The number of bits in the entropy. It can be equal to 128, 160, 192, 224 or 256 bits\n * @returns {string} - A mnemonic whose words are separated by spaces\n */\nexport function generateMnemonic (entropyLength = 128) {\n  try {\n    return bip39.generateMnemonic(entropyLength)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_entropy')\n  }\n}\n\n/**\n * Converting a mnemonic to seed\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {Buffer} - Seed in Uint8Array format\n */\nexport function mnemonicToSeed (mnemonic) {\n  try {\n    return bip39.mnemonicToSeedSync(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a mnemonic to entropy\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {string} HEX strings entropy\n */\nexport function mnemonicToEntropy (mnemonic) {\n  try {\n    return bip39.mnemonicToEntropy(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a seed to hdkey (Hierarchical Deterministic Key)\n * @param {Buffer} seed - Mnemonic seed in Buffer\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromSeed (seed) {\n  try {\n    return HDkey.fromMasterSeed(seed)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_seed')\n  }\n}\n\n\n/**\n * Converting a xprv to hdkey (Hierarchical Deterministic Key)\n * @param {string} xprv - Extended private key\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromXprv (xprv) {\n  try {\n    return HDkey.fromExtendedKey(xprv)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_xprv')\n  }\n}\n\n/**\n * Getting xprv by hdkey\n * @param {Object} hd - HDkey node\n * @returns {string} Extended private key\n */\nexport function getXprv (hd) {\n  try {\n    return hd.privateExtendedKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_hdkey')\n  }\n}\n\n/**\n * Derivation of node. Getting child node by path\n * @param {Object} hd - HDkey node\n * @param {string} path - Derivation path\n * @returns {Object} - Child node\n */\n\nexport function derive (hd, path) {\n  if (!hd) {\n    throw new CustomError('err_core_derivation_hdkey')\n  }\n  \n  if (!path) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  \n  let regex = new RegExp(/(^\\m\\/44\\')([\\/{1}\\d+\\'{1}]+)/mg)\n  \n  if (!regex.test(path)) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  \n  try {\n    return hd.derive(path)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_derivation')\n  }\n}\n\n/**\n * Getting a bitcoin address by node and child index\n * @param {Object} node - HDkey node\n * @param {number} childIndex - Index of the child node\n * @returns {string} Bitcoin address\n */\n\nexport function getBtcAddress (node, childIndex = 0) {\n  try {\n    let pubKey = node.deriveChild(childIndex).publicKey\n    \n    return bitcoin.payments.p2pkh({\n      pubkey: pubKey\n    }).address\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_btc_address')\n  }\n}\n\n/**\n * Getting a Ethereum private key by node\n * @param {Object} node - Ethereum node\n * @returns {Buffer} Ethereum private key in Uint8Array format\n */\n\nexport function getEthPrivateKey (node) {\n  try {\n    return node._privateKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_node')\n  }\n}\n\n/**\n * Getting a Ethereum public key by private key\n * @param {Buffer} privateKey - Ethereum private key\n * @returns {Buffer} Ethereum public key in Uint8Array format\n */\n\nexport function getEthPublicKey (privateKey) {\n  try {\n    return ethUtil.privateToPublic(privateKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_private_key')\n  }\n}\n\n/**\n * Getting a Ethereum wallet address by public key\n * @param {Buffer} publicKey - Ethereum public key\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddress (publicKey) {\n  try {\n    let addrBuffer = ethUtil\n      .publicToAddress(publicKey)\n      .toString('hex')\n    return ethUtil.toChecksumAddress(addrBuffer).toLowerCase()\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Getting Ethereum wallet address by node\n * @param {Object} node - Ethereum node\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddressByNode (node) {\n  try {\n    let privateKey = getEthPrivateKey(node)\n    let publicKey = getEthPublicKey(privateKey)\n    return getEthAddress(publicKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Convert a Bitcoin private key to the WIF (Wallet Import Format)\n * @param {Buffer} privateKey - Private key in Uint8Array format\n * @returns {string} Private key in WIF\n */\nexport function privateKeyToWIF (privateKey) {\n  try {\n    return wif.encode(128, privateKey, true)\n  }\n  catch (e) {\n    throw new CustomError('err_core_private_key')\n  }\n}\n\n/**\n * Calculating the transaction size by the number of inputs and outputs\n * @param {number} i - Number of inputs. By default 1\n * @param {number} o - Number of outputs. By default 2\n * @returns {number} Transaction size\n */\n\nexport function calcBtcTxSize (i = 1, o = 2) {\n  return i * 148 + o * 34 + 10\n}\n\n/**\n * Creating a raw Bitcoin transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw transaction and transaction hash\n */\n\nexport function makeRawBtcTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    let txb = new bitcoin.TransactionBuilder()\n    \n    txb.setVersion(1)\n    \n    inputs.forEach((item) => {\n      txb.addInput(item.hash, +item.n)\n    })\n    \n    outputs.forEach((item) => {\n      txb.addOutput(item.address, +item.value)\n    })\n    \n    inputs.forEach((item, index) => {\n      let key = bitcoin.ECPair.fromWIF(item.key)\n      txb.sign(index, key)\n    })\n    \n    let tx = txb.build()\n    let hash = tx.getId()\n    \n    return {\n      hash,\n      tx: tx.toHex()\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_btc_build')\n  }\n}\n\n/**\n * Creating a raw Ethereum transaction\n * @param {Object} data - Input data for a transaction\n * @param {string} data.to - Recipient address or contract address\n * @param {number} data.value - Transaction amount\n * @param {number} data.nonce - Nonce, transaction count of an account\n * @param {number} data.gasPrice - Transaction gas price\n * @param {number} data.gasLimit - Transaction gas limit\n * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)\n * @param {string} data.data - Data in hex representation (required for ERC20 transactions)\n * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format\n * @returns {Object} Returns raw transaction and transaction hash\n */\n\nexport function makeRawEthTx (data = {}) {\n  const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data\n  \n  if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||\n    isNaN(gasLimit)) {\n    throw new CustomError('err_tx_eth_invalid_params')\n  }\n  \n  if (typeof to !== 'string') {\n    throw new CustomError('err_tx_eth_invalid_params_string')\n  }\n  \n  try {\n    let params = {\n      to: to,\n      nonce: utils.toHex(parseInt(nonce)),\n      value: utils.toHex(parseInt(value)),\n      gasPrice: utils.toHex(parseInt(gasPrice)),\n      gasLimit: utils.toHex(parseInt(gasLimit)),\n      chainId: utils.toHex(1)\n    }\n    \n    if (data.hasOwnProperty('from') && data.from) {\n      params.from = data.from\n    }\n    \n    if (data.hasOwnProperty('data') && data.data) {\n      params.data = data.data\n    }\n    \n    const tx = new Transaction(params)\n    const privateKeyBuffer = ethUtil.toBuffer(privateKey)\n    \n    tx.sign(privateKeyBuffer)\n    \n    const serializedTx = tx.serialize()\n    const hash = tx.hash().toString('hex')\n    \n    return {\n      hash: `0x${ hash }`,\n      tx: `0x${ serializedTx.toString('hex') }`\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_eth_build')\n  }\n}\n",
+    "content": "import * as bip39 from 'bip39'\nimport * as bitcoin from 'bitcoinjs-lib'\nimport {Transaction} from 'ethereumjs-tx'\nimport * as ethUtil from 'ethereumjs-util'\nimport * as HDkey from 'hdkey'\nimport * as utils from 'web3-utils'\nimport wif from 'wif'\nimport CustomError from '@/helpers/handleErrors'\n\n/**\n * Generation of mnemonics.\n * The number of words in a mnemonic depends on the length of the entropy\n * @param {number} entropyLength - The number of bits in the entropy. It can be equal to 128, 160, 192, 224 or 256 bits\n * @returns {string} - A mnemonic whose words are separated by spaces\n */\nexport function generateMnemonic (entropyLength = 128) {\n  try {\n    return bip39.generateMnemonic(entropyLength)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_entropy')\n  }\n}\n\n/**\n * Converting a mnemonic to seed\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {Buffer} - Seed in Uint8Array format\n */\nexport function mnemonicToSeed (mnemonic) {\n  try {\n    return bip39.mnemonicToSeedSync(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a mnemonic to entropy\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {string} HEX strings entropy\n */\nexport function mnemonicToEntropy (mnemonic) {\n  try {\n    return bip39.mnemonicToEntropy(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a seed to hdkey (Hierarchical Deterministic Key)\n * @param {Buffer} seed - Mnemonic seed in Buffer\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromSeed (seed) {\n  try {\n    return HDkey.fromMasterSeed(seed)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_seed')\n  }\n}\n\n\n/**\n * Converting a xprv to hdkey (Hierarchical Deterministic Key)\n * @param {string} xprv - Extended private key\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromXprv (xprv) {\n  try {\n    return HDkey.fromExtendedKey(xprv)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_xprv')\n  }\n}\n\n/**\n * Getting xprv by hdkey\n * @param {Object} hd - HDkey node\n * @returns {string} Extended private key\n */\nexport function getXprv (hd) {\n  try {\n    return hd.privateExtendedKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_hdkey')\n  }\n}\n\n/**\n * Derivation of node. Getting child node by path\n * @param {Object} hd - HDkey node\n * @param {string} path - Derivation path\n * @returns {Object} - Child node\n */\n\nexport function derive (hd, path) {\n  if (!hd) {\n    throw new CustomError('err_core_derivation_hdkey')\n  }\n  \n  if (!path) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  \n  let regex = new RegExp(/(^\\m\\/44\\')([\\/{1}\\d+\\'{1}]+)/mg)\n  \n  if (!regex.test(path)) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  \n  try {\n    return hd.derive(path)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_derivation')\n  }\n}\n\n/**\n * Getting a bitcoin address by node and child index\n * @param {Object} node - HDkey node\n * @param {number} childIndex - Index of the child node\n * @returns {string} Bitcoin address\n */\n\nexport function getBtcAddress (node, childIndex = 0) {\n  try {\n    let pubKey = node.deriveChild(childIndex).publicKey\n    \n    return bitcoin.payments.p2pkh({\n      pubkey: pubKey\n    }).address\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_btc_address')\n  }\n}\n\n/**\n * Getting a Ethereum private key by node\n * @param {Object} node - Ethereum node\n * @returns {Buffer} Ethereum private key in Uint8Array format\n */\n\nexport function getEthPrivateKey (node) {\n  try {\n    return node._privateKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_node')\n  }\n}\n\n/**\n * Getting a Ethereum public key by private key\n * @param {Buffer} privateKey - Ethereum private key\n * @returns {Buffer} Ethereum public key in Uint8Array format\n */\n\nexport function getEthPublicKey (privateKey) {\n  try {\n    return ethUtil.privateToPublic(privateKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_private_key')\n  }\n}\n\n/**\n * Getting a Ethereum wallet address by public key\n * @param {Buffer} publicKey - Ethereum public key\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddress (publicKey) {\n  try {\n    let addrBuffer = ethUtil\n      .publicToAddress(publicKey)\n      .toString('hex')\n    return ethUtil.toChecksumAddress(addrBuffer).toLowerCase()\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Getting Ethereum wallet address by node\n * @param {Object} node - Ethereum node\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddressByNode (node) {\n  try {\n    let privateKey = getEthPrivateKey(node)\n    let publicKey = getEthPublicKey(privateKey)\n    return getEthAddress(publicKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Convert a Bitcoin private key to the WIF (Wallet Import Format)\n * @param {Buffer} privateKey - Private key in Uint8Array format\n * @returns {string} Private key in WIF\n */\nexport function privateKeyToWIF (privateKey) {\n  try {\n    return wif.encode(128, privateKey, true)\n  }\n  catch (e) {\n    throw new CustomError('err_core_private_key')\n  }\n}\n\n/**\n * Calculating the transaction size by the number of inputs and outputs\n * @param {number} i - Number of inputs. By default 1\n * @param {number} o - Number of outputs. By default 2\n * @returns {number} Transaction size\n */\n\nexport function calcBtcTxSize (i = 1, o = 2) {\n  return i * 148 + o * 34 + 10\n}\n\n/**\n * Creating a raw Bitcoin transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw transaction and transaction hash\n */\n\nexport function makeRawBtcTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    let txb = new bitcoin.TransactionBuilder()\n    \n    txb.setVersion(1)\n    \n    inputs.forEach((item) => {\n      txb.addInput(item.tx_hash_big_endian, +item.tx_output_n)\n    })\n    \n    outputs.forEach((item) => {\n      txb.addOutput(item.address, +item.value)\n    })\n    \n    inputs.forEach((item, index) => {\n      let key = bitcoin.ECPair.fromWIF(item.key)\n      txb.sign(index, key)\n    })\n    \n    let tx = txb.build()\n    let hash = tx.getId()\n    \n    return {\n      hash,\n      tx: tx.toHex()\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_btc_build')\n  }\n}\n\n/**\n * Creating a raw Ethereum transaction\n * @param {Object} data - Input data for a transaction\n * @param {string} data.to - Recipient address or contract address\n * @param {number} data.value - Transaction amount\n * @param {number} data.nonce - Nonce, transaction count of an account\n * @param {number} data.gasPrice - Transaction gas price\n * @param {number} data.gasLimit - Transaction gas limit\n * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)\n * @param {string} data.data - Data in hex representation (required for ERC20 transactions)\n * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format\n * @returns {Object} Returns raw transaction and transaction hash\n */\n\nexport function makeRawEthTx (data = {}) {\n  const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data\n  \n  if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||\n    isNaN(gasLimit)) {\n    throw new CustomError('err_tx_eth_invalid_params')\n  }\n  \n  if (typeof to !== 'string') {\n    throw new CustomError('err_tx_eth_invalid_params_string')\n  }\n  \n  try {\n    let params = {\n      to: to,\n      nonce: utils.toHex(parseInt(nonce)),\n      value: utils.toHex(parseInt(value)),\n      gasPrice: utils.toHex(parseInt(gasPrice)),\n      gasLimit: utils.toHex(parseInt(gasLimit)),\n      chainId: utils.toHex(1)\n    }\n    \n    if (data.hasOwnProperty('from') && data.from) {\n      params.from = data.from\n    }\n    \n    if (data.hasOwnProperty('data') && data.data) {\n      params.data = data.data\n    }\n    \n    const tx = new Transaction(params)\n    const privateKeyBuffer = ethUtil.toBuffer(privateKey)\n    \n    tx.sign(privateKeyBuffer)\n    \n    const serializedTx = tx.serialize()\n    const hash = tx.hash().toString('hex')\n    \n    return {\n      hash: `0x${ hash }`,\n      tx: `0x${ serializedTx.toString('hex') }`\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_eth_build')\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/helpers/coreHelper.js",
     "access": "public",
@@ -5849,7 +5849,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"lumi-web-core\",\n  \"description\": \"Lumi Wallet Core - Web Version\",\n  \"version\": \"1.0.0\",\n  \"author\": {\n    \"name\": \"vikowl\",\n    \"email\": \"vd@lumiwallet.com\"\n  },\n  \"main\": \"dist/index.js\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core\"\n  },\n  \"homepage\": \"https://github.com/lumiwallet/lumi-web-core\",\n  \"keywords\": [\n    \"lumi\",\n    \"crypto\",\n    \"wallet\",\n    \"client-side\",\n    \"web\",\n    \"app\"\n  ],\n  \"bugs\": {\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core/issues\"\n  },\n  \"dependencies\": {\n    \"@babel/runtime\": \"^7.8.4\",\n    \"bip39\": \"^3.0.2\",\n    \"bip39-checker\": \"^1.1.7\",\n    \"bitcoinjs-lib\": \"^5.1.7\",\n    \"ethereumjs-tx\": \"^2.1.2\",\n    \"ethereumjs-util\": \"^6.2.0\",\n    \"hdkey\": \"^1.1.1\",\n    \"web3-utils\": \"^1.2.6\",\n    \"wif\": \"^2.0.6\",\n    \"worker-loader\": \"^2.0.0\"\n  },\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.8.4\",\n    \"@babel/core\": \"^7.8.6\",\n    \"@babel/plugin-syntax-dynamic-import\": \"^7.8.3\",\n    \"@babel/plugin-transform-runtime\": \"^7.8.3\",\n    \"@babel/preset-env\": \"^7.8.6\",\n    \"babel-loader\": \"^8.0.6\",\n    \"babel-plugin-module-resolver\": \"^4.0.0\",\n    \"commitizen\": \"^4.0.3\",\n    \"cz-conventional-changelog\": \"^3.1.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^6.8.0\",\n    \"eslint-plugin-import\": \"^2.20.1\",\n    \"eslint-plugin-promise\": \"^4.2.1\",\n    \"eslint-plugin-sonarjs\": \"^0.5.0\",\n    \"eslint-plugin-standard\": \"^4.0.1\",\n    \"randombytes\": \"^2.1.0\",\n    \"unleash\": \"^2.0.1\",\n    \"webpack\": \"^4.42.0\"\n  },\n  \"engines\": {\n    \"node\": \">= 10.19.0\"\n  },\n  \"files\": [\n    \"dist/\"\n  ],\n  \"scripts\": {\n    \"clean\": \"rm -rf dist\",\n    \"lint\": \"eslint --ext .js --ignore-path .gitignore .\",\n    \"precommit\": \"npm run lint\",\n    \"commit\": \"git-cz\",\n    \"prepare\": \"npm run build\",\n    \"build\": \"npm run clean && babel src --out-dir dist\",\n    \"test\": \"\",\n    \"preversion\": \"npm run test\",\n    \"version\": \"npm run clean && npm run build && unleash -p -d\",\n    \"postversion\": \"git add . && git push && git push --tags\",\n    \"doc\": \"esdoc -c ./.esdoc\"\n  },\n  \"config\": {\n    \"commitizen\": {\n      \"path\": \"./node_modules/cz-conventional-changelog\"\n    }\n  }\n}\n",
+    "content": "{\n  \"name\": \"lumi-web-core\",\n  \"description\": \"Lumi Wallet Core - Web Version\",\n  \"version\": \"1.0.2\",\n  \"author\": {\n    \"name\": \"vikowl\",\n    \"email\": \"vd@lumiwallet.com\"\n  },\n  \"main\": \"dist/index.js\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core\"\n  },\n  \"homepage\": \"https://github.com/lumiwallet/lumi-web-core\",\n  \"keywords\": [\n    \"lumi\",\n    \"crypto\",\n    \"wallet\",\n    \"client-side\",\n    \"web\",\n    \"app\"\n  ],\n  \"bugs\": {\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core/issues\"\n  },\n  \"dependencies\": {\n    \"@babel/runtime\": \"^7.11.2\",\n    \"bip39\": \"^3.0.2\",\n    \"bip39-checker\": \"^1.1.7\",\n    \"bitcoinjs-lib\": \"^5.1.10\",\n    \"ethereumjs-tx\": \"^2.1.2\",\n    \"ethereumjs-util\": \"^6.2.1\",\n    \"hdkey\": \"^1.1.2\",\n    \"web3-utils\": \"^1.2.11\",\n    \"wif\": \"^2.0.6\",\n    \"worker-loader\": \"^2.0.0\"\n  },\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.10.5\",\n    \"@babel/core\": \"^7.11.1\",\n    \"@babel/plugin-syntax-dynamic-import\": \"^7.8.3\",\n    \"@babel/plugin-transform-runtime\": \"^7.11.0\",\n    \"@babel/preset-env\": \"^7.11.0\",\n    \"babel-loader\": \"^8.1.0\",\n    \"babel-plugin-module-resolver\": \"^4.0.0\",\n    \"commitizen\": \"^4.1.2\",\n    \"cz-conventional-changelog\": \"^3.2.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^6.8.0\",\n    \"eslint-plugin-import\": \"^2.22.0\",\n    \"eslint-plugin-promise\": \"^4.2.1\",\n    \"eslint-plugin-sonarjs\": \"^0.5.0\",\n    \"eslint-plugin-standard\": \"^4.0.1\",\n    \"randombytes\": \"^2.1.0\",\n    \"webpack\": \"^4.44.1\"\n  },\n  \"engines\": {\n    \"node\": \">= 10.19.0\"\n  },\n  \"files\": [\n    \"dist/\"\n  ],\n  \"scripts\": {\n    \"clean\": \"rm -rf dist\",\n    \"lint\": \"eslint --ext .js --ignore-path .gitignore .\",\n    \"precommit\": \"npm run lint\",\n    \"commit\": \"git-cz\",\n    \"prepare\": \"npm run build\",\n    \"build\": \"npm run clean && babel src --out-dir dist\",\n    \"test\": \"\",\n    \"preversion\": \"npm run test\",\n    \"version\": \"npm run clean && npm run build\",\n    \"postversion\": \"git add . && git push && git push --tags\",\n    \"doc\": \"esdoc -c ./.esdoc\"\n  },\n  \"config\": {\n    \"commitizen\": {\n      \"path\": \"./node_modules/cz-conventional-changelog\"\n    }\n  }\n}\n",
     "longname": "/Users/user/work/lumi-web-core/package.json",
     "name": "package.json",
     "static": true,
