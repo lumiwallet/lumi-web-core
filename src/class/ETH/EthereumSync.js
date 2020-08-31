@@ -36,7 +36,7 @@ export default class EthereumSync {
   
   /**
    * Request to receive a balance of Ethereum wallet
-   * @returns {Promise<void>}
+   * @returns {Promise<number>}
    */
   
   async getBalance () {
@@ -51,12 +51,7 @@ export default class EthereumSync {
 
     let res = await this.request.send(params)
     
-    if (!res || !res.hasOwnProperty('result')) {
-      // todo throw warning
-      return 0
-    }
-    
-    return +res.result
+    return res && res.hasOwnProperty('result') ? +res.result : 0
   }
   
   /**
@@ -75,13 +70,8 @@ export default class EthereumSync {
     }
 
     let res = await this.request.send(params)
-  
-    if (!res || !res.hasOwnProperty('result')) {
-      // todo throw warning
-      return []
-    }
     
-    return res.result
+    return res && res.hasOwnProperty('result') ? res.result : []
   }
   
   /**
@@ -96,13 +86,8 @@ export default class EthereumSync {
     }
 
     let res = await this.request.send(params)
-  
-    if (!res || !res.hasOwnProperty('result')) {
-      // todo throw warning
-      return 0
-    }
     
-    return parseInt(res.result, 16)
+    return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 0
   }
 
   get DATA () {

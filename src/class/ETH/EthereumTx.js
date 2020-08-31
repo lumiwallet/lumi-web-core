@@ -1,7 +1,7 @@
-import converter from '@/helpers/converters'
+import converter       from '@/helpers/converters'
 import toFormatDecimal from '@/helpers/toFormatDecimal'
-import {makeRawEthTx} from '@/helpers/coreHelper'
-import CustomError from '@/helpers/handleErrors'
+import {makeRawEthTx}  from '@/helpers/coreHelper'
+import CustomError     from '@/helpers/handleErrors'
 
 /**
  * Class EthereumTx.
@@ -37,27 +37,24 @@ export default class EthereumTx {
   calcFee (customGasPrice = 0, customGasLimit = 0) {
     this.feeList = [
       {
-        name: 'Optimal',
+        id: 'optimal',
         gasPrice: this.gasPrice,
         gasLimit: this.defaultGasLimit,
         fee: toFormatDecimal(
           converter.wei_to_eth(this.gasPrice * this.defaultGasLimit)
-        ),
-        title: 'Optimal fee'
+        )
       },
       {
         custom: true,
-        name: 'Custom',
+        id: 'custom',
         gasPrice: customGasPrice,
         gasLimit: customGasLimit,
         fee: toFormatDecimal(
           converter.wei_to_eth(customGasPrice * customGasLimit)
-        ),
-        title: 'For advanced: custom fee',
-        addText: 'Not recommended'
+        )
       }
     ]
-
+    
     return this.feeList
   }
   
@@ -91,7 +88,7 @@ export default class EthereumTx {
     
     return makeRawEthTx(params)
   }
-
+  
   get DATA () {
     return {
       fee: this.feeList

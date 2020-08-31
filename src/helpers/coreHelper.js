@@ -261,7 +261,7 @@ export function makeRawBtcTx (data = {}) {
     txb.setVersion(1)
     
     inputs.forEach((item) => {
-      txb.addInput(item.hash, +item.n)
+      txb.addInput(item.tx_hash_big_endian, +item.tx_output_n)
     })
     
     outputs.forEach((item) => {
