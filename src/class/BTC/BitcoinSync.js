@@ -27,7 +27,6 @@ export default class BitcoinSync {
       external: [],
       internal: [],
       empty: {},
-      fullList: [],
       all: []
     }
     this.deriveAddress = {
@@ -50,9 +49,10 @@ export default class BitcoinSync {
    */
   
   async Start () {
-    await this.getAddresses()
-    await this.processTransactions()
-    await this.getFeesRequest()
+    await Promise.all([
+      await this.getAddresses(),
+      await this.getFeesRequest()
+    ])
   }
   
   /**
@@ -82,22 +82,16 @@ export default class BitcoinSync {
     
     this.addresses.external = addresses[0]
     this.addresses.internal = addresses[1]
-    
     this.addresses.empty = {
       external: this.addresses.external[this.addresses.external.length - 1],
       internal: this.addresses.internal[this.addresses.internal.length - 1]
     }
-    
     await this.additionalCheckAddress()
     
-    this.addresses.fullList = [
-      ...this.addresses.external,
-      ...this.addresses.internal
-    ]
-    this.addresses.all = this.addresses.fullList.map((item) => item.address)
+    this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) => item.address)
     
     await this.getUnspent()
-    this.balance = this.getBalance(this.unspent)
+    await this.processTransactions()
   }
   
   /**
@@ -316,6 +310,7 @@ export default class BitcoinSync {
     })
     
     this.unspent = unspent.sort((a, b) => b.value - a.value)
+    this.balance = this.getBalance(this.unspent)
   }
   
   /**
@@ -450,7 +445,7 @@ export default class BitcoinSync {
   async getUnspentOutputsRequest (addresses) {
     if (!addresses) return []
     
-    let length = 100
+    const length = 100
     let arraysCount = Math.ceil(addresses.length / length)
     let arrays = []
     
@@ -489,8 +484,9 @@ export default class BitcoinSync {
   
   async getFeesRequest () {
     try {
-      let res = await fetch(this.api.bitcoinFee)
-      this.fee = await res.json()
+      const res = await fetch(this.api.bitcoinFee)
+      const resJson = await res.json()
+      this.fee = resJson.sort((a, b) => b.feePerByte - a.feePerByte)
     }
     catch (err) {
       console.log('BTC getFeesRequest', err)

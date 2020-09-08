@@ -2,6 +2,7 @@ import {validateMnemonic} from 'bip39'
 import {normalize, checkWords} from 'bip39-checker'
 import CustomError from '@/helpers/handleErrors'
 import * as core from '@/helpers/coreHelper'
+import * as bitcoin from 'bitcoinjs-lib'
 
 /**
  * Class Wallet
@@ -42,7 +43,7 @@ export default class Core {
       privateKey: null,
       publicKey: null
     }
-
+    
     this.generateWallet()
   }
   
@@ -106,7 +107,7 @@ export default class Core {
    * Importing a wallet by key
    * @private
    */
-
+  
   _importByKey () {
     this.hdkey = core.hdFromXprv(this.xprv)
   }
@@ -119,12 +120,10 @@ export default class Core {
    */
   
   _generateBTCcore () {
-    const bitcoin_external_path = "m/44'/0'/0'/0"
-    const bitcoin_internal_path = "m/44'/0'/0'/1"
+    const bitcoin_external_path = 'm/44\'/0\'/0\'/0'
+    const bitcoin_internal_path = 'm/44\'/0\'/0\'/1'
     this.BTC.externalNode = core.derive(this.hdkey, bitcoin_external_path)
     this.BTC.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
-    this.BTC.privateKey = this.hdkey.privateKey
-    this.BTC.publicKey = this.hdkey.publicKey
     this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0)
   }
   
@@ -134,9 +133,9 @@ export default class Core {
    * a private and public key, and the Ethereum address
    * @private
    */
-
+  
   _generateETHcore () {
-    const ethereum_path = "m/44'/60'/0'/0/0"
+    const ethereum_path = 'm/44\'/60\'/0\'/0/0'
     this.ETH.node = core.derive(this.hdkey, ethereum_path)
     this.ETH.privateKey = core.getEthPrivateKey(this.ETH.node)
     this.ETH.privateKeyHex = '0x' + this.ETH.privateKey.toString('hex')
@@ -149,12 +148,11 @@ export default class Core {
    * */
   
   _generateBCHcore () {
-    const bitcoincash_external_path = "m/44'/145'/0'/0"
-    const bitcoincash_internal_path = "m/44'/145'/0'/1"
+    const bitcoincash_external_path = 'm/44\'/145\'/0\'/0'
+    const bitcoincash_internal_path = 'm/44\'/145\'/0\'/1'
     this.BCH.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
-    this.BCH.intenalNode = core.derive(this.hdkey, bitcoincash_internal_path)
-    
-    console.log(this.BCH)
+    this.BCH.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
+    this.BCH.address = core.getBtcAddress(this.BCH.externalNode, 0)
   }
   
   /**
@@ -168,10 +166,10 @@ export default class Core {
   
   getChildNodes (data = {}) {
     let {from, to, path} = data
-  
+    
     from = +from
     to = +to
-  
+    
     if (!Number.isInteger(from) || !Number.isInteger(to) || from > to) {
       throw new CustomError('err_core_derivation_range')
     }
@@ -186,20 +184,21 @@ export default class Core {
         },
         list: []
       }
-  
+      
       for (let i = from; i <= to; i++) {
         const child = {}
         const deriveChild = node.deriveChild(i)
-        child.path = `${path}/${i}`
+        child.path = `${ path }/${ i }`
         child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)
         child.publicKey = deriveChild.publicKey.toString('hex')
         child.btcAddress = core.getBtcAddress(node, i)
         child.ethAddress = core.getEthAddressByNode(deriveChild)
         info.list.push(child)
       }
-  
+      
       return info
-    } catch (e) {
+    }
+    catch (e) {
       throw new CustomError('err_core_derivation')
     }
   }
@@ -209,21 +208,21 @@ export default class Core {
    * @param mnemonic
    * @returns {boolean}
    */
-
+  
   checkMnemonic (mnemonic) {
     let words = mnemonic.split(' ')
     let withTypo = []
-
+    
     words.forEach((word, index) => {
       if (!checkWords(word, 'english')) {
         withTypo.push(index)
       }
     })
-
+    
     if (withTypo.length) {
       throw new CustomError('err_core_mnemonic')
     }
-
+    
     return validateMnemonic(mnemonic)
   }
   
@@ -233,7 +232,7 @@ export default class Core {
    * @returns {number} Bits of entropy
    * @private
    */
-
+  
   _getEntropyLength (words) {
     let bitsOfEntropy = {
       12: 128,
@@ -242,14 +241,14 @@ export default class Core {
       21: 224,
       24: 256
     }
-
+    
     if (!bitsOfEntropy.hasOwnProperty(+words)) {
       throw new CustomError('err_core_7')
     }
-  
+    
     return bitsOfEntropy[words]
   }
-
+  
   get DATA () {
     return {
       mnemonic: this.mnemonic,

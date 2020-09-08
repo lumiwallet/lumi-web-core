@@ -1,29 +1,15 @@
 import converter from '@/helpers/converters'
-import {calcBtcTxSize, makeRawBtcTx} from '@/helpers/coreHelper'
+import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBchTx} from '@/helpers/coreHelper'
 import CustomError from '@/helpers/handleErrors'
 
-const FEE_IDS = ['fast', 'regular', 'cheap', 'custom']
+const FEE_IDS = ['regular', 'custom']
 
-/**
- * Class BitcoinTx.
- * This class is responsible for calculating the fee,
- * calculating the available amount to send, and generating and signing a Bitcoin transaction
- * @class
- */
+// const toCashAddress = bchaddr.toCashAddress
 
-export default class BitcoinTx {
-  /**
-   * Create a BitcoinTx
-   * @param {Object} data - Input data for generating a transaction or calculating a fee or available amount
-   * @param {Array} data.unspent - Array of unspent addresses
-   * @param {string} data.internalAddress - Address for change
-   * @param {number} data.amount - Transaction amount
-   * @param {number} data.balance - Bitcoin wallet balance
-   * @param {Array} data.feeList - Set of bitcoin fees
-   * @param {Object} data.customFee - Custom fee entered by the user
-   */
+export default class BitcoinCashTx {
   constructor (data) {
     this.unspent = data.unspent
+    this.nodes = data.nodes
     this.internalAddress = data.internalAddress
     this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
     this.balance = data.balance
@@ -32,12 +18,6 @@ export default class BitcoinTx {
     this.customFee = +data.customFee ? +data.customFee : 0
     this.feeList = []
   }
-  
-  /**
-   * Calculating the fee amount
-   * @param {number} size - Transaction size
-   * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
-   */
   
   async calcFee (size = 0) {
     const fees = [...this.fee.map(item => item.feePerByte), this.customFee]
@@ -56,7 +36,7 @@ export default class BitcoinTx {
       return {
         id: FEE_IDS[i],
         SAT: item.fee,
-        BTC: converter.sat_to_btc(item.fee),
+        BCH: converter.sat_to_btc(item.fee),
         fee: fees[i],
         feeInBTC: converter.sat_to_btc(fees[i]),
         inputs: item.inputs,
@@ -68,19 +48,12 @@ export default class BitcoinTx {
     return this.feeList
   }
   
-  /**
-   * Sets an array of zero fees.
-   * Used when the user does not have enough funds for the transaction
-   * @returns {Array} Returns an array with zero fees
-   */
-  
-  // TODO docs
   calcEmptyFee (fees) {
     this.feeList = fees.map((item, i) => {
       return {
         id: FEE_IDS[i],
         SAT: 0,
-        BTC: 0,
+        BCH: 0,
         fee: item,
         feeInBTC: converter.sat_to_btc(item),
         inputs: [],
@@ -91,13 +64,6 @@ export default class BitcoinTx {
     
     return this.feeList
   }
-  
-  /**
-   * Finds a list of inputs for a specific transaction
-   * @param {number} fee - Fee size
-   * @param {number} size - Transaction size
-   * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
-   */
   
   async getInputs (fee, size) {
     let index = 0
@@ -112,7 +78,7 @@ export default class BitcoinTx {
       let defaultSize = calcBtcTxSize(index + 1, 2)
       let calcFee = size ? size * fee : defaultSize * fee
       
-      inputsAmount += item.value
+      inputsAmount += item.satoshis
       inputs.push(item)
       
       let total = this.amount + calcFee + this.dust
@@ -138,38 +104,39 @@ export default class BitcoinTx {
       }
     }
     await req()
+    
     return res
   }
-  
-  /**
-   * Creating a transaction
-   * @param {Object} data - Input data for a transaction
-   * @param {string} data.addressTo - Recipient address
-   * @param {Object} data.fee - The transaction fee and list of inputs
-   * @param {Object} data.inputsAmount - The amount of inputs involved in the transaction
-   * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully
-   */
   
   async make (data) {
     const {addressTo, fee} = data
     
     if (isNaN(this.amount)) {
-      throw new CustomError('err_tx_btc_amount')
+      throw new CustomError('err_tx_bch_amount')
     }
     
     if (isNaN(fee.SAT)) {
-      throw new CustomError('err_tx_btc_fee')
+      throw new CustomError('err_tx_bch_fee')
     }
     
-    let change = +fee.inputsAmount - +this.amount - +fee.SAT
+    const inputsAmount = +fee.inputsAmount
+    const amount = +this.amount
+    const sat = +fee.SAT
+    const change = inputsAmount - amount - sat
+    
+    let inputs = fee.inputs.map(utxo => {
+      utxo.key = getBtcPrivateKeyByIndex(this.nodes[utxo.nodeType], utxo.deriveIndex)
+      
+      return utxo
+    })
     
     if (change >= 0) {
       let params = {
-        inputs: fee.inputs,
+        inputs: inputs,
         outputs: [
           {
             address: addressTo,
-            value: this.amount
+            satoshis: amount
           }
         ]
       }
@@ -177,13 +144,13 @@ export default class BitcoinTx {
       if (change !== 0) {
         params.outputs[1] = {
           address: this.internalAddress,
-          value: change
+          satoshis: change
         }
       }
       
-      return makeRawBtcTx(params)
+      return makeRawBchTx(params)
     } else {
-      throw new CustomError('err_tx_btc_balance')
+      throw new CustomError('err_tx_bch_balance')
     }
   }
 }

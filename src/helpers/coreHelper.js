@@ -5,6 +5,8 @@ import * as ethUtil from 'ethereumjs-util'
 import * as HDkey from 'hdkey'
 import * as utils from 'web3-utils'
 import wif from 'wif'
+import * as bchaddr from 'bchaddrjs'
+import * as bitcore from 'bitcore-lib-cash'
 import CustomError from '@/helpers/handleErrors'
 
 /**
@@ -348,4 +350,55 @@ export function makeRawEthTx (data = {}) {
     console.log(e)
     throw new CustomError('err_tx_eth_build')
   }
+}
+
+export function makeRawBchTx (data = {}) {
+  try {
+    const {inputs, outputs} = data
+    const toCashAddress = bchaddr.toCashAddress
+    
+    let utxos = []
+    let privateKeys = []
+    
+    for (const utxo of inputs) {
+      utxos.push({
+        txId: utxo.txid,
+        outputIndex: utxo.vout,
+        address: toCashAddress(utxo.cashAddress),
+        script: utxo.scriptPubKey,
+        satoshis: utxo.satoshis
+      })
+      
+      privateKeys.push(utxo.key)
+    }
+    
+    const outputsInCashFormat = outputs.map(item => {
+      item.address = toCashAddress(item.address)
+
+      return item
+    })
+    
+    const tx = new bitcore.Transaction()
+      .from(utxos)
+      .to(outputsInCashFormat)
+      .sign(privateKeys)
+    
+    const txData = tx.serialize()
+    
+    return {
+      tx: txData.toString('hex'),
+      hash: tx.hash
+    }
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_tx_bch_build')
+  }
+}
+
+export function getBtcPrivateKeyByIndex (node, index) {
+  // todo check
+  const key = node.deriveChild(index).privateKey
+  
+  return privateKeyToWIF(key)
 }
