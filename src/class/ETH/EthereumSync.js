@@ -41,55 +41,55 @@ export default class EthereumSync {
   
   async getBalance () {
     this.balance = 0
-
+    
     let params = {
       module: 'account',
       action: 'balance',
       address: this.address,
       tag: 'latest'
     }
-
+    
     let res = await this.request.send(params)
     
-    return res && res.hasOwnProperty('result') ? +res.result : 0
+    return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0
   }
   
   /**
    * Request to receive Ethereum transaction list
    * @returns {Promise<Array>}
    */
-
+  
   async getTransactions () {
     this.transactions = []
-
+    
     let params = {
       module: 'account',
       action: 'txlist',
       address: this.address,
       sort: 'asc'
     }
-
+    
     let res = await this.request.send(params)
     
-    return res && res.hasOwnProperty('result') ? res.result : []
+    return res && res.hasOwnProperty('result') && Array.isArray(res.result) ? res.result : []
   }
   
   /**
    * Request to receive a amount of gas price
    * @returns {Promise<number>}
    */
-
+  
   async getGasPrice () {
     let params = {
       module: 'proxy',
       action: 'eth_gasPrice'
     }
-
+    
     let res = await this.request.send(params)
     
     return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 0
   }
-
+  
   get DATA () {
     return {
       address: this.address,
