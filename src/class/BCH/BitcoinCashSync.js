@@ -1,9 +1,20 @@
 import Request from '@/helpers/Request'
 import {getBtcAddress} from '@/helpers/coreHelper'
 
-// const BCH_PREFIX = 'bitcoincash:'
+/**
+ * Class BitcoinCashSync.
+ * This class allows you to get information about the balance on a Bitcoin Cash wallet,
+ * the list of unspent, a set of addresses that participated in transactions, and a list of transactions
+ * @class
+ */
 
 export default class BitcoinCashSync {
+  /**
+   * Create a BitcoinCashSync
+   * @param {Object} externalNode - External Bitcoin Cash node
+   * @param {Object} internalNode - Internal Bitcoin Cash node
+   * @param {Object} api - A set of URLs for getting information about Bitcoin Cash addresses
+   */
   constructor (externalNode, internalNode, api) {
     this.externalNode = externalNode
     this.internalNode = internalNode
@@ -34,12 +45,23 @@ export default class BitcoinCashSync {
     this.request = new Request(this.api.bitcoinCash)
   }
   
+  /**
+   * The method that starts the synchronization Bitcoin Cash part of wallet
+   * @returns {Promise<boolean>}
+   * @constructor
+   */
+  
   async Start () {
     await Promise.all([
       await this.getAddresses(),
       await this.getBlockchainInfo()
     ])
   }
+  
+  /**
+   * Getting internal and external addresses that were involved in transactions
+   * @returns {Promise<boolean>}
+   */
   
   async getAddresses () {
     const nodeData = [
@@ -64,7 +86,6 @@ export default class BitcoinCashSync {
     
     this.addresses.external = addresses[0]
     this.addresses.internal = addresses[1]
-    
     this.addresses.empty = {
       external: this.addresses.external[this.addresses.external.length - 1],
       internal: this.addresses.internal[this.addresses.internal.length - 1]
@@ -75,6 +96,61 @@ export default class BitcoinCashSync {
     await this.getUnspent()
     await this.processTransactions()
   }
+  
+  /**
+   * Auxiliary method that gets the Bitcoin Cash address by node and index
+   * @param {Object} node - Bitcoin Cash node
+   * @param {string} type - Node type (external or internal)
+   * @param {number} from - The index that the derivation starts from
+   * @param {number} to - Index to which deprivation occurs
+   * @returns {Promise<Array>} Returns array of addresses
+   * @private
+   */
+  
+  async _getArrayOfAddresses (node, type, from, to) {
+    let addresses = []
+    
+    for (let i = from; i < to; i++) {
+      let address = ''
+      
+      if (this.deriveAddress[type].hasOwnProperty(i)) {
+        address = this.deriveAddress[type][i]
+      } else {
+        address = getBtcAddress(node, i)
+      }
+      addresses.push(address)
+    }
+    
+    return addresses
+  }
+  
+  /**
+   * Returns the derivation index for an address
+   * @param {string} address - Legacy Bitcoin Cash address
+   */
+  
+  _getDeriveIndexByAddress (address) {
+    let find = this.addresses.external.find(item => item.address === address)
+    let node = 'external'
+    
+    if (!find) {
+      find = this.addresses.internal.find(item => item.address === address)
+      node = 'internal'
+    }
+    
+    return {
+      index: find.deriveIndex,
+      node: node
+    }
+  }
+  
+  /**
+   * Getting information about addresses and forming an array of addresses.
+   * Makes a request for a bundle of addresses and gets a list of transactions
+   * @param node - Bitcoin Cahs node
+   * @param type - Node type (external or internal)
+   * @returns {Promise<Array>} A list of addresses with transactions
+   */
   
   async getAddressesByNode (node, type) {
     const CONTROL_COUNT = 20
@@ -148,6 +224,12 @@ export default class BitcoinCashSync {
     return list
   }
   
+  /**
+   * Processing transaction information: setting the type (incoming or outgoing),
+   * getting addresses from and to, getting a transaction amount
+   * @returns {Promise<Boolean>}
+   */
+  
   async processTransactions () {
     this.transactions.unique = this.transactions.all.filter(
       (value, index, self) =>
@@ -181,6 +263,13 @@ export default class BitcoinCashSync {
     }
   }
   
+  /**
+   * Getting a unspent transaction output for
+   * all addresses in the wallet with the transaction.
+   * Calculates the balance of the wallet for unspent
+   * @returns {Promise<boolean>}
+   */
+  
   async getUnspent () {
     let res = await this.getUnspentOutputsRequest(this.addresses.all)
     let unspent = []
@@ -210,20 +299,11 @@ export default class BitcoinCashSync {
     this.balance = this.getBalance(this.unspent)
   }
   
-  _getDeriveIndexByAddress (address, type) {
-    let finded = this.addresses.external.find(item => item.address === address)
-    let node = 'external'
-    
-    if (!finded) {
-      finded = this.addresses.internal.find(item => item.address === address)
-      node = 'internal'
-    }
-    
-    return {
-      index: finded.deriveIndex,
-      node: node
-    }
-  }
+  /**
+   * Getting a balance of Bitcoin Cash wallet from a list of unspent
+   * @param {Array} unspent - The list of unspent transaction output
+   * @returns {number} The balance of the Bitcoin Cash wallet
+   */
   
   getBalance (unspent) {
     if (!Array.isArray(unspent)) {
@@ -241,22 +321,11 @@ export default class BitcoinCashSync {
     return balance
   }
   
-  async _getArrayOfAddresses (node, type, from, to) {
-    let addresses = []
-    
-    for (let i = from; i < to; i++) {
-      let address = ''
-      
-      if (this.deriveAddress[type].hasOwnProperty(i)) {
-        address = this.deriveAddress[type][i]
-      } else {
-        address = getBtcAddress(node, i)
-      }
-      addresses.push(address)
-    }
-    
-    return addresses
-  }
+  /**
+   * Request for information at multiple addresses
+   * @param {Array} addresses - List of addresses to get data from
+   * @returns {Promise<Object>} Address information, including a list of transactions
+   */
   
   async getMultiAddressRequest (addresses) {
     if (!addresses) return false
@@ -282,6 +351,12 @@ export default class BitcoinCashSync {
       return []
     }
   }
+  
+  /**
+   * Request to receive unspent outputs
+   * @param {Array} addresses - A set of addresses to get the unspent output from
+   * @returns {Promise<Array>} - Information about unspent output
+   */
   
   async getUnspentOutputsRequest (addresses) {
     if (!addresses) return []
@@ -319,6 +394,13 @@ export default class BitcoinCashSync {
     
     return [].concat.apply([], res)
   }
+  
+  /**
+   * Bitcoin Cash blockchain information request.
+   * Getting the latest block number.
+   * @returns {Promise<boolean>}
+   */
+  
   
   async getBlockchainInfo () {
     const params = {

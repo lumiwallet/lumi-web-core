@@ -33,6 +33,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
@@ -42,6 +43,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -49,6 +51,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
@@ -89,8 +92,8 @@ export default class Core {
     this.seed = null
     this.hdkey = null
     this.BTC = {
-      node: null,
       internalNode: null,
+      externalNode: null,
       privateKey: null,
       publicKey: null
     }
@@ -99,7 +102,13 @@ export default class Core {
       privateKey: null,
       publicKey: null
     }
-
+    this.BCH = {
+      internalNode: null,
+      externalNode: null,
+      privateKey: null,
+      publicKey: null
+    }
+    
     this.generateWallet()
   }
   
@@ -125,6 +134,7 @@ export default class Core {
     
     this._generateBTCcore()
     this._generateETHcore()
+    this._generateBCHcore()
   }
   
   /**
@@ -162,26 +172,24 @@ export default class Core {
    * Importing a wallet by key
    * @private
    */
-
+  
   _importByKey () {
     this.hdkey = core.hdFromXprv(this.xprv)
   }
   
   /**
    * Creating a core for Bitcoin.
-   * At the output, we get a external and internal node,
-   * a private and public key, and the first address of the external core
+   * At the output, we get a external and internal node
+   * and the first address of the external core
    * @private
    */
   
   _generateBTCcore () {
-    const bitcoin_internal_path = &quot;m/44&apos;/0&apos;/0&apos;/0&quot;
-    const bitcoin_external_path = &quot;m/44&apos;/0&apos;/0&apos;/1&quot;
-    this.BTC.node = core.derive(this.hdkey, bitcoin_internal_path)
-    this.BTC.internalNode = core.derive(this.hdkey, bitcoin_external_path)
-    this.BTC.privateKey = this.hdkey.privateKey
-    this.BTC.publicKey = this.hdkey.publicKey
-    this.BTC.address = core.getBtcAddress(this.BTC.node, 0)
+    const bitcoin_external_path = &apos;m/44\&apos;/0\&apos;/0\&apos;/0&apos;
+    const bitcoin_internal_path = &apos;m/44\&apos;/0\&apos;/0\&apos;/1&apos;
+    this.BTC.externalNode = core.derive(this.hdkey, bitcoin_external_path)
+    this.BTC.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
+    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0)
   }
   
   /**
@@ -190,14 +198,29 @@ export default class Core {
    * a private and public key, and the Ethereum address
    * @private
    */
-
+  
   _generateETHcore () {
-    const ethereum_path = &quot;m/44&apos;/60&apos;/0&apos;/0/0&quot;
+    const ethereum_path = &apos;m/44\&apos;/60\&apos;/0\&apos;/0/0&apos;
     this.ETH.node = core.derive(this.hdkey, ethereum_path)
     this.ETH.privateKey = core.getEthPrivateKey(this.ETH.node)
     this.ETH.privateKeyHex = &apos;0x&apos; + this.ETH.privateKey.toString(&apos;hex&apos;)
     this.ETH.publicKey = core.getEthPublicKey(this.ETH.privateKey)
     this.ETH.address = core.getEthAddress(this.ETH.publicKey)
+  }
+  
+  /**
+   * Creating a core for Bitcoin Cash.
+   * At the output, we get a external and internal node
+   * and the first address of the external core
+   * @private
+   */
+  
+  _generateBCHcore () {
+    const bitcoincash_external_path = &apos;m/44\&apos;/145\&apos;/0\&apos;/0&apos;
+    const bitcoincash_internal_path = &apos;m/44\&apos;/145\&apos;/0\&apos;/1&apos;
+    this.BCH.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
+    this.BCH.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
+    this.BCH.address = core.getBtcAddress(this.BCH.externalNode, 0)
   }
   
   /**
@@ -211,10 +234,10 @@ export default class Core {
   
   getChildNodes (data = {}) {
     let {from, to, path} = data
-  
+    
     from = +from
     to = +to
-  
+    
     if (!Number.isInteger(from) || !Number.isInteger(to) || from &gt; to) {
       throw new CustomError(&apos;err_core_derivation_range&apos;)
     }
@@ -229,20 +252,21 @@ export default class Core {
         },
         list: []
       }
-  
+      
       for (let i = from; i &lt;= to; i++) {
         const child = {}
         const deriveChild = node.deriveChild(i)
-        child.path = `${path}/${i}`
+        child.path = `${ path }/${ i }`
         child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)
         child.publicKey = deriveChild.publicKey.toString(&apos;hex&apos;)
         child.btcAddress = core.getBtcAddress(node, i)
         child.ethAddress = core.getEthAddressByNode(deriveChild)
         info.list.push(child)
       }
-  
+      
       return info
-    } catch (e) {
+    }
+    catch (e) {
       throw new CustomError(&apos;err_core_derivation&apos;)
     }
   }
@@ -252,21 +276,21 @@ export default class Core {
    * @param mnemonic
    * @returns {boolean}
    */
-
+  
   checkMnemonic (mnemonic) {
     let words = mnemonic.split(&apos; &apos;)
     let withTypo = []
-
+    
     words.forEach((word, index) =&gt; {
       if (!checkWords(word, &apos;english&apos;)) {
         withTypo.push(index)
       }
     })
-
+    
     if (withTypo.length) {
       throw new CustomError(&apos;err_core_mnemonic&apos;)
     }
-
+    
     return validateMnemonic(mnemonic)
   }
   
@@ -276,7 +300,7 @@ export default class Core {
    * @returns {number} Bits of entropy
    * @private
    */
-
+  
   _getEntropyLength (words) {
     let bitsOfEntropy = {
       12: 128,
@@ -285,14 +309,14 @@ export default class Core {
       21: 224,
       24: 256
     }
-
+    
     if (!bitsOfEntropy.hasOwnProperty(+words)) {
       throw new CustomError(&apos;err_core_7&apos;)
     }
-  
+    
     return bitsOfEntropy[words]
   }
-
+  
   get DATA () {
     return {
       mnemonic: this.mnemonic,
@@ -302,7 +326,8 @@ export default class Core {
       seed: this.seed,
       seedInHex: this.seed ? this.seed.toString(&apos;hex&apos;) : null,
       BTC: this.BTC,
-      ETH: this.ETH
+      ETH: this.ETH,
+      BCH: this.BCH
     }
   }
 }

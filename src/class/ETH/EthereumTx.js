@@ -1,7 +1,7 @@
-import converter       from '@/helpers/converters'
+import converter from '@/helpers/converters'
 import toFormatDecimal from '@/helpers/toFormatDecimal'
-import {makeRawEthTx}  from '@/helpers/coreHelper'
-import CustomError     from '@/helpers/handleErrors'
+import {makeRawEthTx} from '@/helpers/coreHelper'
+import CustomError from '@/helpers/handleErrors'
 
 /**
  * Class EthereumTx.

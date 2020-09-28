@@ -33,6 +33,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
@@ -42,6 +43,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -49,6 +51,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
@@ -63,11 +66,11 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Wrapper from &apos;@/Wrapper&apos;
 import CustomError from &apos;@/helpers/handleErrors&apos;
-import {makeRawBtcTx, makeRawEthTx} from &apos;@/helpers/coreHelper&apos;
+import {makeRawBtcTx, makeRawEthTx, makeRawBchTx} from &apos;@/helpers/coreHelper&apos;
 
 export {default as converter} from &apos;@/helpers/converters&apos;
 export {default as toDecimal} from &apos;@/helpers/toFormatDecimal&apos;
-export {makeRawBtcTx, makeRawEthTx}
+export {makeRawBtcTx, makeRawEthTx, makeRawBchTx}
 
 /**
  * Class Wallet
@@ -86,15 +89,16 @@ export default class Wallet {
     this.api = {
       bitcoin: &apos;&apos;,
       bitcoinFee: &apos;&apos;,
-      ethereum: &apos;&apos;
+      ethereum: &apos;&apos;,
+      bitcoinCash: &apos;&apos;
     }
     this._apiReady = false
-
+    
     if (api) {
       this.setApiEndpoint(api)
     }
   }
-
+  
   /**
    * Creating a new wallet
    *
@@ -106,7 +110,7 @@ export default class Wallet {
    * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address
    * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address
    */
-
+  
   async createNew (count = 12) {
     let data = {
       data: {
@@ -115,12 +119,12 @@ export default class Wallet {
       },
       api: this.api
     }
-
+    
     this.core = await this.wrapper.method(&apos;create&apos;, data)
-
+    
     return this.core
   }
-
+  
   /**
    * Creating a wallet by mnemonic
    *
@@ -132,12 +136,12 @@ export default class Wallet {
    * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address
    * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address
    */
-
+  
   async createByMnemonic (mnemonic = &apos;&apos;) {
     if (!mnemonic) {
-      throw Error(&apos;Mnemonic is empty!&apos;)
+      throw new CustomError(&apos;err_core_mnemonic_empty&apos;)
     }
-
+    
     let data = {
       data: {
         from: &apos;mnemonic&apos;,
@@ -145,12 +149,12 @@ export default class Wallet {
       },
       api: this.api
     }
-
+    
     this.core = await this.wrapper.method(&apos;create&apos;, data)
-
+    
     return this.core
   }
-
+  
   /**
    * Creating a wallet by xprv key
    *
@@ -162,13 +166,12 @@ export default class Wallet {
    * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address
    * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address
    */
-
+  
   async createByKey (key = &apos;&apos;) {
     if (!key) {
-      // todo customerror
-      throw Error(&apos;Key is empty!&apos;)
+      throw new CustomError(&apos;err_core_xprv&apos;)
     }
-
+    
     let data = {
       data: {
         from: &apos;xprv&apos;,
@@ -176,12 +179,12 @@ export default class Wallet {
       },
       api: this.api
     }
-
+    
     this.core = await this.wrapper.method(&apos;create&apos;, data)
-
+    
     return this.core
   }
-
+  
   /**
    * The method starts synchronization of BTC and ETH
    *
@@ -189,15 +192,18 @@ export default class Wallet {
    * @returns {Object} sync.BTC - The BTC object contains the addresses used, the list of transactions, the unspent list, the balance in Satoshi, the latest block and the list of commissions
    * @returns {Object} sync.ETH - The ETH object contains the ethereum address, the balance in wei, the list of transactions and gas price
    */
-
+  
   async syncAll () {
     if (!this._apiReady) {
       throw new CustomError(&apos;err_wallet_api&apos;)
     }
-
-    await this.syncBTC()
-    await this.syncETH()
-
+    
+    await Promise.all([
+      this.syncBTC(),
+      this.syncETH(),
+      this.syncBCH()
+    ])
+    
     return this.sync
   }
   
@@ -216,10 +222,10 @@ export default class Wallet {
     if (!this.core) {
       throw new CustomError(&apos;err_wallet_exist&apos;)
     }
-  
+    
     return await this.wrapper.method(&apos;getNodes&apos;, data)
   }
-
+  
   /**
    * The method starts synchronization of BTC
    *
@@ -232,17 +238,17 @@ export default class Wallet {
    * @returns {number} sync.latestBlock - The last block of the bitcoin blockchain
    * @returns {Array} sync.fee - The list of fee per byte
    */
-
+  
   async syncBTC () {
     if (!this._apiReady) {
       throw new CustomError(&apos;err_wallet_api&apos;)
     }
     
     this.sync.BTC = await this.wrapper.method(&apos;sync&apos;, &apos;BTC&apos;)
-
+    
     return this.sync.BTC
   }
-
+  
   /**
    * The method starts synchronization of ETH
    *
@@ -253,33 +259,57 @@ export default class Wallet {
    * @returns {Array} sync.transactions - The list of ethereum transactions
    * @returns {number} sync.gasPrice - Gas price
    */
-
+  
   async syncETH () {
     if (!this._apiReady) {
       throw new CustomError(&apos;err_wallet_api&apos;)
     }
     
     this.sync.ETH = await this.wrapper.method(&apos;sync&apos;, &apos;ETH&apos;)
-
+    
     return this.sync.ETH
+  }
+  
+  async syncBCH () {
+    if (!this._apiReady) {
+      throw new CustomError(&apos;err_wallet_api&apos;)
+    }
+    
+    this.sync.BCH = await this.wrapper.method(&apos;sync&apos;, &apos;BCH&apos;)
+    
+    return this.sync.BCH
   }
   
   /**
    * The method returns a raw BTC transaction
    *
    * @param {Object} data
-   * @param {string} data.address - Legacy bitcoin address
-   * @param {number} data.fee - Transaction fee in Satoshi
    * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
    * transaction hash, output n, address, value, script and private key in WIF format
    * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value
    * @returns {Promise&lt;Object&gt;} Returns object with transaction hash and raw transaction data
    * @returns {string} hash - Transaction hash
-   * @returns {string} tx - Raw bitcoin transaction
+   * @returns {string} tx - Raw Bitcoin transaction
    */
   
   async makeRawBtcTx (data) {
     return await makeRawBtcTx(data)
+  }
+  
+  /**
+   * The method returns a raw BCH transaction
+   *
+   * @param {Object} data
+   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
+   * transaction hash, output n, address, value in satoshis, script and private key in WIF format
+   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value in satoshis
+   * @returns {Promise&lt;Object&gt;} Returns object with transaction hash and raw transaction data
+   * @returns {string} hash - Transaction hash
+   * @returns {string} tx - Raw Bitcoin Cash transaction
+   */
+  
+  async makeRawBchTx (data) {
+    return await makeRawBchTx(data)
   }
   
   /**
@@ -294,7 +324,7 @@ export default class Wallet {
    * @param {string} data.privateKey - Private key of ether wallet in hex
    * @returns {Promise&lt;Object&gt;} Returns object with transaction hash and raw transaction data
    * @returns {string} hash - Transaction hash
-   * @returns {string} tx - Raw ethereum transaction
+   * @returns {string} tx - Raw Ethereum transaction
    */
   
   async makeRawEthTx (data) {
@@ -310,7 +340,7 @@ export default class Wallet {
    * @param {Object} params.size - Transaction size. Relevant for bitcoin transactions
    * @returns {Promise&lt;Array&gt;} The list of transaction fees
    */
-
+  
   async calculateFee (params) {
     if (!this._apiReady) {
       throw new CustomError(&apos;err_wallet_api&apos;)
@@ -352,7 +382,7 @@ export default class Wallet {
       currency: data.currency,
       tx: data.tx
     }
-  
+    
     return await this.wrapper.method(&apos;transaction&apos;, params)
   }
   
@@ -363,13 +393,14 @@ export default class Wallet {
    * @param {string} api.bitcoin - Url address of bitcoin endpoint
    * @param {string} api.bitcoinFee - Url address of bitcoin fee endpoint
    * @param {string} api.ethereum - Url address of ethereum endpoint
+   * @param {string} api.bitcoinCash - Url address of bitcoin cash endpoint
    */
-
+  
   setApiEndpoint (api) {
     if (!api || typeof api !== &apos;object&apos; || Array.isArray(api)) {
-      throw Error(&apos;Api must be object!&apos;)
+      throw new CustomError(&apos;err_wallet_api_type&apos;)
     }
-
+    
     for (let key in this.api) {
       if (api.hasOwnProperty(key)) {
         this.api[key] = api[key]
@@ -383,15 +414,15 @@ export default class Wallet {
   get Core () {
     return this.core
   }
-
+  
   get getSyncBTC () {
     return this.sync.BTC
   }
-
+  
   get getSyncETH () {
     return this.sync.ETH
   }
-
+  
   get getApiState () {
     return this._apiReady
   }

@@ -1,7 +1,7 @@
 {
-  "coverage": "57.32%",
-  "expectCount": 157,
-  "actualCount": 90,
+  "coverage": "56.04%",
+  "expectCount": 182,
+  "actualCount": 102,
   "files": {
     "src/Wrapper.js": {
       "expectCount": 9,
@@ -12,6 +12,21 @@
         5,
         15,
         16
+      ]
+    },
+    "src/class/BCH/BitcoinCashTx.js": {
+      "expectCount": 16,
+      "actualCount": 7,
+      "undocumentLines": [
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
       ]
     },
     "src/class/BTC/BitcoinSync.js": {
@@ -25,31 +40,31 @@
         24,
         25,
         26,
-        33,
-        37,
+        32,
+        36,
+        40,
         41,
         42,
-        43,
-        236
+        230
       ]
     },
     "src/class/BTC/BitcoinTx.js": {
-      "expectCount": 14,
-      "actualCount": 6,
+      "expectCount": 15,
+      "actualCount": 7,
       "undocumentLines": [
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
       ]
     },
     "src/class/Core.js": {
-      "expectCount": 20,
-      "actualCount": 11,
+      "expectCount": 22,
+      "actualCount": 12,
       "undocumentLines": [
         22,
         23,
@@ -59,7 +74,8 @@
         27,
         28,
         34,
-        233
+        39,
+        254
       ]
     },
     "src/class/ETH/EthereumSync.js": {
@@ -89,18 +105,20 @@
       ]
     },
     "src/class/WalletWrapper.js": {
-      "expectCount": 13,
+      "expectCount": 15,
       "actualCount": 9,
       "undocumentLines": [
-        22,
-        23,
         24,
-        25
+        25,
+        26,
+        27,
+        111,
+        211
       ]
     },
     "src/helpers/coreHelper.js": {
-      "expectCount": 16,
-      "actualCount": 16,
+      "expectCount": 18,
+      "actualCount": 18,
       "undocumentLines": []
     },
     "src/helpers/handleErrors.js": {
@@ -124,18 +142,19 @@
       "undocumentLines": []
     },
     "src/index.js": {
-      "expectCount": 23,
-      "actualCount": 14,
+      "expectCount": 25,
+      "actualCount": 15,
       "undocumentLines": [
         20,
         21,
         22,
         23,
-        28,
-        320,
-        324,
-        328,
-        332
+        29,
+        207,
+        348,
+        352,
+        356,
+        360
       ]
     },
     "src/workers/wallet.worker.js": {

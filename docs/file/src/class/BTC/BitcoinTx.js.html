@@ -33,6 +33,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
@@ -42,6 +43,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -49,6 +51,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
@@ -66,6 +69,13 @@ import {calcBtcTxSize, makeRawBtcTx} from &apos;@/helpers/coreHelper&apos;
 import CustomError from &apos;@/helpers/handleErrors&apos;
 
 /**
+ * List of available commission types for Bitcoin transactions
+ * @type {Array}
+ */
+
+const FEE_IDS = [&apos;fast&apos;, &apos;regular&apos;, &apos;cheap&apos;, &apos;custom&apos;]
+
+/**
  * Class BitcoinTx.
  * This class is responsible for calculating the fee,
  * calculating the available amount to send, and generating and signing a Bitcoin transaction
@@ -75,7 +85,7 @@ import CustomError from &apos;@/helpers/handleErrors&apos;
 export default class BitcoinTx {
   /**
    * Create a BitcoinTx
-   * @param {Object} data - Input data for generating a transaction or calculating a fee or available amount
+   * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount
    * @param {Array} data.unspent - Array of unspent addresses
    * @param {string} data.internalAddress - Address for change
    * @param {number} data.amount - Transaction amount
@@ -84,6 +94,7 @@ export default class BitcoinTx {
    * @param {Object} data.customFee - Custom fee entered by the user
    */
   constructor (data) {
+    console.log(&apos;btc&apos;, data)
     this.unspent = data.unspent
     this.internalAddress = data.internalAddress
     this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
@@ -101,61 +112,30 @@ export default class BitcoinTx {
    */
   
   async calcFee (size = 0) {
+    const fees = [...this.fee.map(item =&gt; item.feePerByte), this.customFee]
+    
     if (this.amount &lt;= 0 || this.balance &lt; this.amount) {
-      return this.calcEmptyFee()
+      return this.calcEmptyFee(fees)
     }
     
-    let fast = this.fee[2].feePerByte
-    let regular = this.fee[1].feePerByte
-    let cheap = this.fee[0].feePerByte
-    let custom = this.customFee
+    const pArray = fees.map(async fee =&gt; {
+      return await this.getInputs(fee, size)
+    })
     
-    this.dust = size ? 0 : 1000
-
-    let fastResult = await this.getInputs(fast, size)
-    let regularResult = await this.getInputs(regular, size)
-    let cheapResult = await this.getInputs(cheap, size)
-    let customResult = await this.getInputs(custom, size)
+    const res = await Promise.all(pArray)
     
-    this.feeList = [
-      {
-        id: &apos;fast&apos;,
-        SAT: fastResult.fee,
-        BTC: converter.sat_to_btc(fastResult.fee),
-        fee: this.fee[2].feePerByte,
-        feeInBTC: converter.sat_to_btc(this.fee[2].feePerByte),
-        inputs: fastResult.inputs,
-        inputsAmount: fastResult.inputsAmount,
-      },
-      {
-        id: &apos;regular&apos;,
-        SAT: regularResult.fee,
-        BTC: converter.sat_to_btc(regularResult.fee),
-        fee: this.fee[1].feePerByte,
-        feeInBTC: converter.sat_to_btc(this.fee[1].feePerByte),
-        inputs: regularResult.inputs,
-        inputsAmount: regularResult.inputsAmount
-      },
-      {
-        id: &apos;cheap&apos;,
-        SAT: cheapResult.fee,
-        BTC: converter.sat_to_btc(cheapResult.fee),
-        fee: this.fee[0].feePerByte,
-        feeInBTC: converter.sat_to_btc(this.fee[0].feePerByte),
-        inputs: cheapResult.inputs,
-        inputsAmount: cheapResult.inputsAmount,
-      },
-      {
-        custom: true,
-        id: &apos;custom&apos;,
-        SAT: customResult.fee,
-        BTC: converter.sat_to_btc(customResult.fee),
-        fee: this.customFee,
-        feeInBTC: converter.sat_to_btc(this.customFee),
-        inputs: customResult.inputs,
-        inputsAmount: customResult.inputsAmount,
+    this.feeList = res.map((item, i) =&gt; {
+      return {
+        id: FEE_IDS[i],
+        SAT: item.fee,
+        BTC: converter.sat_to_btc(item.fee),
+        fee: fees[i],
+        feeInBTC: converter.sat_to_btc(fees[i]),
+        inputs: item.inputs,
+        inputsAmount: item.inputsAmount,
+        custom: FEE_IDS[i] === &apos;custom&apos;
       }
-    ]
+    })
     
     return this.feeList
   }
@@ -166,47 +146,19 @@ export default class BitcoinTx {
    * @returns {Array} Returns an array with zero fees
    */
   
-  calcEmptyFee () {
-    this.feeList = [
-      {
-        id: &apos;fast&apos;,
+  calcEmptyFee (fees) {
+    this.feeList = fees.map((item, i) =&gt; {
+      return {
+        id: FEE_IDS[i],
         SAT: 0,
         BTC: 0,
-        fee: this.fee[2].feePerByte,
-        feeInBTC: converter.sat_to_btc(this.fee[2].feePerByte),
-        inputs: [],
-        inputsAmount: 0
-      },
-      {
-        id: &apos;regular&apos;,
-        SAT: 0,
-        BTC: 0,
-        fee: this.fee[1].feePerByte,
-        feeInBTC: converter.sat_to_btc(this.fee[1].feePerByte),
-        inputs: [],
-        inputsAmount: 0
-      },
-      {
-        id: &apos;cheap&apos;,
-        SAT: 0,
-        BTC: 0,
-        fee: this.fee[0].feePerByte,
-        feeInBTC: converter.sat_to_btc(this.fee[0].feePerByte),
+        fee: item,
+        feeInBTC: converter.sat_to_btc(item),
         inputs: [],
         inputsAmount: 0,
-        title: &apos;Cheap but takes time...&apos;,
-        addText: &apos;per byte&apos;
-      },
-      {
-        custom: true,
-        id: &apos;custom&apos;,
-        feePerByte: this.customFee,
-        fee: 0,
-        feeInSat: 0,
-        inputs: [],
-        inputsAmount: 0
+        custom: FEE_IDS[i] === &apos;custom&apos;
       }
-    ]
+    })
     
     return this.feeList
   }
@@ -224,6 +176,8 @@ export default class BitcoinTx {
     let inputs = []
     let res = {}
     
+    this.dust = size ? 0 : 1000
+    
     let req = async () =&gt; {
       let item = this.unspent[index]
       let defaultSize = calcBtcTxSize(index + 1, 2)
@@ -234,7 +188,7 @@ export default class BitcoinTx {
       
       let total = this.amount + calcFee + this.dust
       
-      if (inputsAmount &lt; total) {
+      if (total &gt; inputsAmount) {
         index++
         
         if (index &gt;= this.unspent.length) {
@@ -247,18 +201,10 @@ export default class BitcoinTx {
           await req()
         }
       } else {
-        if (inputsAmount &gt;= total) {
-          res = {
-            fee: calcFee,
-            inputs: inputs,
-            inputsAmount: inputsAmount
-          }
-        } else {
-          res = {
-            fee: 0,
-            inputs: [],
-            inputsAmount: 0
-          }
+        res = {
+          fee: calcFee,
+          inputs: inputs,
+          inputsAmount: inputsAmount
         }
       }
     }
@@ -267,11 +213,10 @@ export default class BitcoinTx {
   }
   
   /**
-   * Creating a transaction
+   * Creating a Bitcoin transaction
    * @param {Object} data - Input data for a transaction
    * @param {string} data.addressTo - Recipient address
    * @param {Object} data.fee - The transaction fee and list of inputs
-   * @param {Object} data.inputsAmount - The amount of inputs involved in the transaction
    * @returns {Promise&lt;Object&gt;} Returns the raw transaction and transaction hash if sent successfully
    */
   

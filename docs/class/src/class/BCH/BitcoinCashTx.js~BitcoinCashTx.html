@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../../">
-  <title data-ice="title">EthereumTx | lumi-web-core</title>
+  <title data-ice="title">BitcoinCashTx | lumi-web-core</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -64,17 +64,17 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import EthereumTx from &apos;<span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber12">lumi-web-core/src/class/ETH/EthereumTx.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import BitcoinCashTx from &apos;<span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber19">lumi-web-core/src/class/BCH/BitcoinCashTx.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber12">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber19">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
-  <h1 data-ice="name">EthereumTx</h1>
+  <h1 data-ice="name">BitcoinCashTx</h1>
 
   
 
@@ -90,8 +90,9 @@
 
   
   
-  <div class="description" data-ice="description"><p>Class EthereumTx.
-This class is responsible for calculating the fee and generating and signing a Ethereum transaction</p>
+  <div class="description" data-ice="description"><p>Class BitcoinCashTx.
+This class is responsible for calculating the fee,
+calculating the available amount to send, and generating and signing a Bitcoin Cash transaction</p>
 </div>
   
 
@@ -124,13 +125,13 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>)</span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Create a EthereumTx</p>
+        <div data-ice="description"><p>Create a BitcoinCashTx</p>
 </div>
       </div>
     </td>
@@ -150,7 +151,7 @@ This class is responsible for calculating the fee and generating and signing a E
     <td>
       <span class="access" data-ice="access">public</span>
       
-      <span class="kind" data-ice="kind">get</span>
+      
       
       <span class="override" data-ice="override"></span>
     </td>
@@ -160,7 +161,7 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-get-DATA">DATA</a></span></span><span class="code" data-ice="signature">: {&quot;fee&quot;: <span>*</span>}</span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-amount">amount</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -188,7 +189,7 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-address">address</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-balance">balance</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -216,7 +217,7 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-balance">balance</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-customFee">customFee</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -244,7 +245,7 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-defaultGasLimit">defaultGasLimit</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-dust">dust</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
         </p>
       </div>
       <div>
@@ -272,7 +273,7 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-feeList">feeList</a></span></span><span class="code" data-ice="signature">: <span><span>*</span><span>[]</span></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-fee">fee</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -300,7 +301,7 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-gasPrice">gasPrice</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-feeList">feeList</a></span></span><span class="code" data-ice="signature">: <span><span>*</span><span>[]</span></span></span>
         </p>
       </div>
       <div>
@@ -328,7 +329,63 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-privateKey">privateKey</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-internalAddress">internalAddress</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-nodes">nodes</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-unspent">unspent</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -363,7 +420,36 @@ This class is responsible for calculating the fee and generating and signing a E
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-method-calcFee">calcFee</a></span></span><span class="code" data-ice="signature">(customGasPrice: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, customGasLimit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-method-calcEmptyFee">calcEmptyFee</a></span></span><span class="code" data-ice="signature">(fees: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Sets an array of zero fees.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-method-calcFee">calcFee</a></span></span><span class="code" data-ice="signature">(size: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&gt;</span>
         </p>
       </div>
       <div>
@@ -392,13 +478,42 @@ This class is responsible for calculating the fee and generating and signing a E
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-method-make">make</a></span></span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-method-getInputs">getInputs</a></span></span><span class="code" data-ice="signature">(fee: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, size: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Creating a transaction</p>
+        <div data-ice="description"><p>Finds a list of inputs for a specific transaction</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-method-make">make</a></span></span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Creating a Bitcoin Cash transaction</p>
 </div>
       </div>
     </td>
@@ -429,14 +544,14 @@ This class is responsible for calculating the fee and generating and signing a E
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber21">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber31">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Create a EthereumTx</p>
+  <div data-ice="description"><p>Create a BitcoinCashTx</p>
 </div>
 
   
@@ -453,35 +568,56 @@ This class is responsible for calculating the fee and generating and signing a E
       <td data-ice="name" class="code" data-depth="0">data</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Input data for generating a transaction or calculating a fee</p>
+      <td data-ice="description"><p>Input data for generating a transaction, calculating a fee or available amount</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">data.address</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Ethereum wallet address</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">data.privateKey</td>
+      <td data-ice="name" class="code" data-depth="1">data.unspent</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Ethereum private key in Uint8Array format</p>
+      <td data-ice="description"><p>Array of unspent addresses</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">data.amount</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Transaction amount</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">data.balance</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Ethereum wallet balance</p>
+      <td data-ice="description"><p>Bitcoin Cash wallet balance</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">data.gasPrice</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="name" class="code" data-depth="1">data.feeList</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Gas price for transaction</p>
+      <td data-ice="description"><p>Set of raw Bitcoin Cash fees</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">data.customFee</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Custom fee entered by the user</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">data.nodes</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>External and internal Bitcoin Cash nodes</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">data.internalAddress</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Address for change</p>
 </td>
     </tr>
 </tbody>
@@ -510,61 +646,18 @@ This class is responsible for calculating the fee and generating and signing a E
 <div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-get-DATA">
-    <span class="access" data-ice="access">public</span>
-    
-    <span class="kind" data-ice="kind">get</span>
-    
-    
-    
-    <span class="code" data-ice="name">DATA</span><span class="code" data-ice="signature">: {&quot;fee&quot;: <span>*</span>}</span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber92">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-address">
+  <h3 data-ice="anchor" id="instance-member-amount">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">address</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">amount</span><span class="code" data-ice="signature">: <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber22">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber34">source</a></span></span>
     </span>
   </h3>
 
@@ -607,7 +700,7 @@ This class is responsible for calculating the fee and generating and signing a E
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber24">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber35">source</a></span></span>
     </span>
   </h3>
 
@@ -639,18 +732,104 @@ This class is responsible for calculating the fee and generating and signing a E
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-defaultGasLimit">
+  <h3 data-ice="anchor" id="instance-member-customFee">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">defaultGasLimit</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="code" data-ice="name">customFee</span><span class="code" data-ice="signature">: <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber26">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber36">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-dust">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">dust</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber41">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-fee">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">fee</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber39">source</a></span></span>
     </span>
   </h3>
 
@@ -693,7 +872,7 @@ This class is responsible for calculating the fee and generating and signing a E
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber27">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber40">source</a></span></span>
     </span>
   </h3>
 
@@ -725,18 +904,18 @@ This class is responsible for calculating the fee and generating and signing a E
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-gasPrice">
+  <h3 data-ice="anchor" id="instance-member-internalAddress">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">gasPrice</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">internalAddress</span><span class="code" data-ice="signature">: <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber25">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber38">source</a></span></span>
     </span>
   </h3>
 
@@ -768,18 +947,61 @@ This class is responsible for calculating the fee and generating and signing a E
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-privateKey">
+  <h3 data-ice="anchor" id="instance-member-nodes">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">privateKey</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">nodes</span><span class="code" data-ice="signature">: <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber23">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber37">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-unspent">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">unspent</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber33">source</a></span></span>
     </span>
   </h3>
 
@@ -814,18 +1036,93 @@ This class is responsible for calculating the fee and generating and signing a E
 <div data-ice="methodDetails"><h2 data-ice="title">Public Methods</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-calcFee">
+  <h3 data-ice="anchor" id="instance-method-calcEmptyFee">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">calcFee</span><span class="code" data-ice="signature">(customGasPrice: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, customGasLimit: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></span>
+    <span class="code" data-ice="name">calcEmptyFee</span><span class="code" data-ice="signature">(fees: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber37">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber86">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Sets an array of zero fees.
+Used when the user does not have enough funds for the transaction</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">fees</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>set of commission types</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns an array with zero fees</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-calcFee">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">calcFee</span><span class="code" data-ice="signature">(size: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&gt;</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber50">source</a></span></span>
     </span>
   </h3>
 
@@ -846,17 +1143,10 @@ This class is responsible for calculating the fee and generating and signing a E
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">customGasPrice</td>
+      <td data-ice="name" class="code" data-depth="0">size</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Amount of custom gas price</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">customGasLimit</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Amount of custom gas limit</p>
+      <td data-ice="description"><p>Transaction size</p>
 </td>
     </tr>
 </tbody>
@@ -869,8 +1159,89 @@ This class is responsible for calculating the fee and generating and signing a E
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></td>
-          <td class="return-desc" data-ice="returnDescription"><p>A list with the optimal and custom fee</p>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns a set of fees for a specific transaction amount</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getInputs">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">getInputs</span><span class="code" data-ice="signature">(fee: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, size: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber110">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Finds a list of inputs for a specific transaction</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">fee</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Fee size</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">size</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Transaction size</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs</p>
 </td>
         </tr>
       </tbody>
@@ -906,14 +1277,14 @@ This class is responsible for calculating the fee and generating and signing a E
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/ETH/EthereumTx.js.html#lineNumber71">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#lineNumber161">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Creating a transaction</p>
+  <div data-ice="description"><p>Creating a Bitcoin Cash transaction</p>
 </div>
 
   
@@ -941,24 +1312,10 @@ This class is responsible for calculating the fee and generating and signing a E
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">data.amount</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Transaction amount in ETH</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">data.fee</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Object with amount of gas price and gas limit</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">data.nonce</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Nonce, transaction count of an account</p>
+      <td data-ice="description"><p>The transaction fee and list of inputs</p>
 </td>
     </tr>
 </tbody>
@@ -972,7 +1329,7 @@ This class is responsible for calculating the fee and generating and signing a E
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</td>
-          <td class="return-desc" data-ice="returnDescription"><p>Return a raw transaction in hex to send and transaction hash</p>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns the raw transaction and transaction hash if sent successfully</p>
 </td>
         </tr>
       </tbody>

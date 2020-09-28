@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 1683,
+  "end": 2106,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 29,
+      "line": 36,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 1683,
+    "end": 2106,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 29,
+        "line": 36,
         "column": 0
       }
     },
@@ -31,28 +31,28 @@
       {
         "type": "ExportDefaultDeclaration",
         "start": 0,
-        "end": 1682,
+        "end": 2105,
         "loc": {
           "start": {
             "line": 1,
             "column": 0
           },
           "end": {
-            "line": 28,
+            "line": 35,
             "column": 1
           }
         },
         "declaration": {
           "type": "ObjectExpression",
           "start": 15,
-          "end": 1682,
+          "end": 2105,
           "loc": {
             "start": {
               "line": 1,
               "column": 15
             },
             "end": {
-              "line": 28,
+              "line": 35,
               "column": 1
             }
           },
@@ -170,7 +170,7 @@
             {
               "type": "ObjectProperty",
               "start": 166,
-              "end": 195,
+              "end": 209,
               "loc": {
                 "start": {
                   "line": 4,
@@ -178,7 +178,7 @@
                 },
                 "end": {
                   "line": 4,
-                  "column": 31
+                  "column": 45
                 }
               },
               "method": false,
@@ -187,7 +187,7 @@
               "key": {
                 "type": "Identifier",
                 "start": 166,
-                "end": 179,
+                "end": 189,
                 "loc": {
                   "start": {
                     "line": 4,
@@ -195,6 +195,61 @@
                   },
                   "end": {
                     "line": 4,
+                    "column": 25
+                  },
+                  "identifierName": "err_core_mnemonic_empty"
+                },
+                "name": "err_core_mnemonic_empty"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 191,
+                "end": 209,
+                "loc": {
+                  "start": {
+                    "line": 4,
+                    "column": 27
+                  },
+                  "end": {
+                    "line": 4,
+                    "column": 45
+                  }
+                },
+                "extra": {
+                  "rawValue": "Invalid mnemonic",
+                  "raw": "'Invalid mnemonic'"
+                },
+                "value": "Invalid mnemonic"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 213,
+              "end": 242,
+              "loc": {
+                "start": {
+                  "line": 5,
+                  "column": 2
+                },
+                "end": {
+                  "line": 5,
+                  "column": 31
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 213,
+                "end": 226,
+                "loc": {
+                  "start": {
+                    "line": 5,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 5,
                     "column": 15
                   },
                   "identifierName": "err_core_seed"
@@ -203,15 +258,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 181,
-                "end": 195,
+                "start": 228,
+                "end": 242,
                 "loc": {
                   "start": {
-                    "line": 4,
+                    "line": 5,
                     "column": 17
                   },
                   "end": {
-                    "line": 4,
+                    "line": 5,
                     "column": 31
                   }
                 },
@@ -224,15 +279,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 199,
-              "end": 230,
+              "start": 246,
+              "end": 277,
               "loc": {
                 "start": {
-                  "line": 5,
+                  "line": 6,
                   "column": 2
                 },
                 "end": {
-                  "line": 5,
+                  "line": 6,
                   "column": 33
                 }
               },
@@ -241,15 +296,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 199,
-                "end": 215,
+                "start": 246,
+                "end": 262,
                 "loc": {
                   "start": {
-                    "line": 5,
+                    "line": 6,
                     "column": 2
                   },
                   "end": {
-                    "line": 5,
+                    "line": 6,
                     "column": 18
                   },
                   "identifierName": "err_core_entropy"
@@ -258,15 +313,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 217,
-                "end": 230,
+                "start": 264,
+                "end": 277,
                 "loc": {
                   "start": {
-                    "line": 5,
+                    "line": 6,
                     "column": 20
                   },
                   "end": {
-                    "line": 5,
+                    "line": 6,
                     "column": 33
                   }
                 },
@@ -279,15 +334,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 234,
-              "end": 263,
+              "start": 281,
+              "end": 310,
               "loc": {
                 "start": {
-                  "line": 6,
+                  "line": 7,
                   "column": 2
                 },
                 "end": {
-                  "line": 6,
+                  "line": 7,
                   "column": 31
                 }
               },
@@ -296,15 +351,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 234,
-                "end": 247,
+                "start": 281,
+                "end": 294,
                 "loc": {
                   "start": {
-                    "line": 6,
+                    "line": 7,
                     "column": 2
                   },
                   "end": {
-                    "line": 6,
+                    "line": 7,
                     "column": 15
                   },
                   "identifierName": "err_core_xprv"
@@ -313,15 +368,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 249,
-                "end": 263,
+                "start": 296,
+                "end": 310,
                 "loc": {
                   "start": {
-                    "line": 6,
+                    "line": 7,
                     "column": 17
                   },
                   "end": {
-                    "line": 6,
+                    "line": 7,
                     "column": 31
                   }
                 },
@@ -334,15 +389,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 267,
-              "end": 298,
+              "start": 314,
+              "end": 345,
               "loc": {
                 "start": {
-                  "line": 7,
+                  "line": 8,
                   "column": 2
                 },
                 "end": {
-                  "line": 7,
+                  "line": 8,
                   "column": 33
                 }
               },
@@ -351,15 +406,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 267,
-                "end": 281,
+                "start": 314,
+                "end": 328,
                 "loc": {
                   "start": {
-                    "line": 7,
+                    "line": 8,
                     "column": 2
                   },
                   "end": {
-                    "line": 7,
+                    "line": 8,
                     "column": 16
                   },
                   "identifierName": "err_core_hdkey"
@@ -368,15 +423,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 283,
-                "end": 298,
+                "start": 330,
+                "end": 345,
                 "loc": {
                   "start": {
-                    "line": 7,
+                    "line": 8,
                     "column": 18
                   },
                   "end": {
-                    "line": 7,
+                    "line": 8,
                     "column": 33
                   }
                 },
@@ -389,15 +444,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 302,
-              "end": 363,
+              "start": 349,
+              "end": 410,
               "loc": {
                 "start": {
-                  "line": 8,
+                  "line": 9,
                   "column": 2
                 },
                 "end": {
-                  "line": 8,
+                  "line": 9,
                   "column": 63
                 }
               },
@@ -406,15 +461,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 302,
-                "end": 319,
+                "start": 349,
+                "end": 366,
                 "loc": {
                   "start": {
-                    "line": 8,
+                    "line": 9,
                     "column": 2
                   },
                   "end": {
-                    "line": 8,
+                    "line": 9,
                     "column": 19
                   },
                   "identifierName": "err_core_btc_node"
@@ -423,15 +478,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 321,
-                "end": 363,
+                "start": 368,
+                "end": 410,
                 "loc": {
                   "start": {
-                    "line": 8,
+                    "line": 9,
                     "column": 21
                   },
                   "end": {
-                    "line": 8,
+                    "line": 9,
                     "column": 63
                   }
                 },
@@ -444,15 +499,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 367,
-              "end": 436,
+              "start": 414,
+              "end": 483,
               "loc": {
                 "start": {
-                  "line": 9,
+                  "line": 10,
                   "column": 2
                 },
                 "end": {
-                  "line": 9,
+                  "line": 10,
                   "column": 71
                 }
               },
@@ -461,15 +516,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 367,
-                "end": 384,
+                "start": 414,
+                "end": 431,
                 "loc": {
                   "start": {
-                    "line": 9,
+                    "line": 10,
                     "column": 2
                   },
                   "end": {
-                    "line": 9,
+                    "line": 10,
                     "column": 19
                   },
                   "identifierName": "err_core_eth_node"
@@ -478,15 +533,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 386,
-                "end": 436,
+                "start": 433,
+                "end": 483,
                 "loc": {
                   "start": {
-                    "line": 9,
+                    "line": 10,
                     "column": 21
                   },
                   "end": {
-                    "line": 9,
+                    "line": 10,
                     "column": 71
                   }
                 },
@@ -499,15 +554,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 440,
-              "end": 522,
+              "start": 487,
+              "end": 569,
               "loc": {
                 "start": {
-                  "line": 10,
+                  "line": 11,
                   "column": 2
                 },
                 "end": {
-                  "line": 10,
+                  "line": 11,
                   "column": 84
                 }
               },
@@ -516,15 +571,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 440,
-                "end": 464,
+                "start": 487,
+                "end": 511,
                 "loc": {
                   "start": {
-                    "line": 10,
+                    "line": 11,
                     "column": 2
                   },
                   "end": {
-                    "line": 10,
+                    "line": 11,
                     "column": 26
                   },
                   "identifierName": "err_core_eth_private_key"
@@ -533,15 +588,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 466,
-                "end": 522,
+                "start": 513,
+                "end": 569,
                 "loc": {
                   "start": {
-                    "line": 10,
+                    "line": 11,
                     "column": 28
                   },
                   "end": {
-                    "line": 10,
+                    "line": 11,
                     "column": 84
                   }
                 },
@@ -554,15 +609,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 526,
-              "end": 603,
+              "start": 573,
+              "end": 650,
               "loc": {
                 "start": {
-                  "line": 11,
+                  "line": 12,
                   "column": 2
                 },
                 "end": {
-                  "line": 11,
+                  "line": 12,
                   "column": 79
                 }
               },
@@ -571,15 +626,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 526,
-                "end": 549,
+                "start": 573,
+                "end": 596,
                 "loc": {
                   "start": {
-                    "line": 11,
+                    "line": 12,
                     "column": 2
                   },
                   "end": {
-                    "line": 11,
+                    "line": 12,
                     "column": 25
                   },
                   "identifierName": "err_core_eth_public_key"
@@ -588,15 +643,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 551,
-                "end": 603,
+                "start": 598,
+                "end": 650,
                 "loc": {
                   "start": {
-                    "line": 11,
+                    "line": 12,
                     "column": 27
                   },
                   "end": {
-                    "line": 11,
+                    "line": 12,
                     "column": 79
                   }
                 },
@@ -609,15 +664,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 607,
-              "end": 685,
+              "start": 654,
+              "end": 732,
               "loc": {
                 "start": {
-                  "line": 12,
+                  "line": 13,
                   "column": 2
                 },
                 "end": {
-                  "line": 12,
+                  "line": 13,
                   "column": 80
                 }
               },
@@ -626,15 +681,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 607,
-                "end": 626,
+                "start": 654,
+                "end": 673,
                 "loc": {
                   "start": {
-                    "line": 12,
+                    "line": 13,
                     "column": 2
                   },
                   "end": {
-                    "line": 12,
+                    "line": 13,
                     "column": 21
                   },
                   "identifierName": "err_core_derivation"
@@ -643,15 +698,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 628,
-                "end": 685,
+                "start": 675,
+                "end": 732,
                 "loc": {
                   "start": {
-                    "line": 12,
+                    "line": 13,
                     "column": 23
                   },
                   "end": {
-                    "line": 12,
+                    "line": 13,
                     "column": 80
                   }
                 },
@@ -664,15 +719,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 689,
-              "end": 735,
+              "start": 736,
+              "end": 782,
               "loc": {
                 "start": {
-                  "line": 13,
+                  "line": 14,
                   "column": 2
                 },
                 "end": {
-                  "line": 13,
+                  "line": 14,
                   "column": 48
                 }
               },
@@ -681,15 +736,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 689,
-                "end": 714,
+                "start": 736,
+                "end": 761,
                 "loc": {
                   "start": {
-                    "line": 13,
+                    "line": 14,
                     "column": 2
                   },
                   "end": {
-                    "line": 13,
+                    "line": 14,
                     "column": 27
                   },
                   "identifierName": "err_core_derivation_hdkey"
@@ -698,15 +753,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 716,
-                "end": 735,
+                "start": 763,
+                "end": 782,
                 "loc": {
                   "start": {
-                    "line": 13,
+                    "line": 14,
                     "column": 29
                   },
                   "end": {
-                    "line": 13,
+                    "line": 14,
                     "column": 48
                   }
                 },
@@ -719,15 +774,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 739,
-              "end": 790,
+              "start": 786,
+              "end": 837,
               "loc": {
                 "start": {
-                  "line": 14,
+                  "line": 15,
                   "column": 2
                 },
                 "end": {
-                  "line": 14,
+                  "line": 15,
                   "column": 53
                 }
               },
@@ -736,15 +791,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 739,
-                "end": 763,
+                "start": 786,
+                "end": 810,
                 "loc": {
                   "start": {
-                    "line": 14,
+                    "line": 15,
                     "column": 2
                   },
                   "end": {
-                    "line": 14,
+                    "line": 15,
                     "column": 26
                   },
                   "identifierName": "err_core_derivation_path"
@@ -753,15 +808,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 765,
-                "end": 790,
+                "start": 812,
+                "end": 837,
                 "loc": {
                   "start": {
-                    "line": 14,
+                    "line": 15,
                     "column": 28
                   },
                   "end": {
-                    "line": 14,
+                    "line": 15,
                     "column": 53
                   }
                 },
@@ -774,15 +829,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 794,
-              "end": 854,
+              "start": 841,
+              "end": 901,
               "loc": {
                 "start": {
-                  "line": 15,
+                  "line": 16,
                   "column": 2
                 },
                 "end": {
-                  "line": 15,
+                  "line": 16,
                   "column": 62
                 }
               },
@@ -791,15 +846,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 794,
-                "end": 819,
+                "start": 841,
+                "end": 866,
                 "loc": {
                   "start": {
-                    "line": 15,
+                    "line": 16,
                     "column": 2
                   },
                   "end": {
-                    "line": 15,
+                    "line": 16,
                     "column": 27
                   },
                   "identifierName": "err_core_derivation_range"
@@ -808,15 +863,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 821,
-                "end": 854,
+                "start": 868,
+                "end": 901,
                 "loc": {
                   "start": {
-                    "line": 15,
+                    "line": 16,
                     "column": 29
                   },
                   "end": {
-                    "line": 15,
+                    "line": 16,
                     "column": 62
                   }
                 },
@@ -829,15 +884,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 858,
-              "end": 916,
+              "start": 905,
+              "end": 963,
               "loc": {
                 "start": {
-                  "line": 16,
+                  "line": 17,
                   "column": 2
                 },
                 "end": {
-                  "line": 16,
+                  "line": 17,
                   "column": 60
                 }
               },
@@ -846,15 +901,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 858,
-                "end": 878,
+                "start": 905,
+                "end": 925,
                 "loc": {
                   "start": {
-                    "line": 16,
+                    "line": 17,
                     "column": 2
                   },
                   "end": {
-                    "line": 16,
+                    "line": 17,
                     "column": 22
                   },
                   "identifierName": "err_core_private_key"
@@ -863,15 +918,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 880,
-                "end": 916,
+                "start": 927,
+                "end": 963,
                 "loc": {
                   "start": {
-                    "line": 16,
+                    "line": 17,
                     "column": 24
                   },
                   "end": {
-                    "line": 16,
+                    "line": 17,
                     "column": 60
                   }
                 },
@@ -884,15 +939,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 920,
-              "end": 962,
+              "start": 967,
+              "end": 1009,
               "loc": {
                 "start": {
-                  "line": 17,
+                  "line": 18,
                   "column": 2
                 },
                 "end": {
-                  "line": 17,
+                  "line": 18,
                   "column": 44
                 }
               },
@@ -901,15 +956,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 920,
-                "end": 938,
+                "start": 967,
+                "end": 985,
                 "loc": {
                   "start": {
-                    "line": 17,
+                    "line": 18,
                     "column": 2
                   },
                   "end": {
-                    "line": 17,
+                    "line": 18,
                     "column": 20
                   },
                   "identifierName": "err_tx_btc_balance"
@@ -918,15 +973,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 940,
-                "end": 962,
+                "start": 987,
+                "end": 1009,
                 "loc": {
                   "start": {
-                    "line": 17,
+                    "line": 18,
                     "column": 22
                   },
                   "end": {
-                    "line": 17,
+                    "line": 18,
                     "column": 44
                   }
                 },
@@ -939,15 +994,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 966,
-              "end": 1030,
+              "start": 1013,
+              "end": 1077,
               "loc": {
                 "start": {
-                  "line": 18,
+                  "line": 19,
                   "column": 2
                 },
                 "end": {
-                  "line": 18,
+                  "line": 19,
                   "column": 66
                 }
               },
@@ -956,15 +1011,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 966,
-                "end": 982,
+                "start": 1013,
+                "end": 1029,
                 "loc": {
                   "start": {
-                    "line": 18,
+                    "line": 19,
                     "column": 2
                   },
                   "end": {
-                    "line": 18,
+                    "line": 19,
                     "column": 18
                   },
                   "identifierName": "err_tx_btc_build"
@@ -973,15 +1028,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 984,
-                "end": 1030,
+                "start": 1031,
+                "end": 1077,
                 "loc": {
                   "start": {
-                    "line": 18,
+                    "line": 19,
                     "column": 20
                   },
                   "end": {
-                    "line": 18,
+                    "line": 19,
                     "column": 66
                   }
                 },
@@ -994,15 +1049,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1034,
-              "end": 1094,
+              "start": 1081,
+              "end": 1141,
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 20,
                   "column": 2
                 },
                 "end": {
-                  "line": 19,
+                  "line": 20,
                   "column": 62
                 }
               },
@@ -1011,15 +1066,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1034,
-                "end": 1051,
+                "start": 1081,
+                "end": 1098,
                 "loc": {
                   "start": {
-                    "line": 19,
+                    "line": 20,
                     "column": 2
                   },
                   "end": {
-                    "line": 19,
+                    "line": 20,
                     "column": 19
                   },
                   "identifierName": "err_tx_btc_amount"
@@ -1028,15 +1083,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1053,
-                "end": 1094,
+                "start": 1100,
+                "end": 1141,
                 "loc": {
                   "start": {
-                    "line": 19,
+                    "line": 20,
                     "column": 21
                   },
                   "end": {
-                    "line": 19,
+                    "line": 20,
                     "column": 62
                   }
                 },
@@ -1049,15 +1104,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1098,
-              "end": 1149,
+              "start": 1145,
+              "end": 1196,
               "loc": {
                 "start": {
-                  "line": 20,
+                  "line": 21,
                   "column": 2
                 },
                 "end": {
-                  "line": 20,
+                  "line": 21,
                   "column": 53
                 }
               },
@@ -1066,15 +1121,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1098,
-                "end": 1112,
+                "start": 1145,
+                "end": 1159,
                 "loc": {
                   "start": {
-                    "line": 20,
+                    "line": 21,
                     "column": 2
                   },
                   "end": {
-                    "line": 20,
+                    "line": 21,
                     "column": 16
                   },
                   "identifierName": "err_tx_btc_fee"
@@ -1083,15 +1138,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1114,
-                "end": 1149,
+                "start": 1161,
+                "end": 1196,
                 "loc": {
                   "start": {
-                    "line": 20,
+                    "line": 21,
                     "column": 18
                   },
                   "end": {
-                    "line": 20,
+                    "line": 21,
                     "column": 53
                   }
                 },
@@ -1104,15 +1159,125 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1153,
-              "end": 1195,
+              "start": 1200,
+              "end": 1260,
               "loc": {
                 "start": {
-                  "line": 21,
+                  "line": 22,
                   "column": 2
                 },
                 "end": {
-                  "line": 21,
+                  "line": 22,
+                  "column": 62
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 1200,
+                "end": 1217,
+                "loc": {
+                  "start": {
+                    "line": 22,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 22,
+                    "column": 19
+                  },
+                  "identifierName": "err_tx_bch_amount"
+                },
+                "name": "err_tx_bch_amount"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 1219,
+                "end": 1260,
+                "loc": {
+                  "start": {
+                    "line": 22,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 22,
+                    "column": 62
+                  }
+                },
+                "extra": {
+                  "rawValue": "Invalid amount. Amount must by a Number",
+                  "raw": "'Invalid amount. Amount must by a Number'"
+                },
+                "value": "Invalid amount. Amount must by a Number"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 1264,
+              "end": 1315,
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 2
+                },
+                "end": {
+                  "line": 23,
+                  "column": 53
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 1264,
+                "end": 1278,
+                "loc": {
+                  "start": {
+                    "line": 23,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 23,
+                    "column": 16
+                  },
+                  "identifierName": "err_tx_bch_fee"
+                },
+                "name": "err_tx_bch_fee"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 1280,
+                "end": 1315,
+                "loc": {
+                  "start": {
+                    "line": 23,
+                    "column": 18
+                  },
+                  "end": {
+                    "line": 23,
+                    "column": 53
+                  }
+                },
+                "extra": {
+                  "rawValue": "Invalid fee. Fee must by a Number",
+                  "raw": "'Invalid fee. Fee must by a Number'"
+                },
+                "value": "Invalid fee. Fee must by a Number"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 1319,
+              "end": 1361,
+              "loc": {
+                "start": {
+                  "line": 24,
+                  "column": 2
+                },
+                "end": {
+                  "line": 24,
                   "column": 44
                 }
               },
@@ -1121,32 +1286,32 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1153,
-                "end": 1171,
+                "start": 1319,
+                "end": 1337,
                 "loc": {
                   "start": {
-                    "line": 21,
+                    "line": 24,
                     "column": 2
                   },
                   "end": {
-                    "line": 21,
+                    "line": 24,
                     "column": 20
                   },
-                  "identifierName": "err_tx_eth_balance"
+                  "identifierName": "err_tx_bch_balance"
                 },
-                "name": "err_tx_eth_balance"
+                "name": "err_tx_bch_balance"
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1173,
-                "end": 1195,
+                "start": 1339,
+                "end": 1361,
                 "loc": {
                   "start": {
-                    "line": 21,
+                    "line": 24,
                     "column": 22
                   },
                   "end": {
-                    "line": 21,
+                    "line": 24,
                     "column": 44
                   }
                 },
@@ -1159,15 +1324,125 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1199,
-              "end": 1245,
+              "start": 1365,
+              "end": 1429,
               "loc": {
                 "start": {
-                  "line": 22,
+                  "line": 25,
                   "column": 2
                 },
                 "end": {
-                  "line": 22,
+                  "line": 25,
+                  "column": 66
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 1365,
+                "end": 1381,
+                "loc": {
+                  "start": {
+                    "line": 25,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 25,
+                    "column": 18
+                  },
+                  "identifierName": "err_tx_bch_build"
+                },
+                "name": "err_tx_bch_build"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 1383,
+                "end": 1429,
+                "loc": {
+                  "start": {
+                    "line": 25,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 25,
+                    "column": 66
+                  }
+                },
+                "extra": {
+                  "rawValue": "BCH transaction failed. Check all parameters",
+                  "raw": "'BCH transaction failed. Check all parameters'"
+                },
+                "value": "BCH transaction failed. Check all parameters"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 1433,
+              "end": 1475,
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 2
+                },
+                "end": {
+                  "line": 26,
+                  "column": 44
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 1433,
+                "end": 1451,
+                "loc": {
+                  "start": {
+                    "line": 26,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 20
+                  },
+                  "identifierName": "err_tx_eth_balance"
+                },
+                "name": "err_tx_eth_balance"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 1453,
+                "end": 1475,
+                "loc": {
+                  "start": {
+                    "line": 26,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 44
+                  }
+                },
+                "extra": {
+                  "rawValue": "Insufficient balance",
+                  "raw": "'Insufficient balance'"
+                },
+                "value": "Insufficient balance"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 1479,
+              "end": 1525,
+              "loc": {
+                "start": {
+                  "line": 27,
+                  "column": 2
+                },
+                "end": {
+                  "line": 27,
                   "column": 48
                 }
               },
@@ -1176,15 +1451,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1199,
-                "end": 1217,
+                "start": 1479,
+                "end": 1497,
                 "loc": {
                   "start": {
-                    "line": 22,
+                    "line": 27,
                     "column": 2
                   },
                   "end": {
-                    "line": 22,
+                    "line": 27,
                     "column": 20
                   },
                   "identifierName": "err_tx_eth_address"
@@ -1193,15 +1468,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1219,
-                "end": 1245,
+                "start": 1499,
+                "end": 1525,
                 "loc": {
                   "start": {
-                    "line": 22,
+                    "line": 27,
                     "column": 22
                   },
                   "end": {
-                    "line": 22,
+                    "line": 27,
                     "column": 48
                   }
                 },
@@ -1214,15 +1489,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1249,
-              "end": 1313,
+              "start": 1529,
+              "end": 1593,
               "loc": {
                 "start": {
-                  "line": 23,
+                  "line": 28,
                   "column": 2
                 },
                 "end": {
-                  "line": 23,
+                  "line": 28,
                   "column": 66
                 }
               },
@@ -1231,15 +1506,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1249,
-                "end": 1265,
+                "start": 1529,
+                "end": 1545,
                 "loc": {
                   "start": {
-                    "line": 23,
+                    "line": 28,
                     "column": 2
                   },
                   "end": {
-                    "line": 23,
+                    "line": 28,
                     "column": 18
                   },
                   "identifierName": "err_tx_eth_build"
@@ -1248,15 +1523,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1267,
-                "end": 1313,
+                "start": 1547,
+                "end": 1593,
                 "loc": {
                   "start": {
-                    "line": 23,
+                    "line": 28,
                     "column": 20
                   },
                   "end": {
-                    "line": 23,
+                    "line": 28,
                     "column": 66
                   }
                 },
@@ -1269,15 +1544,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1317,
-              "end": 1419,
+              "start": 1597,
+              "end": 1699,
               "loc": {
                 "start": {
-                  "line": 24,
+                  "line": 29,
                   "column": 2
                 },
                 "end": {
-                  "line": 24,
+                  "line": 29,
                   "column": 104
                 }
               },
@@ -1286,15 +1561,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1317,
-                "end": 1342,
+                "start": 1597,
+                "end": 1622,
                 "loc": {
                   "start": {
-                    "line": 24,
+                    "line": 29,
                     "column": 2
                   },
                   "end": {
-                    "line": 24,
+                    "line": 29,
                     "column": 27
                   },
                   "identifierName": "err_tx_eth_invalid_params"
@@ -1303,15 +1578,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1344,
-                "end": 1419,
+                "start": 1624,
+                "end": 1699,
                 "loc": {
                   "start": {
-                    "line": 24,
+                    "line": 29,
                     "column": 29
                   },
                   "end": {
-                    "line": 24,
+                    "line": 29,
                     "column": 104
                   }
                 },
@@ -1324,15 +1599,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1423,
-              "end": 1511,
+              "start": 1703,
+              "end": 1791,
               "loc": {
                 "start": {
-                  "line": 25,
+                  "line": 30,
                   "column": 2
                 },
                 "end": {
-                  "line": 25,
+                  "line": 30,
                   "column": 90
                 }
               },
@@ -1341,15 +1616,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1423,
-                "end": 1455,
+                "start": 1703,
+                "end": 1735,
                 "loc": {
                   "start": {
-                    "line": 25,
+                    "line": 30,
                     "column": 2
                   },
                   "end": {
-                    "line": 25,
+                    "line": 30,
                     "column": 34
                   },
                   "identifierName": "err_tx_eth_invalid_params_string"
@@ -1358,15 +1633,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1457,
-                "end": 1511,
+                "start": 1737,
+                "end": 1791,
                 "loc": {
                   "start": {
-                    "line": 25,
+                    "line": 30,
                     "column": 36
                   },
                   "end": {
-                    "line": 25,
+                    "line": 30,
                     "column": 90
                   }
                 },
@@ -1379,15 +1654,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1515,
-              "end": 1594,
+              "start": 1795,
+              "end": 1874,
               "loc": {
                 "start": {
-                  "line": 26,
+                  "line": 31,
                   "column": 2
                 },
                 "end": {
-                  "line": 26,
+                  "line": 31,
                   "column": 81
                 }
               },
@@ -1396,15 +1671,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1515,
-                "end": 1531,
+                "start": 1795,
+                "end": 1811,
                 "loc": {
                   "start": {
-                    "line": 26,
+                    "line": 31,
                     "column": 2
                   },
                   "end": {
-                    "line": 26,
+                    "line": 31,
                     "column": 18
                   },
                   "identifierName": "err_wallet_exist"
@@ -1413,15 +1688,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1533,
-                "end": 1594,
+                "start": 1813,
+                "end": 1874,
                 "loc": {
                   "start": {
-                    "line": 26,
+                    "line": 31,
                     "column": 20
                   },
                   "end": {
-                    "line": 26,
+                    "line": 31,
                     "column": 81
                   }
                 },
@@ -1434,16 +1709,16 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1598,
-              "end": 1680,
+              "start": 1878,
+              "end": 1959,
               "loc": {
                 "start": {
-                  "line": 27,
+                  "line": 32,
                   "column": 2
                 },
                 "end": {
-                  "line": 27,
-                  "column": 84
+                  "line": 32,
+                  "column": 83
                 }
               },
               "method": false,
@@ -1451,15 +1726,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1598,
-                "end": 1612,
+                "start": 1878,
+                "end": 1892,
                 "loc": {
                   "start": {
-                    "line": 27,
+                    "line": 32,
                     "column": 2
                   },
                   "end": {
-                    "line": 27,
+                    "line": 32,
                     "column": 16
                   },
                   "identifierName": "err_wallet_api"
@@ -1468,23 +1743,133 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1614,
-                "end": 1680,
+                "start": 1894,
+                "end": 1959,
                 "loc": {
                   "start": {
-                    "line": 27,
+                    "line": 32,
                     "column": 18
                   },
                   "end": {
-                    "line": 27,
-                    "column": 84
+                    "line": 32,
+                    "column": 83
                   }
                 },
                 "extra": {
-                  "rawValue": "Api is not found! Please, use the setter apiEndpoint to install.",
-                  "raw": "'Api is not found! Please, use the setter apiEndpoint to install.'"
+                  "rawValue": "Api is not found! Please, use the setter apiEndpoint to install",
+                  "raw": "'Api is not found! Please, use the setter apiEndpoint to install'"
                 },
-                "value": "Api is not found! Please, use the setter apiEndpoint to install."
+                "value": "Api is not found! Please, use the setter apiEndpoint to install"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 1963,
+              "end": 2008,
+              "loc": {
+                "start": {
+                  "line": 33,
+                  "column": 2
+                },
+                "end": {
+                  "line": 33,
+                  "column": 47
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 1963,
+                "end": 1982,
+                "loc": {
+                  "start": {
+                    "line": 33,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 33,
+                    "column": 21
+                  },
+                  "identifierName": "err_wallet_api_type"
+                },
+                "name": "err_wallet_api_type"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 1984,
+                "end": 2008,
+                "loc": {
+                  "start": {
+                    "line": 33,
+                    "column": 23
+                  },
+                  "end": {
+                    "line": 33,
+                    "column": 47
+                  }
+                },
+                "extra": {
+                  "rawValue": "Api must be an object!",
+                  "raw": "'Api must be an object!'"
+                },
+                "value": "Api must be an object!"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 2012,
+              "end": 2103,
+              "loc": {
+                "start": {
+                  "line": 34,
+                  "column": 2
+                },
+                "end": {
+                  "line": 34,
+                  "column": 93
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 2012,
+                "end": 2040,
+                "loc": {
+                  "start": {
+                    "line": 34,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 34,
+                    "column": 30
+                  },
+                  "identifierName": "err_btc_private_key_by_index"
+                },
+                "name": "err_btc_private_key_by_index"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 2042,
+                "end": 2103,
+                "loc": {
+                  "start": {
+                    "line": 34,
+                    "column": 32
+                  },
+                  "end": {
+                    "line": 34,
+                    "column": 93
+                  }
+                },
+                "extra": {
+                  "rawValue": "Key generation problem. Check the node and derivation index",
+                  "raw": "'Key generation problem. Check the node and derivation index'"
+                },
+                "value": "Key generation problem. Check the node and derivation index"
               }
             }
           ],
@@ -1800,9 +2185,9 @@
         "postfix": false,
         "binop": null
       },
-      "value": "err_core_seed",
+      "value": "err_core_mnemonic_empty",
       "start": 166,
-      "end": 179,
+      "end": 189,
       "loc": {
         "start": {
           "line": 4,
@@ -1810,6 +2195,111 @@
         },
         "end": {
           "line": 4,
+          "column": 25
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 189,
+      "end": 190,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 25
+        },
+        "end": {
+          "line": 4,
+          "column": 26
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Invalid mnemonic",
+      "start": 191,
+      "end": 209,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 27
+        },
+        "end": {
+          "line": 4,
+          "column": 45
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 209,
+      "end": 210,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 45
+        },
+        "end": {
+          "line": 4,
+          "column": 46
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_core_seed",
+      "start": 213,
+      "end": 226,
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 2
+        },
+        "end": {
+          "line": 5,
           "column": 15
         }
       }
@@ -1827,15 +2317,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 179,
-      "end": 180,
+      "start": 226,
+      "end": 227,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 5,
           "column": 15
         },
         "end": {
-          "line": 4,
+          "line": 5,
           "column": 16
         }
       }
@@ -1854,15 +2344,15 @@
         "updateContext": null
       },
       "value": "Invalid seed",
-      "start": 181,
-      "end": 195,
+      "start": 228,
+      "end": 242,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 5,
           "column": 17
         },
         "end": {
-          "line": 4,
+          "line": 5,
           "column": 31
         }
       }
@@ -1880,15 +2370,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 195,
-      "end": 196,
+      "start": 242,
+      "end": 243,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 5,
           "column": 31
         },
         "end": {
-          "line": 4,
+          "line": 5,
           "column": 32
         }
       }
@@ -1906,15 +2396,15 @@
         "binop": null
       },
       "value": "err_core_entropy",
-      "start": 199,
-      "end": 215,
+      "start": 246,
+      "end": 262,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 6,
           "column": 2
         },
         "end": {
-          "line": 5,
+          "line": 6,
           "column": 18
         }
       }
@@ -1932,15 +2422,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 215,
-      "end": 216,
+      "start": 262,
+      "end": 263,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 6,
           "column": 18
         },
         "end": {
-          "line": 5,
+          "line": 6,
           "column": 19
         }
       }
@@ -1959,15 +2449,15 @@
         "updateContext": null
       },
       "value": "Bad entropy",
-      "start": 217,
-      "end": 230,
+      "start": 264,
+      "end": 277,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 6,
           "column": 20
         },
         "end": {
-          "line": 5,
+          "line": 6,
           "column": 33
         }
       }
@@ -1985,15 +2475,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 230,
-      "end": 231,
+      "start": 277,
+      "end": 278,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 6,
           "column": 33
         },
         "end": {
-          "line": 5,
+          "line": 6,
           "column": 34
         }
       }
@@ -2011,15 +2501,15 @@
         "binop": null
       },
       "value": "err_core_xprv",
-      "start": 234,
-      "end": 247,
+      "start": 281,
+      "end": 294,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 7,
           "column": 2
         },
         "end": {
-          "line": 6,
+          "line": 7,
           "column": 15
         }
       }
@@ -2037,15 +2527,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 247,
-      "end": 248,
+      "start": 294,
+      "end": 295,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 7,
           "column": 15
         },
         "end": {
-          "line": 6,
+          "line": 7,
           "column": 16
         }
       }
@@ -2064,15 +2554,15 @@
         "updateContext": null
       },
       "value": "Invalid xprv",
-      "start": 249,
-      "end": 263,
+      "start": 296,
+      "end": 310,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 7,
           "column": 17
         },
         "end": {
-          "line": 6,
+          "line": 7,
           "column": 31
         }
       }
@@ -2090,15 +2580,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 263,
-      "end": 264,
+      "start": 310,
+      "end": 311,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 7,
           "column": 31
         },
         "end": {
-          "line": 6,
+          "line": 7,
           "column": 32
         }
       }
@@ -2116,15 +2606,15 @@
         "binop": null
       },
       "value": "err_core_hdkey",
-      "start": 267,
-      "end": 281,
+      "start": 314,
+      "end": 328,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 2
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 16
         }
       }
@@ -2142,15 +2632,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 281,
-      "end": 282,
+      "start": 328,
+      "end": 329,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 16
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 17
         }
       }
@@ -2169,15 +2659,15 @@
         "updateContext": null
       },
       "value": "Invalid hdkey",
-      "start": 283,
-      "end": 298,
+      "start": 330,
+      "end": 345,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 18
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 33
         }
       }
@@ -2195,15 +2685,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 298,
-      "end": 299,
+      "start": 345,
+      "end": 346,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 33
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 34
         }
       }
@@ -2221,15 +2711,15 @@
         "binop": null
       },
       "value": "err_core_btc_node",
-      "start": 302,
-      "end": 319,
+      "start": 349,
+      "end": 366,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 2
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 19
         }
       }
@@ -2247,15 +2737,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 319,
-      "end": 320,
+      "start": 366,
+      "end": 367,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 19
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 20
         }
       }
@@ -2274,15 +2764,15 @@
         "updateContext": null
       },
       "value": "Error generating address. Check BTC node",
-      "start": 321,
-      "end": 363,
+      "start": 368,
+      "end": 410,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 21
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 63
         }
       }
@@ -2300,15 +2790,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 363,
-      "end": 364,
+      "start": 410,
+      "end": 411,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 63
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 64
         }
       }
@@ -2326,15 +2816,15 @@
         "binop": null
       },
       "value": "err_core_eth_node",
-      "start": 367,
-      "end": 384,
+      "start": 414,
+      "end": 431,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 2
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 19
         }
       }
@@ -2352,15 +2842,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 384,
-      "end": 385,
+      "start": 431,
+      "end": 432,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 19
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 20
         }
       }
@@ -2379,15 +2869,15 @@
         "updateContext": null
       },
       "value": "Error generating ETH private key. Check ETH node",
-      "start": 386,
-      "end": 436,
+      "start": 433,
+      "end": 483,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 21
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 71
         }
       }
@@ -2405,15 +2895,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 436,
-      "end": 437,
+      "start": 483,
+      "end": 484,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 71
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 72
         }
       }
@@ -2431,15 +2921,15 @@
         "binop": null
       },
       "value": "err_core_eth_private_key",
-      "start": 440,
-      "end": 464,
+      "start": 487,
+      "end": 511,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 11,
           "column": 2
         },
         "end": {
-          "line": 10,
+          "line": 11,
           "column": 26
         }
       }
@@ -2457,15 +2947,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 464,
-      "end": 465,
+      "start": 511,
+      "end": 512,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 11,
           "column": 26
         },
         "end": {
-          "line": 10,
+          "line": 11,
           "column": 27
         }
       }
@@ -2484,15 +2974,15 @@
         "updateContext": null
       },
       "value": "Error generating ETH public key. Check ETH private key",
-      "start": 466,
-      "end": 522,
+      "start": 513,
+      "end": 569,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 11,
           "column": 28
         },
         "end": {
-          "line": 10,
+          "line": 11,
           "column": 84
         }
       }
@@ -2510,15 +3000,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 522,
-      "end": 523,
+      "start": 569,
+      "end": 570,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 11,
           "column": 84
         },
         "end": {
-          "line": 10,
+          "line": 11,
           "column": 85
         }
       }
@@ -2536,15 +3026,15 @@
         "binop": null
       },
       "value": "err_core_eth_public_key",
-      "start": 526,
-      "end": 549,
+      "start": 573,
+      "end": 596,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 12,
           "column": 2
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "column": 25
         }
       }
@@ -2562,15 +3052,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 549,
-      "end": 550,
+      "start": 596,
+      "end": 597,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 12,
           "column": 25
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "column": 26
         }
       }
@@ -2589,15 +3079,15 @@
         "updateContext": null
       },
       "value": "Error generating ETH address. Check ETH public key",
-      "start": 551,
-      "end": 603,
+      "start": 598,
+      "end": 650,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 12,
           "column": 27
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "column": 79
         }
       }
@@ -2615,15 +3105,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 603,
-      "end": 604,
+      "start": 650,
+      "end": 651,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 12,
           "column": 79
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "column": 80
         }
       }
@@ -2641,15 +3131,15 @@
         "binop": null
       },
       "value": "err_core_derivation",
-      "start": 607,
-      "end": 626,
+      "start": 654,
+      "end": 673,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 13,
           "column": 2
         },
         "end": {
-          "line": 12,
+          "line": 13,
           "column": 21
         }
       }
@@ -2667,15 +3157,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 626,
-      "end": 627,
+      "start": 673,
+      "end": 674,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 13,
           "column": 21
         },
         "end": {
-          "line": 12,
+          "line": 13,
           "column": 22
         }
       }
@@ -2694,15 +3184,15 @@
         "updateContext": null
       },
       "value": "Problem with derivation. Check node and derivation path",
-      "start": 628,
-      "end": 685,
+      "start": 675,
+      "end": 732,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 13,
           "column": 23
         },
         "end": {
-          "line": 12,
+          "line": 13,
           "column": 80
         }
       }
@@ -2720,15 +3210,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 685,
-      "end": 686,
+      "start": 732,
+      "end": 733,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 13,
           "column": 80
         },
         "end": {
-          "line": 12,
+          "line": 13,
           "column": 81
         }
       }
@@ -2746,15 +3236,15 @@
         "binop": null
       },
       "value": "err_core_derivation_hdkey",
-      "start": 689,
-      "end": 714,
+      "start": 736,
+      "end": 761,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 14,
           "column": 2
         },
         "end": {
-          "line": 13,
+          "line": 14,
           "column": 27
         }
       }
@@ -2772,15 +3262,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 714,
-      "end": 715,
+      "start": 761,
+      "end": 762,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 14,
           "column": 27
         },
         "end": {
-          "line": 13,
+          "line": 14,
           "column": 28
         }
       }
@@ -2799,15 +3289,15 @@
         "updateContext": null
       },
       "value": "HDkey is required",
-      "start": 716,
-      "end": 735,
+      "start": 763,
+      "end": 782,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 14,
           "column": 29
         },
         "end": {
-          "line": 13,
+          "line": 14,
           "column": 48
         }
       }
@@ -2825,15 +3315,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 735,
-      "end": 736,
+      "start": 782,
+      "end": 783,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 14,
           "column": 48
         },
         "end": {
-          "line": 13,
+          "line": 14,
           "column": 49
         }
       }
@@ -2851,15 +3341,15 @@
         "binop": null
       },
       "value": "err_core_derivation_path",
-      "start": 739,
-      "end": 763,
+      "start": 786,
+      "end": 810,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 15,
           "column": 2
         },
         "end": {
-          "line": 14,
+          "line": 15,
           "column": 26
         }
       }
@@ -2877,15 +3367,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 763,
-      "end": 764,
+      "start": 810,
+      "end": 811,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 15,
           "column": 26
         },
         "end": {
-          "line": 14,
+          "line": 15,
           "column": 27
         }
       }
@@ -2904,15 +3394,15 @@
         "updateContext": null
       },
       "value": "Invalid derivation path",
-      "start": 765,
-      "end": 790,
+      "start": 812,
+      "end": 837,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 15,
           "column": 28
         },
         "end": {
-          "line": 14,
+          "line": 15,
           "column": 53
         }
       }
@@ -2930,15 +3420,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 790,
-      "end": 791,
+      "start": 837,
+      "end": 838,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 15,
           "column": 53
         },
         "end": {
-          "line": 14,
+          "line": 15,
           "column": 54
         }
       }
@@ -2956,15 +3446,15 @@
         "binop": null
       },
       "value": "err_core_derivation_range",
-      "start": 794,
-      "end": 819,
+      "start": 841,
+      "end": 866,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 16,
           "column": 2
         },
         "end": {
-          "line": 15,
+          "line": 16,
           "column": 27
         }
       }
@@ -2982,15 +3472,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 819,
-      "end": 820,
+      "start": 866,
+      "end": 867,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 16,
           "column": 27
         },
         "end": {
-          "line": 15,
+          "line": 16,
           "column": 28
         }
       }
@@ -3009,15 +3499,15 @@
         "updateContext": null
       },
       "value": "Bad range. Check from/to params",
-      "start": 821,
-      "end": 854,
+      "start": 868,
+      "end": 901,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 16,
           "column": 29
         },
         "end": {
-          "line": 15,
+          "line": 16,
           "column": 62
         }
       }
@@ -3035,15 +3525,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 854,
-      "end": 855,
+      "start": 901,
+      "end": 902,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 16,
           "column": 62
         },
         "end": {
-          "line": 15,
+          "line": 16,
           "column": 63
         }
       }
@@ -3061,15 +3551,15 @@
         "binop": null
       },
       "value": "err_core_private_key",
-      "start": 858,
-      "end": 878,
+      "start": 905,
+      "end": 925,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 17,
           "column": 2
         },
         "end": {
-          "line": 16,
+          "line": 17,
           "column": 22
         }
       }
@@ -3087,15 +3577,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 878,
-      "end": 879,
+      "start": 925,
+      "end": 926,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 17,
           "column": 22
         },
         "end": {
-          "line": 16,
+          "line": 17,
           "column": 23
         }
       }
@@ -3114,15 +3604,15 @@
         "updateContext": null
       },
       "value": "Invalid private key. Expect buffer",
-      "start": 880,
-      "end": 916,
+      "start": 927,
+      "end": 963,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 17,
           "column": 24
         },
         "end": {
-          "line": 16,
+          "line": 17,
           "column": 60
         }
       }
@@ -3140,15 +3630,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 916,
-      "end": 917,
+      "start": 963,
+      "end": 964,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 17,
           "column": 60
         },
         "end": {
-          "line": 16,
+          "line": 17,
           "column": 61
         }
       }
@@ -3166,15 +3656,15 @@
         "binop": null
       },
       "value": "err_tx_btc_balance",
-      "start": 920,
-      "end": 938,
+      "start": 967,
+      "end": 985,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 18,
           "column": 2
         },
         "end": {
-          "line": 17,
+          "line": 18,
           "column": 20
         }
       }
@@ -3192,15 +3682,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 938,
-      "end": 939,
+      "start": 985,
+      "end": 986,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 18,
           "column": 20
         },
         "end": {
-          "line": 17,
+          "line": 18,
           "column": 21
         }
       }
@@ -3219,15 +3709,15 @@
         "updateContext": null
       },
       "value": "Insufficient balance",
-      "start": 940,
-      "end": 962,
+      "start": 987,
+      "end": 1009,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 18,
           "column": 22
         },
         "end": {
-          "line": 17,
+          "line": 18,
           "column": 44
         }
       }
@@ -3245,15 +3735,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 962,
-      "end": 963,
+      "start": 1009,
+      "end": 1010,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 18,
           "column": 44
         },
         "end": {
-          "line": 17,
+          "line": 18,
           "column": 45
         }
       }
@@ -3271,15 +3761,15 @@
         "binop": null
       },
       "value": "err_tx_btc_build",
-      "start": 966,
-      "end": 982,
+      "start": 1013,
+      "end": 1029,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 19,
           "column": 2
         },
         "end": {
-          "line": 18,
+          "line": 19,
           "column": 18
         }
       }
@@ -3297,15 +3787,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 982,
-      "end": 983,
+      "start": 1029,
+      "end": 1030,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 19,
           "column": 18
         },
         "end": {
-          "line": 18,
+          "line": 19,
           "column": 19
         }
       }
@@ -3324,15 +3814,15 @@
         "updateContext": null
       },
       "value": "BTC transaction failed. Check all parameters",
-      "start": 984,
-      "end": 1030,
+      "start": 1031,
+      "end": 1077,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 19,
           "column": 20
         },
         "end": {
-          "line": 18,
+          "line": 19,
           "column": 66
         }
       }
@@ -3350,15 +3840,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1030,
-      "end": 1031,
+      "start": 1077,
+      "end": 1078,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 19,
           "column": 66
         },
         "end": {
-          "line": 18,
+          "line": 19,
           "column": 67
         }
       }
@@ -3376,15 +3866,15 @@
         "binop": null
       },
       "value": "err_tx_btc_amount",
-      "start": 1034,
-      "end": 1051,
+      "start": 1081,
+      "end": 1098,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 20,
           "column": 2
         },
         "end": {
-          "line": 19,
+          "line": 20,
           "column": 19
         }
       }
@@ -3402,15 +3892,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1051,
-      "end": 1052,
+      "start": 1098,
+      "end": 1099,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 20,
           "column": 19
         },
         "end": {
-          "line": 19,
+          "line": 20,
           "column": 20
         }
       }
@@ -3429,15 +3919,15 @@
         "updateContext": null
       },
       "value": "Invalid amount. Amount must by a Number",
-      "start": 1053,
-      "end": 1094,
+      "start": 1100,
+      "end": 1141,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 20,
           "column": 21
         },
         "end": {
-          "line": 19,
+          "line": 20,
           "column": 62
         }
       }
@@ -3455,15 +3945,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1094,
-      "end": 1095,
+      "start": 1141,
+      "end": 1142,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 20,
           "column": 62
         },
         "end": {
-          "line": 19,
+          "line": 20,
           "column": 63
         }
       }
@@ -3481,15 +3971,15 @@
         "binop": null
       },
       "value": "err_tx_btc_fee",
-      "start": 1098,
-      "end": 1112,
+      "start": 1145,
+      "end": 1159,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 21,
           "column": 2
         },
         "end": {
-          "line": 20,
+          "line": 21,
           "column": 16
         }
       }
@@ -3507,15 +3997,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1112,
-      "end": 1113,
+      "start": 1159,
+      "end": 1160,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 21,
           "column": 16
         },
         "end": {
-          "line": 20,
+          "line": 21,
           "column": 17
         }
       }
@@ -3534,15 +4024,15 @@
         "updateContext": null
       },
       "value": "Invalid fee. Fee must by a Number",
-      "start": 1114,
-      "end": 1149,
+      "start": 1161,
+      "end": 1196,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 21,
           "column": 18
         },
         "end": {
-          "line": 20,
+          "line": 21,
           "column": 53
         }
       }
@@ -3560,15 +4050,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1149,
-      "end": 1150,
+      "start": 1196,
+      "end": 1197,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 21,
           "column": 53
         },
         "end": {
-          "line": 20,
+          "line": 21,
           "column": 54
         }
       }
@@ -3585,113 +4075,8 @@
         "postfix": false,
         "binop": null
       },
-      "value": "err_tx_eth_balance",
-      "start": 1153,
-      "end": 1171,
-      "loc": {
-        "start": {
-          "line": 21,
-          "column": 2
-        },
-        "end": {
-          "line": 21,
-          "column": 20
-        }
-      }
-    },
-    {
-      "type": {
-        "label": ":",
-        "beforeExpr": true,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "start": 1171,
-      "end": 1172,
-      "loc": {
-        "start": {
-          "line": 21,
-          "column": 20
-        },
-        "end": {
-          "line": 21,
-          "column": 21
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "string",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "Insufficient balance",
-      "start": 1173,
-      "end": 1195,
-      "loc": {
-        "start": {
-          "line": 21,
-          "column": 22
-        },
-        "end": {
-          "line": 21,
-          "column": 44
-        }
-      }
-    },
-    {
-      "type": {
-        "label": ",",
-        "beforeExpr": true,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "start": 1195,
-      "end": 1196,
-      "loc": {
-        "start": {
-          "line": 21,
-          "column": 44
-        },
-        "end": {
-          "line": 21,
-          "column": 45
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "value": "err_tx_eth_address",
-      "start": 1199,
+      "value": "err_tx_bch_amount",
+      "start": 1200,
       "end": 1217,
       "loc": {
         "start": {
@@ -3700,7 +4085,7 @@
         },
         "end": {
           "line": 22,
-          "column": 20
+          "column": 19
         }
       }
     },
@@ -3722,10 +4107,535 @@
       "loc": {
         "start": {
           "line": 22,
-          "column": 20
+          "column": 19
         },
         "end": {
           "line": 22,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Invalid amount. Amount must by a Number",
+      "start": 1219,
+      "end": 1260,
+      "loc": {
+        "start": {
+          "line": 22,
+          "column": 21
+        },
+        "end": {
+          "line": 22,
+          "column": 62
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1260,
+      "end": 1261,
+      "loc": {
+        "start": {
+          "line": 22,
+          "column": 62
+        },
+        "end": {
+          "line": 22,
+          "column": 63
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_bch_fee",
+      "start": 1264,
+      "end": 1278,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 2
+        },
+        "end": {
+          "line": 23,
+          "column": 16
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1278,
+      "end": 1279,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 16
+        },
+        "end": {
+          "line": 23,
+          "column": 17
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Invalid fee. Fee must by a Number",
+      "start": 1280,
+      "end": 1315,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 18
+        },
+        "end": {
+          "line": 23,
+          "column": 53
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1315,
+      "end": 1316,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 53
+        },
+        "end": {
+          "line": 23,
+          "column": 54
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_bch_balance",
+      "start": 1319,
+      "end": 1337,
+      "loc": {
+        "start": {
+          "line": 24,
+          "column": 2
+        },
+        "end": {
+          "line": 24,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1337,
+      "end": 1338,
+      "loc": {
+        "start": {
+          "line": 24,
+          "column": 20
+        },
+        "end": {
+          "line": 24,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Insufficient balance",
+      "start": 1339,
+      "end": 1361,
+      "loc": {
+        "start": {
+          "line": 24,
+          "column": 22
+        },
+        "end": {
+          "line": 24,
+          "column": 44
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1361,
+      "end": 1362,
+      "loc": {
+        "start": {
+          "line": 24,
+          "column": 44
+        },
+        "end": {
+          "line": 24,
+          "column": 45
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_bch_build",
+      "start": 1365,
+      "end": 1381,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 2
+        },
+        "end": {
+          "line": 25,
+          "column": 18
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1381,
+      "end": 1382,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 18
+        },
+        "end": {
+          "line": 25,
+          "column": 19
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "BCH transaction failed. Check all parameters",
+      "start": 1383,
+      "end": 1429,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 20
+        },
+        "end": {
+          "line": 25,
+          "column": 66
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1429,
+      "end": 1430,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 66
+        },
+        "end": {
+          "line": 25,
+          "column": 67
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_eth_balance",
+      "start": 1433,
+      "end": 1451,
+      "loc": {
+        "start": {
+          "line": 26,
+          "column": 2
+        },
+        "end": {
+          "line": 26,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1451,
+      "end": 1452,
+      "loc": {
+        "start": {
+          "line": 26,
+          "column": 20
+        },
+        "end": {
+          "line": 26,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Insufficient balance",
+      "start": 1453,
+      "end": 1475,
+      "loc": {
+        "start": {
+          "line": 26,
+          "column": 22
+        },
+        "end": {
+          "line": 26,
+          "column": 44
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1475,
+      "end": 1476,
+      "loc": {
+        "start": {
+          "line": 26,
+          "column": 44
+        },
+        "end": {
+          "line": 26,
+          "column": 45
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_eth_address",
+      "start": 1479,
+      "end": 1497,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 2
+        },
+        "end": {
+          "line": 27,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1497,
+      "end": 1498,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 20
+        },
+        "end": {
+          "line": 27,
           "column": 21
         }
       }
@@ -3744,15 +4654,15 @@
         "updateContext": null
       },
       "value": "Invalid ethereum address",
-      "start": 1219,
-      "end": 1245,
+      "start": 1499,
+      "end": 1525,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 27,
           "column": 22
         },
         "end": {
-          "line": 22,
+          "line": 27,
           "column": 48
         }
       }
@@ -3770,15 +4680,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1245,
-      "end": 1246,
+      "start": 1525,
+      "end": 1526,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 27,
           "column": 48
         },
         "end": {
-          "line": 22,
+          "line": 27,
           "column": 49
         }
       }
@@ -3796,15 +4706,15 @@
         "binop": null
       },
       "value": "err_tx_eth_build",
-      "start": 1249,
-      "end": 1265,
+      "start": 1529,
+      "end": 1545,
       "loc": {
         "start": {
-          "line": 23,
+          "line": 28,
           "column": 2
         },
         "end": {
-          "line": 23,
+          "line": 28,
           "column": 18
         }
       }
@@ -3822,15 +4732,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1265,
-      "end": 1266,
+      "start": 1545,
+      "end": 1546,
       "loc": {
         "start": {
-          "line": 23,
+          "line": 28,
           "column": 18
         },
         "end": {
-          "line": 23,
+          "line": 28,
           "column": 19
         }
       }
@@ -3849,15 +4759,15 @@
         "updateContext": null
       },
       "value": "ETH transaction failed. Check all parameters",
-      "start": 1267,
-      "end": 1313,
+      "start": 1547,
+      "end": 1593,
       "loc": {
         "start": {
-          "line": 23,
+          "line": 28,
           "column": 20
         },
         "end": {
-          "line": 23,
+          "line": 28,
           "column": 66
         }
       }
@@ -3875,15 +4785,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1313,
-      "end": 1314,
+      "start": 1593,
+      "end": 1594,
       "loc": {
         "start": {
-          "line": 23,
+          "line": 28,
           "column": 66
         },
         "end": {
-          "line": 23,
+          "line": 28,
           "column": 67
         }
       }
@@ -3901,15 +4811,15 @@
         "binop": null
       },
       "value": "err_tx_eth_invalid_params",
-      "start": 1317,
-      "end": 1342,
+      "start": 1597,
+      "end": 1622,
       "loc": {
         "start": {
-          "line": 24,
+          "line": 29,
           "column": 2
         },
         "end": {
-          "line": 24,
+          "line": 29,
           "column": 27
         }
       }
@@ -3927,15 +4837,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1342,
-      "end": 1343,
+      "start": 1622,
+      "end": 1623,
       "loc": {
         "start": {
-          "line": 24,
+          "line": 29,
           "column": 27
         },
         "end": {
-          "line": 24,
+          "line": 29,
           "column": 28
         }
       }
@@ -3954,15 +4864,15 @@
         "updateContext": null
       },
       "value": "Invalid params. Nonce, value, gas price and gas limit have to be a number",
-      "start": 1344,
-      "end": 1419,
+      "start": 1624,
+      "end": 1699,
       "loc": {
         "start": {
-          "line": 24,
+          "line": 29,
           "column": 29
         },
         "end": {
-          "line": 24,
+          "line": 29,
           "column": 104
         }
       }
@@ -3980,15 +4890,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1419,
-      "end": 1420,
+      "start": 1699,
+      "end": 1700,
       "loc": {
         "start": {
-          "line": 24,
+          "line": 29,
           "column": 104
         },
         "end": {
-          "line": 24,
+          "line": 29,
           "column": 105
         }
       }
@@ -4006,15 +4916,15 @@
         "binop": null
       },
       "value": "err_tx_eth_invalid_params_string",
-      "start": 1423,
-      "end": 1455,
+      "start": 1703,
+      "end": 1735,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 30,
           "column": 2
         },
         "end": {
-          "line": 25,
+          "line": 30,
           "column": 34
         }
       }
@@ -4032,15 +4942,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1455,
-      "end": 1456,
+      "start": 1735,
+      "end": 1736,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 30,
           "column": 34
         },
         "end": {
-          "line": 25,
+          "line": 30,
           "column": 35
         }
       }
@@ -4059,15 +4969,15 @@
         "updateContext": null
       },
       "value": "Invalid params. Parameters \"to\" must be string based",
-      "start": 1457,
-      "end": 1511,
+      "start": 1737,
+      "end": 1791,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 30,
           "column": 36
         },
         "end": {
-          "line": 25,
+          "line": 30,
           "column": 90
         }
       }
@@ -4085,15 +4995,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1511,
-      "end": 1512,
+      "start": 1791,
+      "end": 1792,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 30,
           "column": 90
         },
         "end": {
-          "line": 25,
+          "line": 30,
           "column": 91
         }
       }
@@ -4111,15 +5021,15 @@
         "binop": null
       },
       "value": "err_wallet_exist",
-      "start": 1515,
-      "end": 1531,
+      "start": 1795,
+      "end": 1811,
       "loc": {
         "start": {
-          "line": 26,
+          "line": 31,
           "column": 2
         },
         "end": {
-          "line": 26,
+          "line": 31,
           "column": 18
         }
       }
@@ -4137,15 +5047,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1531,
-      "end": 1532,
+      "start": 1811,
+      "end": 1812,
       "loc": {
         "start": {
-          "line": 26,
+          "line": 31,
           "column": 18
         },
         "end": {
-          "line": 26,
+          "line": 31,
           "column": 19
         }
       }
@@ -4164,15 +5074,15 @@
         "updateContext": null
       },
       "value": "Wallet not created. Use this method after creating a wallet",
-      "start": 1533,
-      "end": 1594,
+      "start": 1813,
+      "end": 1874,
       "loc": {
         "start": {
-          "line": 26,
+          "line": 31,
           "column": 20
         },
         "end": {
-          "line": 26,
+          "line": 31,
           "column": 81
         }
       }
@@ -4190,15 +5100,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1594,
-      "end": 1595,
+      "start": 1874,
+      "end": 1875,
       "loc": {
         "start": {
-          "line": 26,
+          "line": 31,
           "column": 81
         },
         "end": {
-          "line": 26,
+          "line": 31,
           "column": 82
         }
       }
@@ -4216,15 +5126,15 @@
         "binop": null
       },
       "value": "err_wallet_api",
-      "start": 1598,
-      "end": 1612,
+      "start": 1878,
+      "end": 1892,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 32,
           "column": 2
         },
         "end": {
-          "line": 27,
+          "line": 32,
           "column": 16
         }
       }
@@ -4242,15 +5152,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1612,
-      "end": 1613,
+      "start": 1892,
+      "end": 1893,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 32,
           "column": 16
         },
         "end": {
-          "line": 27,
+          "line": 32,
           "column": 17
         }
       }
@@ -4268,17 +5178,227 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "Api is not found! Please, use the setter apiEndpoint to install.",
-      "start": 1614,
-      "end": 1680,
+      "value": "Api is not found! Please, use the setter apiEndpoint to install",
+      "start": 1894,
+      "end": 1959,
       "loc": {
         "start": {
-          "line": 27,
+          "line": 32,
           "column": 18
         },
         "end": {
-          "line": 27,
+          "line": 32,
+          "column": 83
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1959,
+      "end": 1960,
+      "loc": {
+        "start": {
+          "line": 32,
+          "column": 83
+        },
+        "end": {
+          "line": 32,
           "column": 84
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_wallet_api_type",
+      "start": 1963,
+      "end": 1982,
+      "loc": {
+        "start": {
+          "line": 33,
+          "column": 2
+        },
+        "end": {
+          "line": 33,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 1982,
+      "end": 1983,
+      "loc": {
+        "start": {
+          "line": 33,
+          "column": 21
+        },
+        "end": {
+          "line": 33,
+          "column": 22
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Api must be an object!",
+      "start": 1984,
+      "end": 2008,
+      "loc": {
+        "start": {
+          "line": 33,
+          "column": 23
+        },
+        "end": {
+          "line": 33,
+          "column": 47
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2008,
+      "end": 2009,
+      "loc": {
+        "start": {
+          "line": 33,
+          "column": 47
+        },
+        "end": {
+          "line": 33,
+          "column": 48
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_btc_private_key_by_index",
+      "start": 2012,
+      "end": 2040,
+      "loc": {
+        "start": {
+          "line": 34,
+          "column": 2
+        },
+        "end": {
+          "line": 34,
+          "column": 30
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2040,
+      "end": 2041,
+      "loc": {
+        "start": {
+          "line": 34,
+          "column": 30
+        },
+        "end": {
+          "line": 34,
+          "column": 31
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Key generation problem. Check the node and derivation index",
+      "start": 2042,
+      "end": 2103,
+      "loc": {
+        "start": {
+          "line": 34,
+          "column": 32
+        },
+        "end": {
+          "line": 34,
+          "column": 93
         }
       }
     },
@@ -4294,15 +5414,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1681,
-      "end": 1682,
+      "start": 2104,
+      "end": 2105,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 35,
           "column": 0
         },
         "end": {
-          "line": 28,
+          "line": 35,
           "column": 1
         }
       }
@@ -4320,15 +5440,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1683,
-      "end": 1683,
+      "start": 2106,
+      "end": 2106,
       "loc": {
         "start": {
-          "line": 29,
+          "line": 36,
           "column": 0
         },
         "end": {
-          "line": 29,
+          "line": 36,
           "column": 0
         }
       }

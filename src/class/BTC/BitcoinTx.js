@@ -2,6 +2,11 @@ import converter from '@/helpers/converters'
 import {calcBtcTxSize, makeRawBtcTx} from '@/helpers/coreHelper'
 import CustomError from '@/helpers/handleErrors'
 
+/**
+ * List of available commission types for Bitcoin transactions
+ * @type {Array}
+ */
+
 const FEE_IDS = ['fast', 'regular', 'cheap', 'custom']
 
 /**
@@ -14,7 +19,7 @@ const FEE_IDS = ['fast', 'regular', 'cheap', 'custom']
 export default class BitcoinTx {
   /**
    * Create a BitcoinTx
-   * @param {Object} data - Input data for generating a transaction or calculating a fee or available amount
+   * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount
    * @param {Array} data.unspent - Array of unspent addresses
    * @param {string} data.internalAddress - Address for change
    * @param {number} data.amount - Transaction amount
@@ -23,6 +28,7 @@ export default class BitcoinTx {
    * @param {Object} data.customFee - Custom fee entered by the user
    */
   constructor (data) {
+    console.log('btc', data)
     this.unspent = data.unspent
     this.internalAddress = data.internalAddress
     this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
@@ -74,7 +80,6 @@ export default class BitcoinTx {
    * @returns {Array} Returns an array with zero fees
    */
   
-  // TODO docs
   calcEmptyFee (fees) {
     this.feeList = fees.map((item, i) => {
       return {
@@ -142,11 +147,10 @@ export default class BitcoinTx {
   }
   
   /**
-   * Creating a transaction
+   * Creating a Bitcoin transaction
    * @param {Object} data - Input data for a transaction
    * @param {string} data.addressTo - Recipient address
    * @param {Object} data.fee - The transaction fee and list of inputs
-   * @param {Object} data.inputsAmount - The amount of inputs involved in the transaction
    * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully
    */
   

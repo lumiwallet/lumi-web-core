@@ -2,7 +2,6 @@ import {validateMnemonic} from 'bip39'
 import {normalize, checkWords} from 'bip39-checker'
 import CustomError from '@/helpers/handleErrors'
 import * as core from '@/helpers/coreHelper'
-import * as bitcoin from 'bitcoinjs-lib'
 
 /**
  * Class Wallet
@@ -114,8 +113,8 @@ export default class Core {
   
   /**
    * Creating a core for Bitcoin.
-   * At the output, we get a external and internal node,
-   * a private and public key, and the first address of the external core
+   * At the output, we get a external and internal node
+   * and the first address of the external core
    * @private
    */
   
@@ -144,8 +143,11 @@ export default class Core {
   }
   
   /**
-   * TODO: docs
-   * */
+   * Creating a core for Bitcoin Cash.
+   * At the output, we get a external and internal node
+   * and the first address of the external core
+   * @private
+   */
   
   _generateBCHcore () {
     const bitcoincash_external_path = 'm/44\'/145\'/0\'/0'

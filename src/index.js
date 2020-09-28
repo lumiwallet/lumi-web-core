@@ -1,10 +1,10 @@
-import Wrapper                      from '@/Wrapper'
-import CustomError                  from '@/helpers/handleErrors'
-import {makeRawBtcTx, makeRawEthTx} from '@/helpers/coreHelper'
+import Wrapper from '@/Wrapper'
+import CustomError from '@/helpers/handleErrors'
+import {makeRawBtcTx, makeRawEthTx, makeRawBchTx} from '@/helpers/coreHelper'
 
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
-export {makeRawBtcTx, makeRawEthTx}
+export {makeRawBtcTx, makeRawEthTx, makeRawBchTx}
 
 /**
  * Class Wallet
@@ -73,7 +73,7 @@ export default class Wallet {
   
   async createByMnemonic (mnemonic = '') {
     if (!mnemonic) {
-      throw Error('Mnemonic is empty!')
+      throw new CustomError('err_core_mnemonic_empty')
     }
     
     let data = {
@@ -103,8 +103,7 @@ export default class Wallet {
   
   async createByKey (key = '') {
     if (!key) {
-      // todo customerror
-      throw Error('Key is empty!')
+      throw new CustomError('err_core_xprv')
     }
     
     let data = {
@@ -138,10 +137,6 @@ export default class Wallet {
       this.syncETH(),
       this.syncBCH()
     ])
-    
-    // await this.syncBTC()
-    // await this.syncETH()
-    // await this.syncBCH()
     
     return this.sync
   }
@@ -223,18 +218,32 @@ export default class Wallet {
    * The method returns a raw BTC transaction
    *
    * @param {Object} data
-   * @param {string} data.address - Legacy bitcoin address
-   * @param {number} data.fee - Transaction fee in Satoshi
    * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
    * transaction hash, output n, address, value, script and private key in WIF format
    * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value
    * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data
    * @returns {string} hash - Transaction hash
-   * @returns {string} tx - Raw bitcoin transaction
+   * @returns {string} tx - Raw Bitcoin transaction
    */
   
   async makeRawBtcTx (data) {
     return await makeRawBtcTx(data)
+  }
+  
+  /**
+   * The method returns a raw BCH transaction
+   *
+   * @param {Object} data
+   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
+   * transaction hash, output n, address, value in satoshis, script and private key in WIF format
+   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value in satoshis
+   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data
+   * @returns {string} hash - Transaction hash
+   * @returns {string} tx - Raw Bitcoin Cash transaction
+   */
+  
+  async makeRawBchTx (data) {
+    return await makeRawBchTx(data)
   }
   
   /**
@@ -249,7 +258,7 @@ export default class Wallet {
    * @param {string} data.privateKey - Private key of ether wallet in hex
    * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data
    * @returns {string} hash - Transaction hash
-   * @returns {string} tx - Raw ethereum transaction
+   * @returns {string} tx - Raw Ethereum transaction
    */
   
   async makeRawEthTx (data) {
@@ -323,7 +332,7 @@ export default class Wallet {
   
   setApiEndpoint (api) {
     if (!api || typeof api !== 'object' || Array.isArray(api)) {
-      throw Error('Api must be object!')
+      throw new CustomError('err_wallet_api_type')
     }
     
     for (let key in this.api) {

@@ -65,5 +65,6 @@ module.exports = {
       'fetch',
       'Array.prototype.push'
     ]
-  }
+  },
+  ignorePatterns: ['/node_modules/', '/dist/', '/docs/', '/lib/']
 }

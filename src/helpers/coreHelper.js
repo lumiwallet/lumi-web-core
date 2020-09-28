@@ -252,7 +252,7 @@ export function calcBtcTxSize (i = 1, o = 2) {
  * @param {Object} data - Input data for a transaction
  * @param {Array} data.inputs - List of inputs
  * @param {Array} data.outputs - List of outputs
- * @returns {Object} Returns raw transaction and transaction hash
+ * @returns {Object} Returns raw Bitcoin transaction and transaction hash
  */
 
 export function makeRawBtcTx (data = {}) {
@@ -300,7 +300,7 @@ export function makeRawBtcTx (data = {}) {
  * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)
  * @param {string} data.data - Data in hex representation (required for ERC20 transactions)
  * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format
- * @returns {Object} Returns raw transaction and transaction hash
+ * @returns {Object} Returns raw Ethereum transaction and transaction hash
  */
 
 export function makeRawEthTx (data = {}) {
@@ -352,32 +352,32 @@ export function makeRawEthTx (data = {}) {
   }
 }
 
+/**
+ * Creating a raw Bitcoin Cash transaction
+ * @param {Object} data - Input data for a transaction
+ * @param {Array} data.inputs - List of inputs
+ * @param {Array} data.outputs - List of outputs
+ * @returns {Object} Returns raw Bitcoin Cash transaction and transaction hash
+ */
+
 export function makeRawBchTx (data = {}) {
   try {
     const {inputs, outputs} = data
     const toCashAddress = bchaddr.toCashAddress
-    
-    let utxos = []
-    let privateKeys = []
-    
-    for (const utxo of inputs) {
-      utxos.push({
-        txId: utxo.txid,
-        outputIndex: utxo.vout,
-        address: toCashAddress(utxo.cashAddress),
-        script: utxo.scriptPubKey,
-        satoshis: utxo.satoshis
-      })
+    const privateKeys = inputs.map(item => item.key)
+    const utxos = inputs.map(item => {
+      item.outputIndex = +item.outputIndex
+      item.satoshis = +item.satoshis
       
-      privateKeys.push(utxo.key)
-    }
-    
-    const outputsInCashFormat = outputs.map(item => {
-      item.address = toCashAddress(item.address)
-
       return item
     })
     
+    const outputsInCashFormat = outputs.map(item => {
+      item.address = toCashAddress(item.address)
+      item.satoshis = +item.satoshis
+      
+      return item
+    })
     const tx = new bitcore.Transaction()
       .from(utxos)
       .to(outputsInCashFormat)
@@ -396,9 +396,19 @@ export function makeRawBchTx (data = {}) {
   }
 }
 
+/**
+ * Getting Bitcoin private key for address by derivation index
+ * @param {Object} node - Input data for a transaction
+ * @param {number} index - Derivation index
+ * @returns {string} Returns Private key in WIF format
+ */
+
 export function getBtcPrivateKeyByIndex (node, index) {
-  // todo check
-  const key = node.deriveChild(index).privateKey
+  try {
+    const key = node.deriveChild(index).privateKey
   
-  return privateKeyToWIF(key)
+    return privateKeyToWIF(key)
+  } catch (e) {
+    throw new CustomError('err_btc_private_key_by_index')
+  }
 }

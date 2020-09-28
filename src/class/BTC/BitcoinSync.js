@@ -4,7 +4,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 
 /**
  * Class BitcoinSync.
- * This class allows you to get information about the balance on a bitcoin wallet,
+ * This class allows you to get information about the balance on a Bitcoin wallet,
  * the list of unspent, a set of addresses that participated in transactions, and a list of transactions
  * @class
  */
@@ -14,7 +14,7 @@ export default class BitcoinSync {
    * Create a BitcoinSync
    * @param {Object} externalNode - External Bitcoin node
    * @param {Object} internalNode - Internal Bitcoin node
-   * @param {Object} api - A set of URLs for getting information about bitcoin addresses
+   * @param {Object} api - A set of URLs for getting information about Bitcoin addresses
    */
   constructor (externalNode, internalNode, api) {
     this.externalNode = externalNode
@@ -95,7 +95,7 @@ export default class BitcoinSync {
   }
   
   /**
-   * Auxiliary method that gets the bitcoin address by node and index
+   * Auxiliary method that gets the Bitcoin address by node and index
    * @param {Object} node - Bitcoin node
    * @param {string} type - Node type (external or internal)
    * @param {number} from - The index that the derivation starts from
@@ -124,8 +124,8 @@ export default class BitcoinSync {
   /**
    * Getting information about addresses and forming an array of addresses.
    * Makes a request for a bundle of addresses and gets a list of transactions
-   * @param node - Bitcoin node
-   * @param type - Node type (external or internal)
+   * @param {Object} node - Bitcoin node
+   * @param {string} type - Node type (external or internal)
    * @returns {Promise<Array>} A list of addresses with transactions
    */
   
@@ -288,7 +288,9 @@ export default class BitcoinSync {
   }
   
   /**
-   * Getting a unspent transaction output for all addresses in the wallet with the transaction
+   * Getting a unspent transaction output for
+   * all addresses in the wallet with the transaction.
+   * Calculates the balance of the wallet for unspent
    * @returns {Promise<boolean>}
    */
   
@@ -316,7 +318,7 @@ export default class BitcoinSync {
   /**
    * Getting a balance of Bitcoin wallet from a list of unspent
    * @param {Array} unspent - The list of unspent transaction output
-   * @returns {number} The balance of the bitcoin wallet
+   * @returns {number} The balance of the Bitcoin Cash wallet
    */
   
   getBalance (unspent) {
