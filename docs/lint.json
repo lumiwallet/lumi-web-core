@@ -4,43 +4,47 @@
     "filePath": "src/index.js",
     "lines": [
       {
-        "lineNumber": 295,
+        "lineNumber": 322,
         "line": "  /**"
       },
       {
-        "lineNumber": 296,
+        "lineNumber": 323,
         "line": "   * Sets the API Endpoint"
       },
       {
-        "lineNumber": 297,
+        "lineNumber": 324,
         "line": "   *"
       },
       {
-        "lineNumber": 298,
+        "lineNumber": 325,
         "line": "   * @type {Object} api"
       },
       {
-        "lineNumber": 299,
+        "lineNumber": 326,
         "line": "   * @param {string} api.bitcoin - Url address of bitcoin endpoint"
       },
       {
-        "lineNumber": 300,
+        "lineNumber": 327,
         "line": "   * @param {string} api.bitcoinFee - Url address of bitcoin fee endpoint"
       },
       {
-        "lineNumber": 301,
+        "lineNumber": 328,
         "line": "   * @param {string} api.ethereum - Url address of ethereum endpoint"
       },
       {
-        "lineNumber": 302,
+        "lineNumber": 329,
+        "line": "   * @param {string} api.bitcoinCash - Url address of bitcoin cash endpoint"
+      },
+      {
+        "lineNumber": 330,
         "line": "   */"
       },
       {
-        "lineNumber": 303,
-        "line": ""
+        "lineNumber": 331,
+        "line": "  "
       },
       {
-        "lineNumber": 304,
+        "lineNumber": 332,
         "line": "  setApiEndpoint (api) {"
       }
     ],

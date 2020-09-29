@@ -1,8 +1,10 @@
 import Core from '@/class/Core'
 import BitcoinSync from '@/class/BTC/BitcoinSync'
 import EthereumSync from '@/class/ETH/EthereumSync'
+import BitcoinCashSync from '@/class/BCH/BitcoinCashSync'
 import BitcoinTx from '@/class/BTC/BitcoinTx'
 import EthereumTx from '@/class/ETH/EthereumTx'
+import BitcoinCashTx from '@/class/BCH/BitcoinCashTx'
 
 /**
  * Class WalletWrapper
@@ -24,7 +26,8 @@ export default class WalletWrapper {
     this.core = null
     this.sync = {
       BTC: null,
-      ETH: null
+      ETH: null,
+      BCH: null
     }
   }
   
@@ -48,7 +51,7 @@ export default class WalletWrapper {
    * @returns {Promise<Object>} Returns object with bitcoin or ethereum synchronization information
    * @constructor
    */
-
+  
   async Sync (type) {
     try {
       switch (type) {
@@ -56,6 +59,8 @@ export default class WalletWrapper {
           return await this.SyncBTC()
         case 'ETH':
           return await this.SyncETH()
+        case 'BCH':
+          return await this.SyncBCH()
       }
     }
     catch (e) {
@@ -70,15 +75,15 @@ export default class WalletWrapper {
    */
   
   async SyncBTC () {
-    this.Sync.BTC = new BitcoinSync(
-      this.core.DATA.BTC.node,
+    this.sync.BTC = new BitcoinSync(
+      this.core.DATA.BTC.externalNode,
       this.core.DATA.BTC.internalNode,
       this.api
     )
 
     try {
-      await this.Sync.BTC.Start()
-      return this.Sync.BTC.DATA
+      await this.sync.BTC.Start()
+      return this.sync.BTC.DATA
     }
     catch (e) {
       console.log('SyncBTC error', e)
@@ -90,13 +95,29 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-
+  
   async SyncETH () {
-    this.Sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
-
+    this.sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
+    
     try {
-      await this.Sync.ETH.Start()
-      return this.Sync.ETH.DATA
+      await this.sync.ETH.Start()
+      return this.sync.ETH.DATA
+    }
+    catch (e) {
+      console.log('SyncETH error', e)
+    }
+  }
+  
+  async SyncBCH () {
+    this.sync.BCH = new BitcoinCashSync(
+      this.core.DATA.BCH.externalNode,
+      this.core.DATA.BCH.internalNode,
+      this.api
+    )
+  
+    try {
+      await this.sync.BCH.Start()
+      return this.sync.BCH.DATA
     }
     catch (e) {
       console.log('SyncETH error', e)
@@ -112,15 +133,17 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-
+  
   async Transaction (data) {
     const {currency, method, tx} = data
-
+    
     switch (currency) {
       case 'BTC':
         return this.createBTCTx(method, tx)
       case 'ETH':
         return this.createETHTx(method, tx)
+      case 'BCH':
+        return this.createBCHTx(method, tx)
       default:
         throw new Error('Unknown txs type (currency)')
     }
@@ -132,22 +155,22 @@ export default class WalletWrapper {
    * @param {Object} txData - Input data for the transaction
    * @returns {Promise<Object>} Information about the transaction or fee
    */
-
+  
   async createBTCTx (method, txData) {
     let BTCdata = {
-      unspent: this.Sync.BTC.unspent,
-      balance: this.Sync.BTC.balance,
-      feeList: this.Sync.BTC.fee,
+      unspent: this.sync.BTC.unspent,
+      balance: this.sync.BTC.balance,
+      feeList: this.sync.BTC.fee,
       amount: txData.amount,
       customFee: txData.customFee
     }
     
     if (method === 'make') {
-      BTCdata.internalAddress = this.Sync.BTC.addresses.empty.internal.address
+      BTCdata.internalAddress = this.sync.BTC.addresses.empty.internal.address
     }
     
     let tx = new BitcoinTx(BTCdata)
-
+    
     switch (method) {
       case 'make':
         return tx.make(txData)
@@ -167,14 +190,14 @@ export default class WalletWrapper {
   
   async createETHTx (method, txData) {
     let ETHdata = {
-      address: this.Sync.ETH.address,
-      gasPrice: this.Sync.ETH.gasPrice,
-      balance: this.Sync.ETH.balance,
+      address: this.sync.ETH.address,
+      gasPrice: this.sync.ETH.gasPrice,
+      balance: this.sync.ETH.balance,
       privateKey: this.core.DATA.ETH.privateKey
     }
-
+    
     let tx = new EthereumTx(ETHdata)
-
+    
     switch (method) {
       case 'make':
         return tx.make(txData)
@@ -182,6 +205,35 @@ export default class WalletWrapper {
         return tx.calcFee()
       default:
         throw new Error('Unknown eth txs method')
+    }
+  }
+  
+  async createBCHTx (method, txData) {
+    let BCHdata = {
+      unspent: this.sync.BCH.unspent,
+      balance: this.sync.BCH.balance,
+      feeList: this.sync.BCH.fee,
+      amount: txData.amount,
+      customFee: txData.customFee
+    }
+    
+    if (method === 'make') {
+      BCHdata.internalAddress = this.sync.BCH.addresses.empty.internal.address
+      BCHdata.nodes = {
+        external: this.core.DATA.BCH.externalNode,
+        internal: this.core.DATA.BCH.internalNode
+      }
+    }
+    
+    let tx = new BitcoinCashTx(BCHdata)
+    
+    switch (method) {
+      case 'make':
+        return tx.make(txData)
+      case 'calcFee':
+        return tx.calcFee(txData.size)
+      default:
+        throw new Error('Unknown BCH txs method')
     }
   }
 }

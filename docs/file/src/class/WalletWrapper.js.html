@@ -33,6 +33,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
@@ -42,6 +43,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -49,6 +51,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
@@ -64,8 +67,10 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Core from &apos;@/class/Core&apos;
 import BitcoinSync from &apos;@/class/BTC/BitcoinSync&apos;
 import EthereumSync from &apos;@/class/ETH/EthereumSync&apos;
+import BitcoinCashSync from &apos;@/class/BCH/BitcoinCashSync&apos;
 import BitcoinTx from &apos;@/class/BTC/BitcoinTx&apos;
 import EthereumTx from &apos;@/class/ETH/EthereumTx&apos;
+import BitcoinCashTx from &apos;@/class/BCH/BitcoinCashTx&apos;
 
 /**
  * Class WalletWrapper
@@ -87,7 +92,8 @@ export default class WalletWrapper {
     this.core = null
     this.sync = {
       BTC: null,
-      ETH: null
+      ETH: null,
+      BCH: null
     }
   }
   
@@ -111,7 +117,7 @@ export default class WalletWrapper {
    * @returns {Promise&lt;Object&gt;} Returns object with bitcoin or ethereum synchronization information
    * @constructor
    */
-
+  
   async Sync (type) {
     try {
       switch (type) {
@@ -119,6 +125,8 @@ export default class WalletWrapper {
           return await this.SyncBTC()
         case &apos;ETH&apos;:
           return await this.SyncETH()
+        case &apos;BCH&apos;:
+          return await this.SyncBCH()
       }
     }
     catch (e) {
@@ -133,15 +141,15 @@ export default class WalletWrapper {
    */
   
   async SyncBTC () {
-    this.Sync.BTC = new BitcoinSync(
-      this.core.DATA.BTC.node,
+    this.sync.BTC = new BitcoinSync(
+      this.core.DATA.BTC.externalNode,
       this.core.DATA.BTC.internalNode,
       this.api
     )
 
     try {
-      await this.Sync.BTC.Start()
-      return this.Sync.BTC.DATA
+      await this.sync.BTC.Start()
+      return this.sync.BTC.DATA
     }
     catch (e) {
       console.log(&apos;SyncBTC error&apos;, e)
@@ -153,13 +161,29 @@ export default class WalletWrapper {
    * @returns {Promise&lt;Object&gt;}
    * @constructor
    */
-
+  
   async SyncETH () {
-    this.Sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
-
+    this.sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
+    
     try {
-      await this.Sync.ETH.Start()
-      return this.Sync.ETH.DATA
+      await this.sync.ETH.Start()
+      return this.sync.ETH.DATA
+    }
+    catch (e) {
+      console.log(&apos;SyncETH error&apos;, e)
+    }
+  }
+  
+  async SyncBCH () {
+    this.sync.BCH = new BitcoinCashSync(
+      this.core.DATA.BCH.externalNode,
+      this.core.DATA.BCH.internalNode,
+      this.api
+    )
+  
+    try {
+      await this.sync.BCH.Start()
+      return this.sync.BCH.DATA
     }
     catch (e) {
       console.log(&apos;SyncETH error&apos;, e)
@@ -175,15 +199,17 @@ export default class WalletWrapper {
    * @returns {Promise&lt;Object&gt;}
    * @constructor
    */
-
+  
   async Transaction (data) {
     const {currency, method, tx} = data
-
+    
     switch (currency) {
       case &apos;BTC&apos;:
         return this.createBTCTx(method, tx)
       case &apos;ETH&apos;:
         return this.createETHTx(method, tx)
+      case &apos;BCH&apos;:
+        return this.createBCHTx(method, tx)
       default:
         throw new Error(&apos;Unknown txs type (currency)&apos;)
     }
@@ -195,22 +221,22 @@ export default class WalletWrapper {
    * @param {Object} txData - Input data for the transaction
    * @returns {Promise&lt;Object&gt;} Information about the transaction or fee
    */
-
+  
   async createBTCTx (method, txData) {
     let BTCdata = {
-      unspent: this.Sync.BTC.unspent,
-      balance: this.Sync.BTC.balance,
-      feeList: this.Sync.BTC.fee,
+      unspent: this.sync.BTC.unspent,
+      balance: this.sync.BTC.balance,
+      feeList: this.sync.BTC.fee,
       amount: txData.amount,
       customFee: txData.customFee
     }
     
     if (method === &apos;make&apos;) {
-      BTCdata.internalAddress = this.Sync.BTC.addresses.empty.internal.address
+      BTCdata.internalAddress = this.sync.BTC.addresses.empty.internal.address
     }
     
     let tx = new BitcoinTx(BTCdata)
-
+    
     switch (method) {
       case &apos;make&apos;:
         return tx.make(txData)
@@ -230,14 +256,14 @@ export default class WalletWrapper {
   
   async createETHTx (method, txData) {
     let ETHdata = {
-      address: this.Sync.ETH.address,
-      gasPrice: this.Sync.ETH.gasPrice,
-      balance: this.Sync.ETH.balance,
+      address: this.sync.ETH.address,
+      gasPrice: this.sync.ETH.gasPrice,
+      balance: this.sync.ETH.balance,
       privateKey: this.core.DATA.ETH.privateKey
     }
-
+    
     let tx = new EthereumTx(ETHdata)
-
+    
     switch (method) {
       case &apos;make&apos;:
         return tx.make(txData)
@@ -245,6 +271,35 @@ export default class WalletWrapper {
         return tx.calcFee()
       default:
         throw new Error(&apos;Unknown eth txs method&apos;)
+    }
+  }
+  
+  async createBCHTx (method, txData) {
+    let BCHdata = {
+      unspent: this.sync.BCH.unspent,
+      balance: this.sync.BCH.balance,
+      feeList: this.sync.BCH.fee,
+      amount: txData.amount,
+      customFee: txData.customFee
+    }
+    
+    if (method === &apos;make&apos;) {
+      BCHdata.internalAddress = this.sync.BCH.addresses.empty.internal.address
+      BCHdata.nodes = {
+        external: this.core.DATA.BCH.externalNode,
+        internal: this.core.DATA.BCH.internalNode
+      }
+    }
+    
+    let tx = new BitcoinCashTx(BCHdata)
+    
+    switch (method) {
+      case &apos;make&apos;:
+        return tx.make(txData)
+      case &apos;calcFee&apos;:
+        return tx.calcFee(txData.size)
+      default:
+        throw new Error(&apos;Unknown BCH txs method&apos;)
     }
   }
 }

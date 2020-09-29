@@ -1,5 +1,11 @@
 window.esdocSearchIndex = [
   [
+    "lumi-web-core/src/class/bch/bitcoincashtx.js~bitcoincashtx",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html",
+    "<span>BitcoinCashTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BCH/BitcoinCashTx.js</span>",
+    "class"
+  ],
+  [
     "lumi-web-core/src/class/btc/bitcoinsync.js~bitcoinsync",
     "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html",
     "<span>BitcoinSync</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BTC/BitcoinSync.js</span>",
@@ -78,6 +84,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "lumi-web-core/src/helpers/corehelper.js~getbtcprivatekeybyindex",
+    "function/index.html#static-function-getBtcPrivateKeyByIndex",
+    "<span>getBtcPrivateKeyByIndex</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~getethaddress",
     "function/index.html#static-function-getEthAddress",
     "<span>getEthAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
@@ -117,6 +129,12 @@ window.esdocSearchIndex = [
     "lumi-web-core/src/helpers/corehelper.js~hdfromxprv",
     "function/index.html#static-function-hdFromXprv",
     "<span>hdFromXprv</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/helpers/corehelper.js~makerawbchtx",
+    "function/index.html#static-function-makeRawBchTx",
+    "<span>makeRawBchTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
   ],
   [
@@ -468,6 +486,96 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/class/bch/bitcoincashtx.js",
+    "file/src/class/BCH/BitcoinCashTx.js.html",
+    "src/class/BCH/BitcoinCashTx.js",
+    "file"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#amount",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-amount",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#amount",
+    "member"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#balance",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-balance",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#balance",
+    "member"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#calcemptyfee",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-method-calcEmptyFee",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#calcEmptyFee",
+    "method"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#calcfee",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-method-calcFee",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#calcFee",
+    "method"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#constructor",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-constructor-constructor",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#constructor",
+    "method"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#customfee",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-customFee",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#customFee",
+    "member"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#dust",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-dust",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#dust",
+    "member"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#fee",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-fee",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#fee",
+    "member"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#feelist",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-feeList",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#feeList",
+    "member"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#getinputs",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-method-getInputs",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#getInputs",
+    "method"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#internaladdress",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-internalAddress",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#internalAddress",
+    "member"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#make",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-method-make",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#make",
+    "method"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#nodes",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-nodes",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#nodes",
+    "member"
+  ],
+  [
+    "src/class/bch/bitcoincashtx.js~bitcoincashtx#unspent",
+    "class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html#instance-member-unspent",
+    "src/class/BCH/BitcoinCashTx.js~BitcoinCashTx#unspent",
+    "member"
+  ],
+  [
     "src/class/btc/bitcoinsync.js",
     "file/src/class/BTC/BitcoinSync.js.html",
     "src/class/BTC/BitcoinSync.js",
@@ -531,6 +639,12 @@ window.esdocSearchIndex = [
     "src/class/btc/bitcoinsync.js~bitcoinsync#deriveaddress",
     "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-deriveAddress",
     "src/class/BTC/BitcoinSync.js~BitcoinSync#deriveAddress",
+    "member"
+  ],
+  [
+    "src/class/btc/bitcoinsync.js~bitcoinsync#externalnode",
+    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-externalNode",
+    "src/class/BTC/BitcoinSync.js~BitcoinSync#externalNode",
     "member"
   ],
   [
@@ -603,12 +717,6 @@ window.esdocSearchIndex = [
     "src/class/btc/bitcoinsync.js~bitcoinsync#latestblock",
     "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-latestBlock",
     "src/class/BTC/BitcoinSync.js~BitcoinSync#latestBlock",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#node",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-node",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#node",
     "member"
   ],
   [
@@ -726,6 +834,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/class/core.js~core#bch",
+    "class/src/class/Core.js~Core.html#instance-member-BCH",
+    "src/class/Core.js~Core#BCH",
+    "member"
+  ],
+  [
     "src/class/core.js~core#btc",
     "class/src/class/Core.js~Core.html#instance-member-BTC",
     "src/class/Core.js~Core#BTC",
@@ -742,6 +856,12 @@ window.esdocSearchIndex = [
     "class/src/class/Core.js~Core.html#instance-member-ETH",
     "src/class/Core.js~Core#ETH",
     "member"
+  ],
+  [
+    "src/class/core.js~core#_generatebchcore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateBCHcore",
+    "src/class/Core.js~Core#_generateBCHcore",
+    "method"
   ],
   [
     "src/class/core.js~core#_generatebtccore",
@@ -1002,6 +1122,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#syncbch",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncBCH",
+    "src/class/WalletWrapper.js~WalletWrapper#SyncBCH",
+    "method"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#syncbtc",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncBTC",
     "src/class/WalletWrapper.js~WalletWrapper#SyncBTC",
@@ -1036,6 +1162,12 @@ window.esdocSearchIndex = [
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-member-core",
     "src/class/WalletWrapper.js~WalletWrapper#core",
     "member"
+  ],
+  [
+    "src/class/walletwrapper.js~walletwrapper#createbchtx",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createBCHTx",
+    "src/class/WalletWrapper.js~WalletWrapper#createBCHTx",
+    "method"
   ],
   [
     "src/class/walletwrapper.js~walletwrapper#createbtctx",
@@ -1206,6 +1338,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/index.js~wallet#makerawbchtx",
+    "class/src/index.js~Wallet.html#instance-method-makeRawBchTx",
+    "src/index.js~Wallet#makeRawBchTx",
+    "method"
+  ],
+  [
     "src/index.js~wallet#makerawbtctx",
     "class/src/index.js~Wallet.html#instance-method-makeRawBtcTx",
     "src/index.js~Wallet#makeRawBtcTx",
@@ -1239,6 +1377,12 @@ window.esdocSearchIndex = [
     "src/index.js~wallet#syncall",
     "class/src/index.js~Wallet.html#instance-method-syncAll",
     "src/index.js~Wallet#syncAll",
+    "method"
+  ],
+  [
+    "src/index.js~wallet#syncbch",
+    "class/src/index.js~Wallet.html#instance-method-syncBCH",
+    "src/index.js~Wallet#syncBCH",
     "method"
   ],
   [

@@ -33,6 +33,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
@@ -42,6 +43,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -49,6 +51,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
@@ -184,7 +187,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~Wallet.html#instance-member-api">api</a></span></span><span class="code" data-ice="signature">: {&quot;bitcoin&quot;: <span>*</span>, &quot;bitcoinFee&quot;: <span>*</span>, &quot;ethereum&quot;: <span>*</span>}</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~Wallet.html#instance-member-api">api</a></span></span><span class="code" data-ice="signature">: {&quot;bitcoin&quot;: <span>*</span>, &quot;bitcoinFee&quot;: <span>*</span>, &quot;ethereum&quot;: <span>*</span>, &quot;bitcoinCash&quot;: <span>*</span>}</span>
         </p>
       </div>
       <div>
@@ -566,6 +569,35 @@
           
           <span data-ice="async">async</span>
           
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~Wallet.html#instance-method-makeRawBchTx">makeRawBchTx</a></span></span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>The method returns a raw BCH transaction</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
           <span class="code" data-ice="name"><span><a href="class/src/index.js~Wallet.html#instance-method-makeRawBtcTx">makeRawBtcTx</a></span></span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
@@ -690,6 +722,34 @@
         
         <div data-ice="description"><p>The method starts synchronization of BTC and ETH</p>
 </div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~Wallet.html#instance-method-syncBCH">syncBCH</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
       </div>
     </td>
     <td>
@@ -841,7 +901,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber320">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber348">source</a></span></span>
     </span>
   </h3>
 
@@ -880,7 +940,7 @@
     
     
     
-    <span class="code" data-ice="name">api</span><span class="code" data-ice="signature">: {&quot;bitcoin&quot;: <span>*</span>, &quot;bitcoinFee&quot;: <span>*</span>, &quot;ethereum&quot;: <span>*</span>}</span>
+    <span class="code" data-ice="name">api</span><span class="code" data-ice="signature">: {&quot;bitcoin&quot;: <span>*</span>, &quot;bitcoinFee&quot;: <span>*</span>, &quot;ethereum&quot;: <span>*</span>, &quot;bitcoinCash&quot;: <span>*</span>}</span>
     <span class="right-info">
       
       
@@ -970,7 +1030,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber332">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber360">source</a></span></span>
     </span>
   </h3>
 
@@ -1013,7 +1073,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber324">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber352">source</a></span></span>
     </span>
   </h3>
 
@@ -1056,7 +1116,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber328">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber356">source</a></span></span>
     </span>
   </h3>
 
@@ -1187,7 +1247,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber28">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber29">source</a></span></span>
     </span>
   </h3>
 
@@ -1233,7 +1293,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber251">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber278">source</a></span></span>
     </span>
   </h3>
 
@@ -1334,7 +1394,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber103">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber104">source</a></span></span>
     </span>
   </h3>
 
@@ -1408,7 +1468,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber73">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber74">source</a></span></span>
     </span>
   </h3>
 
@@ -1481,7 +1541,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber47">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber48">source</a></span></span>
     </span>
   </h3>
 
@@ -1555,7 +1615,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber152">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber155">source</a></span></span>
     </span>
   </h3>
 
@@ -1617,6 +1677,94 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-makeRawBchTx">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">makeRawBchTx</span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber245">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>The method returns a raw BCH transaction</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">data</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">data.inputs</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>List of transaction inputs. Input contains the following parameters:
+transaction hash, output n, address, value in satoshis, script and private key in WIF format</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">data.outputs</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>List of transaction outpus. Output contains the following parameters: address and value in satoshis</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>tx - Raw Bitcoin Cash transaction</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-makeRawBtcTx">
     <span class="access" data-ice="access">public</span>
     
@@ -1628,7 +1776,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber218">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber229">source</a></span></span>
     </span>
   </h3>
 
@@ -1653,20 +1801,6 @@
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">data.address</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Legacy bitcoin address</p>
-</td>
-    </tr>
-<tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">data.fee</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Transaction fee in Satoshi</p>
-</td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">data.inputs</td>
@@ -1694,7 +1828,7 @@ transaction hash, output n, address, value, script and private key in WIF format
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-          <td class="return-desc" data-ice="returnDescription"><p>tx - Raw bitcoin transaction</p>
+          <td class="return-desc" data-ice="returnDescription"><p>tx - Raw Bitcoin transaction</p>
 </td>
         </tr>
       </tbody>
@@ -1730,7 +1864,7 @@ transaction hash, output n, address, value, script and private key in WIF format
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber237">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber264">source</a></span></span>
     </span>
   </h3>
 
@@ -1809,7 +1943,7 @@ transaction hash, output n, address, value, script and private key in WIF format
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-          <td class="return-desc" data-ice="returnDescription"><p>tx - Raw ethereum transaction</p>
+          <td class="return-desc" data-ice="returnDescription"><p>tx - Raw Ethereum transaction</p>
 </td>
         </tr>
       </tbody>
@@ -1845,7 +1979,7 @@ transaction hash, output n, address, value, script and private key in WIF format
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber282">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber309">source</a></span></span>
     </span>
   </h3>
 
@@ -1952,7 +2086,7 @@ transaction hash, output n, address, value, script and private key in WIF format
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber305">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber333">source</a></span></span>
     </span>
   </h3>
 
@@ -1991,6 +2125,13 @@ transaction hash, output n, address, value, script and private key in WIF format
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>Url address of ethereum endpoint</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">api.bitcoinCash</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Url address of bitcoin cash endpoint</p>
 </td>
     </tr>
 </tbody>
@@ -2073,6 +2214,61 @@ transaction hash, output n, address, value, script and private key in WIF format
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-syncBCH">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">syncBCH</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber207">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-syncBTC">
     <span class="access" data-ice="access">public</span>
     
@@ -2084,7 +2280,7 @@ transaction hash, output n, address, value, script and private key in WIF format
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber173">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber176">source</a></span></span>
     </span>
   </h3>
 
@@ -2141,7 +2337,7 @@ transaction hash, output n, address, value, script and private key in WIF format
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber194">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber197">source</a></span></span>
     </span>
   </h3>
 

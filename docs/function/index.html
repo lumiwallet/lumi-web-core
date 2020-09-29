@@ -33,6 +33,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
@@ -42,6 +43,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -49,6 +51,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
@@ -173,6 +176,35 @@
         
         
         <div data-ice="description"><p>Getting a bitcoin address by node and child index</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span><span class="code" data-ice="signature">(node: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, index: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Getting Bitcoin private key for address by derivation index</p>
 </div>
       </div>
     </td>
@@ -376,6 +408,35 @@
         
         
         <div data-ice="description"><p>Converting a xprv to hdkey (Hierarchical Deterministic Key)</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Creating a raw Bitcoin Cash transaction</p>
 </div>
       </div>
     </td>
@@ -604,11 +665,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber244">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber246">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {calcBtcTxSize} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber244">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {calcBtcTxSize} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber246">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Calculating the transaction size by the number of inputs and outputs</p>
@@ -685,11 +746,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber109">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber111">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {derive} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber109">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {derive} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber111">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Derivation of node. Getting child node by path</p>
@@ -766,11 +827,11 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber16">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber18">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {generateMnemonic} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber16">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {generateMnemonic} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber18">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Generation of mnemonics.
@@ -841,11 +902,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber140">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber142">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getBtcAddress} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber140">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getBtcAddress} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber142">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Getting a bitcoin address by node and child index</p>
@@ -911,6 +972,87 @@ The number of words in a mnemonic depends on the length of the entropy</p>
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-function-getBtcPrivateKeyByIndex">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">getBtcPrivateKeyByIndex</span><span class="code" data-ice="signature">(node: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, index: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber407">source</a></span></span>
+    </span>
+  </h3>
+
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getBtcPrivateKeyByIndex} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber407">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  
+  
+  <div data-ice="description"><p>Getting Bitcoin private key for address by derivation index</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">node</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Input data for a transaction</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">index</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Derivation index</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns Private key in WIF format</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-function-getEthAddress">
     <span class="access" data-ice="access">public</span>
     
@@ -922,11 +1064,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber192">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber194">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEthAddress} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber192">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEthAddress} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber194">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Getting a Ethereum wallet address by public key</p>
@@ -996,11 +1138,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber211">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber213">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEthAddressByNode} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber211">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEthAddressByNode} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber213">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Getting Ethereum wallet address by node</p>
@@ -1070,11 +1212,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber160">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber162">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEthPrivateKey} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber160">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEthPrivateKey} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber162">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Getting a Ethereum private key by node</p>
@@ -1144,11 +1286,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber176">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber178">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEthPublicKey} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber176">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getEthPublicKey} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber178">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Getting a Ethereum public key by private key</p>
@@ -1218,11 +1360,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber92">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber94">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getXprv} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber92">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getXprv} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber94">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Getting xprv by hdkey</p>
@@ -1292,11 +1434,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber61">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber63">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {hdFromSeed} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber61">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {hdFromSeed} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber63">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Converting a seed to hdkey (Hierarchical Deterministic Key)</p>
@@ -1366,11 +1508,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber77">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber79">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {hdFromXprv} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber77">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {hdFromXprv} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber79">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Converting a xprv to hdkey (Hierarchical Deterministic Key)</p>
@@ -1429,6 +1571,94 @@ The number of words in a mnemonic depends on the length of the entropy</p>
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-function-makeRawBchTx">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">makeRawBchTx</span><span class="code" data-ice="signature">(data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber363">source</a></span></span>
+    </span>
+  </h3>
+
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {makeRawBchTx} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber363">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  
+  
+  <div data-ice="description"><p>Creating a raw Bitcoin Cash transaction</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">data</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Input data for a transaction</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">data.inputs</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>List of inputs</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">data.outputs</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>List of outputs</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns raw Bitcoin Cash transaction and transaction hash</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-function-makeRawBtcTx">
     <span class="access" data-ice="access">public</span>
     
@@ -1440,11 +1670,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber256">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber258">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {makeRawBtcTx} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber256">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {makeRawBtcTx} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber258">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Creating a raw Bitcoin transaction</p>
@@ -1492,7 +1722,7 @@ The number of words in a mnemonic depends on the length of the entropy</p>
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns raw transaction and transaction hash</p>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns raw Bitcoin transaction and transaction hash</p>
 </td>
         </tr>
       </tbody>
@@ -1528,11 +1758,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber304">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber306">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {makeRawEthTx} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber304">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {makeRawEthTx} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber306">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Creating a raw Ethereum transaction</p>
@@ -1622,7 +1852,7 @@ The number of words in a mnemonic depends on the length of the entropy</p>
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns raw transaction and transaction hash</p>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns raw Ethereum transaction and transaction hash</p>
 </td>
         </tr>
       </tbody>
@@ -1658,11 +1888,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber46">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber48">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {mnemonicToEntropy} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber46">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {mnemonicToEntropy} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber48">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Converting a mnemonic to entropy</p>
@@ -1732,11 +1962,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber31">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber33">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {mnemonicToSeed} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber31">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {mnemonicToSeed} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber33">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Converting a mnemonic to seed</p>
@@ -1806,11 +2036,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber228">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber230">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {privateKeyToWIF} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber228">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {privateKeyToWIF} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber230">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Convert a Bitcoin private key to the WIF (Wallet Import Format)</p>

@@ -33,6 +33,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
@@ -42,6 +43,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -49,6 +51,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
@@ -60,7 +63,7 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">90/157</span></h1>
+<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">102/182</span></h1>
 
 <table class="files-summary" data-ice="files" data-use-coverage="true">
   <thead>
@@ -84,52 +87,60 @@
       <td style="display: none;" data-ice="updated">2020-07-06 13:03:48 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/class/BTC/BitcoinSync.js.html#errorLines=20,21,22,23,236,24,25,26,33,37,41,42,43">src/class/BTC/BitcoinSync.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/class/BCH/BitcoinCashTx.js.html#errorLines=32,33,34,35,36,37,38,39,40">src/class/BCH/BitcoinCashTx.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></td>
+      <td class="coverage"><span data-ice="coverage">43 %</span><span data-ice="coverageCount" class="coverage-count">7/16</span></td>
+      <td style="display: none;" data-ice="size">5738 byte</td>
+      <td style="display: none;" data-ice="lines">213</td>
+      <td style="display: none;" data-ice="updated">2020-09-03 12:47:29 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/class/BTC/BitcoinSync.js.html#errorLines=20,21,22,23,230,24,25,26,32,36,40,41,42">src/class/BTC/BitcoinSync.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></td>
       <td class="coverage"><span data-ice="coverage">53 %</span><span data-ice="coverageCount" class="coverage-count">15/28</span></td>
-      <td style="display: none;" data-ice="size">13493 byte</td>
-      <td style="display: none;" data-ice="lines">516</td>
-      <td style="display: none;" data-ice="updated">2020-08-06 15:46:10 (UTC)</td>
+      <td style="display: none;" data-ice="size">13652 byte</td>
+      <td style="display: none;" data-ice="lines">514</td>
+      <td style="display: none;" data-ice="updated">2020-09-02 08:16:00 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/class/BTC/BitcoinTx.js.html#errorLines=24,25,26,27,28,29,30,31">src/class/BTC/BitcoinTx.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/class/BTC/BitcoinTx.js.html#errorLines=31,32,33,34,35,36,37,38">src/class/BTC/BitcoinTx.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></td>
-      <td class="coverage"><span data-ice="coverage">42 %</span><span data-ice="coverageCount" class="coverage-count">6/14</span></td>
-      <td style="display: none;" data-ice="size">6897 byte</td>
-      <td style="display: none;" data-ice="lines">251</td>
-      <td style="display: none;" data-ice="updated">2020-08-02 13:23:26 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">46 %</span><span data-ice="coverageCount" class="coverage-count">7/15</span></td>
+      <td style="display: none;" data-ice="size">5076 byte</td>
+      <td style="display: none;" data-ice="lines">192</td>
+      <td style="display: none;" data-ice="updated">2020-09-03 12:47:29 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/class/Core.js.html#errorLines=22,23,233,24,25,26,27,28,34">src/class/Core.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/class/Core.js.html#errorLines=22,23,24,25,254,26,27,28,34,39">src/class/Core.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></td>
-      <td class="coverage"><span data-ice="coverage">55 %</span><span data-ice="coverageCount" class="coverage-count">11/20</span></td>
-      <td style="display: none;" data-ice="size">6287 byte</td>
-      <td style="display: none;" data-ice="lines">245</td>
-      <td style="display: none;" data-ice="updated">2020-08-06 15:45:24 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">54 %</span><span data-ice="coverageCount" class="coverage-count">12/22</span></td>
+      <td style="display: none;" data-ice="size">6968 byte</td>
+      <td style="display: none;" data-ice="lines">267</td>
+      <td style="display: none;" data-ice="updated">2020-09-02 10:52:21 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/class/ETH/EthereumSync.js.html#errorLines=17,18,19,20,21,22,93">src/class/ETH/EthereumSync.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></td>
       <td class="coverage"><span data-ice="coverage">46 %</span><span data-ice="coverageCount" class="coverage-count">6/13</span></td>
-      <td style="display: none;" data-ice="size">2232 byte</td>
+      <td style="display: none;" data-ice="size">2309 byte</td>
       <td style="display: none;" data-ice="lines">101</td>
-      <td style="display: none;" data-ice="updated">2020-08-06 15:46:10 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2020-09-06 09:19:33 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/class/ETH/EthereumTx.js.html#errorLines=22,23,24,25,26,27,92">src/class/ETH/EthereumTx.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></td>
       <td class="coverage"><span data-ice="coverage">36 %</span><span data-ice="coverageCount" class="coverage-count">4/11</span></td>
-      <td style="display: none;" data-ice="size">2850 byte</td>
+      <td style="display: none;" data-ice="size">2839 byte</td>
       <td style="display: none;" data-ice="lines">97</td>
-      <td style="display: none;" data-ice="updated">2020-08-06 15:46:10 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2020-09-02 10:46:17 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/class/WalletWrapper.js.html#errorLines=22,23,24,25">src/class/WalletWrapper.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/class/WalletWrapper.js.html#errorLines=111,211,24,25,26,27">src/class/WalletWrapper.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></td>
-      <td class="coverage"><span data-ice="coverage">69 %</span><span data-ice="coverageCount" class="coverage-count">9/13</span></td>
-      <td style="display: none;" data-ice="size">4563 byte</td>
-      <td style="display: none;" data-ice="lines">187</td>
-      <td style="display: none;" data-ice="updated">2020-08-06 15:45:24 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">60 %</span><span data-ice="coverageCount" class="coverage-count">9/15</span></td>
+      <td style="display: none;" data-ice="size">5912 byte</td>
+      <td style="display: none;" data-ice="lines">239</td>
+      <td style="display: none;" data-ice="updated">2020-09-03 12:49:44 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/helpers/converters.js.html">src/helpers/converters.js</a></span></td>
@@ -145,6 +156,7 @@
 <span><a href="function/index.html#static-function-derive">derive</a></span>
 <span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span>
 <span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span>
+<span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span>
 <span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span>
 <span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span>
 <span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span>
@@ -152,23 +164,24 @@
 <span><a href="function/index.html#static-function-getXprv">getXprv</a></span>
 <span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span>
 <span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span>
+<span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span>
 <span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span>
 <span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span>
 <span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span>
 <span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span>
 <span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></td>
-      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">16/16</span></td>
-      <td style="display: none;" data-ice="size">8682 byte</td>
-      <td style="display: none;" data-ice="lines">351</td>
-      <td style="display: none;" data-ice="updated">2020-08-06 15:45:24 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">100 %</span><span data-ice="coverageCount" class="coverage-count">18/18</span></td>
+      <td style="display: none;" data-ice="size">10406 byte</td>
+      <td style="display: none;" data-ice="lines">415</td>
+      <td style="display: none;" data-ice="updated">2020-09-03 12:22:41 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/helpers/errors.js.html">src/helpers/errors.js</a></span></td>
       <td data-ice="identifier" class="identifiers">-</td>
       <td class="coverage"><span data-ice="coverage">-</span></td>
-      <td style="display: none;" data-ice="size">1683 byte</td>
-      <td style="display: none;" data-ice="lines">28</td>
-      <td style="display: none;" data-ice="updated">2020-07-06 13:03:48 (UTC)</td>
+      <td style="display: none;" data-ice="size">2106 byte</td>
+      <td style="display: none;" data-ice="lines">35</td>
+      <td style="display: none;" data-ice="updated">2020-09-02 10:57:16 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/helpers/handleErrors.js.html#errorLines=10,12,13,18">src/helpers/handleErrors.js</a></span></td>
@@ -195,12 +208,12 @@
       <td style="display: none;" data-ice="updated">2020-07-06 13:03:48 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/index.js.html#errorLines=20,21,22,23,28,320,324,328,332">src/index.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/index.js.html#errorLines=20,207,21,22,23,29,348,352,356,360">src/index.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></td>
-      <td class="coverage"><span data-ice="coverage">60 %</span><span data-ice="coverageCount" class="coverage-count">14/23</span></td>
-      <td style="display: none;" data-ice="size">10130 byte</td>
-      <td style="display: none;" data-ice="lines">335</td>
-      <td style="display: none;" data-ice="updated">2020-08-05 14:18:43 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">60 %</span><span data-ice="coverageCount" class="coverage-count">15/25</span></td>
+      <td style="display: none;" data-ice="size">11192 byte</td>
+      <td style="display: none;" data-ice="lines">363</td>
+      <td style="display: none;" data-ice="updated">2020-09-03 12:47:15 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/workers/wallet.worker.js.html#errorLines=3">src/workers/wallet.worker.js</a></span></td>

@@ -1,6 +1,7 @@
 export default {
   err_core_mnemonic: 'Wrong mnemonic phrase. Please, check the spelling and try again',
   err_core_mnemonic_length: 'Bad word count for mnemonic',
+  err_core_mnemonic_empty: 'Invalid mnemonic',
   err_core_seed: 'Invalid seed',
   err_core_entropy: 'Bad entropy',
   err_core_xprv: 'Invalid xprv',
@@ -18,11 +19,17 @@ export default {
   err_tx_btc_build: 'BTC transaction failed. Check all parameters',
   err_tx_btc_amount: 'Invalid amount. Amount must by a Number',
   err_tx_btc_fee: 'Invalid fee. Fee must by a Number',
+  err_tx_bch_amount: 'Invalid amount. Amount must by a Number',
+  err_tx_bch_fee: 'Invalid fee. Fee must by a Number',
+  err_tx_bch_balance: 'Insufficient balance',
+  err_tx_bch_build: 'BCH transaction failed. Check all parameters',
   err_tx_eth_balance: 'Insufficient balance',
   err_tx_eth_address: 'Invalid ethereum address',
   err_tx_eth_build: 'ETH transaction failed. Check all parameters',
   err_tx_eth_invalid_params: 'Invalid params. Nonce, value, gas price and gas limit have to be a number',
   err_tx_eth_invalid_params_string: 'Invalid params. Parameters "to" must be string based',
   err_wallet_exist: 'Wallet not created. Use this method after creating a wallet',
-  err_wallet_api: 'Api is not found! Please, use the setter apiEndpoint to install.'
+  err_wallet_api: 'Api is not found! Please, use the setter apiEndpoint to install',
+  err_wallet_api_type: 'Api must be an object!',
+  err_btc_private_key_by_index: 'Key generation problem. Check the node and derivation index'
 }

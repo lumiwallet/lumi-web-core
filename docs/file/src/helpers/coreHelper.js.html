@@ -33,6 +33,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
@@ -42,6 +43,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -49,6 +51,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
@@ -68,6 +71,8 @@ import * as ethUtil from &apos;ethereumjs-util&apos;
 import * as HDkey from &apos;hdkey&apos;
 import * as utils from &apos;web3-utils&apos;
 import wif from &apos;wif&apos;
+import * as bchaddr from &apos;bchaddrjs&apos;
+import * as bitcore from &apos;bitcore-lib-cash&apos;
 import CustomError from &apos;@/helpers/handleErrors&apos;
 
 /**
@@ -313,7 +318,7 @@ export function calcBtcTxSize (i = 1, o = 2) {
  * @param {Object} data - Input data for a transaction
  * @param {Array} data.inputs - List of inputs
  * @param {Array} data.outputs - List of outputs
- * @returns {Object} Returns raw transaction and transaction hash
+ * @returns {Object} Returns raw Bitcoin transaction and transaction hash
  */
 
 export function makeRawBtcTx (data = {}) {
@@ -361,7 +366,7 @@ export function makeRawBtcTx (data = {}) {
  * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)
  * @param {string} data.data - Data in hex representation (required for ERC20 transactions)
  * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format
- * @returns {Object} Returns raw transaction and transaction hash
+ * @returns {Object} Returns raw Ethereum transaction and transaction hash
  */
 
 export function makeRawEthTx (data = {}) {
@@ -410,6 +415,68 @@ export function makeRawEthTx (data = {}) {
   catch (e) {
     console.log(e)
     throw new CustomError(&apos;err_tx_eth_build&apos;)
+  }
+}
+
+/**
+ * Creating a raw Bitcoin Cash transaction
+ * @param {Object} data - Input data for a transaction
+ * @param {Array} data.inputs - List of inputs
+ * @param {Array} data.outputs - List of outputs
+ * @returns {Object} Returns raw Bitcoin Cash transaction and transaction hash
+ */
+
+export function makeRawBchTx (data = {}) {
+  try {
+    const {inputs, outputs} = data
+    const toCashAddress = bchaddr.toCashAddress
+    const privateKeys = inputs.map(item =&gt; item.key)
+    const utxos = inputs.map(item =&gt; {
+      item.outputIndex = +item.outputIndex
+      item.satoshis = +item.satoshis
+      item.address = toCashAddress(item.address)
+      
+      return item
+    })
+    
+    const outputsInCashFormat = outputs.map(item =&gt; {
+      item.address = toCashAddress(item.address)
+      item.satoshis = +item.satoshis
+      
+      return item
+    })
+    const tx = new bitcore.Transaction()
+      .from(utxos)
+      .to(outputsInCashFormat)
+      .sign(privateKeys)
+    
+    const txData = tx.serialize()
+    
+    return {
+      tx: txData.toString(&apos;hex&apos;),
+      hash: tx.hash
+    }
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError(&apos;err_tx_bch_build&apos;)
+  }
+}
+
+/**
+ * Getting Bitcoin private key for address by derivation index
+ * @param {Object} node - Input data for a transaction
+ * @param {number} index - Derivation index
+ * @returns {string} Returns Private key in WIF format
+ */
+
+export function getBtcPrivateKeyByIndex (node, index) {
+  try {
+    const key = node.deriveChild(index).privateKey
+  
+    return privateKeyToWIF(key)
+  } catch (e) {
+    throw new CustomError(&apos;err_btc_private_key_by_index&apos;)
   }
 }
 </code></pre>

@@ -4,7 +4,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 
 /**
  * Class BitcoinSync.
- * This class allows you to get information about the balance on a bitcoin wallet,
+ * This class allows you to get information about the balance on a Bitcoin wallet,
  * the list of unspent, a set of addresses that participated in transactions, and a list of transactions
  * @class
  */
@@ -12,12 +12,12 @@ import * as bitcoin from 'bitcoinjs-lib'
 export default class BitcoinSync {
   /**
    * Create a BitcoinSync
-   * @param {Object} node - External Bitcoin node
+   * @param {Object} externalNode - External Bitcoin node
    * @param {Object} internalNode - Internal Bitcoin node
-   * @param {Object} api - A set of URLs for getting information about bitcoin addresses
+   * @param {Object} api - A set of URLs for getting information about Bitcoin addresses
    */
-  constructor (node, internalNode, api) {
-    this.node = node
+  constructor (externalNode, internalNode, api) {
+    this.externalNode = externalNode
     this.internalNode = internalNode
     this.api = api
     this.balance = 0
@@ -27,7 +27,6 @@ export default class BitcoinSync {
       external: [],
       internal: [],
       empty: {},
-      fullList: [],
       all: []
     }
     this.deriveAddress = {
@@ -50,9 +49,10 @@ export default class BitcoinSync {
    */
   
   async Start () {
-    await this.getAddresses()
-    await this.processTransactions()
-    await this.getFeesRequest()
+    await Promise.all([
+      await this.getAddresses(),
+      await this.getFeesRequest()
+    ])
   }
   
   /**
@@ -63,7 +63,7 @@ export default class BitcoinSync {
   async getAddresses () {
     const nodeData = [
       {
-        node: this.node,
+        node: this.externalNode,
         type: 'external'
       }, {
         node: this.internalNode,
@@ -82,26 +82,20 @@ export default class BitcoinSync {
     
     this.addresses.external = addresses[0]
     this.addresses.internal = addresses[1]
-    
     this.addresses.empty = {
       external: this.addresses.external[this.addresses.external.length - 1],
       internal: this.addresses.internal[this.addresses.internal.length - 1]
     }
-    
     await this.additionalCheckAddress()
     
-    this.addresses.fullList = [
-      ...this.addresses.external,
-      ...this.addresses.internal
-    ]
-    this.addresses.all = this.addresses.fullList.map((item) => item.address)
+    this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) => item.address)
     
     await this.getUnspent()
-    this.balance = this.getBalance(this.unspent)
+    await this.processTransactions()
   }
   
   /**
-   * Auxiliary method that gets the bitcoin address by node and index
+   * Auxiliary method that gets the Bitcoin address by node and index
    * @param {Object} node - Bitcoin node
    * @param {string} type - Node type (external or internal)
    * @param {number} from - The index that the derivation starts from
@@ -130,8 +124,8 @@ export default class BitcoinSync {
   /**
    * Getting information about addresses and forming an array of addresses.
    * Makes a request for a bundle of addresses and gets a list of transactions
-   * @param node - Bitcoin node
-   * @param type - Node type (external or internal)
+   * @param {Object} node - Bitcoin node
+   * @param {string} type - Node type (external or internal)
    * @returns {Promise<Array>} A list of addresses with transactions
    */
   
@@ -189,7 +183,7 @@ export default class BitcoinSync {
                 item.derive_index = derive_index
                 
                 if (type === 'external') {
-                  item.address = getBtcAddress(this.node, derive_index)
+                  item.address = getBtcAddress(this.externalNode, derive_index)
                 } else {
                   item.address = getBtcAddress(this.internalNode, derive_index)
                 }
@@ -215,7 +209,7 @@ export default class BitcoinSync {
           }
           
           if (type === 'external') {
-            data.address = getBtcAddress(this.node, derive_index)
+            data.address = getBtcAddress(this.externalNode, derive_index)
           } else {
             data.address = getBtcAddress(this.internalNode, derive_index)
           }
@@ -294,7 +288,9 @@ export default class BitcoinSync {
   }
   
   /**
-   * Getting a unspent transaction output for all addresses in the wallet with the transaction
+   * Getting a unspent transaction output for
+   * all addresses in the wallet with the transaction.
+   * Calculates the balance of the wallet for unspent
    * @returns {Promise<boolean>}
    */
   
@@ -316,12 +312,13 @@ export default class BitcoinSync {
     })
     
     this.unspent = unspent.sort((a, b) => b.value - a.value)
+    this.balance = this.getBalance(this.unspent)
   }
   
   /**
    * Getting a balance of Bitcoin wallet from a list of unspent
    * @param {Array} unspent - The list of unspent transaction output
-   * @returns {number} The balance of the bitcoin wallet
+   * @returns {number} The balance of the Bitcoin Cash wallet
    */
   
   getBalance (unspent) {
@@ -355,7 +352,7 @@ export default class BitcoinSync {
       wif = privateKeyToWIF(key)
     } else {
       finded = this.addresses.external.find(item => item.address === address)
-      key = this.node.deriveChild(finded.derive_index).privateKey
+      key = this.externalNode.deriveChild(finded.derive_index).privateKey
       wif = privateKeyToWIF(key)
     }
     
@@ -450,7 +447,7 @@ export default class BitcoinSync {
   async getUnspentOutputsRequest (addresses) {
     if (!addresses) return []
     
-    let length = 100
+    const length = 100
     let arraysCount = Math.ceil(addresses.length / length)
     let arrays = []
     
@@ -489,8 +486,9 @@ export default class BitcoinSync {
   
   async getFeesRequest () {
     try {
-      let res = await fetch(this.api.bitcoinFee)
-      this.fee = await res.json()
+      const res = await fetch(this.api.bitcoinFee)
+      const resJson = await res.json()
+      this.fee = resJson.sort((a, b) => b.feePerByte - a.feePerByte)
     }
     catch (err) {
       console.log('BTC getFeesRequest', err)

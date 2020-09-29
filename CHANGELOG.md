@@ -1,90 +1,25 @@
-<a name="0.3.1"></a>
-### 0.3.1 (2020-03-16)
-
-
-<a name="0.3.0"></a>
-## 0.3.0 (2020-03-16)
-
-
-<a name="0.2.12"></a>
-### 0.2.12 (2020-03-06)
-
-
-<a name="0.2.11"></a>
-### 0.2.11 (2020-03-06)
-
-
-<a name="0.2.10"></a>
-### 0.2.10 (2020-03-06)
-
-
-<a name="0.2.9"></a>
-### 0.2.9 (2020-03-04)
-
-
-<a name="0.2.8"></a>
-### 0.2.8 (2020-03-04)
-
-
-<a name="0.2.7"></a>
-### 0.2.7 (2020-03-03)
-
-
-<a name="0.2.6"></a>
-### 0.2.6 (2020-03-03)
-
-
-<a name="0.2.6"></a>
-### 0.2.6 (2020-03-03)
-
-
-<a name="0.2.5"></a>
-### 0.2.5 (2020-03-03)
-
-
-<a name="0.2.4"></a>
-### 0.2.4 (2020-03-03)
-
-
-<a name="0.2.3"></a>
-### 0.2.3 (2020-03-03)
-
-
-<a name="0.2.2"></a>
-### 0.2.2 (2020-03-03)
-
-
-<a name="0.2.1"></a>
-### 0.2.1 (2020-03-03)
-
-
-<a name="0.2.0"></a>
-## 0.2.0 (2020-03-03)
-
-
-<a name="0.1.4"></a>
-### 0.1.4 (2020-02-28)
-
-
-<a name="0.1.3"></a>
-### 0.1.3 (2020-02-28)
-
-
-#### Breaking Changes
-
-* Another way to import api config
-
- ([2ef8663d](https://github.com/lumitechnologies/lumi-web-core/commit/2ef8663d))
-
-
-<a name="0.1.2"></a>
-### 0.1.2 (2020-02-26)
-
-
-<a name="0.1.1"></a>
-### 0.1.1 (2020-02-26)
-
-
-0.0.1 / 2020-02-10
-------------------
-- initial release
+- Edited a BCH address converter. Removed logs
+- Added docs, edited bch tx methods
+- Merge branch 'update-dependencies' into bch
+- Added additional check for ETH api response
+- Update @babel dependencies
+- Added Bitcoin Cash support
+- Merge branch 'master' into bch
+- Merge pull request #4 from lumiwallet/fix-sync
+- [UPDATE] version & docs
+- Merge branch 'update-dependencies' into fix-sync
+- Merge pull request #3 from lumiwallet/update-dependencies
+- [UPDATE] package dependencies
+- Added BCH core
+- [FIX] btc sync and eth sync
+- [UPDATE] npm dependencies
+- [FIX] multi address request
+- Merge pull request #2 from lumiwallet/dependabot/npm_and_yarn/elliptic-6.5.3
+- Bump elliptic from 6.3.3 to 6.5.3
+- [UPDATE] package-lock.json
+- [UPDATE] docs and package version
+- Merge pull request #1 from lumiwallet/edit-btc-fee
+- Added prepare script
+- [EDIT] Changed the generation of the list of commissions
+- [ADD] npm shields
+- [LUMICORE] v1.0.0
