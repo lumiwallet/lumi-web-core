@@ -431,15 +431,22 @@ export function makeRawBchTx (data = {}) {
     const {inputs, outputs} = data
     const toCashAddress = bchaddr.toCashAddress
     const privateKeys = inputs.map(item =&gt; item.key)
-    
-    const outputsInCashFormat = outputs.map(item =&gt; {
+    const utxos = inputs.map(item =&gt; {
+      item.outputIndex = +item.outputIndex
+      item.satoshis = +item.satoshis
       item.address = toCashAddress(item.address)
-
+      
       return item
     })
     
+    const outputsInCashFormat = outputs.map(item =&gt; {
+      item.address = toCashAddress(item.address)
+      item.satoshis = +item.satoshis
+      
+      return item
+    })
     const tx = new bitcore.Transaction()
-      .from(inputs)
+      .from(utxos)
       .to(outputsInCashFormat)
       .sign(privateKeys)
     

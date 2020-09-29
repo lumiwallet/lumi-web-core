@@ -18,6 +18,7 @@
       "expectCount": 16,
       "actualCount": 7,
       "undocumentLines": [
+        32,
         33,
         34,
         35,
@@ -25,8 +26,7 @@
         37,
         38,
         39,
-        40,
-        41
+        40
       ]
     },
     "src/class/BTC/BitcoinSync.js": {
@@ -52,14 +52,14 @@
       "expectCount": 15,
       "actualCount": 7,
       "undocumentLines": [
+        31,
         32,
         33,
         34,
         35,
         36,
         37,
-        38,
-        39
+        38
       ]
     },
     "src/class/Core.js": {
