@@ -368,6 +368,7 @@ export function makeRawBchTx (data = {}) {
     const utxos = inputs.map(item => {
       item.outputIndex = +item.outputIndex
       item.satoshis = +item.satoshis
+      item.address = toCashAddress(item.address)
       
       return item
     })

@@ -29,7 +29,6 @@ export default class BitcoinCashTx {
    * @param {string} data.internalAddress - Address for change
    */
   constructor (data) {
-    console.log('btc cash', data)
     this.unspent = data.unspent
     this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
     this.balance = data.balance
@@ -179,7 +178,7 @@ export default class BitcoinCashTx {
       let item = {
         txId: utxo.txid,
         outputIndex: utxo.vout,
-        address: toCashAddress(utxo.cashAddress),
+        address: utxo.cashAddress,
         script: utxo.scriptPubKey,
         satoshis: utxo.satoshis,
         key: getBtcPrivateKeyByIndex(this.nodes[utxo.nodeType], utxo.deriveIndex)

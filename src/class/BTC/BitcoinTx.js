@@ -28,7 +28,6 @@ export default class BitcoinTx {
    * @param {Object} data.customFee - Custom fee entered by the user
    */
   constructor (data) {
-    console.log('btc', data)
     this.unspent = data.unspent
     this.internalAddress = data.internalAddress
     this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
