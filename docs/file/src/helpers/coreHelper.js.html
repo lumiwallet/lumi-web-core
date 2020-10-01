@@ -44,6 +44,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getCashAddress">getCashAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -429,18 +430,17 @@ export function makeRawEthTx (data = {}) {
 export function makeRawBchTx (data = {}) {
   try {
     const {inputs, outputs} = data
-    const toCashAddress = bchaddr.toCashAddress
     const privateKeys = inputs.map(item =&gt; item.key)
     const utxos = inputs.map(item =&gt; {
       item.outputIndex = +item.outputIndex
       item.satoshis = +item.satoshis
-      item.address = toCashAddress(item.address)
+      item.address = getCashAddress(item.address)
       
       return item
     })
     
     const outputsInCashFormat = outputs.map(item =&gt; {
-      item.address = toCashAddress(item.address)
+      item.address = getCashAddress(item.address)
       item.satoshis = +item.satoshis
       
       return item
@@ -460,6 +460,23 @@ export function makeRawBchTx (data = {}) {
   catch (e) {
     console.log(e)
     throw new CustomError(&apos;err_tx_bch_build&apos;)
+  }
+}
+
+/**
+ * Convert a Bitcoin Cash address from Legacy format to CashAddr format
+ * @param {string} address - Bitcoin Cash address in Legacy format
+ * @returns {string} Returns Bitcoin Cash address in CashAddr format
+ */
+
+export function getCashAddress (address = &quot;&quot;) {
+  try {
+    const toCashAddress = bchaddr.toCashAddress
+  
+    return toCashAddress(address)
+  } catch (e) {
+    console.log(e)
+    throw new CustomError(&apos;err_get_bch_address&apos;)
   }
 }
 

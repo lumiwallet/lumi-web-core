@@ -363,18 +363,17 @@ export function makeRawEthTx (data = {}) {
 export function makeRawBchTx (data = {}) {
   try {
     const {inputs, outputs} = data
-    const toCashAddress = bchaddr.toCashAddress
     const privateKeys = inputs.map(item => item.key)
     const utxos = inputs.map(item => {
       item.outputIndex = +item.outputIndex
       item.satoshis = +item.satoshis
-      item.address = toCashAddress(item.address)
+      item.address = getCashAddress(item.address)
       
       return item
     })
     
     const outputsInCashFormat = outputs.map(item => {
-      item.address = toCashAddress(item.address)
+      item.address = getCashAddress(item.address)
       item.satoshis = +item.satoshis
       
       return item
@@ -394,6 +393,23 @@ export function makeRawBchTx (data = {}) {
   catch (e) {
     console.log(e)
     throw new CustomError('err_tx_bch_build')
+  }
+}
+
+/**
+ * Convert a Bitcoin Cash address from Legacy format to CashAddr format
+ * @param {string} address - Bitcoin Cash address in Legacy format
+ * @returns {string} Returns Bitcoin Cash address in CashAddr format
+ */
+
+export function getCashAddress (address = "") {
+  try {
+    const toCashAddress = bchaddr.toCashAddress
+  
+    return toCashAddress(address)
+  } catch (e) {
+    console.log(e)
+    throw new CustomError('err_get_bch_address')
   }
 }
 

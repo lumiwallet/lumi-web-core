@@ -26,21 +26,20 @@ export default class Core {
     this.seed = null
     this.hdkey = null
     this.BTC = {
+      address: null,
       internalNode: null,
-      externalNode: null,
-      privateKey: null,
-      publicKey: null
+      externalNode: null
     }
     this.ETH = {
+      address: null,
       node: null,
       privateKey: null,
       publicKey: null
     }
     this.BCH = {
+      address: null,
       internalNode: null,
-      externalNode: null,
-      privateKey: null,
-      publicKey: null
+      externalNode: null
     }
     
     this.generateWallet()
@@ -195,6 +194,7 @@ export default class Core {
         child.publicKey = deriveChild.publicKey.toString('hex')
         child.btcAddress = core.getBtcAddress(node, i)
         child.ethAddress = core.getEthAddressByNode(deriveChild)
+        child.bchAddress = core.getCashAddress(child.btcAddress)
         info.list.push(child)
       }
       

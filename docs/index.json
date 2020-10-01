@@ -2563,7 +2563,7 @@
     "__docId__": 131,
     "kind": "file",
     "name": "src/class/Core.js",
-    "content": "import {validateMnemonic} from 'bip39'\nimport {normalize, checkWords} from 'bip39-checker'\nimport CustomError from '@/helpers/handleErrors'\nimport * as core from '@/helpers/coreHelper'\n\n/**\n * Class Wallet\n * @class\n */\n\nexport default class Core {\n  /**\n   * Create a core\n   * @param {Object} data\n   * @param {string} data.from - A type new wallet creating: new, mnemonic or xprv\n   * @param {number} data.count - Number of words for the new mnemonic. Is used when parameter from is 'new'\n   * @param {string} data.mnemonic - The mnemonic phrase. It used when parameter from is 'mnemonic'\n   * @param {string} data.key - BIP32 Root Key. It used when parameter from is 'mnemonic'\n   */\n  constructor (data) {\n    const {from, count, mnemonic, key} = data\n    this.from = from\n    this.count = count\n    this.mnemonic = mnemonic\n    this.xprv = key\n    this.seed = null\n    this.hdkey = null\n    this.BTC = {\n      internalNode: null,\n      externalNode: null,\n      privateKey: null,\n      publicKey: null\n    }\n    this.ETH = {\n      node: null,\n      privateKey: null,\n      publicKey: null\n    }\n    this.BCH = {\n      internalNode: null,\n      externalNode: null,\n      privateKey: null,\n      publicKey: null\n    }\n    \n    this.generateWallet()\n  }\n  \n  /**\n   * The main method that starts the generation of the core.\n   * The type of generation depends on the parameter 'from'\n   */\n  \n  generateWallet () {\n    switch (this.from) {\n      case 'new':\n        this._generateNewMnemonic()\n        break\n      case 'mnemonic':\n        this._importByMnemonic()\n        break\n      case 'xprv':\n        this._importByKey()\n        break\n      default:\n        this._generateNewMnemonic()\n    }\n    \n    this._generateBTCcore()\n    this._generateETHcore()\n    this._generateBCHcore()\n  }\n  \n  /**\n   * Generating a new mnemonic.\n   * The number of words in a mnemonic depends on the parameter 'count'\n   * @private\n   */\n  \n  _generateNewMnemonic () {\n    const entropy = this._getEntropyLength(this.count)\n    this.mnemonic = core.generateMnemonic(entropy)\n    this.seed = core.mnemonicToSeed(this.mnemonic)\n    this.hdkey = core.hdFromSeed(this.seed)\n    this.xprv = core.getXprv(this.hdkey)\n  }\n  \n  /**\n   * Importing a wallet by mnemonic\n   * @private\n   */\n  \n  _importByMnemonic () {\n    this.mnemonic = normalize(this.mnemonic)\n    \n    if (!this.checkMnemonic(this.mnemonic)) {\n      throw new CustomError('err_core_mnemonic')\n    }\n    \n    this.seed = core.mnemonicToSeed(this.mnemonic)\n    this.hdkey = core.hdFromSeed(this.seed)\n    this.xprv = core.getXprv(this.hdkey)\n  }\n  \n  /**\n   * Importing a wallet by key\n   * @private\n   */\n  \n  _importByKey () {\n    this.hdkey = core.hdFromXprv(this.xprv)\n  }\n  \n  /**\n   * Creating a core for Bitcoin.\n   * At the output, we get a external and internal node\n   * and the first address of the external core\n   * @private\n   */\n  \n  _generateBTCcore () {\n    const bitcoin_external_path = 'm/44\\'/0\\'/0\\'/0'\n    const bitcoin_internal_path = 'm/44\\'/0\\'/0\\'/1'\n    this.BTC.externalNode = core.derive(this.hdkey, bitcoin_external_path)\n    this.BTC.internalNode = core.derive(this.hdkey, bitcoin_internal_path)\n    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0)\n  }\n  \n  /**\n   * Creating a core for Ethereum.\n   * At the output, we get a Ethereum node,\n   * a private and public key, and the Ethereum address\n   * @private\n   */\n  \n  _generateETHcore () {\n    const ethereum_path = 'm/44\\'/60\\'/0\\'/0/0'\n    this.ETH.node = core.derive(this.hdkey, ethereum_path)\n    this.ETH.privateKey = core.getEthPrivateKey(this.ETH.node)\n    this.ETH.privateKeyHex = '0x' + this.ETH.privateKey.toString('hex')\n    this.ETH.publicKey = core.getEthPublicKey(this.ETH.privateKey)\n    this.ETH.address = core.getEthAddress(this.ETH.publicKey)\n  }\n  \n  /**\n   * Creating a core for Bitcoin Cash.\n   * At the output, we get a external and internal node\n   * and the first address of the external core\n   * @private\n   */\n  \n  _generateBCHcore () {\n    const bitcoincash_external_path = 'm/44\\'/145\\'/0\\'/0'\n    const bitcoincash_internal_path = 'm/44\\'/145\\'/0\\'/1'\n    this.BCH.externalNode = core.derive(this.hdkey, bitcoincash_external_path)\n    this.BCH.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)\n    this.BCH.address = core.getBtcAddress(this.BCH.externalNode, 0)\n  }\n  \n  /**\n   * The method returns information about child nodes by the derivation path and range\n   * @param {Object} data\n   * @param {number} data.from - Top of the derivation range\n   * @param {number} data.to - End of the derivation range\n   * @param {string} data.path - Derivation path\n   * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}}\n   */\n  \n  getChildNodes (data = {}) {\n    let {from, to, path} = data\n    \n    from = +from\n    to = +to\n    \n    if (!Number.isInteger(from) || !Number.isInteger(to) || from > to) {\n      throw new CustomError('err_core_derivation_range')\n    }\n    \n    try {\n      const node = core.derive(this.hdkey, path)\n      \n      let info = {\n        node: {\n          privateExtendedKey: node.privateExtendedKey,\n          publicExtendedKey: node.publicExtendedKey\n        },\n        list: []\n      }\n      \n      for (let i = from; i <= to; i++) {\n        const child = {}\n        const deriveChild = node.deriveChild(i)\n        child.path = `${ path }/${ i }`\n        child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)\n        child.publicKey = deriveChild.publicKey.toString('hex')\n        child.btcAddress = core.getBtcAddress(node, i)\n        child.ethAddress = core.getEthAddressByNode(deriveChild)\n        info.list.push(child)\n      }\n      \n      return info\n    }\n    catch (e) {\n      throw new CustomError('err_core_derivation')\n    }\n  }\n  \n  /**\n   * Checking the mnemonic for validity\n   * @param mnemonic\n   * @returns {boolean}\n   */\n  \n  checkMnemonic (mnemonic) {\n    let words = mnemonic.split(' ')\n    let withTypo = []\n    \n    words.forEach((word, index) => {\n      if (!checkWords(word, 'english')) {\n        withTypo.push(index)\n      }\n    })\n    \n    if (withTypo.length) {\n      throw new CustomError('err_core_mnemonic')\n    }\n    \n    return validateMnemonic(mnemonic)\n  }\n  \n  /**\n   * Getting the entropy size by the number of words in a mnemonic\n   * @param words\n   * @returns {number} Bits of entropy\n   * @private\n   */\n  \n  _getEntropyLength (words) {\n    let bitsOfEntropy = {\n      12: 128,\n      15: 160,\n      18: 192,\n      21: 224,\n      24: 256\n    }\n    \n    if (!bitsOfEntropy.hasOwnProperty(+words)) {\n      throw new CustomError('err_core_7')\n    }\n    \n    return bitsOfEntropy[words]\n  }\n  \n  get DATA () {\n    return {\n      mnemonic: this.mnemonic,\n      xprv: this.xprv,\n      from: this.from,\n      hdkey: this.hdkey,\n      seed: this.seed,\n      seedInHex: this.seed ? this.seed.toString('hex') : null,\n      BTC: this.BTC,\n      ETH: this.ETH,\n      BCH: this.BCH\n    }\n  }\n}\n",
+    "content": "import {validateMnemonic} from 'bip39'\nimport {normalize, checkWords} from 'bip39-checker'\nimport CustomError from '@/helpers/handleErrors'\nimport * as core from '@/helpers/coreHelper'\n\n/**\n * Class Wallet\n * @class\n */\n\nexport default class Core {\n  /**\n   * Create a core\n   * @param {Object} data\n   * @param {string} data.from - A type new wallet creating: new, mnemonic or xprv\n   * @param {number} data.count - Number of words for the new mnemonic. Is used when parameter from is 'new'\n   * @param {string} data.mnemonic - The mnemonic phrase. It used when parameter from is 'mnemonic'\n   * @param {string} data.key - BIP32 Root Key. It used when parameter from is 'mnemonic'\n   */\n  constructor (data) {\n    const {from, count, mnemonic, key} = data\n    this.from = from\n    this.count = count\n    this.mnemonic = mnemonic\n    this.xprv = key\n    this.seed = null\n    this.hdkey = null\n    this.BTC = {\n      address: null,\n      internalNode: null,\n      externalNode: null\n    }\n    this.ETH = {\n      address: null,\n      node: null,\n      privateKey: null,\n      publicKey: null\n    }\n    this.BCH = {\n      address: null,\n      internalNode: null,\n      externalNode: null\n    }\n    \n    this.generateWallet()\n  }\n  \n  /**\n   * The main method that starts the generation of the core.\n   * The type of generation depends on the parameter 'from'\n   */\n  \n  generateWallet () {\n    switch (this.from) {\n      case 'new':\n        this._generateNewMnemonic()\n        break\n      case 'mnemonic':\n        this._importByMnemonic()\n        break\n      case 'xprv':\n        this._importByKey()\n        break\n      default:\n        this._generateNewMnemonic()\n    }\n    \n    this._generateBTCcore()\n    this._generateETHcore()\n    this._generateBCHcore()\n  }\n  \n  /**\n   * Generating a new mnemonic.\n   * The number of words in a mnemonic depends on the parameter 'count'\n   * @private\n   */\n  \n  _generateNewMnemonic () {\n    const entropy = this._getEntropyLength(this.count)\n    this.mnemonic = core.generateMnemonic(entropy)\n    this.seed = core.mnemonicToSeed(this.mnemonic)\n    this.hdkey = core.hdFromSeed(this.seed)\n    this.xprv = core.getXprv(this.hdkey)\n  }\n  \n  /**\n   * Importing a wallet by mnemonic\n   * @private\n   */\n  \n  _importByMnemonic () {\n    this.mnemonic = normalize(this.mnemonic)\n    \n    if (!this.checkMnemonic(this.mnemonic)) {\n      throw new CustomError('err_core_mnemonic')\n    }\n    \n    this.seed = core.mnemonicToSeed(this.mnemonic)\n    this.hdkey = core.hdFromSeed(this.seed)\n    this.xprv = core.getXprv(this.hdkey)\n  }\n  \n  /**\n   * Importing a wallet by key\n   * @private\n   */\n  \n  _importByKey () {\n    this.hdkey = core.hdFromXprv(this.xprv)\n  }\n  \n  /**\n   * Creating a core for Bitcoin.\n   * At the output, we get a external and internal node\n   * and the first address of the external core\n   * @private\n   */\n  \n  _generateBTCcore () {\n    const bitcoin_external_path = 'm/44\\'/0\\'/0\\'/0'\n    const bitcoin_internal_path = 'm/44\\'/0\\'/0\\'/1'\n    this.BTC.externalNode = core.derive(this.hdkey, bitcoin_external_path)\n    this.BTC.internalNode = core.derive(this.hdkey, bitcoin_internal_path)\n    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0)\n  }\n  \n  /**\n   * Creating a core for Ethereum.\n   * At the output, we get a Ethereum node,\n   * a private and public key, and the Ethereum address\n   * @private\n   */\n  \n  _generateETHcore () {\n    const ethereum_path = 'm/44\\'/60\\'/0\\'/0/0'\n    this.ETH.node = core.derive(this.hdkey, ethereum_path)\n    this.ETH.privateKey = core.getEthPrivateKey(this.ETH.node)\n    this.ETH.privateKeyHex = '0x' + this.ETH.privateKey.toString('hex')\n    this.ETH.publicKey = core.getEthPublicKey(this.ETH.privateKey)\n    this.ETH.address = core.getEthAddress(this.ETH.publicKey)\n  }\n  \n  /**\n   * Creating a core for Bitcoin Cash.\n   * At the output, we get a external and internal node\n   * and the first address of the external core\n   * @private\n   */\n  \n  _generateBCHcore () {\n    const bitcoincash_external_path = 'm/44\\'/145\\'/0\\'/0'\n    const bitcoincash_internal_path = 'm/44\\'/145\\'/0\\'/1'\n    this.BCH.externalNode = core.derive(this.hdkey, bitcoincash_external_path)\n    this.BCH.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)\n    this.BCH.address = core.getBtcAddress(this.BCH.externalNode, 0)\n  }\n  \n  /**\n   * The method returns information about child nodes by the derivation path and range\n   * @param {Object} data\n   * @param {number} data.from - Top of the derivation range\n   * @param {number} data.to - End of the derivation range\n   * @param {string} data.path - Derivation path\n   * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}}\n   */\n  \n  getChildNodes (data = {}) {\n    let {from, to, path} = data\n    \n    from = +from\n    to = +to\n    \n    if (!Number.isInteger(from) || !Number.isInteger(to) || from > to) {\n      throw new CustomError('err_core_derivation_range')\n    }\n    \n    try {\n      const node = core.derive(this.hdkey, path)\n      \n      let info = {\n        node: {\n          privateExtendedKey: node.privateExtendedKey,\n          publicExtendedKey: node.publicExtendedKey\n        },\n        list: []\n      }\n      \n      for (let i = from; i <= to; i++) {\n        const child = {}\n        const deriveChild = node.deriveChild(i)\n        child.path = `${ path }/${ i }`\n        child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)\n        child.publicKey = deriveChild.publicKey.toString('hex')\n        child.btcAddress = core.getBtcAddress(node, i)\n        child.ethAddress = core.getEthAddressByNode(deriveChild)\n        child.bchAddress = core.getCashAddress(child.btcAddress)\n        info.list.push(child)\n      }\n      \n      return info\n    }\n    catch (e) {\n      throw new CustomError('err_core_derivation')\n    }\n  }\n  \n  /**\n   * Checking the mnemonic for validity\n   * @param mnemonic\n   * @returns {boolean}\n   */\n  \n  checkMnemonic (mnemonic) {\n    let words = mnemonic.split(' ')\n    let withTypo = []\n    \n    words.forEach((word, index) => {\n      if (!checkWords(word, 'english')) {\n        withTypo.push(index)\n      }\n    })\n    \n    if (withTypo.length) {\n      throw new CustomError('err_core_mnemonic')\n    }\n    \n    return validateMnemonic(mnemonic)\n  }\n  \n  /**\n   * Getting the entropy size by the number of words in a mnemonic\n   * @param words\n   * @returns {number} Bits of entropy\n   * @private\n   */\n  \n  _getEntropyLength (words) {\n    let bitsOfEntropy = {\n      12: 128,\n      15: 160,\n      18: 192,\n      21: 224,\n      24: 256\n    }\n    \n    if (!bitsOfEntropy.hasOwnProperty(+words)) {\n      throw new CustomError('err_core_7')\n    }\n    \n    return bitsOfEntropy[words]\n  }\n  \n  get DATA () {\n    return {\n      mnemonic: this.mnemonic,\n      xprv: this.xprv,\n      from: this.from,\n      hdkey: this.hdkey,\n      seed: this.seed,\n      seedInHex: this.seed ? this.seed.toString('hex') : null,\n      BTC: this.BTC,\n      ETH: this.ETH,\n      BCH: this.BCH\n    }\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/class/Core.js",
     "access": "public",
@@ -2771,7 +2771,7 @@
     "undocument": true,
     "type": {
       "types": [
-        "{\"internalNode\": *, \"externalNode\": *, \"privateKey\": *, \"publicKey\": *}"
+        "{\"address\": *, \"internalNode\": *, \"externalNode\": *}"
       ]
     }
   },
@@ -2784,11 +2784,11 @@
     "longname": "src/class/Core.js~Core#ETH",
     "access": "public",
     "description": null,
-    "lineNumber": 34,
+    "lineNumber": 33,
     "undocument": true,
     "type": {
       "types": [
-        "{\"node\": *, \"privateKey\": *, \"publicKey\": *}"
+        "{\"address\": *, \"node\": *, \"privateKey\": *, \"publicKey\": *}"
       ]
     }
   },
@@ -2805,7 +2805,7 @@
     "undocument": true,
     "type": {
       "types": [
-        "{\"internalNode\": *, \"externalNode\": *, \"privateKey\": *, \"publicKey\": *}"
+        "{\"address\": *, \"internalNode\": *, \"externalNode\": *}"
       ]
     }
   },
@@ -2820,7 +2820,7 @@
     "longname": "src/class/Core.js~Core#generateWallet",
     "access": "public",
     "description": "The main method that starts the generation of the core.\nThe type of generation depends on the parameter 'from'",
-    "lineNumber": 54,
+    "lineNumber": 53,
     "params": [],
     "return": null
   },
@@ -2835,7 +2835,7 @@
     "longname": "src/class/Core.js~Core#_generateNewMnemonic",
     "access": "private",
     "description": "Generating a new mnemonic.\nThe number of words in a mnemonic depends on the parameter 'count'",
-    "lineNumber": 80,
+    "lineNumber": 79,
     "params": [],
     "return": null
   },
@@ -2850,7 +2850,7 @@
     "longname": "src/class/Core.js~Core#_importByMnemonic",
     "access": "private",
     "description": "Importing a wallet by mnemonic",
-    "lineNumber": 93,
+    "lineNumber": 92,
     "params": [],
     "return": null
   },
@@ -2865,7 +2865,7 @@
     "longname": "src/class/Core.js~Core#_importByKey",
     "access": "private",
     "description": "Importing a wallet by key",
-    "lineNumber": 110,
+    "lineNumber": 109,
     "params": [],
     "return": null
   },
@@ -2880,7 +2880,7 @@
     "longname": "src/class/Core.js~Core#_generateBTCcore",
     "access": "private",
     "description": "Creating a core for Bitcoin.\nAt the output, we get a external and internal node\nand the first address of the external core",
-    "lineNumber": 121,
+    "lineNumber": 120,
     "params": [],
     "return": null
   },
@@ -2895,7 +2895,7 @@
     "longname": "src/class/Core.js~Core#_generateETHcore",
     "access": "private",
     "description": "Creating a core for Ethereum.\nAt the output, we get a Ethereum node,\na private and public key, and the Ethereum address",
-    "lineNumber": 136,
+    "lineNumber": 135,
     "params": [],
     "return": null
   },
@@ -2910,7 +2910,7 @@
     "longname": "src/class/Core.js~Core#_generateBCHcore",
     "access": "private",
     "description": "Creating a core for Bitcoin Cash.\nAt the output, we get a external and internal node\nand the first address of the external core",
-    "lineNumber": 152,
+    "lineNumber": 151,
     "params": [],
     "return": null
   },
@@ -2925,7 +2925,7 @@
     "longname": "src/class/Core.js~Core#getChildNodes",
     "access": "public",
     "description": "The method returns information about child nodes by the derivation path and range",
-    "lineNumber": 169,
+    "lineNumber": 168,
     "unknown": [
       {
         "tagName": "@returns",
@@ -4242,7 +4242,7 @@
     "__docId__": 213,
     "kind": "file",
     "name": "src/helpers/coreHelper.js",
-    "content": "import * as bip39 from 'bip39'\nimport * as bitcoin from 'bitcoinjs-lib'\nimport {Transaction} from 'ethereumjs-tx'\nimport * as ethUtil from 'ethereumjs-util'\nimport * as HDkey from 'hdkey'\nimport * as utils from 'web3-utils'\nimport wif from 'wif'\nimport * as bchaddr from 'bchaddrjs'\nimport * as bitcore from 'bitcore-lib-cash'\nimport CustomError from '@/helpers/handleErrors'\n\n/**\n * Generation of mnemonics.\n * The number of words in a mnemonic depends on the length of the entropy\n * @param {number} entropyLength - The number of bits in the entropy. It can be equal to 128, 160, 192, 224 or 256 bits\n * @returns {string} - A mnemonic whose words are separated by spaces\n */\nexport function generateMnemonic (entropyLength = 128) {\n  try {\n    return bip39.generateMnemonic(entropyLength)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_entropy')\n  }\n}\n\n/**\n * Converting a mnemonic to seed\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {Buffer} - Seed in Uint8Array format\n */\nexport function mnemonicToSeed (mnemonic) {\n  try {\n    return bip39.mnemonicToSeedSync(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a mnemonic to entropy\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {string} HEX strings entropy\n */\nexport function mnemonicToEntropy (mnemonic) {\n  try {\n    return bip39.mnemonicToEntropy(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a seed to hdkey (Hierarchical Deterministic Key)\n * @param {Buffer} seed - Mnemonic seed in Buffer\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromSeed (seed) {\n  try {\n    return HDkey.fromMasterSeed(seed)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_seed')\n  }\n}\n\n\n/**\n * Converting a xprv to hdkey (Hierarchical Deterministic Key)\n * @param {string} xprv - Extended private key\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromXprv (xprv) {\n  try {\n    return HDkey.fromExtendedKey(xprv)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_xprv')\n  }\n}\n\n/**\n * Getting xprv by hdkey\n * @param {Object} hd - HDkey node\n * @returns {string} Extended private key\n */\nexport function getXprv (hd) {\n  try {\n    return hd.privateExtendedKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_hdkey')\n  }\n}\n\n/**\n * Derivation of node. Getting child node by path\n * @param {Object} hd - HDkey node\n * @param {string} path - Derivation path\n * @returns {Object} - Child node\n */\n\nexport function derive (hd, path) {\n  if (!hd) {\n    throw new CustomError('err_core_derivation_hdkey')\n  }\n  \n  if (!path) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  \n  let regex = new RegExp(/(^\\m\\/44\\')([\\/{1}\\d+\\'{1}]+)/mg)\n  \n  if (!regex.test(path)) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  \n  try {\n    return hd.derive(path)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_derivation')\n  }\n}\n\n/**\n * Getting a bitcoin address by node and child index\n * @param {Object} node - HDkey node\n * @param {number} childIndex - Index of the child node\n * @returns {string} Bitcoin address\n */\n\nexport function getBtcAddress (node, childIndex = 0) {\n  try {\n    let pubKey = node.deriveChild(childIndex).publicKey\n    \n    return bitcoin.payments.p2pkh({\n      pubkey: pubKey\n    }).address\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_btc_address')\n  }\n}\n\n/**\n * Getting a Ethereum private key by node\n * @param {Object} node - Ethereum node\n * @returns {Buffer} Ethereum private key in Uint8Array format\n */\n\nexport function getEthPrivateKey (node) {\n  try {\n    return node._privateKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_node')\n  }\n}\n\n/**\n * Getting a Ethereum public key by private key\n * @param {Buffer} privateKey - Ethereum private key\n * @returns {Buffer} Ethereum public key in Uint8Array format\n */\n\nexport function getEthPublicKey (privateKey) {\n  try {\n    return ethUtil.privateToPublic(privateKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_private_key')\n  }\n}\n\n/**\n * Getting a Ethereum wallet address by public key\n * @param {Buffer} publicKey - Ethereum public key\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddress (publicKey) {\n  try {\n    let addrBuffer = ethUtil\n      .publicToAddress(publicKey)\n      .toString('hex')\n    return ethUtil.toChecksumAddress(addrBuffer).toLowerCase()\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Getting Ethereum wallet address by node\n * @param {Object} node - Ethereum node\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddressByNode (node) {\n  try {\n    let privateKey = getEthPrivateKey(node)\n    let publicKey = getEthPublicKey(privateKey)\n    return getEthAddress(publicKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Convert a Bitcoin private key to the WIF (Wallet Import Format)\n * @param {Buffer} privateKey - Private key in Uint8Array format\n * @returns {string} Private key in WIF\n */\nexport function privateKeyToWIF (privateKey) {\n  try {\n    return wif.encode(128, privateKey, true)\n  }\n  catch (e) {\n    throw new CustomError('err_core_private_key')\n  }\n}\n\n/**\n * Calculating the transaction size by the number of inputs and outputs\n * @param {number} i - Number of inputs. By default 1\n * @param {number} o - Number of outputs. By default 2\n * @returns {number} Transaction size\n */\n\nexport function calcBtcTxSize (i = 1, o = 2) {\n  return i * 148 + o * 34 + 10\n}\n\n/**\n * Creating a raw Bitcoin transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin transaction and transaction hash\n */\n\nexport function makeRawBtcTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    let txb = new bitcoin.TransactionBuilder()\n    \n    txb.setVersion(1)\n    \n    inputs.forEach((item) => {\n      txb.addInput(item.tx_hash_big_endian, +item.tx_output_n)\n    })\n    \n    outputs.forEach((item) => {\n      txb.addOutput(item.address, +item.value)\n    })\n    \n    inputs.forEach((item, index) => {\n      let key = bitcoin.ECPair.fromWIF(item.key)\n      txb.sign(index, key)\n    })\n    \n    let tx = txb.build()\n    let hash = tx.getId()\n    \n    return {\n      hash,\n      tx: tx.toHex()\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_btc_build')\n  }\n}\n\n/**\n * Creating a raw Ethereum transaction\n * @param {Object} data - Input data for a transaction\n * @param {string} data.to - Recipient address or contract address\n * @param {number} data.value - Transaction amount\n * @param {number} data.nonce - Nonce, transaction count of an account\n * @param {number} data.gasPrice - Transaction gas price\n * @param {number} data.gasLimit - Transaction gas limit\n * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)\n * @param {string} data.data - Data in hex representation (required for ERC20 transactions)\n * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format\n * @returns {Object} Returns raw Ethereum transaction and transaction hash\n */\n\nexport function makeRawEthTx (data = {}) {\n  const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data\n  \n  if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||\n    isNaN(gasLimit)) {\n    throw new CustomError('err_tx_eth_invalid_params')\n  }\n  \n  if (typeof to !== 'string') {\n    throw new CustomError('err_tx_eth_invalid_params_string')\n  }\n  \n  try {\n    let params = {\n      to: to,\n      nonce: utils.toHex(parseInt(nonce)),\n      value: utils.toHex(parseInt(value)),\n      gasPrice: utils.toHex(parseInt(gasPrice)),\n      gasLimit: utils.toHex(parseInt(gasLimit)),\n      chainId: utils.toHex(1)\n    }\n    \n    if (data.hasOwnProperty('from') && data.from) {\n      params.from = data.from\n    }\n    \n    if (data.hasOwnProperty('data') && data.data) {\n      params.data = data.data\n    }\n    \n    const tx = new Transaction(params)\n    const privateKeyBuffer = ethUtil.toBuffer(privateKey)\n    \n    tx.sign(privateKeyBuffer)\n    \n    const serializedTx = tx.serialize()\n    const hash = tx.hash().toString('hex')\n    \n    return {\n      hash: `0x${ hash }`,\n      tx: `0x${ serializedTx.toString('hex') }`\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_eth_build')\n  }\n}\n\n/**\n * Creating a raw Bitcoin Cash transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin Cash transaction and transaction hash\n */\n\nexport function makeRawBchTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    const toCashAddress = bchaddr.toCashAddress\n    const privateKeys = inputs.map(item => item.key)\n    const utxos = inputs.map(item => {\n      item.outputIndex = +item.outputIndex\n      item.satoshis = +item.satoshis\n      item.address = toCashAddress(item.address)\n      \n      return item\n    })\n    \n    const outputsInCashFormat = outputs.map(item => {\n      item.address = toCashAddress(item.address)\n      item.satoshis = +item.satoshis\n      \n      return item\n    })\n    const tx = new bitcore.Transaction()\n      .from(utxos)\n      .to(outputsInCashFormat)\n      .sign(privateKeys)\n    \n    const txData = tx.serialize()\n    \n    return {\n      tx: txData.toString('hex'),\n      hash: tx.hash\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_bch_build')\n  }\n}\n\n/**\n * Getting Bitcoin private key for address by derivation index\n * @param {Object} node - Input data for a transaction\n * @param {number} index - Derivation index\n * @returns {string} Returns Private key in WIF format\n */\n\nexport function getBtcPrivateKeyByIndex (node, index) {\n  try {\n    const key = node.deriveChild(index).privateKey\n  \n    return privateKeyToWIF(key)\n  } catch (e) {\n    throw new CustomError('err_btc_private_key_by_index')\n  }\n}\n",
+    "content": "import * as bip39 from 'bip39'\nimport * as bitcoin from 'bitcoinjs-lib'\nimport {Transaction} from 'ethereumjs-tx'\nimport * as ethUtil from 'ethereumjs-util'\nimport * as HDkey from 'hdkey'\nimport * as utils from 'web3-utils'\nimport wif from 'wif'\nimport * as bchaddr from 'bchaddrjs'\nimport * as bitcore from 'bitcore-lib-cash'\nimport CustomError from '@/helpers/handleErrors'\n\n/**\n * Generation of mnemonics.\n * The number of words in a mnemonic depends on the length of the entropy\n * @param {number} entropyLength - The number of bits in the entropy. It can be equal to 128, 160, 192, 224 or 256 bits\n * @returns {string} - A mnemonic whose words are separated by spaces\n */\nexport function generateMnemonic (entropyLength = 128) {\n  try {\n    return bip39.generateMnemonic(entropyLength)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_entropy')\n  }\n}\n\n/**\n * Converting a mnemonic to seed\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {Buffer} - Seed in Uint8Array format\n */\nexport function mnemonicToSeed (mnemonic) {\n  try {\n    return bip39.mnemonicToSeedSync(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a mnemonic to entropy\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {string} HEX strings entropy\n */\nexport function mnemonicToEntropy (mnemonic) {\n  try {\n    return bip39.mnemonicToEntropy(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a seed to hdkey (Hierarchical Deterministic Key)\n * @param {Buffer} seed - Mnemonic seed in Buffer\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromSeed (seed) {\n  try {\n    return HDkey.fromMasterSeed(seed)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_seed')\n  }\n}\n\n\n/**\n * Converting a xprv to hdkey (Hierarchical Deterministic Key)\n * @param {string} xprv - Extended private key\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromXprv (xprv) {\n  try {\n    return HDkey.fromExtendedKey(xprv)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_xprv')\n  }\n}\n\n/**\n * Getting xprv by hdkey\n * @param {Object} hd - HDkey node\n * @returns {string} Extended private key\n */\nexport function getXprv (hd) {\n  try {\n    return hd.privateExtendedKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_hdkey')\n  }\n}\n\n/**\n * Derivation of node. Getting child node by path\n * @param {Object} hd - HDkey node\n * @param {string} path - Derivation path\n * @returns {Object} - Child node\n */\n\nexport function derive (hd, path) {\n  if (!hd) {\n    throw new CustomError('err_core_derivation_hdkey')\n  }\n  \n  if (!path) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  \n  let regex = new RegExp(/(^\\m\\/44\\')([\\/{1}\\d+\\'{1}]+)/mg)\n  \n  if (!regex.test(path)) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  \n  try {\n    return hd.derive(path)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_derivation')\n  }\n}\n\n/**\n * Getting a bitcoin address by node and child index\n * @param {Object} node - HDkey node\n * @param {number} childIndex - Index of the child node\n * @returns {string} Bitcoin address\n */\n\nexport function getBtcAddress (node, childIndex = 0) {\n  try {\n    let pubKey = node.deriveChild(childIndex).publicKey\n    \n    return bitcoin.payments.p2pkh({\n      pubkey: pubKey\n    }).address\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_btc_address')\n  }\n}\n\n/**\n * Getting a Ethereum private key by node\n * @param {Object} node - Ethereum node\n * @returns {Buffer} Ethereum private key in Uint8Array format\n */\n\nexport function getEthPrivateKey (node) {\n  try {\n    return node._privateKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_node')\n  }\n}\n\n/**\n * Getting a Ethereum public key by private key\n * @param {Buffer} privateKey - Ethereum private key\n * @returns {Buffer} Ethereum public key in Uint8Array format\n */\n\nexport function getEthPublicKey (privateKey) {\n  try {\n    return ethUtil.privateToPublic(privateKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_private_key')\n  }\n}\n\n/**\n * Getting a Ethereum wallet address by public key\n * @param {Buffer} publicKey - Ethereum public key\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddress (publicKey) {\n  try {\n    let addrBuffer = ethUtil\n      .publicToAddress(publicKey)\n      .toString('hex')\n    return ethUtil.toChecksumAddress(addrBuffer).toLowerCase()\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Getting Ethereum wallet address by node\n * @param {Object} node - Ethereum node\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddressByNode (node) {\n  try {\n    let privateKey = getEthPrivateKey(node)\n    let publicKey = getEthPublicKey(privateKey)\n    return getEthAddress(publicKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Convert a Bitcoin private key to the WIF (Wallet Import Format)\n * @param {Buffer} privateKey - Private key in Uint8Array format\n * @returns {string} Private key in WIF\n */\nexport function privateKeyToWIF (privateKey) {\n  try {\n    return wif.encode(128, privateKey, true)\n  }\n  catch (e) {\n    throw new CustomError('err_core_private_key')\n  }\n}\n\n/**\n * Calculating the transaction size by the number of inputs and outputs\n * @param {number} i - Number of inputs. By default 1\n * @param {number} o - Number of outputs. By default 2\n * @returns {number} Transaction size\n */\n\nexport function calcBtcTxSize (i = 1, o = 2) {\n  return i * 148 + o * 34 + 10\n}\n\n/**\n * Creating a raw Bitcoin transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin transaction and transaction hash\n */\n\nexport function makeRawBtcTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    let txb = new bitcoin.TransactionBuilder()\n    \n    txb.setVersion(1)\n    \n    inputs.forEach((item) => {\n      txb.addInput(item.tx_hash_big_endian, +item.tx_output_n)\n    })\n    \n    outputs.forEach((item) => {\n      txb.addOutput(item.address, +item.value)\n    })\n    \n    inputs.forEach((item, index) => {\n      let key = bitcoin.ECPair.fromWIF(item.key)\n      txb.sign(index, key)\n    })\n    \n    let tx = txb.build()\n    let hash = tx.getId()\n    \n    return {\n      hash,\n      tx: tx.toHex()\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_btc_build')\n  }\n}\n\n/**\n * Creating a raw Ethereum transaction\n * @param {Object} data - Input data for a transaction\n * @param {string} data.to - Recipient address or contract address\n * @param {number} data.value - Transaction amount\n * @param {number} data.nonce - Nonce, transaction count of an account\n * @param {number} data.gasPrice - Transaction gas price\n * @param {number} data.gasLimit - Transaction gas limit\n * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)\n * @param {string} data.data - Data in hex representation (required for ERC20 transactions)\n * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format\n * @returns {Object} Returns raw Ethereum transaction and transaction hash\n */\n\nexport function makeRawEthTx (data = {}) {\n  const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data\n  \n  if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||\n    isNaN(gasLimit)) {\n    throw new CustomError('err_tx_eth_invalid_params')\n  }\n  \n  if (typeof to !== 'string') {\n    throw new CustomError('err_tx_eth_invalid_params_string')\n  }\n  \n  try {\n    let params = {\n      to: to,\n      nonce: utils.toHex(parseInt(nonce)),\n      value: utils.toHex(parseInt(value)),\n      gasPrice: utils.toHex(parseInt(gasPrice)),\n      gasLimit: utils.toHex(parseInt(gasLimit)),\n      chainId: utils.toHex(1)\n    }\n    \n    if (data.hasOwnProperty('from') && data.from) {\n      params.from = data.from\n    }\n    \n    if (data.hasOwnProperty('data') && data.data) {\n      params.data = data.data\n    }\n    \n    const tx = new Transaction(params)\n    const privateKeyBuffer = ethUtil.toBuffer(privateKey)\n    \n    tx.sign(privateKeyBuffer)\n    \n    const serializedTx = tx.serialize()\n    const hash = tx.hash().toString('hex')\n    \n    return {\n      hash: `0x${ hash }`,\n      tx: `0x${ serializedTx.toString('hex') }`\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_eth_build')\n  }\n}\n\n/**\n * Creating a raw Bitcoin Cash transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin Cash transaction and transaction hash\n */\n\nexport function makeRawBchTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    const privateKeys = inputs.map(item => item.key)\n    const utxos = inputs.map(item => {\n      item.outputIndex = +item.outputIndex\n      item.satoshis = +item.satoshis\n      item.address = getCashAddress(item.address)\n      \n      return item\n    })\n    \n    const outputsInCashFormat = outputs.map(item => {\n      item.address = getCashAddress(item.address)\n      item.satoshis = +item.satoshis\n      \n      return item\n    })\n    const tx = new bitcore.Transaction()\n      .from(utxos)\n      .to(outputsInCashFormat)\n      .sign(privateKeys)\n    \n    const txData = tx.serialize()\n    \n    return {\n      tx: txData.toString('hex'),\n      hash: tx.hash\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_bch_build')\n  }\n}\n\n/**\n * Convert a Bitcoin Cash address from Legacy format to CashAddr format\n * @param {string} address - Bitcoin Cash address in Legacy format\n * @returns {string} Returns Bitcoin Cash address in CashAddr format\n */\n\nexport function getCashAddress (address = \"\") {\n  try {\n    const toCashAddress = bchaddr.toCashAddress\n  \n    return toCashAddress(address)\n  } catch (e) {\n    console.log(e)\n    throw new CustomError('err_get_bch_address')\n  }\n}\n\n/**\n * Getting Bitcoin private key for address by derivation index\n * @param {Object} node - Input data for a transaction\n * @param {number} index - Derivation index\n * @returns {string} Returns Private key in WIF format\n */\n\nexport function getBtcPrivateKeyByIndex (node, index) {\n  try {\n    const key = node.deriveChild(index).privateKey\n  \n    return privateKeyToWIF(key)\n  } catch (e) {\n    throw new CustomError('err_btc_private_key_by_index')\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/helpers/coreHelper.js",
     "access": "public",
@@ -5117,6 +5117,48 @@
   {
     "__docId__": 231,
     "kind": "function",
+    "name": "getCashAddress",
+    "memberof": "src/helpers/coreHelper.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/helpers/coreHelper.js~getCashAddress",
+    "access": "public",
+    "export": true,
+    "importPath": "lumi-web-core/src/helpers/coreHelper.js",
+    "importStyle": "{getCashAddress}",
+    "description": "Convert a Bitcoin Cash address from Legacy format to CashAddr format",
+    "lineNumber": 405,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{string} Returns Bitcoin Cash address in CashAddr format"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "address",
+        "description": "Bitcoin Cash address in Legacy format"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns Bitcoin Cash address in CashAddr format"
+    }
+  },
+  {
+    "__docId__": 232,
+    "kind": "function",
     "name": "getBtcPrivateKeyByIndex",
     "memberof": "src/helpers/coreHelper.js",
     "generator": false,
@@ -5128,7 +5170,7 @@
     "importPath": "lumi-web-core/src/helpers/coreHelper.js",
     "importStyle": "{getBtcPrivateKeyByIndex}",
     "description": "Getting Bitcoin private key for address by derivation index",
-    "lineNumber": 407,
+    "lineNumber": 423,
     "unknown": [
       {
         "tagName": "@returns",
@@ -5167,10 +5209,10 @@
     }
   },
   {
-    "__docId__": 232,
+    "__docId__": 233,
     "kind": "file",
     "name": "src/helpers/errors.js",
-    "content": "export default {\n  err_core_mnemonic: 'Wrong mnemonic phrase. Please, check the spelling and try again',\n  err_core_mnemonic_length: 'Bad word count for mnemonic',\n  err_core_mnemonic_empty: 'Invalid mnemonic',\n  err_core_seed: 'Invalid seed',\n  err_core_entropy: 'Bad entropy',\n  err_core_xprv: 'Invalid xprv',\n  err_core_hdkey: 'Invalid hdkey',\n  err_core_btc_node: 'Error generating address. Check BTC node',\n  err_core_eth_node: 'Error generating ETH private key. Check ETH node',\n  err_core_eth_private_key: 'Error generating ETH public key. Check ETH private key',\n  err_core_eth_public_key: 'Error generating ETH address. Check ETH public key',\n  err_core_derivation: 'Problem with derivation. Check node and derivation path',\n  err_core_derivation_hdkey: 'HDkey is required',\n  err_core_derivation_path: 'Invalid derivation path',\n  err_core_derivation_range: 'Bad range. Check from/to params',\n  err_core_private_key: 'Invalid private key. Expect buffer',\n  err_tx_btc_balance: 'Insufficient balance',\n  err_tx_btc_build: 'BTC transaction failed. Check all parameters',\n  err_tx_btc_amount: 'Invalid amount. Amount must by a Number',\n  err_tx_btc_fee: 'Invalid fee. Fee must by a Number',\n  err_tx_bch_amount: 'Invalid amount. Amount must by a Number',\n  err_tx_bch_fee: 'Invalid fee. Fee must by a Number',\n  err_tx_bch_balance: 'Insufficient balance',\n  err_tx_bch_build: 'BCH transaction failed. Check all parameters',\n  err_tx_eth_balance: 'Insufficient balance',\n  err_tx_eth_address: 'Invalid ethereum address',\n  err_tx_eth_build: 'ETH transaction failed. Check all parameters',\n  err_tx_eth_invalid_params: 'Invalid params. Nonce, value, gas price and gas limit have to be a number',\n  err_tx_eth_invalid_params_string: 'Invalid params. Parameters \"to\" must be string based',\n  err_wallet_exist: 'Wallet not created. Use this method after creating a wallet',\n  err_wallet_api: 'Api is not found! Please, use the setter apiEndpoint to install',\n  err_wallet_api_type: 'Api must be an object!',\n  err_btc_private_key_by_index: 'Key generation problem. Check the node and derivation index'\n}\n",
+    "content": "export default {\n  err_core_mnemonic: 'Wrong mnemonic phrase. Please, check the spelling and try again',\n  err_core_mnemonic_length: 'Bad word count for mnemonic',\n  err_core_mnemonic_empty: 'Invalid mnemonic',\n  err_core_seed: 'Invalid seed',\n  err_core_entropy: 'Bad entropy',\n  err_core_xprv: 'Invalid xprv',\n  err_core_hdkey: 'Invalid hdkey',\n  err_core_btc_node: 'Error generating address. Check BTC node',\n  err_core_eth_node: 'Error generating ETH private key. Check ETH node',\n  err_core_eth_private_key: 'Error generating ETH public key. Check ETH private key',\n  err_core_eth_public_key: 'Error generating ETH address. Check ETH public key',\n  err_core_derivation: 'Problem with derivation. Check node and derivation path',\n  err_core_derivation_hdkey: 'HDkey is required',\n  err_core_derivation_path: 'Invalid derivation path',\n  err_core_derivation_range: 'Bad range. Check from/to params',\n  err_core_private_key: 'Invalid private key. Expect buffer',\n  err_tx_btc_balance: 'Insufficient balance',\n  err_tx_btc_build: 'BTC transaction failed. Check all parameters',\n  err_tx_btc_amount: 'Invalid amount. Amount must by a Number',\n  err_tx_btc_fee: 'Invalid fee. Fee must by a Number',\n  err_tx_bch_amount: 'Invalid amount. Amount must by a Number',\n  err_tx_bch_fee: 'Invalid fee. Fee must by a Number',\n  err_tx_bch_balance: 'Insufficient balance',\n  err_tx_bch_build: 'BCH transaction failed. Check all parameters',\n  err_tx_eth_balance: 'Insufficient balance',\n  err_tx_eth_address: 'Invalid ethereum address',\n  err_tx_eth_build: 'ETH transaction failed. Check all parameters',\n  err_tx_eth_invalid_params: 'Invalid params. Nonce, value, gas price and gas limit have to be a number',\n  err_tx_eth_invalid_params_string: 'Invalid params. Parameters \"to\" must be string based',\n  err_wallet_exist: 'Wallet not created. Use this method after creating a wallet',\n  err_wallet_api: 'Api is not found! Please, use the setter apiEndpoint to install',\n  err_wallet_api_type: 'Api must be an object!',\n  err_btc_private_key_by_index: 'Key generation problem. Check the node and derivation index',\n  err_get_bch_address: 'Problem with address conversion. Check the format of the source address'\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/helpers/errors.js",
     "access": "public",
@@ -5178,7 +5220,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 233,
+    "__docId__": 234,
     "kind": "file",
     "name": "src/helpers/handleErrors.js",
     "content": "import errors from '@/helpers/errors'\n\n/**\n * Custom error object.\n * By the error code it substitutes the desired message from object 'errors'\n * @extends Error\n */\n\nclass CustomError extends Error {\n  constructor(code) {\n    super(code)\n    this.name = 'CustomError'\n    this.message = errors.hasOwnProperty(code) ? `${code}: ${errors[code]}` : 'Uncaught error'\n  \n    if (Error.captureStackTrace) {\n      Error.captureStackTrace(this, this.constructor)\n    } else {\n      this.stack = (new Error()).stack\n    }\n  }\n}\n\nexport default CustomError\n",
@@ -5189,7 +5231,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 234,
+    "__docId__": 235,
     "kind": "class",
     "name": "CustomError",
     "memberof": "src/helpers/handleErrors.js",
@@ -5207,7 +5249,7 @@
     ]
   },
   {
-    "__docId__": 235,
+    "__docId__": 236,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/helpers/handleErrors.js~CustomError",
@@ -5221,7 +5263,7 @@
     "undocument": true
   },
   {
-    "__docId__": 236,
+    "__docId__": 237,
     "kind": "member",
     "name": "name",
     "memberof": "src/helpers/handleErrors.js~CustomError",
@@ -5238,7 +5280,7 @@
     }
   },
   {
-    "__docId__": 237,
+    "__docId__": 238,
     "kind": "member",
     "name": "message",
     "memberof": "src/helpers/handleErrors.js~CustomError",
@@ -5255,7 +5297,7 @@
     }
   },
   {
-    "__docId__": 238,
+    "__docId__": 239,
     "kind": "member",
     "name": "stack",
     "memberof": "src/helpers/handleErrors.js~CustomError",
@@ -5272,7 +5314,7 @@
     }
   },
   {
-    "__docId__": 239,
+    "__docId__": 240,
     "kind": "file",
     "name": "src/helpers/requestHandleErrors.js",
     "content": "/**\n * Handling requests\n * @param response\n * @returns {any | Promise<any>} Response decoded in json or error if the request failed\n */\nexport default function (response) {\n  if (response.ok) {\n    return response.json()\n  } else {\n    throw new Error(response.statusText)\n  }\n}\n",
@@ -5283,7 +5325,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 240,
+    "__docId__": 241,
     "kind": "function",
     "name": "requestHandleErrors",
     "memberof": "src/helpers/requestHandleErrors.js",
@@ -5326,7 +5368,7 @@
     }
   },
   {
-    "__docId__": 241,
+    "__docId__": 242,
     "kind": "file",
     "name": "src/helpers/toFormatDecimal.js",
     "content": "/**\n * Formatting numbers with the number of digits after the decimal point\n * @param {number|string} value - Value for formatting\n * @param {number} x - Number of digits after the decimal point\n * @param {boolean} floor - type of rounding\n * @returns {string} Formatted value or 0 if no value is specified\n */\nexport default function (value, x = 8, floor = false) {\n  value = parseFloat(value)\n  \n  if (!value) return '0'\n  \n  let num = 0\n  \n  if (floor) {\n    let pow = Math.pow(10, 8)\n    num = Math.floor(value * pow) / pow\n  } else {\n    num = value.toFixed(x)\n  }\n  \n  while (num[num.length - 1] === '0') {\n    num = num.slice(0, -1)\n  }\n  \n  if (num[num.length - 1] === '.') {\n    num = num.slice(0, -1)\n  }\n  \n  return num\n}\n",
@@ -5337,7 +5379,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 242,
+    "__docId__": 243,
     "kind": "function",
     "name": "toFormatDecimal",
     "memberof": "src/helpers/toFormatDecimal.js",
@@ -5400,7 +5442,7 @@
     }
   },
   {
-    "__docId__": 243,
+    "__docId__": 244,
     "kind": "file",
     "name": "src/index.js",
     "content": "import Wrapper from '@/Wrapper'\nimport CustomError from '@/helpers/handleErrors'\nimport {makeRawBtcTx, makeRawEthTx, makeRawBchTx} from '@/helpers/coreHelper'\n\nexport {default as converter} from '@/helpers/converters'\nexport {default as toDecimal} from '@/helpers/toFormatDecimal'\nexport {makeRawBtcTx, makeRawEthTx, makeRawBchTx}\n\n/**\n * Class Wallet\n * @class\n */\n\nexport default class Wallet {\n  /**\n   * Create a Wallet\n   * @param {Object} api - A set of URLs for getting information about addresses\n   */\n  constructor (api) {\n    this.wrapper = new Wrapper()\n    this.core = null\n    this.sync = {}\n    this.api = {\n      bitcoin: '',\n      bitcoinFee: '',\n      ethereum: '',\n      bitcoinCash: ''\n    }\n    this._apiReady = false\n    \n    if (api) {\n      this.setApiEndpoint(api)\n    }\n  }\n  \n  /**\n   * Creating a new wallet\n   *\n   * @param {number} count - Mnemonic words count\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address\n   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address\n   */\n  \n  async createNew (count = 12) {\n    let data = {\n      data: {\n        from: 'new',\n        count: count\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * Creating a wallet by mnemonic\n   *\n   * @param {string} mnemonic\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address\n   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address\n   */\n  \n  async createByMnemonic (mnemonic = '') {\n    if (!mnemonic) {\n      throw new CustomError('err_core_mnemonic_empty')\n    }\n    \n    let data = {\n      data: {\n        from: 'mnemonic',\n        mnemonic: mnemonic\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * Creating a wallet by xprv key\n   *\n   * @param {string} key - BIP32 Root Key\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address\n   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address\n   */\n  \n  async createByKey (key = '') {\n    if (!key) {\n      throw new CustomError('err_core_xprv')\n    }\n    \n    let data = {\n      data: {\n        from: 'xprv',\n        key: key\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * The method starts synchronization of BTC and ETH\n   *\n   * @returns {Promise<Object>} An object with sync's information\n   * @returns {Object} sync.BTC - The BTC object contains the addresses used, the list of transactions, the unspent list, the balance in Satoshi, the latest block and the list of commissions\n   * @returns {Object} sync.ETH - The ETH object contains the ethereum address, the balance in wei, the list of transactions and gas price\n   */\n  \n  async syncAll () {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    await Promise.all([\n      this.syncBTC(),\n      this.syncETH(),\n      this.syncBCH()\n    ])\n    \n    return this.sync\n  }\n  \n  /**\n   * The method returns node by derivation path\n   *\n   * @returns {Promise<Object>} Returns object with node information. Every child node contains the following parameters:\n   * derivation path, private key in WIF format, public key in hex, btc and eth address\n   * @returns {Object} data\n   * @returns {number} sync.from - Top of the derivation range\n   * @returns {number} sync.to - End of the derivation range\n   * @returns {Object} sync.path - Derivation path. It is contains required parameters (purpose, coin, account) and optional (change, index)\n   */\n  \n  async getChildNodes (data) {\n    if (!this.core) {\n      throw new CustomError('err_wallet_exist')\n    }\n    \n    return await this.wrapper.method('getNodes', data)\n  }\n  \n  /**\n   * The method starts synchronization of BTC\n   *\n   * @returns {Promise<Object>} Returns object with bitcoin synchronization information\n   * @returns {Object} sync\n   * @returns {Object} sync.addresses - Lists of internal, external and empty bitcoin address\n   * @returns {Array} sync.transactions - The list of bitcoin transactions\n   * @returns {Array} sync.unspent - The list of unspents addresses\n   * @returns {number} sync.balance - Bitcoin balance in Satoshi\n   * @returns {number} sync.latestBlock - The last block of the bitcoin blockchain\n   * @returns {Array} sync.fee - The list of fee per byte\n   */\n  \n  async syncBTC () {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    this.sync.BTC = await this.wrapper.method('sync', 'BTC')\n    \n    return this.sync.BTC\n  }\n  \n  /**\n   * The method starts synchronization of ETH\n   *\n   * @returns {Promise<Object>} Returns object with ethereum synchronization information\n   * @returns {Object} sync\n   * @returns {string} sync.address - Ethereum wallet address\n   * @returns {number} sync.balance - Ethereum balance in wei\n   * @returns {Array} sync.transactions - The list of ethereum transactions\n   * @returns {number} sync.gasPrice - Gas price\n   */\n  \n  async syncETH () {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    this.sync.ETH = await this.wrapper.method('sync', 'ETH')\n    \n    return this.sync.ETH\n  }\n  \n  async syncBCH () {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    this.sync.BCH = await this.wrapper.method('sync', 'BCH')\n    \n    return this.sync.BCH\n  }\n  \n  /**\n   * The method returns a raw BTC transaction\n   *\n   * @param {Object} data\n   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:\n   * transaction hash, output n, address, value, script and private key in WIF format\n   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Bitcoin transaction\n   */\n  \n  async makeRawBtcTx (data) {\n    return await makeRawBtcTx(data)\n  }\n  \n  /**\n   * The method returns a raw BCH transaction\n   *\n   * @param {Object} data\n   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:\n   * transaction hash, output n, address, value in satoshis, script and private key in WIF format\n   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value in satoshis\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Bitcoin Cash transaction\n   */\n  \n  async makeRawBchTx (data) {\n    return await makeRawBchTx(data)\n  }\n  \n  /**\n   * The method returns a raw ETH transaction\n   *\n   * @param {Object} data\n   * @param {string} data.address - Ethereum address\n   * @param {number} data.amount - The transaction's amount in wei\n   * @param {number} data.nonce - The transaction's nonce\n   * @param {number} data.gasPrice - The transaction's gas price in wei\n   * @param {number} data.gasLimit - The transaction's gas limit\n   * @param {string} data.privateKey - Private key of ether wallet in hex\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Ethereum transaction\n   */\n  \n  async makeRawEthTx (data) {\n    return await makeRawEthTx(data)\n  }\n  \n  /**\n   * This method generates a list of transaction fees for the selected currency\n   * @param {Object} params\n   * @param {Object} params.currency - Selected currency. BTC or ETH\n   * @param {Object} params.amount - Amount of transaction\n   * @param {Object} params.customFee - Custom fee per byte\n   * @param {Object} params.size - Transaction size. Relevant for bitcoin transactions\n   * @returns {Promise<Array>} The list of transaction fees\n   */\n  \n  async calculateFee (params) {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    let {currency, amount, customFee, size} = params\n    \n    return await this.wrapper.method('transaction', {\n      method: 'calcFee',\n      currency: currency,\n      tx: {\n        amount: amount,\n        customFee: customFee,\n        size: size\n      }\n    })\n  }\n  \n  /**\n   * Wrapper for the compilation of transactions of bitcoin and ether\n   * @param {Object} data\n   * @param {string} data.currency - Transaction currency\n   * @param {Object} data.tx\n   * @param {string} data.tx.addressTo - Recipient address\n   * @param {number} data.tx.amount - Transaction amount\n   * @param {number} data.tx.fee - Transaction fee\n   * @returns {Promise<Object>}\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw bitcoin or ethereum transaction\n   */\n  \n  async makeTransaction (data) {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    let params = {\n      method: 'make',\n      currency: data.currency,\n      tx: data.tx\n    }\n    \n    return await this.wrapper.method('transaction', params)\n  }\n  \n  /**\n   * Sets the API Endpoint\n   *\n   * @type {Object} api\n   * @param {string} api.bitcoin - Url address of bitcoin endpoint\n   * @param {string} api.bitcoinFee - Url address of bitcoin fee endpoint\n   * @param {string} api.ethereum - Url address of ethereum endpoint\n   * @param {string} api.bitcoinCash - Url address of bitcoin cash endpoint\n   */\n  \n  setApiEndpoint (api) {\n    if (!api || typeof api !== 'object' || Array.isArray(api)) {\n      throw new CustomError('err_wallet_api_type')\n    }\n    \n    for (let key in this.api) {\n      if (api.hasOwnProperty(key)) {\n        this.api[key] = api[key]\n      } else {\n        throw Error(`Api must be contains ${ key } value`)\n      }\n    }\n    this._apiReady = true\n  }\n  \n  get Core () {\n    return this.core\n  }\n  \n  get getSyncBTC () {\n    return this.sync.BTC\n  }\n  \n  get getSyncETH () {\n    return this.sync.ETH\n  }\n  \n  get getApiState () {\n    return this._apiReady\n  }\n}\n",
@@ -5411,7 +5453,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 244,
+    "__docId__": 245,
     "kind": "class",
     "name": "Wallet",
     "memberof": "src/index.js",
@@ -5432,7 +5474,7 @@
     "interface": false
   },
   {
-    "__docId__": 245,
+    "__docId__": 246,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/index.js~Wallet",
@@ -5457,7 +5499,7 @@
     ]
   },
   {
-    "__docId__": 246,
+    "__docId__": 247,
     "kind": "member",
     "name": "wrapper",
     "memberof": "src/index.js~Wallet",
@@ -5474,7 +5516,7 @@
     }
   },
   {
-    "__docId__": 247,
+    "__docId__": 248,
     "kind": "member",
     "name": "core",
     "memberof": "src/index.js~Wallet",
@@ -5491,7 +5533,7 @@
     }
   },
   {
-    "__docId__": 248,
+    "__docId__": 249,
     "kind": "member",
     "name": "sync",
     "memberof": "src/index.js~Wallet",
@@ -5508,7 +5550,7 @@
     }
   },
   {
-    "__docId__": 249,
+    "__docId__": 250,
     "kind": "member",
     "name": "api",
     "memberof": "src/index.js~Wallet",
@@ -5525,7 +5567,7 @@
     }
   },
   {
-    "__docId__": 250,
+    "__docId__": 251,
     "kind": "member",
     "name": "_apiReady",
     "memberof": "src/index.js~Wallet",
@@ -5542,7 +5584,7 @@
     }
   },
   {
-    "__docId__": 251,
+    "__docId__": 252,
     "kind": "method",
     "name": "createNew",
     "memberof": "src/index.js~Wallet",
@@ -5601,7 +5643,7 @@
     }
   },
   {
-    "__docId__": 253,
+    "__docId__": 254,
     "kind": "method",
     "name": "createByMnemonic",
     "memberof": "src/index.js~Wallet",
@@ -5660,7 +5702,7 @@
     }
   },
   {
-    "__docId__": 255,
+    "__docId__": 256,
     "kind": "method",
     "name": "createByKey",
     "memberof": "src/index.js~Wallet",
@@ -5719,7 +5761,7 @@
     }
   },
   {
-    "__docId__": 257,
+    "__docId__": 258,
     "kind": "method",
     "name": "syncAll",
     "memberof": "src/index.js~Wallet",
@@ -5755,7 +5797,7 @@
     "params": []
   },
   {
-    "__docId__": 258,
+    "__docId__": 259,
     "kind": "method",
     "name": "getChildNodes",
     "memberof": "src/index.js~Wallet",
@@ -5806,7 +5848,7 @@
     ]
   },
   {
-    "__docId__": 259,
+    "__docId__": 260,
     "kind": "method",
     "name": "syncBTC",
     "memberof": "src/index.js~Wallet",
@@ -5862,7 +5904,7 @@
     "params": []
   },
   {
-    "__docId__": 260,
+    "__docId__": 261,
     "kind": "method",
     "name": "syncETH",
     "memberof": "src/index.js~Wallet",
@@ -5910,7 +5952,7 @@
     "params": []
   },
   {
-    "__docId__": 261,
+    "__docId__": 262,
     "kind": "method",
     "name": "syncBCH",
     "memberof": "src/index.js~Wallet",
@@ -5930,7 +5972,7 @@
     }
   },
   {
-    "__docId__": 262,
+    "__docId__": 263,
     "kind": "method",
     "name": "makeRawBtcTx",
     "memberof": "src/index.js~Wallet",
@@ -5997,7 +6039,7 @@
     }
   },
   {
-    "__docId__": 263,
+    "__docId__": 264,
     "kind": "method",
     "name": "makeRawBchTx",
     "memberof": "src/index.js~Wallet",
@@ -6064,7 +6106,7 @@
     }
   },
   {
-    "__docId__": 264,
+    "__docId__": 265,
     "kind": "method",
     "name": "makeRawEthTx",
     "memberof": "src/index.js~Wallet",
@@ -6171,7 +6213,7 @@
     }
   },
   {
-    "__docId__": 265,
+    "__docId__": 266,
     "kind": "method",
     "name": "calculateFee",
     "memberof": "src/index.js~Wallet",
@@ -6250,7 +6292,7 @@
     }
   },
   {
-    "__docId__": 266,
+    "__docId__": 267,
     "kind": "method",
     "name": "makeTransaction",
     "memberof": "src/index.js~Wallet",
@@ -6347,7 +6389,7 @@
     }
   },
   {
-    "__docId__": 267,
+    "__docId__": 268,
     "kind": "method",
     "name": "setApiEndpoint",
     "memberof": "src/index.js~Wallet",
@@ -6411,7 +6453,7 @@
     "return": null
   },
   {
-    "__docId__": 269,
+    "__docId__": 270,
     "kind": "get",
     "name": "Core",
     "memberof": "src/index.js~Wallet",
@@ -6430,7 +6472,7 @@
     }
   },
   {
-    "__docId__": 270,
+    "__docId__": 271,
     "kind": "get",
     "name": "getSyncBTC",
     "memberof": "src/index.js~Wallet",
@@ -6449,7 +6491,7 @@
     }
   },
   {
-    "__docId__": 271,
+    "__docId__": 272,
     "kind": "get",
     "name": "getSyncETH",
     "memberof": "src/index.js~Wallet",
@@ -6468,7 +6510,7 @@
     }
   },
   {
-    "__docId__": 272,
+    "__docId__": 273,
     "kind": "get",
     "name": "getApiState",
     "memberof": "src/index.js~Wallet",
@@ -6487,7 +6529,7 @@
     }
   },
   {
-    "__docId__": 273,
+    "__docId__": 274,
     "kind": "file",
     "name": "src/workers/wallet.worker.js",
     "content": "import WalletWrapper from '@/class/WalletWrapper'\n\nlet Wrapper = {}\n\n/**\n * Creating a wallet core\n *\n * @param {Object} payload - Data for creating a core. Include in the creation method and mnemonic or key\n * @param {number} id - Promise id\n * @returns {Promise<Object>} Returns information about the core\n */\n\nasync function create (payload, id) {\n  try {\n    Wrapper = new WalletWrapper(payload)\n    await Wrapper.Create()\n    postMessage({\n      id,\n      payload: Wrapper.core.DATA\n    })\n  }\n  catch (e) {\n    postMessage({\n      id,\n      error: e.message\n    })\n  }\n}\n\n/**\n * Creating a transaction or getting fee\n *\n * @param payload - Transaction method and input data for the transaction\n * @param id - Promise id\n * @returns {Promise<Object>} Returns information about the success or failure of sending a transaction.\n * Or it returns the fee list\n */\n\nasync function transaction (payload, id) {\n  try {\n    let txs = await Wrapper.Transaction(payload)\n    postMessage({\n      id,\n      payload: txs\n    })\n  }\n  catch (e) {\n    postMessage({\n      id,\n      error: e.message\n    })\n  }\n}\n\n/**\n * Handler that runs the main wallet methods.\n * Methods such as create, sync, transaction and getNodes\n * @param e - event. Get parameters id and payload from the e.data object\n * @returns {Promise<Object>} Returns a data set that depends on the specific method\n */\n\n/* eslint-disable no-undef */\nonmessage = async (e) => {\n  const {id, payload} = e.data\n  \n  if (\n    !payload ||\n    !payload.hasOwnProperty('method') ||\n    !payload.hasOwnProperty('value')\n  ) {\n    postMessage({\n      id,\n      payload: 'error'\n    })\n    return\n  }\n  \n  switch (payload.method) {\n    case 'create':\n      return await create(payload.value, id)\n    case 'sync':\n      const syncRes = await Wrapper.Sync(payload.value)\n      postMessage({\n        id,\n        payload: syncRes\n      })\n      break\n    case 'transaction':\n      return transaction(payload.value, id)\n    case 'getNodes':\n      const nodes = await Wrapper.core.getChildNodes(payload.value)\n      postMessage({\n        id,\n        payload: nodes\n      })\n      break\n    default:\n      postMessage({\n        id,\n        payload: 'worker error'\n      })\n  }\n}\n",
@@ -6498,7 +6540,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 274,
+    "__docId__": 275,
     "kind": "variable",
     "name": "Wrapper",
     "memberof": "src/workers/wallet.worker.js",
@@ -6519,7 +6561,7 @@
     "ignore": true
   },
   {
-    "__docId__": 275,
+    "__docId__": 276,
     "kind": "function",
     "name": "create",
     "memberof": "src/workers/wallet.worker.js",
@@ -6572,7 +6614,7 @@
     "ignore": true
   },
   {
-    "__docId__": 276,
+    "__docId__": 277,
     "kind": "function",
     "name": "transaction",
     "memberof": "src/workers/wallet.worker.js",
@@ -6626,7 +6668,7 @@
   },
   {
     "kind": "index",
-    "content": "[![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://mit-license.org)\n[![NPM](https://img.shields.io/npm/v/lumi-web-core.svg)](https://www.npmjs.org/package/lumi-web-core)\n\n![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)\n\n# LumiCore\nThe LumiCore library is an implementation of tools for working with Bitcoin and Ethereum. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.\n\n> Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).\n\n**Note**: Node version >= 10.19.0\n\n## Installation\nYou can install the package via npm\n``` console\nnpm install lumi-web-core\n```\nOr via yarn:\n``` console\nyarn add lumi-web-core\n```\n\n## Usage\n\n> **Warning!** Do not use the mnemonic, keys, and addresses provided in this readme for real transactions!\n>\n### Create/import\nImport the module and create a new class:\n``` js\n// typical import\nimport Wallet from 'lumi-web-core'\n\nconst WALLET = new Wallet()\n```\nYou can create a new wallet by calling the method createNew(count). Count is the number of words for the new mnemonic.\nBy default it is 12. It can be also  12, 15, 18, 21, and 24 words.\n``` js\n// Create a new wallet\nconst CORE = await WALLET.createNew(15)\n```\nYou can create a wallet based on an existing mnemonic, where mnemonic is a string consisting of words and spaces:\n``` js\n// Create wallet by new mnemonic\n    const CORE = await WALLET.createByMnemonic('ramp grief anger ... olive main into throw')\n```\nOr xprv key: \n``` js\n// Create wallet by xprv key\nconst CORE = await WALLET.createByKey('xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ')\n```\nExample of the returned core:\n``` js\n{\n    mnemonic: \"ramp grief anger ... olive main into throw\",\n    xprv: \"xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ\",\n    from: \"mnemonic\",\n    hdkey: Object,\n    seed: Uint8Array(64),\n    seedInHex: \"1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39\",\n    BTC: {\n        node: Object,\n        internalNode: Object,\n        privateKey: Uint8Array(32),\n        publicKey: Uint8Array(33),\n        address: \"1MS1SjQ1...vrLhajoGLfiV\"\n    },\n    ETH: {\n        node: Object,\n        privateKey: Uint8Array(32),\n        publicKey: Uint8Array(64),\n        address: \"0x06c019a17...aa6d949c947a02\"\n    }\n}\n```\n\n### Derivation\nYou can get information about a child node using the method `getChildNodes`.\n``` js\nconst data = {\n  path: 'm/44'/0'/0'/0',\n  from: 0,\n  to: 20\n}\n\nconst info = await WALLET.getChildNodes(data)\n=> {\n    node: {\n        privateExtendedKey: \"xprvA1CHKT9koKiKuhkeZ6XJxWXEQ1r...va4RtZfFmdYaQeNW72vX9q2DjMo3fsJwxCtkrVXyo2QP8\",\n        publicExtendedKey: \"xpub6EBdixgedhGd8Bq7f84KKeTxx3gYWQ...bn9YVZ8PVXb6tTnCWTorLQPKqRggvdzyHH1TkoR7vuz\"\n    },\n    list: [\n        {\n            path: \"m/44'/0'/0'/0/0\",\n            privateKey: \"KzwMNQ93Dt96Qg...mRpaBCmEXGH2Lpgr2dGZsV\",\n            publicKey: \"023b693fa7fa22e505...4cc450a463c024ab1e3ec526ba\",\n            btcAddress: \"1aVZBbZW...U6WvQF6w36H7\",\n            ethAddress: \"0xcd1594ae...a74ceb13d889d\"\n        },\n        ...\n    ]\n}\n\n```\n`path` this is a string with a derivation path. The path should begin with `m/44'`.\n`from` is top of the range derivation\n`to` is end of the range derivation\n\n### Creating a BTC transaction\nTo create a Bitcoin transaction you need to send a set of inputs and outputs to the `makeRawBtcTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            addr: \"1BYRALP...ypWzTQE8BkEL\",\n            value: 10000,\n            n: 0,\n            script: \"76a91473a2...07d0bff2aee345ac88ac\",\n            hash: \"de06df091735...afd145eecfcd5649634e1d5221\",\n            key: 'L3YFJ4cBDYhZ...bzqgSUxLjTAorR5Kc47mP6x1D'\n        },\n        {\n            addr: \"1BYRALPU...kLypWzTQE8BkEL\",\n            value: 10000,\n            n: 0,\n            script: \"76a91473a2...7d0bff2aee345ac88ac\",\n            hash: \"47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9\",\n            key: 'L3YFJ4cBDYhZ...xLjTAorR5Kc4AorR5K7mP6x1D'\n        }\n      ],\n      outputs: [\n        {\n          address: '1NuABwx...5V5tiXpshAWb8W',\n          value: 15000\n        }\n        {\n          address: '1PbQ36GvG...nimPD7gHPQFk3Nu',\n          value: 5000\n        }\n      ]\n}\n\nconst btc_tx = await WALLET.makeRawBtcTx(data)\n```\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbtc_tx => {\n    hash: '6b4a00f9fd4e5c263b5af65fed0...14cafb97e0f5738cb4a8717',\n    tx: '010000000221521d4e634956cdcfee45d1afbe79080a...04f3d76f2c65501976a914fbf7f38b23308227a308fffff88ac00000000'\n}\n```\n\n### Creating an ETH transaction\nTo make a Ethereum transaction you need to fill in the following params:\n``` js\nconst data = {\n  nonce: 280,\n  amount: 100000000000000,\n  address: '0x1e8d99d2278...d89983e2920df33b485',\n  gasPrice: 19950000002,\n  gasLimit: 21000,\n  privateKey: '0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313'\n}\n\nconst eth_tx = await WALLET.makeRawEthTx(data)\n```\n\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\neth_tx => {\n    hash: '0xcb3869c19f2462a572a5ff13...d67ca71c181452e52a698d035209',\n    tx: '0xf86c8201188504a51cd782825208...6df4207768a01789b726296195a956ceb3dbe73798'\n}\n```\n\nFor more information, see the [docs](https://lumiwallet.github.io/lumi-web-core/).\n\n## Nist testing\nTesting [documentation](./nist/README.md).\n\n## Created using\n* [bip39](https://github.com/bitcoinjs/bip39)\n* [bip39-checker](https://github.com/jcalfee/bip39-checker)\n* [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib)\n* [ethereumjs-tx](https://github.com/ethereumjs/ethereumjs-vm/tree/master/packages/tx)\n* [ethereumjs-util](https://github.com/ethereumjs/ethereumjs-util)\n* [hdkey](https://github.com/cryptocoinjs/hdkey)\n* [web3-utils](https://github.com/ethereum/web3.js)\n* [wif](https://github.com/bitcoinjs/wif)\n* [worker-loader](https://github.com/webpack-contrib/worker-loader)\n## License\n\nLumiCore is available under the MIT license. See the [LICENSE](LICENSE) file for more info.\n",
+    "content": "[![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://mit-license.org)\n[![NPM](https://img.shields.io/npm/v/lumi-web-core.svg)](https://www.npmjs.org/package/lumi-web-core)\n\n![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)\n\n# LumiCore\nThe LumiCore library is an implementation of tools for working with Bitcoin, Ethereum and Bitcoin Cash. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.\n\n> Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).\n\n**Note**: Node version >= 10.19.0\n\n## Installation\nYou can install the package via npm\n``` console\nnpm install lumi-web-core\n```\nOr via yarn:\n``` console\nyarn add lumi-web-core\n```\n\n## Usage\n\n> **Warning!** Do not use the mnemonic, keys, and addresses provided in this readme for real transactions!\n>\n### Create/import\nImport the module and create a new class:\n``` js\n// typical import\nimport Wallet from 'lumi-web-core'\n\nconst WALLET = new Wallet()\n```\nYou can create a new wallet by calling the method createNew(count). Count is the number of words for the new mnemonic.\nBy default it is 12. It can be also  12, 15, 18, 21, and 24 words.\n``` js\n// Create a new wallet\nconst CORE = await WALLET.createNew(15)\n```\nYou can create a wallet based on an existing mnemonic, where mnemonic is a string consisting of words and spaces:\n``` js\n// Create wallet by new mnemonic\n    const CORE = await WALLET.createByMnemonic('ramp grief anger ... olive main into throw')\n```\nOr xprv key: \n``` js\n// Create wallet by xprv key\nconst CORE = await WALLET.createByKey('xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ')\n```\nExample of the returned core:\n``` js\n{\n    mnemonic: \"ramp grief anger ... olive main into throw\",\n    xprv: \"xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ\",\n    from: \"mnemonic\",\n    hdkey: Object,\n    seed: Uint8Array(64),\n    seedInHex: \"1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39\",\n    BTC: {\n        address: \"1MS1SjQ1...vrLhajoGLfiV\"\n        externalNode: Object,\n        internalNode: Object,\n    },\n    ETH: {\n        address: \"0x06c019a17...aa6d949c947a02\"\n        node: Object,\n        privateKey: Uint8Array(32),\n        publicKey: Uint8Array(64),\n    },\n    BCH: {\n        address: \"1657JTP...5pFAA75HrD\",\n        externalNode:Object\n        internalNode: Object\n    }\n}\n```\n\n### Derivation\nYou can get information about a child node using the method `getChildNodes`.\n``` js\nconst data = {\n  path: 'm/44'/0'/0'/0',\n  from: 0,\n  to: 20\n}\n\nconst info = await WALLET.getChildNodes(data)\n=> {\n    node: {\n        privateExtendedKey: \"xprvA1CHKT9koKiKuhkeZ6XJxWXEQ1r...va4RtZfFmdYaQeNW72vX9q2DjMo3fsJwxCtkrVXyo2QP8\",\n        publicExtendedKey: \"xpub6EBdixgedhGd8Bq7f84KKeTxx3gYWQ...bn9YVZ8PVXb6tTnCWTorLQPKqRggvdzyHH1TkoR7vuz\"\n    },\n    list: [\n        {\n            path: \"m/44'/0'/0'/0/0\",\n            privateKey: \"KzwMNQ93Dt96Qg...mRpaBCmEXGH2Lpgr2dGZsV\",\n            publicKey: \"023b693fa7fa22e505...4cc450a463c024ab1e3ec526ba\",\n            btcAddress: \"1aVZBbZW...U6WvQF6w36H7\",\n            ethAddress: \"0xcd1594ae...a74ceb13d889d\",\n            bchAddress: \"bitcoincash:qzwpal7...c3djs884x56y9qptzl\"\n        },\n        ...\n    ]\n}\n\n```\n`path` this is a string with a derivation path. The path should begin with `m/44'`.\n`from` is top of the range derivation\n`to` is end of the range derivation\n\n### Creating a BTC transaction\nTo create a Bitcoin transaction you need to send a set of inputs and outputs to the `makeRawBtcTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            addr: \"1BYRALP...ypWzTQE8BkEL\",\n            value: 10000,\n            n: 0,\n            script: \"76a91473a2...07d0bff2aee345ac88ac\",\n            hash: \"de06df091735...afd145eecfcd5649634e1d5221\",\n            key: 'L3YFJ4cBDYhZ...bzqgSUxLjTAorR5Kc47mP6x1D'\n        },\n        {\n            addr: \"1BYRALPU...kLypWzTQE8BkEL\",\n            value: 10000,\n            n: 0,\n            script: \"76a91473a2...7d0bff2aee345ac88ac\",\n            hash: \"47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9\",\n            key: 'L3YFJ4cBDYhZ...xLjTAorR5Kc4AorR5K7mP6x1D'\n        }\n      ],\n      outputs: [\n        {\n          address: '1NuABwx...5V5tiXpshAWb8W',\n          value: 15000\n        }\n        {\n          address: '1PbQ36GvG...nimPD7gHPQFk3Nu',\n          value: 5000\n        }\n      ]\n}\n\nconst btc_tx = await WALLET.makeRawBtcTx(data)\n```\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbtc_tx => {\n    hash: '6b4a00f9fd4e5c263b5af65fed0...14cafb97e0f5738cb4a8717',\n    tx: '010000000221521d4e634956cdcfee45d1afbe79080a...04f3d76f2c65501976a914fbf7f38b23308227a308fffff88ac00000000'\n}\n```\n\n### Creating an ETH transaction\nTo make a Ethereum transaction you need to fill in the following params:\n``` js\nconst data = {\n  nonce: 280,\n  amount: 100000000000000,\n  address: '0x1e8d99d2278...d89983e2920df33b485',\n  gasPrice: 19950000002,\n  gasLimit: 21000,\n  privateKey: '0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313'\n}\n\nconst eth_tx = await WALLET.makeRawEthTx(data)\n```\n\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\neth_tx => {\n    hash: '0xcb3869c19f2462a572a5ff13...d67ca71c181452e52a698d035209',\n    tx: '0xf86c8201188504a51cd782825208...6df4207768a01789b726296195a956ceb3dbe73798'\n}\n```\n\n### Creating a BCH transaction\nTo create a Bitcoin Cash transaction you need to send a set of inputs and outputs to the `makeRawBchTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            address: \"bitcoincash:qzq29...rfavhxrhwvgm49vlhq\",\n            outputIndex: 1,\n            satoshis: 604909,\n            script: \"76a91480a2a2...81a7acb98777388ac\",\n            txId: \"0488b0c6678e527...5307ce7ddaa8cbc986e616\",\n            key: \"KxMvzeEuGyrBRo...mfR9uzU6bAuc6kyXTmN8h\"\n        }\n      ],\n      outputs: [\n        {\n            address: \"bitcoincash:qzdss...rfpnawutm9vlrh7wdcj\",\n            satoshis: 100000\n        },\n        {\n            address: \"bitcoincash:qr30f7...23hykq2fu3axuxec3g6c6\",\n            satoshis: 504231\n        }\n      ]\n}\n\nconst bch_tx = await WALLET.makeRawBchTx(data)\n```\nAddresses included in inputs and outputs can be CashAddr format or Legacy format.\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbtc_tx => {\n    hash: 'ac5cd881770c28aad990...5d181df4b7d5a9acfec3bdf',\n    tx: '020000000116e686c9cba8da7dce075...edac9eff87677eccaa372580a4f23d3788ac00000000'\n}\n```\n\nFor more information, see the [docs](https://lumiwallet.github.io/lumi-web-core/).\n\n## Nist testing\nTesting [documentation](./nist/README.md).\n\n## Created using\n* [bip39](https://github.com/bitcoinjs/bip39)\n* [bip39-checker](https://github.com/jcalfee/bip39-checker)\n* [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib)\n* [ethereumjs-tx](https://github.com/ethereumjs/ethereumjs-vm/tree/master/packages/tx)\n* [ethereumjs-util](https://github.com/ethereumjs/ethereumjs-util)\n* [hdkey](https://github.com/cryptocoinjs/hdkey)\n* [web3-utils](https://github.com/ethereum/web3.js)\n* [wif](https://github.com/bitcoinjs/wif)\n* [worker-loader](https://github.com/webpack-contrib/worker-loader)\n* [bitcore-lib-cash](https://github.com/bitpay/bitcore/tree/master/packages/bitcore-lib-cash)\n* [bchaddrjs](https://github.com/ealmansi/bchaddrjs)\n## License\n\nLumiCore is available under the MIT license. See the [LICENSE](LICENSE) file for more info.\n",
     "longname": "/Users/user/work/lumi-web-core/README.md",
     "name": "./README.md",
     "static": true,
@@ -6634,7 +6676,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"lumi-web-core\",\n  \"description\": \"Lumi Wallet Core - Web Version\",\n  \"version\": \"1.1.0\",\n  \"author\": {\n    \"name\": \"vikowl\",\n    \"email\": \"vd@lumiwallet.com\"\n  },\n  \"main\": \"dist/index.js\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core\"\n  },\n  \"homepage\": \"https://github.com/lumiwallet/lumi-web-core\",\n  \"keywords\": [\n    \"lumi\",\n    \"crypto\",\n    \"wallet\",\n    \"client-side\",\n    \"web\",\n    \"app\"\n  ],\n  \"bugs\": {\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core/issues\"\n  },\n  \"dependencies\": {\n    \"@babel/runtime\": \"^7.11.2\",\n    \"bchaddrjs\": \"^0.4.9\",\n    \"bip39\": \"^3.0.2\",\n    \"bip39-checker\": \"^1.1.7\",\n    \"bitcoinjs-lib\": \"^5.1.10\",\n    \"bitcore-lib-cash\": \"^8.22.0\",\n    \"ethereumjs-tx\": \"^2.1.2\",\n    \"ethereumjs-util\": \"^6.2.1\",\n    \"hdkey\": \"^1.1.2\",\n    \"web3-utils\": \"^1.2.11\",\n    \"wif\": \"^2.0.6\",\n    \"worker-loader\": \"^2.0.0\"\n  },\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.11.6\",\n    \"@babel/core\": \"^7.11.6\",\n    \"@babel/plugin-syntax-dynamic-import\": \"^7.8.3\",\n    \"@babel/plugin-transform-runtime\": \"^7.11.5\",\n    \"@babel/preset-env\": \"^7.11.5\",\n    \"babel-loader\": \"^8.1.0\",\n    \"babel-plugin-module-resolver\": \"^4.0.0\",\n    \"commitizen\": \"^4.2.1\",\n    \"cz-conventional-changelog\": \"^3.2.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^6.8.0\",\n    \"eslint-plugin-import\": \"^2.22.0\",\n    \"eslint-plugin-promise\": \"^4.2.1\",\n    \"eslint-plugin-sonarjs\": \"^0.5.0\",\n    \"eslint-plugin-standard\": \"^4.0.1\",\n    \"randombytes\": \"^2.1.0\",\n    \"webpack\": \"^4.44.1\"\n  },\n  \"engines\": {\n    \"node\": \">= 10.19.0\"\n  },\n  \"files\": [\n    \"dist/\"\n  ],\n  \"scripts\": {\n    \"clean\": \"rm -rf dist\",\n    \"lint\": \"eslint --ext .js --ignore-path .gitignore .\",\n    \"precommit\": \"npm run lint\",\n    \"commit\": \"git-cz\",\n    \"prepare\": \"npm run build\",\n    \"build\": \"npm run clean && babel src --out-dir dist\",\n    \"test\": \"\",\n    \"preversion\": \"npm run test\",\n    \"version\": \"npm run clean && npm run build\",\n    \"postversion\": \"git add . && git push && git push --tags\",\n    \"doc\": \"esdoc -c ./.esdoc\"\n  },\n  \"config\": {\n    \"commitizen\": {\n      \"path\": \"./node_modules/cz-conventional-changelog\"\n    }\n  }\n}\n",
+    "content": "{\n  \"name\": \"lumi-web-core\",\n  \"description\": \"Lumi Wallet Core - Web Version\",\n  \"version\": \"1.2.0\",\n  \"author\": {\n    \"name\": \"vikowl\",\n    \"email\": \"vd@lumiwallet.com\"\n  },\n  \"main\": \"dist/index.js\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core\"\n  },\n  \"homepage\": \"https://github.com/lumiwallet/lumi-web-core\",\n  \"keywords\": [\n    \"lumi\",\n    \"crypto\",\n    \"wallet\",\n    \"client-side\",\n    \"web\",\n    \"app\"\n  ],\n  \"bugs\": {\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core/issues\"\n  },\n  \"dependencies\": {\n    \"@babel/runtime\": \"^7.11.2\",\n    \"bchaddrjs\": \"^0.4.9\",\n    \"bip39\": \"^3.0.2\",\n    \"bip39-checker\": \"^1.1.7\",\n    \"bitcoinjs-lib\": \"^5.1.10\",\n    \"bitcore-lib-cash\": \"^8.22.0\",\n    \"ethereumjs-tx\": \"^2.1.2\",\n    \"ethereumjs-util\": \"^6.2.1\",\n    \"hdkey\": \"^1.1.2\",\n    \"web3-utils\": \"^1.2.11\",\n    \"wif\": \"^2.0.6\",\n    \"worker-loader\": \"^2.0.0\"\n  },\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.11.6\",\n    \"@babel/core\": \"^7.11.6\",\n    \"@babel/plugin-syntax-dynamic-import\": \"^7.8.3\",\n    \"@babel/plugin-transform-runtime\": \"^7.11.5\",\n    \"@babel/preset-env\": \"^7.11.5\",\n    \"babel-loader\": \"^8.1.0\",\n    \"babel-plugin-module-resolver\": \"^4.0.0\",\n    \"commitizen\": \"^4.2.1\",\n    \"cz-conventional-changelog\": \"^3.2.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^6.8.0\",\n    \"eslint-plugin-import\": \"^2.22.0\",\n    \"eslint-plugin-promise\": \"^4.2.1\",\n    \"eslint-plugin-sonarjs\": \"^0.5.0\",\n    \"eslint-plugin-standard\": \"^4.0.1\",\n    \"randombytes\": \"^2.1.0\",\n    \"webpack\": \"^4.44.1\"\n  },\n  \"engines\": {\n    \"node\": \">= 10.19.0\"\n  },\n  \"files\": [\n    \"dist/\"\n  ],\n  \"scripts\": {\n    \"clean\": \"rm -rf dist\",\n    \"lint\": \"eslint --ext .js --ignore-path .gitignore .\",\n    \"precommit\": \"npm run lint\",\n    \"commit\": \"git-cz\",\n    \"prepare\": \"npm run build\",\n    \"build\": \"npm run clean && babel src --out-dir dist\",\n    \"test\": \"\",\n    \"preversion\": \"npm run test\",\n    \"version\": \"npm run clean && npm run build\",\n    \"postversion\": \"git add . && git push && git push --tags\",\n    \"doc\": \"esdoc -c ./.esdoc\"\n  },\n  \"config\": {\n    \"commitizen\": {\n      \"path\": \"./node_modules/cz-conventional-changelog\"\n    }\n  }\n}\n",
     "longname": "/Users/user/work/lumi-web-core/package.json",
     "name": "package.json",
     "static": true,

@@ -44,6 +44,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getCashAddress">getCashAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -92,21 +93,20 @@ export default class Core {
     this.seed = null
     this.hdkey = null
     this.BTC = {
+      address: null,
       internalNode: null,
-      externalNode: null,
-      privateKey: null,
-      publicKey: null
+      externalNode: null
     }
     this.ETH = {
+      address: null,
       node: null,
       privateKey: null,
       publicKey: null
     }
     this.BCH = {
+      address: null,
       internalNode: null,
-      externalNode: null,
-      privateKey: null,
-      publicKey: null
+      externalNode: null
     }
     
     this.generateWallet()
@@ -261,6 +261,7 @@ export default class Core {
         child.publicKey = deriveChild.publicKey.toString(&apos;hex&apos;)
         child.btcAddress = core.getBtcAddress(node, i)
         child.ethAddress = core.getEthAddressByNode(deriveChild)
+        child.bchAddress = core.getCashAddress(child.btcAddress)
         info.list.push(child)
       }
       
