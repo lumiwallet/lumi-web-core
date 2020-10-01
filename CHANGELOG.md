@@ -1,3 +1,6 @@
+- Removed unused BTC and BCH core properties. Added new method
+- Merge pull request #5 from lumiwallet/bch
+- [UPDATE] doc, package version and changelog
 - Edited a BCH address converter. Removed logs
 - Added docs, edited bch tx methods
 - Merge branch 'update-dependencies' into bch

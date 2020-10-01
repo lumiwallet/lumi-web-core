@@ -4,7 +4,7 @@
 ![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)
 
 # LumiCore
-The LumiCore library is an implementation of tools for working with Bitcoin and Ethereum. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
+The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum and Bitcoin Cash. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
 
 > Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).
 
@@ -58,17 +58,20 @@ Example of the returned core:
     seed: Uint8Array(64),
     seedInHex: "1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39",
     BTC: {
-        node: Object,
-        internalNode: Object,
-        privateKey: Uint8Array(32),
-        publicKey: Uint8Array(33),
         address: "1MS1SjQ1...vrLhajoGLfiV"
+        externalNode: Object,
+        internalNode: Object,
     },
     ETH: {
+        address: "0x06c019a17...aa6d949c947a02"
         node: Object,
         privateKey: Uint8Array(32),
         publicKey: Uint8Array(64),
-        address: "0x06c019a17...aa6d949c947a02"
+    },
+    BCH: {
+        address: "1657JTP...5pFAA75HrD",
+        externalNode:Object
+        internalNode: Object
     }
 }
 ```
@@ -94,7 +97,8 @@ const info = await WALLET.getChildNodes(data)
             privateKey: "KzwMNQ93Dt96Qg...mRpaBCmEXGH2Lpgr2dGZsV",
             publicKey: "023b693fa7fa22e505...4cc450a463c024ab1e3ec526ba",
             btcAddress: "1aVZBbZW...U6WvQF6w36H7",
-            ethAddress: "0xcd1594ae...a74ceb13d889d"
+            ethAddress: "0xcd1594ae...a74ceb13d889d",
+            bchAddress: "bitcoincash:qzwpal7...c3djs884x56y9qptzl"
         },
         ...
     ]
@@ -172,6 +176,43 @@ eth_tx => {
 }
 ```
 
+### Creating a BCH transaction
+To create a Bitcoin Cash transaction you need to send a set of inputs and outputs to the `makeRawBchTx` method:
+``` js
+const data = {
+    inputs: [
+        {
+            address: "bitcoincash:qzq29...rfavhxrhwvgm49vlhq",
+            outputIndex: 1,
+            satoshis: 604909,
+            script: "76a91480a2a2...81a7acb98777388ac",
+            txId: "0488b0c6678e527...5307ce7ddaa8cbc986e616",
+            key: "KxMvzeEuGyrBRo...mfR9uzU6bAuc6kyXTmN8h"
+        }
+      ],
+      outputs: [
+        {
+            address: "bitcoincash:qzdss...rfpnawutm9vlrh7wdcj",
+            satoshis: 100000
+        },
+        {
+            address: "bitcoincash:qr30f7...23hykq2fu3axuxec3g6c6",
+            satoshis: 504231
+        }
+      ]
+}
+
+const bch_tx = await WALLET.makeRawBchTx(data)
+```
+Addresses included in inputs and outputs can be CashAddr format or Legacy format.
+When the transaction is created successfully, an object with the transaction hash and raw tx data is returned
+``` js
+btc_tx => {
+    hash: 'ac5cd881770c28aad990...5d181df4b7d5a9acfec3bdf',
+    tx: '020000000116e686c9cba8da7dce075...edac9eff87677eccaa372580a4f23d3788ac00000000'
+}
+```
+
 For more information, see the [docs](https://lumiwallet.github.io/lumi-web-core/).
 
 ## Nist testing
@@ -187,6 +228,8 @@ Testing [documentation](./nist/README.md).
 * [web3-utils](https://github.com/ethereum/web3.js)
 * [wif](https://github.com/bitcoinjs/wif)
 * [worker-loader](https://github.com/webpack-contrib/worker-loader)
+* [bitcore-lib-cash](https://github.com/bitpay/bitcore/tree/master/packages/bitcore-lib-cash)
+* [bchaddrjs](https://github.com/ealmansi/bchaddrjs)
 ## License
 
 LumiCore is available under the MIT license. See the [LICENSE](LICENSE) file for more info.

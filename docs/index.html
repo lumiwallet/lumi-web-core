@@ -44,6 +44,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getCashAddress">getCashAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
@@ -66,7 +67,7 @@
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://mit-license.org"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat" alt="License"></a>
 <a href="https://www.npmjs.org/package/lumi-web-core"><img src="https://img.shields.io/npm/v/lumi-web-core.svg" alt="NPM"></a></p>
 <p><img src="https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png" alt="lumicore"></p>
-<h1 id="lumicore">LumiCore</h1><p>The LumiCore library is an implementation of tools for working with Bitcoin and Ethereum. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.</p>
+<h1 id="lumicore">LumiCore</h1><p>The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum and Bitcoin Cash. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.</p>
 <blockquote>
 <p>Work of this module has been tested in applications at the Vue.js. You can find it <a href="https://github.com/lumiwallet/lumi-web-core-app">here</a>.</p>
 </blockquote>
@@ -108,17 +109,20 @@ const CORE = await WALLET.createByKey(&apos;xprv9s21ZrQH143K49Xa838YbhNq...VtL5s
     seed: Uint8Array(64),
     seedInHex: &quot;1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39&quot;,
     BTC: {
-        node: Object,
-        internalNode: Object,
-        privateKey: Uint8Array(32),
-        publicKey: Uint8Array(33),
         address: &quot;1MS1SjQ1...vrLhajoGLfiV&quot;
+        externalNode: Object,
+        internalNode: Object,
     },
     ETH: {
+        address: &quot;0x06c019a17...aa6d949c947a02&quot;
         node: Object,
         privateKey: Uint8Array(32),
         publicKey: Uint8Array(64),
-        address: &quot;0x06c019a17...aa6d949c947a02&quot;
+    },
+    BCH: {
+        address: &quot;1657JTP...5pFAA75HrD&quot;,
+        externalNode:Object
+        internalNode: Object
     }
 }</code>
 </code></pre>
@@ -141,7 +145,8 @@ const info = await WALLET.getChildNodes(data)
             privateKey: &quot;KzwMNQ93Dt96Qg...mRpaBCmEXGH2Lpgr2dGZsV&quot;,
             publicKey: &quot;023b693fa7fa22e505...4cc450a463c024ab1e3ec526ba&quot;,
             btcAddress: &quot;1aVZBbZW...U6WvQF6w36H7&quot;,
-            ethAddress: &quot;0xcd1594ae...a74ceb13d889d&quot;
+            ethAddress: &quot;0xcd1594ae...a74ceb13d889d&quot;,
+            bchAddress: &quot;bitcoincash:qzwpal7...c3djs884x56y9qptzl&quot;
         },
         ...
     ]
@@ -209,6 +214,39 @@ const eth_tx = await WALLET.makeRawEthTx(data)</code>
     tx: &apos;0xf86c8201188504a51cd782825208...6df4207768a01789b726296195a956ceb3dbe73798&apos;
 }</code>
 </code></pre>
+<h3 id="creating-a-bch-transaction">Creating a BCH transaction</h3><p>To create a Bitcoin Cash transaction you need to send a set of inputs and outputs to the <code>makeRawBchTx</code> method:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const data = {
+    inputs: [
+        {
+            address: &quot;bitcoincash:qzq29...rfavhxrhwvgm49vlhq&quot;,
+            outputIndex: 1,
+            satoshis: 604909,
+            script: &quot;76a91480a2a2...81a7acb98777388ac&quot;,
+            txId: &quot;0488b0c6678e527...5307ce7ddaa8cbc986e616&quot;,
+            key: &quot;KxMvzeEuGyrBRo...mfR9uzU6bAuc6kyXTmN8h&quot;
+        }
+      ],
+      outputs: [
+        {
+            address: &quot;bitcoincash:qzdss...rfpnawutm9vlrh7wdcj&quot;,
+            satoshis: 100000
+        },
+        {
+            address: &quot;bitcoincash:qr30f7...23hykq2fu3axuxec3g6c6&quot;,
+            satoshis: 504231
+        }
+      ]
+}
+
+const bch_tx = await WALLET.makeRawBchTx(data)</code>
+</code></pre>
+<p>Addresses included in inputs and outputs can be CashAddr format or Legacy format.
+When the transaction is created successfully, an object with the transaction hash and raw tx data is returned</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">btc_tx =&gt; {
+    hash: &apos;ac5cd881770c28aad990...5d181df4b7d5a9acfec3bdf&apos;,
+    tx: &apos;020000000116e686c9cba8da7dce075...edac9eff87677eccaa372580a4f23d3788ac00000000&apos;
+}</code>
+</code></pre>
 <p>For more information, see the <a href="https://lumiwallet.github.io/lumi-web-core/">docs</a>.</p>
 <h2 id="nist-testing">Nist testing</h2><p>Testing <a href="./nist/README.md">documentation</a>.</p>
 <h2 id="created-using">Created using</h2><ul>
@@ -220,7 +258,9 @@ const eth_tx = await WALLET.makeRawEthTx(data)</code>
 <li><a href="https://github.com/cryptocoinjs/hdkey">hdkey</a></li>
 <li><a href="https://github.com/ethereum/web3.js">web3-utils</a></li>
 <li><a href="https://github.com/bitcoinjs/wif">wif</a></li>
-<li><a href="https://github.com/webpack-contrib/worker-loader">worker-loader</a><h2 id="license">License</h2></li>
+<li><a href="https://github.com/webpack-contrib/worker-loader">worker-loader</a></li>
+<li><a href="https://github.com/bitpay/bitcore/tree/master/packages/bitcore-lib-cash">bitcore-lib-cash</a></li>
+<li><a href="https://github.com/ealmansi/bchaddrjs">bchaddrjs</a><h2 id="license">License</h2></li>
 </ul>
 <p>LumiCore is available under the MIT license. See the <a href="LICENSE">LICENSE</a> file for more info.</p>
 </div>

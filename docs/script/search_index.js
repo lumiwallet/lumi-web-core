@@ -90,6 +90,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "lumi-web-core/src/helpers/corehelper.js~getcashaddress",
+    "function/index.html#static-function-getCashAddress",
+    "<span>getCashAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~getethaddress",
     "function/index.html#static-function-getEthAddress",
     "<span>getEthAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",

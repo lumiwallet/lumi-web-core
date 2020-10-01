@@ -31,5 +31,6 @@ export default {
   err_wallet_exist: 'Wallet not created. Use this method after creating a wallet',
   err_wallet_api: 'Api is not found! Please, use the setter apiEndpoint to install',
   err_wallet_api_type: 'Api must be an object!',
-  err_btc_private_key_by_index: 'Key generation problem. Check the node and derivation index'
+  err_btc_private_key_by_index: 'Key generation problem. Check the node and derivation index',
+  err_get_bch_address: 'Problem with address conversion. Check the format of the source address'
 }
