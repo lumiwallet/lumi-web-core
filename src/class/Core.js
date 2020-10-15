@@ -17,10 +17,10 @@ export default class Core {
    * @param {string} data.mnemonic - The mnemonic phrase. It used when parameter from is 'mnemonic'
    * @param {string} data.key - BIP32 Root Key. It used when parameter from is 'mnemonic'
    */
-  constructor (data) {
+  constructor (data = {}) {
     const {from, count, mnemonic, key} = data
     this.from = from
-    this.count = count
+    this.count = count || 12
     this.mnemonic = mnemonic
     this.xprv = key
     this.seed = null
@@ -107,6 +107,9 @@ export default class Core {
    */
   
   _importByKey () {
+    if (!this.xprv || typeof this.xprv !== 'string') {
+      throw new CustomError('err_core_xprv')
+    }
     this.hdkey = core.hdFromXprv(this.xprv)
   }
   

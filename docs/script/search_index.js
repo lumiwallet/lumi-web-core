@@ -37,8 +37,8 @@ window.esdocSearchIndex = [
   ],
   [
     "lumi-web-core/src/class/eth/ethereumtx.js~ethereumtx",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html",
-    "<span>EthereumTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/ETH/EthereumTx.js</span>",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html",
+    "<span>EthereumTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/ETH/EthereumTx.spec.js</span>",
     "class"
   ],
   [
@@ -1045,68 +1045,68 @@ window.esdocSearchIndex = [
   ],
   [
     "src/class/eth/ethereumtx.js",
-    "file/src/class/ETH/EthereumTx.js.html",
-    "src/class/ETH/EthereumTx.js",
+    "file/src/class/ETH/EthereumTx.spec.js.html",
+    "src/class/ETH/EthereumTx.spec.js",
     "file"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#data",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-get-DATA",
-    "src/class/ETH/EthereumTx.js~EthereumTx#DATA",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-get-DATA",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#DATA",
     "member"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#address",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-address",
-    "src/class/ETH/EthereumTx.js~EthereumTx#address",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-member-address",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#address",
     "member"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#balance",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-balance",
-    "src/class/ETH/EthereumTx.js~EthereumTx#balance",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-member-balance",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#balance",
     "member"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#calcfee",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-method-calcFee",
-    "src/class/ETH/EthereumTx.js~EthereumTx#calcFee",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-method-calcFee",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#calcFee",
     "method"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#constructor",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-constructor-constructor",
-    "src/class/ETH/EthereumTx.js~EthereumTx#constructor",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-constructor-constructor",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#constructor",
     "method"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#defaultgaslimit",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-defaultGasLimit",
-    "src/class/ETH/EthereumTx.js~EthereumTx#defaultGasLimit",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-member-defaultGasLimit",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#defaultGasLimit",
     "member"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#feelist",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-feeList",
-    "src/class/ETH/EthereumTx.js~EthereumTx#feeList",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-member-feeList",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#feeList",
     "member"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#gasprice",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-gasPrice",
-    "src/class/ETH/EthereumTx.js~EthereumTx#gasPrice",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-member-gasPrice",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#gasPrice",
     "member"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#make",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-method-make",
-    "src/class/ETH/EthereumTx.js~EthereumTx#make",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-method-make",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#make",
     "method"
   ],
   [
     "src/class/eth/ethereumtx.js~ethereumtx#privatekey",
-    "class/src/class/ETH/EthereumTx.js~EthereumTx.html#instance-member-privateKey",
-    "src/class/ETH/EthereumTx.js~EthereumTx#privateKey",
+    "class/src/class/ETH/EthereumTx.spec.js~EthereumTx.html#instance-member-privateKey",
+    "src/class/ETH/EthereumTx.spec.js~EthereumTx#privateKey",
     "member"
   ],
   [

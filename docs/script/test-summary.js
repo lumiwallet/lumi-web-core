@@ -3,7 +3,7 @@
     var button = ev.target;
     var parent = ev.target.parentElement;
     while(parent) {
-      if (parent.tagName === 'TR' && parent.classList.contains('test-interface')) break;
+      if (parent.tagName === 'TR' && parent.classList.contains('tests-interface')) break;
       parent = parent.parentElement;
     }
 
@@ -42,12 +42,12 @@
     }
   }
 
-  var buttons = document.querySelectorAll('.test-summary tr.test-interface .toggle');
+  var buttons = document.querySelectorAll('.tests-summary tr.tests-interface .toggle');
   for (var i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', toggle);
   }
 
-  var topDescribes = document.querySelectorAll('.test-summary tr[data-test-depth="0"]');
+  var topDescribes = document.querySelectorAll('.tests-summary tr[data-tests-depth="0"]');
   for (var i = 0; i < topDescribes.length; i++) {
     topDescribes[i].style.display = '';
   }
