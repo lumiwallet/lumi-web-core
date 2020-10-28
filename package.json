@@ -1,7 +1,7 @@
 {
   "name": "lumi-web-core",
   "description": "Lumi Wallet Core - Web Version",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": {
     "name": "vikowl",
     "email": "vd@lumiwallet.com"
@@ -98,9 +98,11 @@
     },
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1",
-      "\\.worker.js":"<rootDir>/__mocks__/workerMock.js"
+      "\\.worker.js": "<rootDir>/__mocks__/workerMock.js"
     },
     "collectCoverage": true,
-    "coverageReporters": ["html"]
+    "coverageReporters": [
+      "html"
+    ]
   }
 }

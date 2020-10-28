@@ -1,7 +1,7 @@
 {
   "type": "File",
   "start": 0,
-  "end": 2204,
+  "end": 2250,
   "loc": {
     "start": {
       "line": 1,
@@ -15,7 +15,7 @@
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 2204,
+    "end": 2250,
     "loc": {
       "start": {
         "line": 1,
@@ -31,7 +31,7 @@
       {
         "type": "ExportDefaultDeclaration",
         "start": 0,
-        "end": 2203,
+        "end": 2249,
         "loc": {
           "start": {
             "line": 1,
@@ -45,7 +45,7 @@
         "declaration": {
           "type": "ObjectExpression",
           "start": 15,
-          "end": 2203,
+          "end": 2249,
           "loc": {
             "start": {
               "line": 1,
@@ -1096,16 +1096,16 @@
                   }
                 },
                 "extra": {
-                  "rawValue": "Invalid amount. Amount must by a Number",
-                  "raw": "'Invalid amount. Amount must by a Number'"
+                  "rawValue": "Invalid amount. Amount must be a Number",
+                  "raw": "'Invalid amount. Amount must be a Number'"
                 },
-                "value": "Invalid amount. Amount must by a Number"
+                "value": "Invalid amount. Amount must be a Number"
               }
             },
             {
               "type": "ObjectProperty",
               "start": 1145,
-              "end": 1196,
+              "end": 1219,
               "loc": {
                 "start": {
                   "line": 21,
@@ -1113,7 +1113,7 @@
                 },
                 "end": {
                   "line": 21,
-                  "column": 53
+                  "column": 76
                 }
               },
               "method": false,
@@ -1139,7 +1139,7 @@
               "value": {
                 "type": "StringLiteral",
                 "start": 1161,
-                "end": 1196,
+                "end": 1219,
                 "loc": {
                   "start": {
                     "line": 21,
@@ -1147,20 +1147,20 @@
                   },
                   "end": {
                     "line": 21,
-                    "column": 53
+                    "column": 76
                   }
                 },
                 "extra": {
-                  "rawValue": "Invalid fee. Fee must by a Number",
-                  "raw": "'Invalid fee. Fee must by a Number'"
+                  "rawValue": "Invalid fee. Fee must be a Object with `SAT` parameter",
+                  "raw": "'Invalid fee. Fee must be a Object with \\`SAT\\` parameter'"
                 },
-                "value": "Invalid fee. Fee must by a Number"
+                "value": "Invalid fee. Fee must be a Object with `SAT` parameter"
               }
             },
             {
               "type": "ObjectProperty",
-              "start": 1200,
-              "end": 1260,
+              "start": 1223,
+              "end": 1283,
               "loc": {
                 "start": {
                   "line": 22,
@@ -1176,8 +1176,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1200,
-                "end": 1217,
+                "start": 1223,
+                "end": 1240,
                 "loc": {
                   "start": {
                     "line": 22,
@@ -1193,8 +1193,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1219,
-                "end": 1260,
+                "start": 1242,
+                "end": 1283,
                 "loc": {
                   "start": {
                     "line": 22,
@@ -1206,16 +1206,16 @@
                   }
                 },
                 "extra": {
-                  "rawValue": "Invalid amount. Amount must by a Number",
-                  "raw": "'Invalid amount. Amount must by a Number'"
+                  "rawValue": "Invalid amount. Amount must be a Number",
+                  "raw": "'Invalid amount. Amount must be a Number'"
                 },
-                "value": "Invalid amount. Amount must by a Number"
+                "value": "Invalid amount. Amount must be a Number"
               }
             },
             {
               "type": "ObjectProperty",
-              "start": 1264,
-              "end": 1315,
+              "start": 1287,
+              "end": 1361,
               "loc": {
                 "start": {
                   "line": 23,
@@ -1223,7 +1223,7 @@
                 },
                 "end": {
                   "line": 23,
-                  "column": 53
+                  "column": 76
                 }
               },
               "method": false,
@@ -1231,8 +1231,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1264,
-                "end": 1278,
+                "start": 1287,
+                "end": 1301,
                 "loc": {
                   "start": {
                     "line": 23,
@@ -1248,8 +1248,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1280,
-                "end": 1315,
+                "start": 1303,
+                "end": 1361,
                 "loc": {
                   "start": {
                     "line": 23,
@@ -1257,20 +1257,20 @@
                   },
                   "end": {
                     "line": 23,
-                    "column": 53
+                    "column": 76
                   }
                 },
                 "extra": {
-                  "rawValue": "Invalid fee. Fee must by a Number",
-                  "raw": "'Invalid fee. Fee must by a Number'"
+                  "rawValue": "Invalid fee. Fee must be a Object with `SAT` parameter",
+                  "raw": "'Invalid fee. Fee must be a Object with \\`SAT\\` parameter'"
                 },
-                "value": "Invalid fee. Fee must by a Number"
+                "value": "Invalid fee. Fee must be a Object with `SAT` parameter"
               }
             },
             {
               "type": "ObjectProperty",
-              "start": 1319,
-              "end": 1361,
+              "start": 1365,
+              "end": 1407,
               "loc": {
                 "start": {
                   "line": 24,
@@ -1286,8 +1286,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1319,
-                "end": 1337,
+                "start": 1365,
+                "end": 1383,
                 "loc": {
                   "start": {
                     "line": 24,
@@ -1303,8 +1303,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1339,
-                "end": 1361,
+                "start": 1385,
+                "end": 1407,
                 "loc": {
                   "start": {
                     "line": 24,
@@ -1324,8 +1324,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1365,
-              "end": 1429,
+              "start": 1411,
+              "end": 1475,
               "loc": {
                 "start": {
                   "line": 25,
@@ -1341,8 +1341,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1365,
-                "end": 1381,
+                "start": 1411,
+                "end": 1427,
                 "loc": {
                   "start": {
                     "line": 25,
@@ -1358,8 +1358,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1383,
-                "end": 1429,
+                "start": 1429,
+                "end": 1475,
                 "loc": {
                   "start": {
                     "line": 25,
@@ -1379,8 +1379,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1433,
-              "end": 1475,
+              "start": 1479,
+              "end": 1521,
               "loc": {
                 "start": {
                   "line": 26,
@@ -1396,8 +1396,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1433,
-                "end": 1451,
+                "start": 1479,
+                "end": 1497,
                 "loc": {
                   "start": {
                     "line": 26,
@@ -1413,8 +1413,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1453,
-                "end": 1475,
+                "start": 1499,
+                "end": 1521,
                 "loc": {
                   "start": {
                     "line": 26,
@@ -1434,8 +1434,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1479,
-              "end": 1525,
+              "start": 1525,
+              "end": 1571,
               "loc": {
                 "start": {
                   "line": 27,
@@ -1451,8 +1451,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1479,
-                "end": 1497,
+                "start": 1525,
+                "end": 1543,
                 "loc": {
                   "start": {
                     "line": 27,
@@ -1468,8 +1468,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1499,
-                "end": 1525,
+                "start": 1545,
+                "end": 1571,
                 "loc": {
                   "start": {
                     "line": 27,
@@ -1489,8 +1489,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1529,
-              "end": 1593,
+              "start": 1575,
+              "end": 1639,
               "loc": {
                 "start": {
                   "line": 28,
@@ -1506,8 +1506,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1529,
-                "end": 1545,
+                "start": 1575,
+                "end": 1591,
                 "loc": {
                   "start": {
                     "line": 28,
@@ -1523,8 +1523,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1547,
-                "end": 1593,
+                "start": 1593,
+                "end": 1639,
                 "loc": {
                   "start": {
                     "line": 28,
@@ -1544,8 +1544,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1597,
-              "end": 1699,
+              "start": 1643,
+              "end": 1745,
               "loc": {
                 "start": {
                   "line": 29,
@@ -1561,8 +1561,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1597,
-                "end": 1622,
+                "start": 1643,
+                "end": 1668,
                 "loc": {
                   "start": {
                     "line": 29,
@@ -1578,8 +1578,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1624,
-                "end": 1699,
+                "start": 1670,
+                "end": 1745,
                 "loc": {
                   "start": {
                     "line": 29,
@@ -1599,8 +1599,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1703,
-              "end": 1791,
+              "start": 1749,
+              "end": 1837,
               "loc": {
                 "start": {
                   "line": 30,
@@ -1616,8 +1616,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1703,
-                "end": 1735,
+                "start": 1749,
+                "end": 1781,
                 "loc": {
                   "start": {
                     "line": 30,
@@ -1633,8 +1633,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1737,
-                "end": 1791,
+                "start": 1783,
+                "end": 1837,
                 "loc": {
                   "start": {
                     "line": 30,
@@ -1654,8 +1654,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1795,
-              "end": 1874,
+              "start": 1841,
+              "end": 1920,
               "loc": {
                 "start": {
                   "line": 31,
@@ -1671,8 +1671,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1795,
-                "end": 1811,
+                "start": 1841,
+                "end": 1857,
                 "loc": {
                   "start": {
                     "line": 31,
@@ -1688,8 +1688,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1813,
-                "end": 1874,
+                "start": 1859,
+                "end": 1920,
                 "loc": {
                   "start": {
                     "line": 31,
@@ -1709,8 +1709,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1878,
-              "end": 1959,
+              "start": 1924,
+              "end": 2005,
               "loc": {
                 "start": {
                   "line": 32,
@@ -1726,8 +1726,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1878,
-                "end": 1892,
+                "start": 1924,
+                "end": 1938,
                 "loc": {
                   "start": {
                     "line": 32,
@@ -1743,8 +1743,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1894,
-                "end": 1959,
+                "start": 1940,
+                "end": 2005,
                 "loc": {
                   "start": {
                     "line": 32,
@@ -1764,8 +1764,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 1963,
-              "end": 2008,
+              "start": 2009,
+              "end": 2054,
               "loc": {
                 "start": {
                   "line": 33,
@@ -1781,8 +1781,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 1963,
-                "end": 1982,
+                "start": 2009,
+                "end": 2028,
                 "loc": {
                   "start": {
                     "line": 33,
@@ -1798,8 +1798,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 1984,
-                "end": 2008,
+                "start": 2030,
+                "end": 2054,
                 "loc": {
                   "start": {
                     "line": 33,
@@ -1819,8 +1819,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 2012,
-              "end": 2103,
+              "start": 2058,
+              "end": 2149,
               "loc": {
                 "start": {
                   "line": 34,
@@ -1836,8 +1836,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 2012,
-                "end": 2040,
+                "start": 2058,
+                "end": 2086,
                 "loc": {
                   "start": {
                     "line": 34,
@@ -1853,8 +1853,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 2042,
-                "end": 2103,
+                "start": 2088,
+                "end": 2149,
                 "loc": {
                   "start": {
                     "line": 34,
@@ -1874,8 +1874,8 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 2107,
-              "end": 2201,
+              "start": 2153,
+              "end": 2247,
               "loc": {
                 "start": {
                   "line": 35,
@@ -1891,8 +1891,8 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 2107,
-                "end": 2126,
+                "start": 2153,
+                "end": 2172,
                 "loc": {
                   "start": {
                     "line": 35,
@@ -1908,8 +1908,8 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 2128,
-                "end": 2201,
+                "start": 2174,
+                "end": 2247,
                 "loc": {
                   "start": {
                     "line": 35,
@@ -3973,7 +3973,7 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "Invalid amount. Amount must by a Number",
+      "value": "Invalid amount. Amount must be a Number",
       "start": 1100,
       "end": 1141,
       "loc": {
@@ -4078,9 +4078,9 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "Invalid fee. Fee must by a Number",
+      "value": "Invalid fee. Fee must be a Object with `SAT` parameter",
       "start": 1161,
-      "end": 1196,
+      "end": 1219,
       "loc": {
         "start": {
           "line": 21,
@@ -4088,7 +4088,7 @@
         },
         "end": {
           "line": 21,
-          "column": 53
+          "column": 76
         }
       }
     },
@@ -4105,16 +4105,16 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1196,
-      "end": 1197,
+      "start": 1219,
+      "end": 1220,
       "loc": {
         "start": {
           "line": 21,
-          "column": 53
+          "column": 76
         },
         "end": {
           "line": 21,
-          "column": 54
+          "column": 77
         }
       }
     },
@@ -4131,8 +4131,8 @@
         "binop": null
       },
       "value": "err_tx_bch_amount",
-      "start": 1200,
-      "end": 1217,
+      "start": 1223,
+      "end": 1240,
       "loc": {
         "start": {
           "line": 22,
@@ -4157,8 +4157,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1217,
-      "end": 1218,
+      "start": 1240,
+      "end": 1241,
       "loc": {
         "start": {
           "line": 22,
@@ -4183,9 +4183,9 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "Invalid amount. Amount must by a Number",
-      "start": 1219,
-      "end": 1260,
+      "value": "Invalid amount. Amount must be a Number",
+      "start": 1242,
+      "end": 1283,
       "loc": {
         "start": {
           "line": 22,
@@ -4210,8 +4210,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1260,
-      "end": 1261,
+      "start": 1283,
+      "end": 1284,
       "loc": {
         "start": {
           "line": 22,
@@ -4236,8 +4236,8 @@
         "binop": null
       },
       "value": "err_tx_bch_fee",
-      "start": 1264,
-      "end": 1278,
+      "start": 1287,
+      "end": 1301,
       "loc": {
         "start": {
           "line": 23,
@@ -4262,8 +4262,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1278,
-      "end": 1279,
+      "start": 1301,
+      "end": 1302,
       "loc": {
         "start": {
           "line": 23,
@@ -4288,9 +4288,9 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "Invalid fee. Fee must by a Number",
-      "start": 1280,
-      "end": 1315,
+      "value": "Invalid fee. Fee must be a Object with `SAT` parameter",
+      "start": 1303,
+      "end": 1361,
       "loc": {
         "start": {
           "line": 23,
@@ -4298,7 +4298,7 @@
         },
         "end": {
           "line": 23,
-          "column": 53
+          "column": 76
         }
       }
     },
@@ -4315,16 +4315,16 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1315,
-      "end": 1316,
+      "start": 1361,
+      "end": 1362,
       "loc": {
         "start": {
           "line": 23,
-          "column": 53
+          "column": 76
         },
         "end": {
           "line": 23,
-          "column": 54
+          "column": 77
         }
       }
     },
@@ -4341,8 +4341,8 @@
         "binop": null
       },
       "value": "err_tx_bch_balance",
-      "start": 1319,
-      "end": 1337,
+      "start": 1365,
+      "end": 1383,
       "loc": {
         "start": {
           "line": 24,
@@ -4367,8 +4367,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1337,
-      "end": 1338,
+      "start": 1383,
+      "end": 1384,
       "loc": {
         "start": {
           "line": 24,
@@ -4394,8 +4394,8 @@
         "updateContext": null
       },
       "value": "Insufficient balance",
-      "start": 1339,
-      "end": 1361,
+      "start": 1385,
+      "end": 1407,
       "loc": {
         "start": {
           "line": 24,
@@ -4420,8 +4420,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1361,
-      "end": 1362,
+      "start": 1407,
+      "end": 1408,
       "loc": {
         "start": {
           "line": 24,
@@ -4446,8 +4446,8 @@
         "binop": null
       },
       "value": "err_tx_bch_build",
-      "start": 1365,
-      "end": 1381,
+      "start": 1411,
+      "end": 1427,
       "loc": {
         "start": {
           "line": 25,
@@ -4472,8 +4472,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1381,
-      "end": 1382,
+      "start": 1427,
+      "end": 1428,
       "loc": {
         "start": {
           "line": 25,
@@ -4499,8 +4499,8 @@
         "updateContext": null
       },
       "value": "BCH transaction failed. Check all parameters",
-      "start": 1383,
-      "end": 1429,
+      "start": 1429,
+      "end": 1475,
       "loc": {
         "start": {
           "line": 25,
@@ -4525,8 +4525,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1429,
-      "end": 1430,
+      "start": 1475,
+      "end": 1476,
       "loc": {
         "start": {
           "line": 25,
@@ -4551,8 +4551,8 @@
         "binop": null
       },
       "value": "err_tx_eth_balance",
-      "start": 1433,
-      "end": 1451,
+      "start": 1479,
+      "end": 1497,
       "loc": {
         "start": {
           "line": 26,
@@ -4577,8 +4577,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1451,
-      "end": 1452,
+      "start": 1497,
+      "end": 1498,
       "loc": {
         "start": {
           "line": 26,
@@ -4604,8 +4604,8 @@
         "updateContext": null
       },
       "value": "Insufficient balance",
-      "start": 1453,
-      "end": 1475,
+      "start": 1499,
+      "end": 1521,
       "loc": {
         "start": {
           "line": 26,
@@ -4630,8 +4630,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1475,
-      "end": 1476,
+      "start": 1521,
+      "end": 1522,
       "loc": {
         "start": {
           "line": 26,
@@ -4656,8 +4656,8 @@
         "binop": null
       },
       "value": "err_tx_eth_address",
-      "start": 1479,
-      "end": 1497,
+      "start": 1525,
+      "end": 1543,
       "loc": {
         "start": {
           "line": 27,
@@ -4682,8 +4682,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1497,
-      "end": 1498,
+      "start": 1543,
+      "end": 1544,
       "loc": {
         "start": {
           "line": 27,
@@ -4709,8 +4709,8 @@
         "updateContext": null
       },
       "value": "Invalid ethereum address",
-      "start": 1499,
-      "end": 1525,
+      "start": 1545,
+      "end": 1571,
       "loc": {
         "start": {
           "line": 27,
@@ -4735,8 +4735,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1525,
-      "end": 1526,
+      "start": 1571,
+      "end": 1572,
       "loc": {
         "start": {
           "line": 27,
@@ -4761,8 +4761,8 @@
         "binop": null
       },
       "value": "err_tx_eth_build",
-      "start": 1529,
-      "end": 1545,
+      "start": 1575,
+      "end": 1591,
       "loc": {
         "start": {
           "line": 28,
@@ -4787,8 +4787,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1545,
-      "end": 1546,
+      "start": 1591,
+      "end": 1592,
       "loc": {
         "start": {
           "line": 28,
@@ -4814,8 +4814,8 @@
         "updateContext": null
       },
       "value": "ETH transaction failed. Check all parameters",
-      "start": 1547,
-      "end": 1593,
+      "start": 1593,
+      "end": 1639,
       "loc": {
         "start": {
           "line": 28,
@@ -4840,8 +4840,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1593,
-      "end": 1594,
+      "start": 1639,
+      "end": 1640,
       "loc": {
         "start": {
           "line": 28,
@@ -4866,8 +4866,8 @@
         "binop": null
       },
       "value": "err_tx_eth_invalid_params",
-      "start": 1597,
-      "end": 1622,
+      "start": 1643,
+      "end": 1668,
       "loc": {
         "start": {
           "line": 29,
@@ -4892,8 +4892,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1622,
-      "end": 1623,
+      "start": 1668,
+      "end": 1669,
       "loc": {
         "start": {
           "line": 29,
@@ -4919,8 +4919,8 @@
         "updateContext": null
       },
       "value": "Invalid params. Nonce, value, gas price and gas limit have to be a number",
-      "start": 1624,
-      "end": 1699,
+      "start": 1670,
+      "end": 1745,
       "loc": {
         "start": {
           "line": 29,
@@ -4945,8 +4945,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1699,
-      "end": 1700,
+      "start": 1745,
+      "end": 1746,
       "loc": {
         "start": {
           "line": 29,
@@ -4971,8 +4971,8 @@
         "binop": null
       },
       "value": "err_tx_eth_invalid_params_string",
-      "start": 1703,
-      "end": 1735,
+      "start": 1749,
+      "end": 1781,
       "loc": {
         "start": {
           "line": 30,
@@ -4997,8 +4997,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1735,
-      "end": 1736,
+      "start": 1781,
+      "end": 1782,
       "loc": {
         "start": {
           "line": 30,
@@ -5024,8 +5024,8 @@
         "updateContext": null
       },
       "value": "Invalid params. Parameters \"to\" must be string based",
-      "start": 1737,
-      "end": 1791,
+      "start": 1783,
+      "end": 1837,
       "loc": {
         "start": {
           "line": 30,
@@ -5050,8 +5050,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1791,
-      "end": 1792,
+      "start": 1837,
+      "end": 1838,
       "loc": {
         "start": {
           "line": 30,
@@ -5076,8 +5076,8 @@
         "binop": null
       },
       "value": "err_wallet_exist",
-      "start": 1795,
-      "end": 1811,
+      "start": 1841,
+      "end": 1857,
       "loc": {
         "start": {
           "line": 31,
@@ -5102,8 +5102,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1811,
-      "end": 1812,
+      "start": 1857,
+      "end": 1858,
       "loc": {
         "start": {
           "line": 31,
@@ -5129,8 +5129,8 @@
         "updateContext": null
       },
       "value": "Wallet not created. Use this method after creating a wallet",
-      "start": 1813,
-      "end": 1874,
+      "start": 1859,
+      "end": 1920,
       "loc": {
         "start": {
           "line": 31,
@@ -5155,8 +5155,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1874,
-      "end": 1875,
+      "start": 1920,
+      "end": 1921,
       "loc": {
         "start": {
           "line": 31,
@@ -5181,8 +5181,8 @@
         "binop": null
       },
       "value": "err_wallet_api",
-      "start": 1878,
-      "end": 1892,
+      "start": 1924,
+      "end": 1938,
       "loc": {
         "start": {
           "line": 32,
@@ -5207,8 +5207,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1892,
-      "end": 1893,
+      "start": 1938,
+      "end": 1939,
       "loc": {
         "start": {
           "line": 32,
@@ -5234,8 +5234,8 @@
         "updateContext": null
       },
       "value": "Api is not found! Please, use the setter apiEndpoint to install",
-      "start": 1894,
-      "end": 1959,
+      "start": 1940,
+      "end": 2005,
       "loc": {
         "start": {
           "line": 32,
@@ -5260,8 +5260,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1959,
-      "end": 1960,
+      "start": 2005,
+      "end": 2006,
       "loc": {
         "start": {
           "line": 32,
@@ -5286,8 +5286,8 @@
         "binop": null
       },
       "value": "err_wallet_api_type",
-      "start": 1963,
-      "end": 1982,
+      "start": 2009,
+      "end": 2028,
       "loc": {
         "start": {
           "line": 33,
@@ -5312,8 +5312,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1982,
-      "end": 1983,
+      "start": 2028,
+      "end": 2029,
       "loc": {
         "start": {
           "line": 33,
@@ -5339,8 +5339,8 @@
         "updateContext": null
       },
       "value": "Api must be an object!",
-      "start": 1984,
-      "end": 2008,
+      "start": 2030,
+      "end": 2054,
       "loc": {
         "start": {
           "line": 33,
@@ -5365,8 +5365,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 2008,
-      "end": 2009,
+      "start": 2054,
+      "end": 2055,
       "loc": {
         "start": {
           "line": 33,
@@ -5391,8 +5391,8 @@
         "binop": null
       },
       "value": "err_btc_private_key_by_index",
-      "start": 2012,
-      "end": 2040,
+      "start": 2058,
+      "end": 2086,
       "loc": {
         "start": {
           "line": 34,
@@ -5417,8 +5417,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 2040,
-      "end": 2041,
+      "start": 2086,
+      "end": 2087,
       "loc": {
         "start": {
           "line": 34,
@@ -5444,8 +5444,8 @@
         "updateContext": null
       },
       "value": "Key generation problem. Check the node and derivation index",
-      "start": 2042,
-      "end": 2103,
+      "start": 2088,
+      "end": 2149,
       "loc": {
         "start": {
           "line": 34,
@@ -5470,8 +5470,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 2103,
-      "end": 2104,
+      "start": 2149,
+      "end": 2150,
       "loc": {
         "start": {
           "line": 34,
@@ -5496,8 +5496,8 @@
         "binop": null
       },
       "value": "err_get_bch_address",
-      "start": 2107,
-      "end": 2126,
+      "start": 2153,
+      "end": 2172,
       "loc": {
         "start": {
           "line": 35,
@@ -5522,8 +5522,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 2126,
-      "end": 2127,
+      "start": 2172,
+      "end": 2173,
       "loc": {
         "start": {
           "line": 35,
@@ -5549,8 +5549,8 @@
         "updateContext": null
       },
       "value": "Problem with address conversion. Check the format of the source address",
-      "start": 2128,
-      "end": 2201,
+      "start": 2174,
+      "end": 2247,
       "loc": {
         "start": {
           "line": 35,
@@ -5574,8 +5574,8 @@
         "postfix": false,
         "binop": null
       },
-      "start": 2202,
-      "end": 2203,
+      "start": 2248,
+      "end": 2249,
       "loc": {
         "start": {
           "line": 36,
@@ -5600,8 +5600,8 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 2204,
-      "end": 2204,
+      "start": 2250,
+      "end": 2250,
       "loc": {
         "start": {
           "line": 37,

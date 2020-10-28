@@ -45,7 +45,7 @@
         40,
         41,
         42,
-        230
+        232
       ]
     },
     "src/class/BTC/BitcoinTx.js": {
@@ -75,7 +75,7 @@
         28,
         33,
         39,
-        254
+        257
       ]
     },
     "src/class/ETH/EthereumSync.js": {
