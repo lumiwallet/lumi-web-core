@@ -1,6 +1,6 @@
 import Wrapper from '@/Wrapper'
 import CustomError from '@/helpers/handleErrors'
-import {makeRawBtcTx, makeRawEthTx, makeRawBchTx} from '@/helpers/coreHelper'
+import {makeRawBtcTx, makeRawEthTx, makeRawBchTx, getBtcPrivateKeyByIndex} from '@/helpers/coreHelper'
 
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'

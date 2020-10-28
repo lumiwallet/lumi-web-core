@@ -25,7 +25,7 @@ export default class BitcoinCashTx {
    * @param {number} data.balance - Bitcoin Cash wallet balance
    * @param {Array} data.feeList - Set of raw Bitcoin Cash fees
    * @param {Object} data.customFee - Custom fee entered by the user
-   * @param {string} data.nodes - External and internal Bitcoin Cash nodes
+   * @param {Object} data.nodes - External and internal Bitcoin Cash nodes
    * @param {string} data.internalAddress - Address for change
    */
   constructor (data) {
@@ -160,7 +160,7 @@ export default class BitcoinCashTx {
   async make (data) {
     const {addressTo, fee} = data
     
-    if (isNaN(this.amount)) {
+    if (!this.amount) {
       throw new CustomError('err_tx_bch_amount')
     }
     
@@ -204,7 +204,6 @@ export default class BitcoinCashTx {
           satoshis: change
         }
       }
-      
       return makeRawBchTx(params)
     } else {
       throw new CustomError('err_tx_bch_balance')

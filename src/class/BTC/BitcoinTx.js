@@ -34,7 +34,7 @@ export default class BitcoinTx {
     this.balance = data.balance
     this.dust = 1000
     this.fee = data.feeList
-    this.customFee = +data.customFee ? +data.customFee : 0
+    this.customFee = +data.customFee || 0
     this.feeList = []
   }
   
@@ -156,7 +156,7 @@ export default class BitcoinTx {
   async make (data) {
     const {addressTo, fee} = data
     
-    if (isNaN(this.amount)) {
+    if (!this.amount) {
       throw new CustomError('err_tx_btc_amount')
     }
     
@@ -177,7 +177,7 @@ export default class BitcoinTx {
         ]
       }
       
-      if (change !== 0) {
+      if (change) {
         params.outputs[1] = {
           address: this.internalAddress,
           value: change

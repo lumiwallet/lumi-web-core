@@ -1,4 +1,4 @@
-node nist-test.js
+node nist-tests.js
 cd sts-2.1.2
 ./assess 1200000
 open experiments/AlgorithmTesting/finalAnalysisReport.txt

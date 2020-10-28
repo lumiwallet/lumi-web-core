@@ -225,9 +225,11 @@ export default class BitcoinSync {
           this.transactions.all = [...this.transactions.all, ...res.txs]
         }
         
-        if (res.hasOwnProperty(&apos;info&apos;) &amp;&amp;
-          res.info.hasOwnProperty(&apos;latest_block&apos;)) {
+        if ((res.hasOwnProperty(&apos;info&apos;) &amp;&amp;
+          res.info.hasOwnProperty(&apos;latest_block&apos;))) {
           this.latestBlock = res.info.latest_block.height
+        } else if (res.hasOwnProperty(&apos;last_block&apos;)) {
+          this.latestBlock = res.last_block
         }
         
         if (res.hasOwnProperty(&apos;addresses&apos;)) {
