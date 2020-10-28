@@ -1,3 +1,4 @@
+- Added test for main core classes. Hotfix to get the last block of BTC
 - Removed unused BTC and BCH core properties. Added new method
 - Merge pull request #5 from lumiwallet/bch
 - [UPDATE] doc, package version and changelog
