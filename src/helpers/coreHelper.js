@@ -1,13 +1,13 @@
-import * as bip39 from 'bip39'
-import * as bitcoin from 'bitcoinjs-lib'
+import * as bip39    from 'bip39'
+import * as bitcoin  from 'bitcoinjs-lib'
 import {Transaction} from 'ethereumjs-tx'
-import * as ethUtil from 'ethereumjs-util'
-import * as HDkey from 'hdkey'
-import * as utils from 'web3-utils'
-import wif from 'wif'
-import * as bchaddr from 'bchaddrjs'
-import * as bitcore from 'bitcore-lib-cash'
-import CustomError from '@/helpers/handleErrors'
+import * as ethUtil  from 'ethereumjs-util'
+import * as HDkey    from 'hdkey'
+import * as utils    from 'web3-utils'
+import wif           from 'wif'
+import * as bchaddr  from 'bchaddrjs'
+import * as bitcore  from 'bitcore-lib-cash'
+import CustomError   from '@/helpers/handleErrors'
 
 /**
  * Generation of mnemonics.
@@ -117,7 +117,7 @@ export function derive (hd, path) {
     throw new CustomError('err_core_derivation_path')
   }
   
-  let regex = new RegExp(/(^\m\/44\')([\/{1}\d+\'{1}]+)/mg)
+  let regex = new RegExp(/(^\m\/\d+\')([\/{1}\d+\'{1}]+)/mg)
   
   if (!regex.test(path)) {
     throw new CustomError('err_core_derivation_path')
@@ -139,11 +139,17 @@ export function derive (hd, path) {
  * @returns {string} Bitcoin address
  */
 
-export function getBtcAddress (node, childIndex = 0) {
+export function getBtcAddress (node, childIndex = 0, type = 'p2pkh') {
+  const types = ['p2pkh', 'p2wpkh', 'p2sh']
+  if (!types.includes(type)) {
+    // todo new error
+    throw new CustomError('err_core_btc_address')
+  }
+  
   try {
     let pubKey = node.deriveChild(childIndex).publicKey
-    
-    return bitcoin.payments.p2pkh({
+  
+    return bitcoin.payments[type]({
       pubkey: pubKey
     }).address
   }
@@ -257,27 +263,71 @@ export function calcBtcTxSize (i = 1, o = 2) {
 
 export function makeRawBtcTx (data = {}) {
   try {
-    const {inputs, outputs} = data
-    let txb = new bitcoin.TransactionBuilder()
+    // add type?
+    // type p2pkh, p2sh, p2wsh
+    const {inputs, outputs, type} = data
+    console.log('inputs', inputs)
+    console.log('outputs', outputs)
+    const psbt = new bitcoin.Psbt()
     
-    txb.setVersion(1)
-    
-    inputs.forEach((item) => {
-      txb.addInput(item.tx_hash_big_endian, +item.tx_output_n)
+    inputs.forEach(input => {
+      let data = {
+        hash: input.tx_hash_big_endian,  // txid number
+        index: input.tx_output_n,  // output number
+        sequence: input.sequence // often 0xfffffffe
+      }
+      
+      if (type === 'p2pkh') {
+        data.nonWitnessUtxo = Buffer.from(input.hex, 'hex')
+      }
+      
+      if (type === '')
+        psbt.addInput({
+          
+          nonWitnessUtxo: Buffer.from(input.hex, 'hex'), // works for witness inputs too!
+          redeemScript: input.redeemScript || '', // only if there's redeem script
+          witnessScript: input.witnessScript || '' // only if there's witness script
+        })
     })
+    // add inputs
     
-    outputs.forEach((item) => {
-      txb.addOutput(item.address, +item.value)
-    })
     
-    inputs.forEach((item, index) => {
-      let key = bitcoin.ECPair.fromWIF(item.key)
-      txb.sign(index, key)
-    })
+    // add output
+    // psbt.addOutput({
+    //   address: '1KRMKfeZcmosxALVYESdPNez1AP1mEtywp',
+    //   value: 80000,
+    // })
+    //
+    // psbt.validateSignaturesOfInput(0);
+    // // or psbt.signAllInputs(keyPair)
+    // psbt.finalizeAllInputs()
+    //
+    // const tx = psbt.extractTransaction()
+    // const hash = tx.getId()
     
-    let tx = txb.build()
-    let hash = tx.getId()
+    // signInputs
+    // psbt.signInput(0, alice);
+    // let txb = new bitcoin.TransactionBuilder()
+    //
+    // txb.setVersion(1)
+    //
+    // inputs.forEach((item) => {
+    //   txb.addInput(item.tx_hash_big_endian, +item.tx_output_n)
+    // })
+    //
+    // outputs.forEach((item) => {
+    //   txb.addOutput(item.address, +item.value)
+    // })
+    //
+    // inputs.forEach((item, index) => {
+    //   let key = bitcoin.ECPair.fromWIF(item.key)
+    //   txb.sign(index, key)
+    // })
+    //
+    // let tx = txb.build()
+    // let hash = tx.getId()
     
+    const hash = ''
     return {
       hash,
       tx: tx.toHex()
@@ -402,12 +452,13 @@ export function makeRawBchTx (data = {}) {
  * @returns {string} Returns Bitcoin Cash address in CashAddr format
  */
 
-export function getCashAddress (address = "") {
+export function getCashAddress (address = '') {
   try {
     const toCashAddress = bchaddr.toCashAddress
-  
+    
     return toCashAddress(address)
-  } catch (e) {
+  }
+  catch (e) {
     console.log(e)
     throw new CustomError('err_get_bch_address')
   }
@@ -423,9 +474,10 @@ export function getCashAddress (address = "") {
 export function getBtcPrivateKeyByIndex (node, index) {
   try {
     const key = node.deriveChild(index).privateKey
-  
+    
     return privateKeyToWIF(key)
-  } catch (e) {
+  }
+  catch (e) {
     throw new CustomError('err_btc_private_key_by_index')
   }
 }

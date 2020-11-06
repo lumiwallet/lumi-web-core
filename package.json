@@ -29,7 +29,7 @@
     "bchaddrjs": "^0.4.9",
     "bip39": "^3.0.2",
     "bip39-checker": "^1.1.7",
-    "bitcoinjs-lib": "^5.1.10",
+    "bitcoinjs-lib": "^5.2.0",
     "bitcore-lib-cash": "^8.22.0",
     "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^6.2.1",

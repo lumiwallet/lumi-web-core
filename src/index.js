@@ -183,6 +183,16 @@ export default class Wallet {
     return this.sync.BTC
   }
   
+  async syncSegwit () {
+    if (!this._apiReady) {
+      throw new CustomError('err_wallet_api')
+    }
+    
+    this.sync.Segwit = await this.wrapper.method('sync', 'Sewgit')
+    
+    return this.sync.Segwit
+  }
+  
   /**
    * The method starts synchronization of ETH
    *
@@ -204,6 +214,7 @@ export default class Wallet {
     return this.sync.ETH
   }
   
+  // TODO docs
   async syncBCH () {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
@@ -353,8 +364,16 @@ export default class Wallet {
     return this.sync.BTC
   }
   
+  get getSyncSegwit () {
+    return this.sync.Segwit
+  }
+  
   get getSyncETH () {
     return this.sync.ETH
+  }
+  
+  get getSyncBCH () {
+    return this.sync.BCH
   }
   
   get getApiState () {

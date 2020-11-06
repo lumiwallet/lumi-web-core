@@ -1,5 +1,6 @@
 import Core from '@/class/Core'
 import BitcoinSync from '@/class/BTC/BitcoinSync'
+import SegwitSync from '@/class/BTC/SegwitSync'
 import EthereumSync from '@/class/ETH/EthereumSync'
 import BitcoinCashSync from '@/class/BCH/BitcoinCashSync'
 import BitcoinTx from '@/class/BTC/BitcoinTx'
@@ -26,6 +27,7 @@ export default class WalletWrapper {
     this.core = null
     this.sync = {
       BTC: null,
+      Segwit: null,
       ETH: null,
       BCH: null
     }
@@ -57,6 +59,8 @@ export default class WalletWrapper {
       switch (type) {
         case 'BTC':
           return await this.SyncBTC()
+        case 'Segwit':
+          return await this.SyncBTC()
         case 'ETH':
           return await this.SyncETH()
         case 'BCH':
@@ -75,12 +79,14 @@ export default class WalletWrapper {
    */
   
   async SyncBTC () {
-    this.sync.BTC = new BitcoinSync(
-      this.core.DATA.BTC.externalNode,
-      this.core.DATA.BTC.internalNode,
-      this.api
-    )
-
+    if (!this.sync.BTC) {
+      this.sync.BTC = new BitcoinSync(
+        this.core.DATA.BTC.externalNode,
+        this.core.DATA.BTC.internalNode,
+        this.api
+      )
+    }
+    
     try {
       await this.sync.BTC.Start()
       return this.sync.BTC.DATA
@@ -97,7 +103,9 @@ export default class WalletWrapper {
    */
   
   async SyncETH () {
-    this.sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
+    if (!this.sync.ETH) {
+      this.sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
+    }
     
     try {
       await this.sync.ETH.Start()
@@ -108,13 +116,34 @@ export default class WalletWrapper {
     }
   }
   
-  async SyncBCH () {
-    this.sync.BCH = new BitcoinCashSync(
-      this.core.DATA.BCH.externalNode,
-      this.core.DATA.BCH.internalNode,
-      this.api
-    )
+  async SyncSegwit () {
+    if (!this.sync.Segwit) {
+      this.sync.Segwit = new SegwitSync(
+        this.core.DATA.Segwit.externalNode,
+        this.core.DATA.Segwit.internalNode,
+        this.api
+      )
+    }
+    
+    try {
+      await this.sync.Segwit.Start()
+      return this.sync.Segwit.DATA
+    }
+    catch (e) {
+      console.log('SyncSegwit error', e)
+    }
+  }
   
+  // TODO docs
+  async SyncBCH () {
+    if (!this.sync.BCH) {
+      this.sync.BCH = new BitcoinCashSync(
+        this.core.DATA.BCH.externalNode,
+        this.core.DATA.BCH.internalNode,
+        this.api
+      )
+    }
+    
     try {
       await this.sync.BCH.Start()
       return this.sync.BCH.DATA

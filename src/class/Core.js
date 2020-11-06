@@ -41,7 +41,11 @@ export default class Core {
       internalNode: null,
       externalNode: null
     }
-    
+    this.Segwit = {
+      address: null,
+      internalNode: null,
+      externalNode: null
+    }
     this.generateWallet()
   }
   
@@ -125,7 +129,14 @@ export default class Core {
     const bitcoin_internal_path = 'm/44\'/0\'/0\'/1'
     this.BTC.externalNode = core.derive(this.hdkey, bitcoin_external_path)
     this.BTC.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
-    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0)
+    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0, 'p2pkh')
+  
+    const segwit_external_path = 'm/84\'/0\'/0\'/0'
+    const segwit_internal_path = 'm/84\'/0\'/0\'/1'
+    this.Segwit.externalNode = core.derive(this.hdkey, segwit_external_path)
+    this.Segwit.internalNode = core.derive(this.hdkey, segwit_internal_path)
+    this.Segwit.address = core.getBtcAddress(this.Segwit.externalNode, 0, 'p2wpkh')
+    console.log('address 1', this.Segwit.address)
   }
   
   /**
@@ -264,7 +275,8 @@ export default class Core {
       seedInHex: this.seed ? this.seed.toString('hex') : null,
       BTC: this.BTC,
       ETH: this.ETH,
-      BCH: this.BCH
+      BCH: this.BCH,
+      Segwit: this.Segwit
     }
   }
 }

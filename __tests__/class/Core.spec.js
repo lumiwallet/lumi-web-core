@@ -9,7 +9,7 @@ const test_data = {
 const test_derivation_path = 'm/44\'/0\'/0\'/0'
 
 describe('Core class', () => {
-  test('it should create a Core class by mnemonic', () => {
+  test.only('it should create a Core class by mnemonic', () => {
     const core_exemplar = new Core(test_data)
     
     expect(core_exemplar).toBeDefined()

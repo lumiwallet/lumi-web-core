@@ -10,7 +10,7 @@ import * as bitcoin from 'bitcoinjs-lib'
  * @class
  */
 
-export default class BitcoinSync {
+export default class SegwitSync {
   /**
    * Create a BitcoinSync
    * @param {Object} externalNode - External Bitcoin node
@@ -39,7 +39,6 @@ export default class BitcoinSync {
       unique: []
     }
     this.fee = []
-    this.checked200 = false
     this.request = new Request('https://api.lumiwallet.com/proxy/v2/btc')
     // this.request = new Request(this.api.bitcoin)
   }
@@ -53,7 +52,7 @@ export default class BitcoinSync {
   async Start () {
     await Promise.all([
       await this.getAddresses(),
-      await this.getFeesRequest()
+      // await this.getFeesRequest()
     ])
   }
   
@@ -72,7 +71,7 @@ export default class BitcoinSync {
         type: 'internal'
       }
     ]
-
+    
     const pArray = nodeData.map(async item => {
       return await this.getAddressesByNode(
         item.node,
@@ -88,40 +87,15 @@ export default class BitcoinSync {
       external: this.addresses.external[this.addresses.external.length - 1],
       internal: this.addresses.internal[this.addresses.internal.length - 1]
     }
-    // await this.additionalCheckAddress()
     
     this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) => item.address)
     
-    this.balance = this.getBalance(this.unspent)
-    await this.processTransactions()
+    console.log('done', this)
+    // await this.getUnspent()
+    // await this.processTransactions()
   }
   
-  // /**
-  //  * Auxiliary method that gets the Bitcoin address by node and index
-  //  * @param {Object} node - Bitcoin node
-  //  * @param {string} type - Node type (external or internal)
-  //  * @param {number} from - The index that the derivation starts from
-  //  * @param {number} to - Index to which deprivation occurs
-  //  * @returns {Promise<Array>} Returns array of addresses
-  //  * @private
-  //  */
-  //
-  // async _getArrayOfAddresses (node, type, from, to) {
-  //   let addresses = []
-  //
-  //   for (let i = from; i < to; i++) {
-  //     let address = ''
-  //
-  //     if (this.deriveAddress[type].hasOwnProperty(i)) {
-  //       address = this.deriveAddress[type][i]
-  //     } else {
-  //       address = getBtcAddress(node, i)
-  //     }
-  //     addresses.push(address)
-  //   }
-  //
-  //   return addresses
-  // }
+  
   
   /**
    * Getting information about addresses and forming an array of addresses.
@@ -146,14 +120,12 @@ export default class BitcoinSync {
     }
     
     const req = async () => {
-      let {addresses, addressesObj} = await sync.getArrayOfBtcAddresses(
+      let addresses = await sync.getArrayOfBtcAddresses(
         node,
+        type,
         data.from,
-        data.to,
-        this.deriveAddress[type]
+        data.to
       )
-  
-      this.deriveAddress[type] = {...addressesObj, ...this.deriveAddress[type]}
       
       try {
         let res = await this.getMultiAddressRequest(addresses)
@@ -232,34 +204,6 @@ export default class BitcoinSync {
     await req()
     
     return list
-  }
-  
-  async additionalCheckAddress () {
-    console.log(!this.checked200, !this.deriveAddress.internal.hasOwnProperty(200))
-    if (!this.checked200 && !this.deriveAddress.internal.hasOwnProperty(200)) {
-      let address = getBtcAddress(this.internalNode, 200)
-      this.deriveAddress.internal[200] = address
-      this.checked200 = true
-      
-      let res = await this.getMultiAddressRequest([address])
-      console.log('200', res)
-      if (res.hasOwnProperty('txs')) {
-        this.transactions.all = [...this.transactions.all, ...res.txs]
-      }
-      
-      if (res.hasOwnProperty('addresses')) {
-        let item = res.addresses.find((itm) => itm.address === address)
-        
-        if (item && item.n_tx) {
-          item.type = 'internal'
-          item.derive_index = 200
-          
-          let lastEmptyAddress = this.addresses.internal.pop()
-          this.addresses.internal.push(item)
-          this.addresses.internal.push(lastEmptyAddress)
-        }
-      }
-    }
   }
   
   /**
@@ -346,28 +290,6 @@ export default class BitcoinSync {
   }
   
   /**
-   * Getting a private key at a bitcoin address
-   * @param {string} address - Bitcoin address
-   * @returns {Object} - Bitcoin private key
-   */
-  
-  // getPrivateKey (address) {
-  //   let finded = this.addresses.internal.find(item => item.address === address)
-  //   let key, wif = null
-  //
-  //   if (finded) {
-  //     key = this.internalNode.deriveChild(finded.derive_index).privateKey
-  //     wif = privateKeyToWIF(key)
-  //   } else {
-  //     finded = this.addresses.external.find(item => item.address === address)
-  //     key = this.externalNode.deriveChild(finded.derive_index).privateKey
-  //     wif = privateKeyToWIF(key)
-  //   }
-  //
-  //   return wif
-  // }
-  
-  /**
    * Getting a raw transaction from the transaction hash
    * @param {string} txHash - Transaction hash
    * @returns {Promise<Object>} - Raw transaction
@@ -424,10 +346,8 @@ export default class BitcoinSync {
           
           if (res.data.hasOwnProperty('txs')) {
             txs = [...txs, ...res.data.txs]
-
+            
             if (res.data.txs.length === 100) {
-              
-              console.log('OFFSET!!!')
               offset += OFFSET_STEP
               await req()
             }
@@ -435,11 +355,11 @@ export default class BitcoinSync {
           
           data.txs = txs
         } else {
-          console.log('BTC getMultiAddressRequest', res.error)
+          console.log('Segwit getMultiAddressRequest', res.error)
         }
       }
       catch (err) {
-        console.log('BTC getMultiAddressRequest', err)
+        console.log('Segwit getMultiAddressRequest', err)
       }
     }
     
