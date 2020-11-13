@@ -139,9 +139,10 @@ export function derive (hd, path) {
  * @returns {string} Bitcoin address
  */
 
-export function getBtcAddress (node, childIndex = 0, type = 'p2pkh') {
-  const types = ['p2pkh', 'p2wpkh', 'p2sh']
-  if (!types.includes(type)) {
+export function getBtcAddress (node, childIndex = 0, format = 'p2pkh') {
+  const formats = ['p2pkh', 'p2wpkh', 'p2sh']
+  
+  if (!formats.includes(format)) {
     // todo new error
     throw new CustomError('err_core_btc_address')
   }
@@ -149,7 +150,7 @@ export function getBtcAddress (node, childIndex = 0, type = 'p2pkh') {
   try {
     let pubKey = node.deriveChild(childIndex).publicKey
   
-    return bitcoin.payments[type]({
+    return bitcoin.payments[format]({
       pubkey: pubKey
     }).address
   }

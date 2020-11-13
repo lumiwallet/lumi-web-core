@@ -1,6 +1,5 @@
 import Core from '@/class/Core'
 import BitcoinSync from '@/class/BTC/BitcoinSync'
-import SegwitSync from '@/class/BTC/SegwitSync'
 import EthereumSync from '@/class/ETH/EthereumSync'
 import BitcoinCashSync from '@/class/BCH/BitcoinCashSync'
 import BitcoinTx from '@/class/BTC/BitcoinTx'
@@ -27,7 +26,7 @@ export default class WalletWrapper {
     this.core = null
     this.sync = {
       BTC: null,
-      Segwit: null,
+      SEGWIT: null,
       ETH: null,
       BCH: null
     }
@@ -59,8 +58,8 @@ export default class WalletWrapper {
       switch (type) {
         case 'BTC':
           return await this.SyncBTC()
-        case 'Segwit':
-          return await this.SyncBTC()
+        case 'SEGWIT':
+          return await this.SyncSEGWIT()
         case 'ETH':
           return await this.SyncETH()
         case 'BCH':
@@ -83,7 +82,8 @@ export default class WalletWrapper {
       this.sync.BTC = new BitcoinSync(
         this.core.DATA.BTC.externalNode,
         this.core.DATA.BTC.internalNode,
-        this.api
+        this.api,
+        'p2pkh'
       )
     }
     
@@ -116,21 +116,24 @@ export default class WalletWrapper {
     }
   }
   
-  async SyncSegwit () {
-    if (!this.sync.Segwit) {
-      this.sync.Segwit = new SegwitSync(
-        this.core.DATA.Segwit.externalNode,
-        this.core.DATA.Segwit.internalNode,
-        this.api
+  // TODO: DOCS
+  async SyncSEGWIT () {
+    if (!this.sync.SEGWIT) {
+      this.sync.SEGWIT = new BitcoinSync(
+        this.core.DATA.SEGWIT.externalNode,
+        this.core.DATA.SEGWIT.internalNode,
+        this.api,
+        'p2wpkh'
       )
     }
     
     try {
-      await this.sync.Segwit.Start()
-      return this.sync.Segwit.DATA
+      console.log('CORE syncSEGWIT')
+      await this.sync.SEGWIT.Start()
+      return this.sync.SEGWIT.DATA
     }
     catch (e) {
-      console.log('SyncSegwit error', e)
+      console.log('SyncSEGWIT error', e)
     }
   }
   

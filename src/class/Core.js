@@ -41,7 +41,7 @@ export default class Core {
       internalNode: null,
       externalNode: null
     }
-    this.Segwit = {
+    this.SEGWIT = {
       address: null,
       internalNode: null,
       externalNode: null
@@ -133,10 +133,9 @@ export default class Core {
   
     const segwit_external_path = 'm/84\'/0\'/0\'/0'
     const segwit_internal_path = 'm/84\'/0\'/0\'/1'
-    this.Segwit.externalNode = core.derive(this.hdkey, segwit_external_path)
-    this.Segwit.internalNode = core.derive(this.hdkey, segwit_internal_path)
-    this.Segwit.address = core.getBtcAddress(this.Segwit.externalNode, 0, 'p2wpkh')
-    console.log('address 1', this.Segwit.address)
+    this.SEGWIT.externalNode = core.derive(this.hdkey, segwit_external_path)
+    this.SEGWIT.internalNode = core.derive(this.hdkey, segwit_internal_path)
+    this.SEGWIT.address = core.getBtcAddress(this.SEGWIT.externalNode, 0, 'p2wpkh')
   }
   
   /**
@@ -276,7 +275,7 @@ export default class Core {
       BTC: this.BTC,
       ETH: this.ETH,
       BCH: this.BCH,
-      Segwit: this.Segwit
+      SEGWIT: this.SEGWIT
     }
   }
 }

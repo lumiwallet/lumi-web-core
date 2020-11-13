@@ -183,14 +183,14 @@ export default class Wallet {
     return this.sync.BTC
   }
   
-  async syncSegwit () {
+  async syncSEGWIT() {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
     
-    this.sync.Segwit = await this.wrapper.method('sync', 'Sewgit')
+    this.sync.SEGWIT = await this.wrapper.method('sync', 'SEGWIT')
     
-    return this.sync.Segwit
+    return this.sync.SEGWIT
   }
   
   /**
@@ -365,7 +365,7 @@ export default class Wallet {
   }
   
   get getSyncSegwit () {
-    return this.sync.Segwit
+    return this.sync.SEGWIT
   }
   
   get getSyncETH () {
