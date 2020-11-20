@@ -270,7 +270,7 @@ export function makeRawBtcTx (data = {}) {
     console.log('inputs', inputs)
     console.log('outputs', outputs)
     const psbt = new bitcoin.Psbt()
-    
+    const a = bitcoin.Transaction.fromObject()
     inputs.forEach(input => {
       let data = {
         hash: input.tx_hash_big_endian,  // txid number

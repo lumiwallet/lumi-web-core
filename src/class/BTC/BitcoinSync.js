@@ -52,6 +52,11 @@ export default class BitcoinSync {
    */
   
   async Start () {
+    this.transactions = {
+      all: [],
+      unique: []
+    }
+    this.unspent = []
     await Promise.all([
       await this.getAddresses(),
       await this.getFeesRequest()

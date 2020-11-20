@@ -1,6 +1,15 @@
-import converter from '@/helpers/converters'
+import converter                     from '@/helpers/converters'
 import {calcBtcTxSize, makeRawBtcTx} from '@/helpers/coreHelper'
-import CustomError from '@/helpers/handleErrors'
+import CustomError                   from '@/helpers/handleErrors'
+
+function hex_to_ascii (str1) {
+  let hex = str1.toString()
+  let str = ''
+  for (var n = 0; n < hex.length; n += 2) {
+    str += String.fromCharCode(parseInt(hex.substr(n, 2), 16))
+  }
+  return str
+}
 
 /**
  * List of available commission types for Bitcoin transactions
@@ -27,6 +36,7 @@ export default class BitcoinTx {
    * @param {Array} data.feeList - Set of bitcoin fees
    * @param {Object} data.customFee - Custom fee entered by the user
    */
+  // todo docs
   constructor (data) {
     this.unspent = data.unspent
     this.internalAddress = data.internalAddress
@@ -36,6 +46,7 @@ export default class BitcoinTx {
     this.fee = data.feeList
     this.customFee = +data.customFee || 0
     this.feeList = []
+    this.txs = data.txs
   }
   
   /**
@@ -164,11 +175,20 @@ export default class BitcoinTx {
       throw new CustomError('err_tx_btc_fee')
     }
     
+    if (!this.txs || !Array.isArray(this.txs)) {
+      // todo error
+    }
+    
     let change = +fee.inputsAmount - +this.amount - +fee.SAT
     
+    const inputs = fee.inputs.map(item => {
+      item.tx = this.txs.find(tx => tx.hash === item.tx_hash_big_endian)
+      return item
+    })
+    console.log(fee.inputs)
     if (change >= 0) {
       let params = {
-        inputs: fee.inputs,
+        inputs: inputs,
         outputs: [
           {
             address: addressTo,

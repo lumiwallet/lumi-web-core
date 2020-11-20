@@ -199,6 +199,7 @@ export default class WalletWrapper {
     
     if (method === 'make') {
       BTCdata.internalAddress = this.sync.BTC.addresses.empty.internal.address
+      BTCdata.txs = this.sync.BTC.transactions.unique
     }
     
     let tx = new BitcoinTx(BTCdata)
