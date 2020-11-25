@@ -1,6 +1,6 @@
-import Request from '@/helpers/Request'
+import Request                          from '@/helpers/Request'
 import {getBtcAddress, privateKeyToWIF} from '@/helpers/coreHelper'
-import * as bitcoin from 'bitcoinjs-lib'
+import * as bitcoin                     from 'bitcoinjs-lib'
 
 /**
  * Class BitcoinSync.
@@ -280,9 +280,20 @@ export default class BitcoinSync {
         self.findIndex((tx) => tx.hash === value.hash) === index
     )
     
+    const externalAddresses = this.addresses.external.map(item => item.address)
+    
     try {
       this.transactions.unique.forEach((tx) => {
-        let isMyInAddress = this.addresses.all.includes(tx.inputs[0].prev_out.addr)
+        let isMyInAddress = false
+        
+        for (let input of tx.inputs) {
+          if (input.prev_out?.addr) {
+            if (this.addresses.all.includes(input.prev_out.addr)) {
+              isMyInAddress = true
+              break
+            }
+          }
+        }
         
         tx.action = isMyInAddress ? 'outgoing' : 'incoming'
         tx.self = isMyInAddress ? tx.out.every(item => this.addresses.all.includes(item.addr)) : false
@@ -291,9 +302,24 @@ export default class BitcoinSync {
           tx.action = 'outgoing'
         }
         
-        tx.to = tx.out[0].addr
         tx.from = tx.inputs[0].prev_out.addr
-        tx.value = tx.out[0].value
+        
+        if (tx.action === 'outgoing') {
+          tx.to = tx.out[0].addr
+          tx.value = tx.out[0].value
+        } else {
+          let to = tx.out.find(item => {
+            return externalAddresses.includes(item.addr)
+          })
+          
+          if (to) {
+            tx.to = to.addr
+            tx.value = to.value
+          } else {
+            tx.to = tx.out[0].addr
+            tx.value = tx.out[0].value
+          }
+        }
       })
     }
     catch (e) {
