@@ -147,7 +147,7 @@ export default class BitcoinCashSync {
   /**
    * Getting information about addresses and forming an array of addresses.
    * Makes a request for a bundle of addresses and gets a list of transactions
-   * @param node - Bitcoin Cahs node
+   * @param node - Bitcoin Cash node
    * @param type - Node type (external or internal)
    * @returns {Promise<Array>} A list of addresses with transactions
    */

@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for helpers/handleErrors.js</title>
+    <title>Code coverage report for helpers/requestHandleErrors.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">helpers</a> handleErrors.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">helpers</a> requestHandleErrors.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -32,7 +32,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
@@ -74,17 +74,7 @@
 <a name='L15'></a><a href='#L15'>15</a>
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a>
-<a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a>
-<a name='L22'></a><a href='#L22'>22</a>
-<a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L18'></a><a href='#L18'>18</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -93,39 +83,31 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import errors from '@/helpers/errors'
-&nbsp;
-/**
- * Custom error object.
- * By the error code it substitutes the desired message from object 'errors'
- * @extends Error
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * Handling requests
+ * @param response
+ * @returns {any | Promise&lt;any&gt;} Response decoded in json or error if the request failed
  */
-&nbsp;
-class CustomError extends Error {
-<span class="fstat-no" title="function not covered" >  co</span>nstructor(code) {
-<span class="cstat-no" title="statement not covered" >    super(code)</span>
-<span class="cstat-no" title="statement not covered" >    this.name = 'CustomError'</span>
-<span class="cstat-no" title="statement not covered" >    this.message = errors.hasOwnProperty(code) ? `${code}: ${errors[code]}` : 'Uncaught error'</span>
-  
-<span class="cstat-no" title="statement not covered" >    if (Error.captureStackTrace) {</span>
-<span class="cstat-no" title="statement not covered" >      Error.captureStackTrace(this, this.constructor)</span>
+export default <span class="fstat-no" title="function not covered" >fu</span>nction (response) {
+<span class="cstat-no" title="statement not covered" >  if (response.ok) {</span>
+    const contentType = <span class="cstat-no" title="statement not covered" >response.headers.get('content-type')</span>
+<span class="cstat-no" title="statement not covered" >    if (contentType &amp;&amp; contentType.indexOf('application/json') !== -1) {</span>
+<span class="cstat-no" title="statement not covered" >      return response.json()</span>
     } else {
-<span class="cstat-no" title="statement not covered" >      this.stack = (new Error()).stack</span>
+<span class="cstat-no" title="statement not covered" >      return response.text()</span>
     }
+  } else {
+<span class="cstat-no" title="statement not covered" >    throw new Error(response.statusText)</span>
   }
 }
-&nbsp;
-export default CustomError
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

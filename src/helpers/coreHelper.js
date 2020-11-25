@@ -1,13 +1,13 @@
-import * as bip39    from 'bip39'
-import * as bitcoin  from 'bitcoinjs-lib'
+import * as bip39 from 'bip39'
+import * as bitcoin from 'bitcoinjs-lib'
 import {Transaction} from 'ethereumjs-tx'
-import * as ethUtil  from 'ethereumjs-util'
-import * as HDkey    from 'hdkey'
-import * as utils    from 'web3-utils'
-import wif           from 'wif'
-import * as bchaddr  from 'bchaddrjs'
-import * as bitcore  from 'bitcore-lib-cash'
-import CustomError   from '@/helpers/handleErrors'
+import * as ethUtil from 'ethereumjs-util'
+import * as HDkey from 'hdkey'
+import * as utils from 'web3-utils'
+import wif from 'wif'
+import * as bchaddr from 'bchaddrjs'
+import * as bitcore from 'bitcore-lib-cash'
+import CustomError from '@/helpers/handleErrors'
 
 /**
  * Generation of mnemonics.
@@ -149,7 +149,7 @@ export function getBtcAddress (node, childIndex = 0, format = 'p2pkh') {
   
   try {
     let pubKey = node.deriveChild(childIndex).publicKey
-  
+    
     return bitcoin.payments[format]({
       pubkey: pubKey
     }).address
@@ -249,9 +249,20 @@ export function privateKeyToWIF (privateKey) {
  * @param {number} o - Number of outputs. By default 2
  * @returns {number} Transaction size
  */
+// todo docs
+export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
+  let result = 0
+  
+  if (isWitness) {
+    let base_size = (41 * i) + (32 * o) + 10
+    let total_size = (149 * i) + (32 * o) + 12
 
-export function calcBtcTxSize (i = 1, o = 2) {
-  return i * 148 + o * 34 + 10
+    result = ((3 * base_size) + total_size) / 4
+  } else {
+    result = i * 148 + o * 34 + 10
+  }
+  
+  return result
 }
 
 /**
@@ -270,68 +281,56 @@ export function makeRawBtcTx (data = {}) {
     console.log('inputs', inputs)
     console.log('outputs', outputs)
     const psbt = new bitcoin.Psbt()
-    const a = bitcoin.Transaction.fromObject()
+    psbt.setVersion(1)
+    
     inputs.forEach(input => {
+      const isSegwit = input.tx && input.tx.substring(8, 12) === '0001'
+      
       let data = {
-        hash: input.tx_hash_big_endian,  // txid number
-        index: input.tx_output_n,  // output number
-        sequence: input.sequence // often 0xfffffffe
+        hash: input.tx_hash_big_endian,
+        index: input.tx_output_n,
+        sequence: input.sequence
       }
       
-      if (type === 'p2pkh') {
-        data.nonWitnessUtxo = Buffer.from(input.hex, 'hex')
+      if (isSegwit) {
+        data.witnessUtxo = {
+          script: Buffer.from(input.script, 'hex'),
+          value: input.value
+        }
+        
+        data.witnessScript = Buffer.from(input.witnessScript, 'hex')
+      } else {
+        data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')
       }
       
-      if (type === '')
-        psbt.addInput({
-          
-          nonWitnessUtxo: Buffer.from(input.hex, 'hex'), // works for witness inputs too!
-          redeemScript: input.redeemScript || '', // only if there's redeem script
-          witnessScript: input.witnessScript || '' // only if there's witness script
-        })
+      psbt.addInput(data)
     })
     // add inputs
+  
+    outputs.forEach(output => {
+      psbt.addOutput({
+        address: output.address,
+        value: output.value,
+      })
+    })
     
+    console.log(psbt)
+  
+    inputs.forEach((input, i) => {
+      psbt.signInput(i, bitcoin.ECPair.fromWIF(input.key))
+    })
+    psbt.validateSignaturesOfAllInputs()
+    psbt.finalizeAllInputs()
+    const transaction = psbt.extractTransaction()
+    console.log('transaction', transaction)
+    const signedTransaction = transaction.toHex()
+    console.log('signedTransaction', signedTransaction)
+    const hash = transaction.getId()
+    console.log('hash', hash)
     
-    // add output
-    // psbt.addOutput({
-    //   address: '1KRMKfeZcmosxALVYESdPNez1AP1mEtywp',
-    //   value: 80000,
-    // })
-    //
-    // psbt.validateSignaturesOfInput(0);
-    // // or psbt.signAllInputs(keyPair)
-    // psbt.finalizeAllInputs()
-    //
-    // const tx = psbt.extractTransaction()
-    // const hash = tx.getId()
-    
-    // signInputs
-    // psbt.signInput(0, alice);
-    // let txb = new bitcoin.TransactionBuilder()
-    //
-    // txb.setVersion(1)
-    //
-    // inputs.forEach((item) => {
-    //   txb.addInput(item.tx_hash_big_endian, +item.tx_output_n)
-    // })
-    //
-    // outputs.forEach((item) => {
-    //   txb.addOutput(item.address, +item.value)
-    // })
-    //
-    // inputs.forEach((item, index) => {
-    //   let key = bitcoin.ECPair.fromWIF(item.key)
-    //   txb.sign(index, key)
-    // })
-    //
-    // let tx = txb.build()
-    // let hash = tx.getId()
-    
-    const hash = ''
     return {
       hash,
-      tx: tx.toHex()
+      tx: signedTransaction
     }
   }
   catch (e) {

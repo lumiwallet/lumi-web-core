@@ -171,7 +171,9 @@ export default class WalletWrapper {
     
     switch (currency) {
       case 'BTC':
-        return this.createBTCTx(method, tx)
+        return this.createBTCTx(method, tx, 'p2pkh')
+      case 'SEGWIT':
+        return this.createBTCTx(method, tx, 'p2wsh')
       case 'ETH':
         return this.createETHTx(method, tx)
       case 'BCH':
@@ -188,18 +190,30 @@ export default class WalletWrapper {
    * @returns {Promise<Object>} Information about the transaction or fee
    */
   
-  async createBTCTx (method, txData) {
+  // todo docs
+  async createBTCTx (method, txData, format = 'p2pkh') {
+    const currency = format === 'p2pkh' ? 'BTC' : 'SEGWIT'
+    console.log('createBTCTx', txData)
     let BTCdata = {
-      unspent: this.sync.BTC.unspent,
-      balance: this.sync.BTC.balance,
-      feeList: this.sync.BTC.fee,
+      unspent: this.sync[currency].unspent,
+      balance: this.sync[currency].balance,
+      feeList: this.sync[currency].fee,
       amount: txData.amount,
-      customFee: txData.customFee
+      customFee: txData.customFee,
+      format
     }
     
     if (method === 'make') {
-      BTCdata.internalAddress = this.sync.BTC.addresses.empty.internal.address
-      BTCdata.txs = this.sync.BTC.transactions.unique
+      BTCdata.internalAddress = this.sync[currency].addresses.empty.internal.address
+      
+      if (format === 'p2pkh') {
+        BTCdata.nodes = {
+          external: this.core.DATA[currency].externalNode,
+          internal: this.core.DATA[currency].internalNode
+        }
+      } else {
+        BTCdata.txs = this.sync.SEGWIT.transactions.unique
+      }
     }
     
     let tx = new BitcoinTx(BTCdata)

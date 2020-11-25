@@ -33,23 +33,23 @@ export default class Request {
   send (params = {}, method, type = 'POST') {
     let fullUrl = this.url
     let body = null
-
+    
     if (method) {
       fullUrl += `/${ method }`
     }
-
+    
     if (type === 'POST') {
       body = JSON.stringify({...params, ...this.basicData})
     } else {
       fullUrl += '?' + this.serialize(params)
     }
-
+    
     let initParams = {
       method: type,
       headers: this.headers,
       body: body
     }
-
+    
     return new Promise((resolve, reject) => {
       fetch(fullUrl, initParams)
         .then(handleErrors)
@@ -68,10 +68,10 @@ export default class Request {
    * @param {Object} obj - Parameters to serialize
    * @returns {string}
    */
-
+  
   serialize (obj) {
     if (!obj || typeof obj !== 'object') return ''
-
+    
     return Object.keys(obj)
       .reduce(function (a, k) {
         a.push(k + '=' + encodeURIComponent(obj[k]))

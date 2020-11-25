@@ -1,15 +1,7 @@
-import converter                     from '@/helpers/converters'
-import {calcBtcTxSize, makeRawBtcTx} from '@/helpers/coreHelper'
-import CustomError                   from '@/helpers/handleErrors'
-
-function hex_to_ascii (str1) {
-  let hex = str1.toString()
-  let str = ''
-  for (var n = 0; n < hex.length; n += 2) {
-    str += String.fromCharCode(parseInt(hex.substr(n, 2), 16))
-  }
-  return str
-}
+import converter from '@/helpers/converters'
+import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from '@/helpers/coreHelper'
+import CustomError from '@/helpers/handleErrors'
+import Request from '@/helpers/Request'
 
 /**
  * List of available commission types for Bitcoin transactions
@@ -45,8 +37,10 @@ export default class BitcoinTx {
     this.dust = 1000
     this.fee = data.feeList
     this.customFee = +data.customFee || 0
+    this.nodes = data.nodes
     this.feeList = []
-    this.txs = data.txs
+    this.request = new Request('https://blockchain.info/rawtx')
+    this.format = data.format || 'p2pkh'
   }
   
   /**
@@ -124,7 +118,7 @@ export default class BitcoinTx {
     
     let req = async () => {
       let item = this.unspent[index]
-      let defaultSize = calcBtcTxSize(index + 1, 2)
+      let defaultSize = calcBtcTxSize(index + 1, 2, this.format === 'p2wsh')
       let calcFee = size ? size * fee : defaultSize * fee
       
       inputsAmount += item.value
@@ -175,17 +169,16 @@ export default class BitcoinTx {
       throw new CustomError('err_tx_btc_fee')
     }
     
-    if (!this.txs || !Array.isArray(this.txs)) {
-      // todo error
+    let change = +fee.inputsAmount - +this.amount - +fee.SAT
+    let inputs = []
+    
+    try {
+      inputs = await this.getInputsWithTxInfo(fee.inputs)
+    }
+    catch (e) {
+      throw new Error(e.message)
     }
     
-    let change = +fee.inputsAmount - +this.amount - +fee.SAT
-    
-    const inputs = fee.inputs.map(item => {
-      item.tx = this.txs.find(tx => tx.hash === item.tx_hash_big_endian)
-      return item
-    })
-    console.log(fee.inputs)
     if (change >= 0) {
       let params = {
         inputs: inputs,
@@ -208,5 +201,57 @@ export default class BitcoinTx {
     } else {
       throw new CustomError('err_tx_btc_balance')
     }
+  }
+  
+  async getInputsWithTxInfo (inputs) {
+    try {
+      for (let input of inputs) {
+        if (this.format === 'p2wsh') {
+          // get witnessScript
+        } else {
+          if (!input.tx) {
+            input.tx = await this.getRawTxHex(input.tx_hash_big_endian)
+          }
+        }
+        input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+      }
+      
+    }
+    catch (e) {
+      throw new Error(e.message)
+    }
+    return inputs
+  }
+  
+  async getRawTxHex (hash) {
+    let params = {
+      format: 'hex',
+      cors: 'true'
+    }
+    
+    return await fetch(`https://blockchain.info/rawtx/${ hash }?format=hex&cors=true`, {
+      method: 'GET',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
+      })
+    }).then(res => res.text())
+      .then(res => {
+        return res
+      })
+    
+    // try {
+    //   let res = await this.request.send(params, hash, 'GET')
+    //
+    //   if (res.status === 'success') {
+    //     return res.data
+    //   } else {
+    //     console.log(res.error)
+    //     return {}
+    //   }
+    // }
+    // catch (e) {
+    //   console.log('BTC getRawTxHex', e)
+    // }
   }
 }
