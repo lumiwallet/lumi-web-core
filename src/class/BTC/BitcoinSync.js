@@ -488,7 +488,8 @@ export default class BitcoinSync {
       return new Promise((resolve) => {
         let params = {
           method: 'unspent',
-          active: array
+          active: array,
+          limit: 1000
         }
         
         this.request.send(params).then(res => {
