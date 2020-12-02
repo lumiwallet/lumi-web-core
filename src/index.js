@@ -1,10 +1,22 @@
 import Wrapper from '@/Wrapper'
 import CustomError from '@/helpers/handleErrors'
-import {makeRawBtcTx, makeRawEthTx, makeRawBchTx, getBtcPrivateKeyByIndex} from '@/helpers/coreHelper'
+import {
+  makeRawBtcTx,
+  makeRawEthTx,
+  makeRawBchTx,
+  getBtcPrivateKeyByIndex,
+  calcBtcTxSize
+} from '@/helpers/coreHelper'
 
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
-export {makeRawBtcTx, makeRawEthTx, makeRawBchTx}
+export {
+  makeRawBtcTx,
+  makeRawEthTx,
+  makeRawBchTx,
+  getBtcPrivateKeyByIndex,
+  calcBtcTxSize
+}
 
 /**
  * Class Wallet
@@ -183,7 +195,9 @@ export default class Wallet {
     return this.sync.BTC
   }
   
-  async syncSEGWIT() {
+  // todo docs
+  
+  async syncSEGWIT () {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }

@@ -122,6 +122,7 @@ export default class BitcoinSync {
         address = getBtcAddress(node, i, this.format)
         this.deriveAddress[type][i] = address
       }
+      
       addresses.push(address)
     }
     
@@ -280,7 +281,7 @@ export default class BitcoinSync {
         self.findIndex((tx) => tx.hash === value.hash) === index
     )
     
-    const externalAddresses = this.addresses.external.map(item => item.address)
+    // ????? const externalAddresses = this.addresses.external.map(item => item.address)
     
     try {
       this.transactions.unique.forEach((tx) => {
@@ -304,14 +305,10 @@ export default class BitcoinSync {
         
         tx.from = tx.inputs[0].prev_out.addr
         
-        if (tx.action === 'outgoing') {
-          tx.to = tx.out[0].addr
-          tx.value = tx.out[0].value
-        } else {
+        if (tx.action === 'incoming') {
           let to = tx.out.find(item => {
-            return externalAddresses.includes(item.addr)
+            return this.addresses.all.includes(item.addr)
           })
-          
           if (to) {
             tx.to = to.addr
             tx.value = to.value
@@ -319,6 +316,9 @@ export default class BitcoinSync {
             tx.to = tx.out[0].addr
             tx.value = tx.out[0].value
           }
+        } else {
+          tx.to = tx.out[0].addr
+          tx.value = tx.out[0].value
         }
       })
     }
@@ -335,7 +335,7 @@ export default class BitcoinSync {
     
     for (let item of this.unspent) {
       const address = this._getAddressByHash(item.tx_hash_big_endian, item.tx_output_n)
-      
+      //todo error
       if (!address) continue
       
       item.address = address
@@ -411,6 +411,7 @@ export default class BitcoinSync {
     if (!addresses) return false
     
     const OFFSET_STEP = 100
+    const TXS_COUNT = 100
     let offset = 0
     let data = {}
     let txs = []
@@ -419,7 +420,7 @@ export default class BitcoinSync {
       let params = {
         method: 'multiaddr',
         active: addresses,
-        n: 100,
+        n: TXS_COUNT,
         offset: offset
       }
       
@@ -431,8 +432,7 @@ export default class BitcoinSync {
           
           if (res.data.hasOwnProperty('txs')) {
             txs = [...txs, ...res.data.txs]
-            
-            if (res.data.txs.length === 100) {
+            if (res.data.txs.length === TXS_COUNT) {
               offset += OFFSET_STEP
               await req()
             }

@@ -37,7 +37,7 @@ export default class BitcoinTx {
     this.dust = 1000
     this.fee = data.feeList
     this.customFee = +data.customFee || 0
-    this.nodes = data.nodes
+    this.nodes = data.nodes || {}
     this.feeList = []
     this.request = new Request('https://blockchain.info/rawtx')
     this.format = data.format || 'p2pkh'
@@ -147,6 +147,7 @@ export default class BitcoinTx {
       }
     }
     await req()
+    
     return res
   }
   
@@ -205,12 +206,18 @@ export default class BitcoinTx {
   
   async getInputsWithTxInfo (inputs) {
     try {
+      let txs = {}
       for (let input of inputs) {
-        if (this.format === 'p2wsh') {
-          // get witnessScript
-        } else {
+        if (this.format === 'p2pkh') {
           if (!input.tx) {
-            input.tx = await this.getRawTxHex(input.tx_hash_big_endian)
+            const hash = input.tx_hash_big_endian
+            
+            if (!txs[hash]) {
+              input.tx = await this.getRawTxHex(input.tx_hash_big_endian)
+              txs[hash] = inputs.tx
+            } else {
+              input.tx = txs[hash]
+            }
           }
         }
         input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
@@ -224,11 +231,6 @@ export default class BitcoinTx {
   }
   
   async getRawTxHex (hash) {
-    let params = {
-      format: 'hex',
-      cors: 'true'
-    }
-    
     return await fetch(`https://blockchain.info/rawtx/${ hash }?format=hex&cors=true`, {
       method: 'GET',
       headers: new Headers({
@@ -239,7 +241,6 @@ export default class BitcoinTx {
       .then(res => {
         return res
       })
-    
     // try {
     //   let res = await this.request.send(params, hash, 'GET')
     //

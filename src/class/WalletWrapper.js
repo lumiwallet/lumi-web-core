@@ -128,7 +128,6 @@ export default class WalletWrapper {
     }
     
     try {
-      console.log('CORE syncSEGWIT')
       await this.sync.SEGWIT.Start()
       return this.sync.SEGWIT.DATA
     }
@@ -193,7 +192,7 @@ export default class WalletWrapper {
   // todo docs
   async createBTCTx (method, txData, format = 'p2pkh') {
     const currency = format === 'p2pkh' ? 'BTC' : 'SEGWIT'
-    console.log('createBTCTx', txData)
+    
     let BTCdata = {
       unspent: this.sync[currency].unspent,
       balance: this.sync[currency].balance,
@@ -205,14 +204,9 @@ export default class WalletWrapper {
     
     if (method === 'make') {
       BTCdata.internalAddress = this.sync[currency].addresses.empty.internal.address
-      
-      if (format === 'p2pkh') {
-        BTCdata.nodes = {
-          external: this.core.DATA[currency].externalNode,
-          internal: this.core.DATA[currency].internalNode
-        }
-      } else {
-        BTCdata.txs = this.sync.SEGWIT.transactions.unique
+      BTCdata.nodes = {
+        external: this.core.DATA[currency].externalNode,
+        internal: this.core.DATA[currency].internalNode
       }
     }
     
