@@ -39,7 +39,7 @@ export default class BitcoinTx {
     this.customFee = +data.customFee || 0
     this.nodes = data.nodes || {}
     this.feeList = []
-    this.request = new Request('https://blockchain.info/rawtx')
+    this.request = new Request(data.api)
     this.format = data.format || 'p2pkh'
   }
   
@@ -51,7 +51,7 @@ export default class BitcoinTx {
   
   async calcFee (size = 0) {
     const fees = [...this.fee.map(item => item.feePerByte), this.customFee]
-    
+   
     if (this.amount <= 0 || this.balance < this.amount) {
       return this.calcEmptyFee(fees)
     }
@@ -74,7 +74,7 @@ export default class BitcoinTx {
         custom: FEE_IDS[i] === 'custom'
       }
     })
-    
+  
     return this.feeList
   }
   
@@ -206,19 +206,25 @@ export default class BitcoinTx {
   
   async getInputsWithTxInfo (inputs) {
     try {
-      let txs = {}
-      for (let input of inputs) {
-        if (this.format === 'p2pkh') {
+      let rawTxsData = []
+      
+      if (this.format === 'p2pkh') {
+        let hashes = []
+        
+        for (let input of inputs) {
           if (!input.tx) {
-            const hash = input.tx_hash_big_endian
-            
-            if (!txs[hash]) {
-              input.tx = await this.getRawTxHex(input.tx_hash_big_endian)
-              txs[hash] = inputs.tx
-            } else {
-              input.tx = txs[hash]
-            }
+            hashes.push(input.tx_hash_big_endian)
           }
+        }
+        
+        const unique_hashes = [...new Set(hashes)]
+        rawTxsData = await this.getRawTxHex(unique_hashes)
+      }
+      
+      for (let input of inputs) {
+        if (!input.tx) {
+          let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)
+          input.tx = data.rawData
         }
         input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
       }
@@ -230,29 +236,45 @@ export default class BitcoinTx {
     return inputs
   }
   
-  async getRawTxHex (hash) {
-    return await fetch(`https://blockchain.info/rawtx/${ hash }?format=hex&cors=true`, {
-      method: 'GET',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache'
-      })
-    }).then(res => res.text())
-      .then(res => {
-        return res
-      })
-    // try {
-    //   let res = await this.request.send(params, hash, 'GET')
-    //
-    //   if (res.status === 'success') {
-    //     return res.data
-    //   } else {
-    //     console.log(res.error)
-    //     return {}
-    //   }
-    // }
-    // catch (e) {
-    //   console.log('BTC getRawTxHex', e)
-    // }
+  async getRawTxHex (hashes) {
+    if (!hashes || !hashes.length) return []
+    
+    const ARRAY_SIZE = 2
+    const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)
+    let txs = []
+    let arrays = []
+    let counter = 0
+    
+    for (let i = 0; i < ARRAYS_COUNT; i++) {
+      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)
+    }
+
+    const req = async () => {
+      try {
+        let res = await this.request.send({
+          method: 'rawtx',
+          txs: arrays[counter]
+        })
+        
+        if (res.length) {
+          txs = [...txs, ...res]
+          counter++
+          
+          if (counter !== ARRAYS_COUNT) {
+            await req()
+          }
+        } else {
+          // todo error
+          console.log('BTC getRawTxHex txs list is empty')
+        }
+      }
+      catch (e) {
+        console.log('BTC getRawTxHex', e)
+      }
+    }
+    
+    await req()
+    
+    return txs
   }
 }

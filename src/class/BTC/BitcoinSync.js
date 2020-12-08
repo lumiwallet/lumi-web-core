@@ -1,6 +1,5 @@
 import Request                          from '@/helpers/Request'
-import {getBtcAddress, privateKeyToWIF} from '@/helpers/coreHelper'
-import * as bitcoin                     from 'bitcoinjs-lib'
+import {getBtcAddress} from '@/helpers/coreHelper'
 
 /**
  * Class BitcoinSync.
@@ -373,33 +372,6 @@ export default class BitcoinSync {
     
     this.balance = balance
   }
-  
-  // /**
-  //  * Getting a raw transaction from the transaction hash
-  //  * @param {string} txHash - Transaction hash
-  //  * @returns {Promise<Object>} - Raw transaction
-  //  */
-  //
-  // async getRawTxRequest (txHash) {
-  //   let params = {
-  //     method: 'rawtx',
-  //     tx_hash: txHash
-  //   }
-  //
-  //   try {
-  //     let res = await this.request.send(params)
-  //
-  //     if (res.status === 'success') {
-  //       return res.data
-  //     } else {
-  //       console.log(res.error)
-  //       return {}
-  //     }
-  //   }
-  //   catch (e) {
-  //     console.log('BTC getLatestBlock', e)
-  //   }
-  // }
   
   /**
    * Request for information at multiple addresses

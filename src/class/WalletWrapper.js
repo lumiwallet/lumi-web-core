@@ -199,6 +199,7 @@ export default class WalletWrapper {
       feeList: this.sync[currency].fee,
       amount: txData.amount,
       customFee: txData.customFee,
+      api: this.api.bitcoin,
       format
     }
     
