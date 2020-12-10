@@ -219,16 +219,19 @@ export default class BitcoinTx {
         
         const unique_hashes = [...new Set(hashes)]
         rawTxsData = await this.getRawTxHex(unique_hashes)
-      }
-      
-      for (let input of inputs) {
-        if (!input.tx) {
-          let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)
-          input.tx = data.rawData
+  
+        for (let input of inputs) {
+          if (!input.tx) {
+            let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)
+            input.tx = data.rawData
+          }
+          input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
         }
-        input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+      } else {
+        for (let input of inputs) {
+          input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+        }
       }
-      
     }
     catch (e) {
       throw new Error(e.message)
@@ -239,7 +242,7 @@ export default class BitcoinTx {
   async getRawTxHex (hashes) {
     if (!hashes || !hashes.length) return []
     
-    const ARRAY_SIZE = 2
+    const ARRAY_SIZE = 10
     const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)
     let txs = []
     let arrays = []
