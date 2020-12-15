@@ -172,7 +172,7 @@ export default class WalletWrapper {
       case 'BTC':
         return this.createBTCTx(method, tx, 'p2pkh')
       case 'SEGWIT':
-        return this.createBTCTx(method, tx, 'p2wsh')
+        return this.createBTCTx(method, tx, 'p2wpkh')
       case 'ETH':
         return this.createETHTx(method, tx)
       case 'BCH':

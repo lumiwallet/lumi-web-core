@@ -118,7 +118,7 @@ export default class BitcoinTx {
     
     let req = async () => {
       let item = this.unspent[index]
-      let defaultSize = calcBtcTxSize(index + 1, 2, this.format === 'p2wsh')
+      let defaultSize = calcBtcTxSize(index + 1, 2, this.format === 'p2wpkh')
       let calcFee = size ? size * fee : defaultSize * fee
       
       inputsAmount += item.value
@@ -172,7 +172,7 @@ export default class BitcoinTx {
     
     let change = +fee.inputsAmount - +this.amount - +fee.SAT
     let inputs = []
-    
+
     try {
       inputs = await this.getInputsWithTxInfo(fee.inputs)
     }
@@ -218,12 +218,13 @@ export default class BitcoinTx {
         }
         
         const unique_hashes = [...new Set(hashes)]
+        
         rawTxsData = await this.getRawTxHex(unique_hashes)
   
         for (let input of inputs) {
           if (!input.tx) {
             let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)
-            input.tx = data.rawData
+            input.tx = data ? data.rawData : null
           }
           input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
         }

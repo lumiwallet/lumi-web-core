@@ -277,24 +277,32 @@ export function makeRawBtcTx (data = {}) {
   try {
     const {inputs, outputs} = data
     const psbt = new bitcoin.Psbt()
+    let keyPairs = []
+    
     psbt.setVersion(1)
     
     inputs.forEach(input => {
       const isSegwit = input.address.substring(0, 3) === 'bc1'
+      const keyPair = bitcoin.ECPair.fromWIF(input.key)
+  
+      keyPairs.push(keyPair)
+  
       let data = {
         hash: input.tx_hash_big_endian,
         index: input.tx_output_n
       }
       
       if (isSegwit) {
+        const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey})
+        const script = p2wpkh.output.toString('hex')
+        
         data.witnessUtxo = {
-          script: Buffer.from(input.script, 'hex'),
+          script: Buffer.from(script, 'hex'),
           value: input.value
         }
       } else {
         data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')
       }
-      
       psbt.addInput(data)
     })
     
@@ -304,12 +312,14 @@ export function makeRawBtcTx (data = {}) {
         value: output.value
       })
     })
-    
-    inputs.forEach((input, i) => {
-      psbt.signInput(i, bitcoin.ECPair.fromWIF(input.key))
+  
+    keyPairs.forEach((key, i) => {
+      psbt.signInput(i, key)
     })
+    
     psbt.validateSignaturesOfAllInputs()
     psbt.finalizeAllInputs()
+    
     const transaction = psbt.extractTransaction()
     const signedTransaction = transaction.toHex()
     const hash = transaction.getId()
