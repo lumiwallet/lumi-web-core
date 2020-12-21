@@ -205,9 +205,10 @@ export default class Core {
         child.path = `${ path }/${ i }`
         child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)
         child.publicKey = deriveChild.publicKey.toString('hex')
-        child.btcAddress = core.getBtcAddress(node, i)
+        child.p2pkhAddress = core.getBtcAddress(node, i, 'p2pkh')
+        child.p2wpkhAddress = core.getBtcAddress(node, i, 'p2wpkh')
         child.ethAddress = core.getEthAddressByNode(deriveChild)
-        child.bchAddress = core.getCashAddress(child.btcAddress)
+        child.bchAddress = core.getCashAddress(child.p2pkhAddress)
         info.list.push(child)
       }
       
