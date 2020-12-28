@@ -1,6 +1,7 @@
 import BitcoinTx from '@/class/BTC/BitcoinTx'
 import {calcBtcTxSize} from '@/helpers/coreHelper'
 import * as mock from '@/../__mocks__/bitcoinTxMock'
+import * as segwitMock from '@/../__mocks__/p2wpkhTxMock'
 
 describe('BitcoinTx class', () => {
   test('it should create a BitcoinTx class', () => {
@@ -98,7 +99,7 @@ describe('BitcoinTx class', () => {
     expect(fees[2][2].BTC + available_amounts[2]).toBe(mock.test_balance_btc) // for 2 sat pre byte
   })
   
-  test.only('it should make transaction in the amount of 0.00001 BTC on 15xQAQWzpSf8Qjq4UvvtpSXk88KnCGixEa address', async () => {
+  test('it should make transaction in the amount of 0.00001 BTC on 15xQAQWzpSf8Qjq4UvvtpSXk88KnCGixEa address', async () => {
     const data = mock.getData({amount: 0.00001})
     
     const Bitcoin = new BitcoinTx(data)
@@ -107,10 +108,21 @@ describe('BitcoinTx class', () => {
       addressTo: mock.recipient_address,
       fee: fee_list[2] // 2 sat pre byte
     }
-    
     const tx = await Bitcoin.make(tx_data)
-    
     expect(tx).toEqual(mock.test_tx_data)
+  })
+  
+  test('it should make P2WPKH transaction in the amount of 0.00001 BTC on bc1qnphkxa7x4gp7fgl495n4hr2np02svyc7kz6scn address', async () => {
+    const data = segwitMock.getData({amount: 0.00003})
+    
+    const Bitcoin = new BitcoinTx(data)
+    const fee_list = await Bitcoin.calcFee()
+    const tx_data = {
+      addressTo: segwitMock.recipient_address,
+      fee: fee_list[1] // 4 sat pre byte
+    }
+    const tx = await Bitcoin.make(tx_data)
+    expect(tx).toEqual(segwitMock.test_tx_data)
   })
   
   test('it should not make transaction in the amount of 0.5 BTC and throw error \'err_tx_btc_balance: Insufficient balance\'', async () => {
@@ -161,6 +173,30 @@ describe('BitcoinTx class', () => {
     }
     catch (e) {
       expect(e.message).toEqual('err_tx_btc_fee: Invalid fee. Fee must be a Object with `SAT` parameter')
+    }
+  })
+  
+  test('it should not make transaction because unspent is not valid', async () => {
+    const data = {
+      unspent: mock.invalid_unspent,
+      balance: mock.test_balance,
+      feeList: mock.test_fees,
+      amount: 0.00001,
+      customFee: 0
+    }
+    
+    const Bitcoin = new BitcoinTx(data)
+    const fees = await Bitcoin.calcFee()
+    const tx_data = {
+      addressTo: mock.recipient_address,
+      fee: fees[1]
+    }
+    
+    try {
+      await Bitcoin.make(tx_data)
+    }
+    catch (e) {
+      expect(e.message).toEqual('err_tx_btc_unspent: Invalid unspent. Try to resync the BTC wallet')
     }
   })
   

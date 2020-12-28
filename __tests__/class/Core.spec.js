@@ -125,17 +125,19 @@ describe('Core class', () => {
     expect(childNodes.list.length).toBe(test_child_nodes.list.length)
   })
   
-  test('it should create a child nodes by path "m/44\'/0\'/0\'/0" and range from 0 to 1 and check all fields for equality', () => {
+  test('it should create a child nodes by path "m/44\'/0\'/0\'/0" and range from 0 to 2 and check all fields for equality', () => {
     const core_exemplar = new Core(test_data)
     
     const childNodes = core_exemplar.getChildNodes({
       from: 0,
-      to: 0,
+      to: 2,
       path: test_derivation_path
     })
     
     expect(childNodes).toHaveProperty('node.publicExtendedKey', test_child_nodes.node.publicExtendedKey)
     expect(childNodes.list[0]).toMatchObject(test_child_nodes.list[0])
+    expect(childNodes.list[1]).toMatchObject(test_child_nodes.list[1])
+    expect(childNodes.list[2]).toMatchObject(test_child_nodes.list[2])
   })
   
   test('it should not create a child node without path and throw Error with message \`err_core_derivation\`', () => {

@@ -14,9 +14,9 @@ export default class BitcoinSync {
    * @param {Object} externalNode - External Bitcoin node
    * @param {Object} internalNode - Internal Bitcoin node
    * @param {Object} api - A set of URLs for getting information about Bitcoin addresses
+   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
    */
-  // todo docs
-  constructor (externalNode, internalNode, api, format) {
+  constructor (externalNode, internalNode, api, type) {
     this.externalNode = externalNode
     this.internalNode = internalNode
     this.api = api
@@ -39,7 +39,7 @@ export default class BitcoinSync {
     }
     this.fee = []
     this.request = new Request(this.api.bitcoin)
-    this.format = format || 'p2pkh'
+    this.type = type || 'p2pkh'
   }
   
   /**
@@ -118,7 +118,7 @@ export default class BitcoinSync {
       if (this.deriveAddress[type].hasOwnProperty(i)) {
         address = this.deriveAddress[type][i]
       } else {
-        address = getBtcAddress(node, i, this.format)
+        address = getBtcAddress(node, i, this.type)
         this.deriveAddress[type][i] = address
       }
       
@@ -128,7 +128,15 @@ export default class BitcoinSync {
     return addresses
   }
   
-  //todo docs
+  /**
+   * Finds the bitcoin address for unspent in the list of all transactions
+   *
+   * @param {string} hash - Transaction hash for current unspent
+   * @param {number} index - Unspent transaction output index
+   * @returns {null|string} - Returns address or null
+   * @private
+   */
+  
   _getAddressByHash (hash, index) {
     const tx = this.transactions.unique.find(item => item.hash === hash)
     
@@ -224,9 +232,9 @@ export default class BitcoinSync {
                 item.derive_index = derive_index
                 
                 if (type === 'external') {
-                  item.address = getBtcAddress(this.externalNode, derive_index, this.format)
+                  item.address = getBtcAddress(this.externalNode, derive_index, this.type)
                 } else {
-                  item.address = getBtcAddress(this.internalNode, derive_index, this.format)
+                  item.address = getBtcAddress(this.internalNode, derive_index, this.type)
                 }
                 
                 empty.status = true
@@ -250,9 +258,9 @@ export default class BitcoinSync {
           }
           
           if (type === 'external') {
-            data.address = getBtcAddress(this.externalNode, derive_index, this.format)
+            data.address = getBtcAddress(this.externalNode, derive_index, this.type)
           } else {
-            data.address = getBtcAddress(this.internalNode, derive_index, this.format)
+            data.address = getBtcAddress(this.internalNode, derive_index, this.type)
           }
           
           list.push(data)
@@ -326,7 +334,9 @@ export default class BitcoinSync {
     }
   }
   
-  //todo: docs
+  /**
+   * Gets information necessary to create a Bitcoin transaction
+   */
   
   async getTxInfoForUnspent () {
     if (!this.unspent.length) return
@@ -334,8 +344,11 @@ export default class BitcoinSync {
     
     for (let item of this.unspent) {
       const address = this._getAddressByHash(item.tx_hash_big_endian, item.tx_output_n)
-      //todo error
-      if (!address) continue
+      
+      if (!address) {
+        console.log('Can\'t find the unspent address')
+        continue
+      }
       
       item.address = address
       

@@ -1,13 +1,13 @@
-import * as bip39    from 'bip39'
-import * as bitcoin  from 'bitcoinjs-lib'
+import * as bip39 from 'bip39'
+import * as bitcoin from 'bitcoinjs-lib'
 import {Transaction} from 'ethereumjs-tx'
-import * as ethUtil  from 'ethereumjs-util'
-import * as HDkey    from 'hdkey'
-import * as utils    from 'web3-utils'
-import wif           from 'wif'
-import * as bchaddr  from 'bchaddrjs'
-import * as bitcore  from 'bitcore-lib-cash'
-import CustomError   from '@/helpers/handleErrors'
+import * as ethUtil from 'ethereumjs-util'
+import * as HDkey from 'hdkey'
+import * as utils from 'web3-utils'
+import wif from 'wif'
+import * as bchaddr from 'bchaddrjs'
+import * as bitcore from 'bitcore-lib-cash'
+import CustomError from '@/helpers/handleErrors'
 
 /**
  * Generation of mnemonics.
@@ -136,21 +136,21 @@ export function derive (hd, path) {
  * Getting a bitcoin address by node and child index
  * @param {Object} node - HDkey node
  * @param {number} childIndex - Index of the child node
+ * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
  * @returns {string} Bitcoin address
  */
 
-export function getBtcAddress (node, childIndex = 0, format = 'p2pkh') {
-  const formats = ['p2pkh', 'p2wpkh', 'p2sh']
+export function getBtcAddress (node, childIndex = 0, type = 'p2pkh') {
+  const types = ['p2pkh', 'p2wpkh']
   
-  if (!formats.includes(format)) {
-    // todo new error
-    throw new CustomError('err_core_btc_address')
+  if (!types.includes(type)) {
+    throw new CustomError('err_core_btc_type')
   }
   
   try {
     let pubKey = node.deriveChild(childIndex).publicKey
     
-    return bitcoin.payments[format]({
+    return bitcoin.payments[type]({
       pubkey: pubKey
     }).address
   }
@@ -247,9 +247,10 @@ export function privateKeyToWIF (privateKey) {
  * Calculating the transaction size by the number of inputs and outputs
  * @param {number} i - Number of inputs. By default 1
  * @param {number} o - Number of outputs. By default 2
+ * @param {boolean} isWitness - Flag signaling that there is a witness in the transaction
  * @returns {number} Transaction size
  */
-// todo docs
+
 export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
   let result = 0
   
@@ -284,9 +285,9 @@ export function makeRawBtcTx (data = {}) {
     inputs.forEach(input => {
       const isSegwit = input.address.substring(0, 3) === 'bc1'
       const keyPair = bitcoin.ECPair.fromWIF(input.key)
-  
+      
       keyPairs.push(keyPair)
-  
+      
       let data = {
         hash: input.tx_hash_big_endian,
         index: input.tx_output_n
@@ -312,7 +313,7 @@ export function makeRawBtcTx (data = {}) {
         value: output.value
       })
     })
-  
+    
     keyPairs.forEach((key, i) => {
       psbt.signInput(i, key)
     })

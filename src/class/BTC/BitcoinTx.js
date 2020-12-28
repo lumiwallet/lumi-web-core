@@ -27,8 +27,10 @@ export default class BitcoinTx {
    * @param {number} data.balance - Bitcoin wallet balance
    * @param {Array} data.feeList - Set of bitcoin fees
    * @param {Object} data.customFee - Custom fee entered by the user
+   * @param {Object} data.nodes - External and internal nodes required to generate private keys
+   * @param {String} data.type - Bitcoin type. There may be p2pkh or p2wpkh
    */
-  // todo docs
+  
   constructor (data) {
     this.unspent = data.unspent
     this.internalAddress = data.internalAddress
@@ -40,7 +42,7 @@ export default class BitcoinTx {
     this.nodes = data.nodes || {}
     this.feeList = []
     this.request = new Request(data.api)
-    this.format = data.format || 'p2pkh'
+    this.type = data.type || 'p2pkh'
   }
   
   /**
@@ -51,7 +53,7 @@ export default class BitcoinTx {
   
   async calcFee (size = 0) {
     const fees = [...this.fee.map(item => item.feePerByte), this.customFee]
-   
+    
     if (this.amount <= 0 || this.balance < this.amount) {
       return this.calcEmptyFee(fees)
     }
@@ -74,7 +76,7 @@ export default class BitcoinTx {
         custom: FEE_IDS[i] === 'custom'
       }
     })
-  
+    
     return this.feeList
   }
   
@@ -118,7 +120,7 @@ export default class BitcoinTx {
     
     let req = async () => {
       let item = this.unspent[index]
-      let defaultSize = calcBtcTxSize(index + 1, 2, this.format === 'p2wpkh')
+      let defaultSize = calcBtcTxSize(index + 1, 2, this.type === 'p2wpkh')
       let calcFee = size ? size * fee : defaultSize * fee
       
       inputsAmount += item.value
@@ -172,7 +174,7 @@ export default class BitcoinTx {
     
     let change = +fee.inputsAmount - +this.amount - +fee.SAT
     let inputs = []
-
+    
     try {
       inputs = await this.getInputsWithTxInfo(fee.inputs)
     }
@@ -208,29 +210,32 @@ export default class BitcoinTx {
     try {
       let rawTxsData = []
       
-      if (this.format === 'p2pkh') {
+      if (this.type === 'p2pkh') {
         let hashes = []
         
         for (let input of inputs) {
           if (!input.tx) {
-            hashes.push(input.tx_hash_big_endian)
+            if (input.tx_hash_big_endian) {
+              hashes.push(input.tx_hash_big_endian)
+            } else {
+              throw new CustomError('err_tx_btc_unspent')
+            }
           }
         }
-        
         const unique_hashes = [...new Set(hashes)]
         
         rawTxsData = await this.getRawTxHex(unique_hashes)
-  
+        
         for (let input of inputs) {
           if (!input.tx) {
             let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)
             input.tx = data ? data.rawData : null
           }
-          input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
         }
       } else {
         for (let input of inputs) {
-          input.key = getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
         }
       }
     }
@@ -252,9 +257,10 @@ export default class BitcoinTx {
     for (let i = 0; i < ARRAYS_COUNT; i++) {
       arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)
     }
-
+    
     const req = async () => {
       try {
+        
         let res = await this.request.send({
           method: 'rawtx',
           txs: arrays[counter]
@@ -268,12 +274,11 @@ export default class BitcoinTx {
             await req()
           }
         } else {
-          // todo error
-          console.log('BTC getRawTxHex txs list is empty')
+          throw new CustomError('err_tx_btc_raw_tx')
         }
       }
       catch (e) {
-        console.log('BTC getRawTxHex', e)
+        throw new CustomError('err_tx_btc_raw_tx')
       }
     }
     
