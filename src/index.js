@@ -143,7 +143,7 @@ export default class Wallet {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    // ??
+    
     await Promise.all([
       this.syncBTC(),
       this.syncETH(),
@@ -379,10 +379,6 @@ export default class Wallet {
   
   get getSyncBTC () {
     return this.sync.BTC
-  }
-  
-  get getSyncSegwit () {
-    return this.sync.SEGWIT
   }
   
   get getSyncETH () {

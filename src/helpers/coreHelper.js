@@ -263,7 +263,7 @@ export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
     result = i * 148 + o * 34 + 10
   }
   
-  return result
+  return Math.ceil(result)
 }
 
 /**

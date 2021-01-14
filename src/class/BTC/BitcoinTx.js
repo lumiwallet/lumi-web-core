@@ -206,6 +206,12 @@ export default class BitcoinTx {
     }
   }
   
+  /**
+   * Returns the required data to create a transaction
+   * @param {Array} inputs - Array of inputs for tx
+   * @returns {Promise<Object>} Returns an array of inputs with a private keys and raw transaction data for p2pkh items
+   */
+  
   async getInputsWithTxInfo (inputs) {
     try {
       let rawTxsData = []
@@ -244,6 +250,12 @@ export default class BitcoinTx {
     }
     return inputs
   }
+  
+  /**
+   * Raw transaction request
+   * @param {Array} hashes - List of hashes
+   * @returns {Promise<Array>} Array of raw Bitcoin transactions for each hash
+   */
   
   async getRawTxHex (hashes) {
     if (!hashes || !hashes.length) return []
