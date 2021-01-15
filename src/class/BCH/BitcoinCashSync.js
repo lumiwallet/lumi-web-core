@@ -249,13 +249,27 @@ export default class BitcoinCashSync {
           tx.action = 'outgoing'
         }
         
-        const vout = tx.vout.find(item => {
-          return item.scriptPubKey.hasOwnProperty('addresses') && item.scriptPubKey.addresses.length
-        })
+        let vout
+        
+        if (tx.action === 'incoming') {
+          vout = tx.vout.find(item => {
+            return item.scriptPubKey.hasOwnProperty('addresses') &&
+              item.scriptPubKey.addresses.length &&
+              this.addresses.all.includes(item.scriptPubKey.addresses[0])
+          })
+        }
+        
+        if (tx.action === 'outgoing' || !vout) {
+          vout = tx.vout.find(item => {
+            return item.scriptPubKey.hasOwnProperty('addresses') &&
+              item.scriptPubKey.addresses.length
+          })
+        }
+        
         
         tx.to = vout.scriptPubKey.addresses[0]
         tx.from = tx.vin[0].addr
-        tx.value = tx.vout[0].value
+        tx.value = vout.value
       })
     }
     catch (e) {
