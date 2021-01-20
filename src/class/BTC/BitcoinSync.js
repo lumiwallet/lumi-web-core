@@ -288,8 +288,6 @@ export default class BitcoinSync {
         self.findIndex((tx) => tx.hash === value.hash) === index
     )
     
-    // ????? const externalAddresses = this.addresses.external.map(item => item.address)
-    
     try {
       this.transactions.unique.forEach((tx) => {
         let isMyInAddress = false
