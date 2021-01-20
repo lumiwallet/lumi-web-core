@@ -1,10 +1,22 @@
 import Wrapper from '@/Wrapper'
 import CustomError from '@/helpers/handleErrors'
-import {makeRawBtcTx, makeRawEthTx, makeRawBchTx, getBtcPrivateKeyByIndex} from '@/helpers/coreHelper'
+import {
+  makeRawBtcTx,
+  makeRawEthTx,
+  makeRawBchTx,
+  getBtcPrivateKeyByIndex,
+  calcBtcTxSize
+} from '@/helpers/coreHelper'
 
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
-export {makeRawBtcTx, makeRawEthTx, makeRawBchTx}
+export {
+  makeRawBtcTx,
+  makeRawEthTx,
+  makeRawBchTx,
+  getBtcPrivateKeyByIndex,
+  calcBtcTxSize
+}
 
 /**
  * Class Wallet
@@ -161,36 +173,40 @@ export default class Wallet {
   }
   
   /**
-   * The method starts synchronization of BTC
-   *
-   * @returns {Promise<Object>} Returns object with bitcoin synchronization information
+   * The method starts synchronization of Bitcoin wallet
+   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
+   * @returns {Promise<Object>} Returns object with Bitcoin synchronization information
    * @returns {Object} sync
-   * @returns {Object} sync.addresses - Lists of internal, external and empty bitcoin address
-   * @returns {Array} sync.transactions - The list of bitcoin transactions
+   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin address
+   * @returns {Array} sync.transactions - The list of Bitcoin transactions
    * @returns {Array} sync.unspent - The list of unspents addresses
    * @returns {number} sync.balance - Bitcoin balance in Satoshi
-   * @returns {number} sync.latestBlock - The last block of the bitcoin blockchain
+   * @returns {number} sync.latestBlock - The last block of the Bitcoin blockchain
    * @returns {Array} sync.fee - The list of fee per byte
    */
   
-  async syncBTC () {
+  async syncBTC (type = 'p2pkh') {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
     
-    this.sync.BTC = await this.wrapper.method('sync', 'BTC')
+    if (!this.sync.BTC) {
+      this.sync.BTC = {}
+    }
     
-    return this.sync.BTC
+    this.sync.BTC[type] = await this.wrapper.method('sync', {coin: 'BTC', type})
+    
+    return this.sync.BTC[type]
   }
   
   /**
-   * The method starts synchronization of ETH
+   * The method starts synchronization of Ethereum wallet
    *
-   * @returns {Promise<Object>} Returns object with ethereum synchronization information
+   * @returns {Promise<Object>} Returns object with Ethereum synchronization information
    * @returns {Object} sync
    * @returns {string} sync.address - Ethereum wallet address
    * @returns {number} sync.balance - Ethereum balance in wei
-   * @returns {Array} sync.transactions - The list of ethereum transactions
+   * @returns {Array} sync.transactions - The list of Ethereum transactions
    * @returns {number} sync.gasPrice - Gas price
    */
   
@@ -199,17 +215,29 @@ export default class Wallet {
       throw new CustomError('err_wallet_api')
     }
     
-    this.sync.ETH = await this.wrapper.method('sync', 'ETH')
+    this.sync.ETH = await this.wrapper.method('sync', {coin: 'ETH'})
     
     return this.sync.ETH
   }
+  
+  /**
+   * The method starts synchronization of Bitcoin Cash wallet
+   * @returns {Promise<Object>} Returns object with Bitcoin Cash synchronization information
+   * @returns {Object} sync
+   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Cash address
+   * @returns {Array} sync.transactions - The list of Bitcoin Cash transactions
+   * @returns {Array} sync.unspent - The list of unspents addresses
+   * @returns {number} sync.balance - Bitcoin Cash balance in Satoshi
+   * @returns {number} sync.latestBlock - The last block of the Bitcoin Cash blockchain
+   * @returns {Array} sync.fee - The list of fee per byte
+   */
   
   async syncBCH () {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
     
-    this.sync.BCH = await this.wrapper.method('sync', 'BCH')
+    this.sync.BCH = await this.wrapper.method('sync', {coin: 'BCH'})
     
     return this.sync.BCH
   }
@@ -355,6 +383,10 @@ export default class Wallet {
   
   get getSyncETH () {
     return this.sync.ETH
+  }
+  
+  get getSyncBCH () {
+    return this.sync.BCH
   }
   
   get getApiState () {

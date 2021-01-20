@@ -25,7 +25,10 @@ export default class WalletWrapper {
     this.api = params.api
     this.core = null
     this.sync = {
-      BTC: null,
+      BTC: {
+        p2pkh: null,
+        p2wpkh: null
+      },
       ETH: null,
       BCH: null
     }
@@ -47,16 +50,20 @@ export default class WalletWrapper {
   
   /**
    * Getting information about bitcoin or ether addresses
-   * @param {string} type - Type of synchronization method
+   * @param {Object} data - Type of synchronization method
+   * @param {string} data.coin - Coin name for synchronization
+   * @param {string} data.type - Coin type. There may be p2pkh or p2wpkh
    * @returns {Promise<Object>} Returns object with bitcoin or ethereum synchronization information
    * @constructor
    */
   
-  async Sync (type) {
+  async Sync (data) {
+    const {coin, type} = data
+
     try {
-      switch (type) {
+      switch (coin) {
         case 'BTC':
-          return await this.SyncBTC()
+          return await this.SyncBTC(type)
         case 'ETH':
           return await this.SyncETH()
         case 'BCH':
@@ -69,21 +76,27 @@ export default class WalletWrapper {
   }
   
   /**
-   * Getting information about bitcoin addresses
+   * Getting information about Bitcoin wallet from blockchain
+   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
    * @returns {Promise<Object>}
    * @constructor
    */
   
-  async SyncBTC () {
-    this.sync.BTC = new BitcoinSync(
-      this.core.DATA.BTC.externalNode,
-      this.core.DATA.BTC.internalNode,
-      this.api
-    )
-
+  async SyncBTC (type = 'p2pkh') {
+    const currency = type === 'p2pkh' ? 'BTC' : 'SEGWIT'
+    
+    if (!this.sync.BTC[type]) {
+      this.sync.BTC[type] = new BitcoinSync(
+        this.core.DATA[currency].externalNode,
+        this.core.DATA[currency].internalNode,
+        this.api,
+        type
+      )
+    }
+    
     try {
-      await this.sync.BTC.Start()
-      return this.sync.BTC.DATA
+      await this.sync.BTC[type].Start()
+      return this.sync.BTC[type].DATA
     }
     catch (e) {
       console.log('SyncBTC error', e)
@@ -91,13 +104,15 @@ export default class WalletWrapper {
   }
   
   /**
-   * Getting information about ethereum address
+   * Getting information about Ethereum wallet from blockchain
    * @returns {Promise<Object>}
    * @constructor
    */
   
   async SyncETH () {
-    this.sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
+    if (!this.sync.ETH) {
+      this.sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
+    }
     
     try {
       await this.sync.ETH.Start()
@@ -108,13 +123,21 @@ export default class WalletWrapper {
     }
   }
   
-  async SyncBCH () {
-    this.sync.BCH = new BitcoinCashSync(
-      this.core.DATA.BCH.externalNode,
-      this.core.DATA.BCH.internalNode,
-      this.api
-    )
+  /**
+   * Getting information about Bitcoin Cash wallet from blockchain
+   * @returns {Promise<Object>}
+   * @constructor
+   */
   
+  async SyncBCH () {
+    if (!this.sync.BCH) {
+      this.sync.BCH = new BitcoinCashSync(
+        this.core.DATA.BCH.externalNode,
+        this.core.DATA.BCH.internalNode,
+        this.api
+      )
+    }
+    
     try {
       await this.sync.BCH.Start()
       return this.sync.BCH.DATA
@@ -139,7 +162,9 @@ export default class WalletWrapper {
     
     switch (currency) {
       case 'BTC':
-        return this.createBTCTx(method, tx)
+        return this.createBTCTx(method, tx, 'p2pkh')
+      case 'SEGWIT':
+        return this.createBTCTx(method, tx, 'p2wpkh')
       case 'ETH':
         return this.createETHTx(method, tx)
       case 'BCH':
@@ -153,20 +178,29 @@ export default class WalletWrapper {
    * Creating a bitcoin transaction
    * @param {string} method - Method 'make' for creating a transaction and method 'calcFee' for calculating fee
    * @param {Object} txData - Input data for the transaction
+   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
    * @returns {Promise<Object>} Information about the transaction or fee
    */
-  
-  async createBTCTx (method, txData) {
+
+  async createBTCTx (method, txData, type = 'p2pkh') {
+    const currency = type === 'p2pkh' ? 'BTC' : 'SEGWIT'
+    
     let BTCdata = {
-      unspent: this.sync.BTC.unspent,
-      balance: this.sync.BTC.balance,
-      feeList: this.sync.BTC.fee,
+      unspent: this.sync.BTC[type].unspent,
+      balance: this.sync.BTC[type].balance,
+      feeList: this.sync.BTC[type].fee,
       amount: txData.amount,
-      customFee: txData.customFee
+      customFee: txData.customFee,
+      api: this.api.bitcoin,
+      type
     }
     
     if (method === 'make') {
-      BTCdata.internalAddress = this.sync.BTC.addresses.empty.internal.address
+      BTCdata.internalAddress = this.sync.BTC[type].addresses.empty.internal.address
+      BTCdata.nodes = {
+        external: this.core.DATA[currency].externalNode,
+        internal: this.core.DATA[currency].internalNode
+      }
     }
     
     let tx = new BitcoinTx(BTCdata)

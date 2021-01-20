@@ -26,7 +26,8 @@ export const test_child_nodes = {
         path: 'm/44\'/0\'/0\'/0/0',
         publicKey:
           '0321e8aa81fa978173588bb1b7cd0d68a4348472da27bd6846caf0098095629326',
-        btcAddress: '1NrHVrLqZy7jGByMhhtUjht9De4hgZ6xsj',
+        p2pkhAddress: '1NrHVrLqZy7jGByMhhtUjht9De4hgZ6xsj',
+        p2wpkhAddress: 'bc1qa7kvhqvrzvlscsfzpwtvrfup3jjarn6tkwqs8z',
         ethAddress: '0xb27bc049c4e1c443153259958149e715f6aab88e',
         bchAddress: 'bitcoincash:qrh6ejupsvfn7rzpyg9edsd8sxx2t5w0fv69a7yw0z'
       },
@@ -34,7 +35,8 @@ export const test_child_nodes = {
         path: 'm/44\'/0\'/0\'/0/1',
         publicKey:
           '036ea855e01dbe50e6db58b1708cfac3984479ca38a2f12c57cc20816c03b06fed',
-        btcAddress: '1Q2XXJPC6J36rjDTptbxEJyn8h31V6vjee',
+        p2pkhAddress: '1Q2XXJPC6J36rjDTptbxEJyn8h31V6vjee',
+        p2wpkhAddress: 'bc1qlj2vntssahyucsnmk0xuxnuq9decde0533q3ru',
         ethAddress: '0x2759e8446bf4dab547a8e345523547021431d4da',
         bchAddress: 'bitcoincash:qr7ffjdwzrkunnzz0weums60sq4h8ph97sp4hek49n'
       },
@@ -42,7 +44,8 @@ export const test_child_nodes = {
         path: 'm/44\'/0\'/0\'/0/2',
         publicKey:
           '03987100e398f108207aab95445694fbed92738b0aaa5e9c5c6d11601ba31d364b',
-        btcAddress: '1Mw2mEUeL4Ao4cBB3HdpT91mVMbxRK6PiG',
+        p2pkhAddress: '1Mw2mEUeL4Ao4cBB3HdpT91mVMbxRK6PiG',
+        p2wpkhAddress: 'bc1qukd89uzgkth9u3aj2mf9vwjguau3fhkhjajc68',
         ethAddress: '0x5d03fde7c3c75a2345fe597fe526ff38a978a85f',
         bchAddress: 'bitcoincash:qrje5uhsfzewuhj8kftdy436frnhj9x76u29k4uzuk'
       },
@@ -50,7 +53,8 @@ export const test_child_nodes = {
         path: 'm/44\'/0\'/0\'/0/3',
         publicKey:
           '02891718d22ae2408885ea09d51096b4f4646a13ce576c3ab51142cbf7e830867f',
-        btcAddress: '1Ge8oR98J9mcWdZHfn5CL1FZgHadpwZhXZ',
+        p2pkhAddress: '1Ge8oR98J9mcWdZHfn5CL1FZgHadpwZhXZ',
+        p2wpkhAddress: 'bc1q4w8unemey2sjz2g26tuce6f7hu867sjx0enajs',
         ethAddress: '0x5bc54d20abce2d4041082503b9774ba5f19d2f7a',
         bchAddress: 'bitcoincash:qz4clj080y32zgffptf0nr8f86lslt6zgcyqh38l6h'
       },
@@ -58,7 +62,8 @@ export const test_child_nodes = {
         path: 'm/44\'/0\'/0\'/0/4',
         publicKey:
           '03419323f21346edcefc1fd1fdaba31069f51fbeca4558a928a151df71b7a5bd78',
-        btcAddress: '1NN9JCmZfYfWjg2JSeSPNvSYL5kxZ1kBZ6',
+        p2pkhAddress: '1NN9JCmZfYfWjg2JSeSPNvSYL5kxZ1kBZ6',
+        p2wpkhAddress: 'bc1qafdy6ez9k9q7hn6j70z5jy04qfasxd4j78cxtp',
         ethAddress: '0x28eb0dbf350e1120930925a01f3f53cdd23108c6',
         bchAddress: 'bitcoincash:qr495ntygkc5r6702teu2jg375p8kqekkgjcp6fc06'
       },

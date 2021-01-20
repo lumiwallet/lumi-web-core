@@ -117,7 +117,7 @@ export function derive (hd, path) {
     throw new CustomError('err_core_derivation_path')
   }
   
-  let regex = new RegExp(/(^\m\/44\')([\/{1}\d+\'{1}]+)/mg)
+  let regex = new RegExp(/(^\m\/\d+\')([\/{1}\d+\'{1}]+)/mg)
   
   if (!regex.test(path)) {
     throw new CustomError('err_core_derivation_path')
@@ -136,14 +136,21 @@ export function derive (hd, path) {
  * Getting a bitcoin address by node and child index
  * @param {Object} node - HDkey node
  * @param {number} childIndex - Index of the child node
+ * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
  * @returns {string} Bitcoin address
  */
 
-export function getBtcAddress (node, childIndex = 0) {
+export function getBtcAddress (node, childIndex = 0, type = 'p2pkh') {
+  const types = ['p2pkh', 'p2wpkh']
+  
+  if (!types.includes(type)) {
+    throw new CustomError('err_core_btc_type')
+  }
+  
   try {
     let pubKey = node.deriveChild(childIndex).publicKey
     
-    return bitcoin.payments.p2pkh({
+    return bitcoin.payments[type]({
       pubkey: pubKey
     }).address
   }
@@ -240,11 +247,23 @@ export function privateKeyToWIF (privateKey) {
  * Calculating the transaction size by the number of inputs and outputs
  * @param {number} i - Number of inputs. By default 1
  * @param {number} o - Number of outputs. By default 2
+ * @param {boolean} isWitness - Flag signaling that there is a witness in the transaction
  * @returns {number} Transaction size
  */
 
-export function calcBtcTxSize (i = 1, o = 2) {
-  return i * 148 + o * 34 + 10
+export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
+  let result = 0
+  
+  if (isWitness) {
+    let base_size = (41 * i) + (32 * o) + 10
+    let total_size = (149 * i) + (32 * o) + 12
+    
+    result = ((3 * base_size) + total_size) / 4
+  } else {
+    result = i * 148 + o * 34 + 10
+  }
+  
+  return Math.ceil(result)
 }
 
 /**
@@ -258,29 +277,57 @@ export function calcBtcTxSize (i = 1, o = 2) {
 export function makeRawBtcTx (data = {}) {
   try {
     const {inputs, outputs} = data
-    let txb = new bitcoin.TransactionBuilder()
+    const psbt = new bitcoin.Psbt()
+    let keyPairs = []
     
-    txb.setVersion(1)
+    psbt.setVersion(1)
     
-    inputs.forEach((item) => {
-      txb.addInput(item.tx_hash_big_endian, +item.tx_output_n)
+    inputs.forEach(input => {
+      const isSegwit = input.address.substring(0, 3) === 'bc1'
+      const keyPair = bitcoin.ECPair.fromWIF(input.key)
+      
+      keyPairs.push(keyPair)
+      
+      let data = {
+        hash: input.tx_hash_big_endian,
+        index: input.tx_output_n
+      }
+      
+      if (isSegwit) {
+        const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey})
+        const script = p2wpkh.output.toString('hex')
+        
+        data.witnessUtxo = {
+          script: Buffer.from(script, 'hex'),
+          value: input.value
+        }
+      } else {
+        data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')
+      }
+      psbt.addInput(data)
     })
     
-    outputs.forEach((item) => {
-      txb.addOutput(item.address, +item.value)
+    outputs.forEach(output => {
+      psbt.addOutput({
+        address: output.address,
+        value: output.value
+      })
     })
     
-    inputs.forEach((item, index) => {
-      let key = bitcoin.ECPair.fromWIF(item.key)
-      txb.sign(index, key)
+    keyPairs.forEach((key, i) => {
+      psbt.signInput(i, key)
     })
     
-    let tx = txb.build()
-    let hash = tx.getId()
+    psbt.validateSignaturesOfAllInputs()
+    psbt.finalizeAllInputs()
+    
+    const transaction = psbt.extractTransaction()
+    const signedTransaction = transaction.toHex()
+    const hash = transaction.getId()
     
     return {
       hash,
-      tx: tx.toHex()
+      tx: signedTransaction
     }
   }
   catch (e) {
@@ -402,12 +449,13 @@ export function makeRawBchTx (data = {}) {
  * @returns {string} Returns Bitcoin Cash address in CashAddr format
  */
 
-export function getCashAddress (address = "") {
+export function getCashAddress (address = '') {
   try {
     const toCashAddress = bchaddr.toCashAddress
-  
+    
     return toCashAddress(address)
-  } catch (e) {
+  }
+  catch (e) {
     console.log(e)
     throw new CustomError('err_get_bch_address')
   }
@@ -423,9 +471,10 @@ export function getCashAddress (address = "") {
 export function getBtcPrivateKeyByIndex (node, index) {
   try {
     const key = node.deriveChild(index).privateKey
-  
+    
     return privateKeyToWIF(key)
-  } catch (e) {
+  }
+  catch (e) {
     throw new CustomError('err_btc_private_key_by_index')
   }
 }

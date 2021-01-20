@@ -1,6 +1,7 @@
 import converter from '@/helpers/converters'
-import {calcBtcTxSize, makeRawBtcTx} from '@/helpers/coreHelper'
+import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from '@/helpers/coreHelper'
 import CustomError from '@/helpers/handleErrors'
+import Request from '@/helpers/Request'
 
 /**
  * List of available commission types for Bitcoin transactions
@@ -26,7 +27,10 @@ export default class BitcoinTx {
    * @param {number} data.balance - Bitcoin wallet balance
    * @param {Array} data.feeList - Set of bitcoin fees
    * @param {Object} data.customFee - Custom fee entered by the user
+   * @param {Object} data.nodes - External and internal nodes required to generate private keys
+   * @param {String} data.type - Bitcoin type. There may be p2pkh or p2wpkh
    */
+  
   constructor (data) {
     this.unspent = data.unspent
     this.internalAddress = data.internalAddress
@@ -35,7 +39,10 @@ export default class BitcoinTx {
     this.dust = 1000
     this.fee = data.feeList
     this.customFee = +data.customFee || 0
+    this.nodes = data.nodes || {}
     this.feeList = []
+    this.request = new Request(data.api)
+    this.type = data.type || 'p2pkh'
   }
   
   /**
@@ -113,7 +120,7 @@ export default class BitcoinTx {
     
     let req = async () => {
       let item = this.unspent[index]
-      let defaultSize = calcBtcTxSize(index + 1, 2)
+      let defaultSize = calcBtcTxSize(index + 1, 2, this.type === 'p2wpkh')
       let calcFee = size ? size * fee : defaultSize * fee
       
       inputsAmount += item.value
@@ -142,6 +149,7 @@ export default class BitcoinTx {
       }
     }
     await req()
+    
     return res
   }
   
@@ -165,10 +173,18 @@ export default class BitcoinTx {
     }
     
     let change = +fee.inputsAmount - +this.amount - +fee.SAT
+    let inputs = []
+    
+    try {
+      inputs = await this.getInputsWithTxInfo(fee.inputs)
+    }
+    catch (e) {
+      throw new Error(e.message)
+    }
     
     if (change >= 0) {
       let params = {
-        inputs: fee.inputs,
+        inputs: inputs,
         outputs: [
           {
             address: addressTo,
@@ -188,5 +204,98 @@ export default class BitcoinTx {
     } else {
       throw new CustomError('err_tx_btc_balance')
     }
+  }
+  
+  /**
+   * Returns the required data to create a transaction
+   * @param {Array} inputs - Array of inputs for tx
+   * @returns {Promise<Object>} Returns an array of inputs with a private keys and raw transaction data for p2pkh items
+   */
+  
+  async getInputsWithTxInfo (inputs) {
+    try {
+      let rawTxsData = []
+      
+      if (this.type === 'p2pkh') {
+        let hashes = []
+        
+        for (let input of inputs) {
+          if (!input.tx) {
+            if (input.tx_hash_big_endian) {
+              hashes.push(input.tx_hash_big_endian)
+            } else {
+              throw new CustomError('err_tx_btc_unspent')
+            }
+          }
+        }
+        const unique_hashes = [...new Set(hashes)]
+        
+        rawTxsData = await this.getRawTxHex(unique_hashes)
+        
+        for (let input of inputs) {
+          if (!input.tx) {
+            let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)
+            input.tx = data ? data.rawData : null
+          }
+          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+        }
+      } else {
+        for (let input of inputs) {
+          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+        }
+      }
+    }
+    catch (e) {
+      throw new Error(e.message)
+    }
+    return inputs
+  }
+  
+  /**
+   * Raw transaction request
+   * @param {Array} hashes - List of hashes
+   * @returns {Promise<Array>} Array of raw Bitcoin transactions for each hash
+   */
+  
+  async getRawTxHex (hashes) {
+    if (!hashes || !hashes.length) return []
+    
+    const ARRAY_SIZE = 10
+    const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)
+    let txs = []
+    let arrays = []
+    let counter = 0
+    
+    for (let i = 0; i < ARRAYS_COUNT; i++) {
+      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)
+    }
+    
+    const req = async () => {
+      try {
+        
+        let res = await this.request.send({
+          method: 'rawtx',
+          txs: arrays[counter]
+        })
+        
+        if (res.length) {
+          txs = [...txs, ...res]
+          counter++
+          
+          if (counter !== ARRAYS_COUNT) {
+            await req()
+          }
+        } else {
+          throw new CustomError('err_tx_btc_raw_tx')
+        }
+      }
+      catch (e) {
+        throw new CustomError('err_tx_btc_raw_tx')
+      }
+    }
+    
+    await req()
+    
+    return txs
   }
 }

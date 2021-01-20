@@ -41,7 +41,11 @@ export default class Core {
       internalNode: null,
       externalNode: null
     }
-    
+    this.SEGWIT = {
+      address: null,
+      internalNode: null,
+      externalNode: null
+    }
     this.generateWallet()
   }
   
@@ -125,7 +129,13 @@ export default class Core {
     const bitcoin_internal_path = 'm/44\'/0\'/0\'/1'
     this.BTC.externalNode = core.derive(this.hdkey, bitcoin_external_path)
     this.BTC.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
-    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0)
+    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0, 'p2pkh')
+  
+    const segwit_external_path = 'm/84\'/0\'/0\'/0'
+    const segwit_internal_path = 'm/84\'/0\'/0\'/1'
+    this.SEGWIT.externalNode = core.derive(this.hdkey, segwit_external_path)
+    this.SEGWIT.internalNode = core.derive(this.hdkey, segwit_internal_path)
+    this.SEGWIT.address = core.getBtcAddress(this.SEGWIT.externalNode, 0, 'p2wpkh')
   }
   
   /**
@@ -195,9 +205,10 @@ export default class Core {
         child.path = `${ path }/${ i }`
         child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)
         child.publicKey = deriveChild.publicKey.toString('hex')
-        child.btcAddress = core.getBtcAddress(node, i)
+        child.p2pkhAddress = core.getBtcAddress(node, i, 'p2pkh')
+        child.p2wpkhAddress = core.getBtcAddress(node, i, 'p2wpkh')
         child.ethAddress = core.getEthAddressByNode(deriveChild)
-        child.bchAddress = core.getCashAddress(child.btcAddress)
+        child.bchAddress = core.getCashAddress(child.p2pkhAddress)
         info.list.push(child)
       }
       
@@ -264,7 +275,8 @@ export default class Core {
       seedInHex: this.seed ? this.seed.toString('hex') : null,
       BTC: this.BTC,
       ETH: this.ETH,
-      BCH: this.BCH
+      BCH: this.BCH,
+      SEGWIT: this.SEGWIT
     }
   }
 }
