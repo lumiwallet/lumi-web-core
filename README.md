@@ -41,7 +41,7 @@ const CORE = await WALLET.createNew(15)
 You can create a wallet based on an existing mnemonic, where mnemonic is a string consisting of words and spaces:
 ``` js
 // Create wallet by new mnemonic
-    const CORE = await WALLET.createByMnemonic('ramp grief anger ... olive main into throw')
+const CORE = await WALLET.createByMnemonic('ramp grief anger ... olive main into throw')
 ```
 Or xprv key: 
 ``` js
@@ -110,24 +110,27 @@ const info = await WALLET.getChildNodes(data)
 `to` is end of the range derivation
 
 ### Creating a BTC transaction
+Creation of P2PKH or P2WPKH transactions is supported.
 To create a Bitcoin transaction you need to send a set of inputs and outputs to the `makeRawBtcTx` method:
 ``` js
 const data = {
     inputs: [
         {
-            addr: "1BYRALP...ypWzTQE8BkEL",
+            address: "1BYRALP...ypWzTQE8BkEL",
             value: 10000,
-            n: 0,
+            tx_output_n: 0,
+            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000' // Raw transaction (only for P2PKH transactions)
             script: "76a91473a2...07d0bff2aee345ac88ac",
-            hash: "de06df091735...afd145eecfcd5649634e1d5221",
+            tx_hash_big_endian: "de06df091735...afd145eecfcd5649634e1d5221",
             key: 'L3YFJ4cBDYhZ...bzqgSUxLjTAorR5Kc47mP6x1D'
         },
         {
-            addr: "1BYRALPU...kLypWzTQE8BkEL",
+            address: "1BYRALPU...kLypWzTQE8BkEL",
             value: 10000,
-            n: 0,
+            tx_output_n: 0,
+            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000' // Raw transaction (only for P2PKH transactions)
             script: "76a91473a2...7d0bff2aee345ac88ac",
-            hash: "47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9",
+            tx_hash_big_endian: "47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9",
             key: 'L3YFJ4cBDYhZ...xLjTAorR5Kc4AorR5K7mP6x1D'
         }
       ],
