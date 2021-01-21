@@ -119,7 +119,7 @@ const data = {
             address: "1BYRALP...ypWzTQE8BkEL",
             value: 10000,
             tx_output_n: 0,
-            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000' // Raw transaction (only for P2PKH transactions)
+            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000', // Raw transaction (only for P2PKH transactions)
             script: "76a91473a2...07d0bff2aee345ac88ac",
             tx_hash_big_endian: "de06df091735...afd145eecfcd5649634e1d5221",
             key: 'L3YFJ4cBDYhZ...bzqgSUxLjTAorR5Kc47mP6x1D'
@@ -128,7 +128,7 @@ const data = {
             address: "1BYRALPU...kLypWzTQE8BkEL",
             value: 10000,
             tx_output_n: 0,
-            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000' // Raw transaction (only for P2PKH transactions)
+            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000', // Raw transaction (only for P2PKH transactions)
             script: "76a91473a2...7d0bff2aee345ac88ac",
             tx_hash_big_endian: "47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9",
             key: 'L3YFJ4cBDYhZ...xLjTAorR5Kc4AorR5K7mP6x1D'
