@@ -1,7 +1,7 @@
-import converter from '@/helpers/converters'
+import converter                                              from '@/helpers/converters'
 import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from '@/helpers/coreHelper'
-import CustomError from '@/helpers/handleErrors'
-import Request from '@/helpers/Request'
+import CustomError                                            from '@/helpers/handleErrors'
+import Request                                                from '@/helpers/Request'
 
 /**
  * List of available commission types for Bitcoin transactions
@@ -272,14 +272,13 @@ export default class BitcoinTx {
     
     const req = async () => {
       try {
-        
         let res = await this.request.send({
           method: 'rawtx',
           txs: arrays[counter]
         })
         
-        if (res.length) {
-          txs = [...txs, ...res]
+        if (res.status === 'success' && res.data.length) {
+          txs = [...txs, ...res.data]
           counter++
           
           if (counter !== ARRAYS_COUNT) {
