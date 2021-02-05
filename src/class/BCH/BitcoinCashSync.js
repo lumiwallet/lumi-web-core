@@ -42,6 +42,7 @@ export default class BitcoinCashSync {
         level: 'Regular'
       }
     ]
+    
     this.request = new Request(this.api.bitcoinCash)
   }
   
@@ -116,7 +117,7 @@ export default class BitcoinCashSync {
       if (this.deriveAddress[type].hasOwnProperty(i)) {
         address = this.deriveAddress[type][i]
       } else {
-        address = getBtcAddress(node, i)
+        address = getBtcAddress(node, i, 'p2pkh')
       }
       addresses.push(address)
     }

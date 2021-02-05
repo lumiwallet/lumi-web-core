@@ -210,14 +210,18 @@ export default class Wallet {
    * @returns {number} sync.gasPrice - Gas price
    */
   
-  async syncETH () {
+  async syncETH (type = 0) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
+  
+    if (!this.sync.ETH) {
+      this.sync.ETH = {}
+    }
     
-    this.sync.ETH = await this.wrapper.method('sync', {coin: 'ETH'})
+    this.sync.ETH[type] = await this.wrapper.method('sync', {coin: 'ETH', type})
     
-    return this.sync.ETH
+    return this.sync.ETH[type]
   }
   
   /**
@@ -236,6 +240,10 @@ export default class Wallet {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
+  
+    // if (!this.sync.BCH) {
+    //   this.sync.BCH = {}
+    // }
     
     this.sync.BCH = await this.wrapper.method('sync', {coin: 'BCH'})
     
@@ -308,11 +316,12 @@ export default class Wallet {
       throw new CustomError('err_wallet_api')
     }
     
-    let {currency, amount, customFee, size} = params
+    let {currency, amount, customFee, addressType, size} = params
     
     return await this.wrapper.method('transaction', {
       method: 'calcFee',
       currency: currency,
+      addressType: addressType,
       tx: {
         amount: amount,
         customFee: customFee,

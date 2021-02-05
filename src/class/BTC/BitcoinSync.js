@@ -84,7 +84,6 @@ export default class BitcoinSync {
     })
     
     const addresses = await Promise.all(pArray)
-    
     this.addresses.external = addresses[0]
     this.addresses.internal = addresses[1]
     this.addresses.empty = {
@@ -199,7 +198,7 @@ export default class BitcoinSync {
       
       try {
         let res = await this.getMultiAddressRequest(addresses)
-        
+
         if (res.hasOwnProperty('txs')) {
           this.transactions.all = [...this.transactions.all, ...res.txs]
         }
@@ -392,7 +391,7 @@ export default class BitcoinSync {
   
   async getMultiAddressRequest (addresses) {
     if (!addresses) return false
-    
+
     const OFFSET_STEP = 100
     const TXS_COUNT = 100
     let offset = 0
@@ -409,7 +408,7 @@ export default class BitcoinSync {
       
       try {
         let res = await this.request.send(params)
-        
+
         if (res.status === 'success') {
           data = res.data || {}
           

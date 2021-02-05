@@ -25,28 +25,14 @@ export default class Core {
     this.xprv = key
     this.seed = null
     this.hdkey = null
-    this.BTC = {
-      address: null,
-      internalNode: null,
-      externalNode: null
+    this.config = {
+      BTC: ['p2pkh', 'p2wpkh'],
+      ETH: [0],
+      BCH: ['p2pkh']
     }
-    this.ETH = {
-      address: null,
-      node: null,
-      privateKey: null,
-      publicKey: null
-    }
-    this.BCH = {
-      address: null,
-      internalNode: null,
-      externalNode: null
-    }
-    this.SEGWIT = {
-      address: null,
-      internalNode: null,
-      externalNode: null
-    }
-    this.generateWallet()
+    this.BTC = {}
+    this.ETH = {}
+    this.BCH = {}
   }
   
   /**
@@ -54,7 +40,7 @@ export default class Core {
    * The type of generation depends on the parameter 'from'
    */
   
-  generateWallet () {
+  async generateWallet () {
     switch (this.from) {
       case 'new':
         this._generateNewMnemonic()
@@ -69,9 +55,8 @@ export default class Core {
         this._generateNewMnemonic()
     }
     
-    this._generateBTCcore()
-    this._generateETHcore()
-    this._generateBCHcore()
+    
+    await this.generateCurrenciesCore(this.config)
   }
   
   /**
@@ -117,6 +102,25 @@ export default class Core {
     this.hdkey = core.hdFromXprv(this.xprv)
   }
   
+  
+  async generateCurrenciesCore (config = {}) {
+    for (let coin in config) {
+      for (let item of config[coin]) {
+        switch (coin) {
+          case 'BTC':
+            await this._generateBTCcore(item)
+            break
+          case 'ETH':
+            await this._generateETHcore(item)
+            break
+          case 'BCH':
+            await this._generateBCHcore(item)
+            break
+        }
+      }
+    }
+  }
+  
   /**
    * Creating a core for Bitcoin.
    * At the output, we get a external and internal node
@@ -124,18 +128,25 @@ export default class Core {
    * @private
    */
   
-  _generateBTCcore () {
-    const bitcoin_external_path = 'm/44\'/0\'/0\'/0'
-    const bitcoin_internal_path = 'm/44\'/0\'/0\'/1'
-    this.BTC.externalNode = core.derive(this.hdkey, bitcoin_external_path)
-    this.BTC.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
-    this.BTC.address = core.getBtcAddress(this.BTC.externalNode, 0, 'p2pkh')
-  
-    const segwit_external_path = 'm/84\'/0\'/0\'/0'
-    const segwit_internal_path = 'm/84\'/0\'/0\'/1'
-    this.SEGWIT.externalNode = core.derive(this.hdkey, segwit_external_path)
-    this.SEGWIT.internalNode = core.derive(this.hdkey, segwit_internal_path)
-    this.SEGWIT.address = core.getBtcAddress(this.SEGWIT.externalNode, 0, 'p2wpkh')
+  _generateBTCcore (type = 'p2pkh') {
+    const bitcoin_paths = {
+      p2pkh: `m/44'/0'/0'`,
+      p2wpkh: `m/84'/0'/0'`
+    }
+    if (!(type in bitcoin_paths)) {
+      // TODO throw error
+    }
+    const bitcoin_external_path = bitcoin_paths[type] + '/0'
+    const bitcoin_internal_path = bitcoin_paths[type] + '/1'
+    
+    this.BTC[type] = {}
+    this.BTC[type].externalNode = core.derive(this.hdkey, bitcoin_external_path)
+    this.BTC[type].internalNode = core.derive(this.hdkey, bitcoin_internal_path)
+    this.BTC[type].address = core.getBtcAddress(this.BTC[type].externalNode, 0, type)
+    this.BTC[type].dp = {
+      external: bitcoin_external_path,
+      internal: bitcoin_internal_path
+    }
   }
   
   /**
@@ -145,13 +156,19 @@ export default class Core {
    * @private
    */
   
-  _generateETHcore () {
-    const ethereum_path = 'm/44\'/60\'/0\'/0/0'
-    this.ETH.node = core.derive(this.hdkey, ethereum_path)
-    this.ETH.privateKey = core.getEthPrivateKey(this.ETH.node)
-    this.ETH.privateKeyHex = '0x' + this.ETH.privateKey.toString('hex')
-    this.ETH.publicKey = core.getEthPublicKey(this.ETH.privateKey)
-    this.ETH.address = core.getEthAddress(this.ETH.publicKey)
+  _generateETHcore (account = 0) {
+    if (Number.isInteger(account)) {
+      // TODO throw error
+    }
+    const ethereum_path = `m/44'/60'/${ account }'/0/0`
+    
+    this.ETH[account] = {}
+    this.ETH[account].node = core.derive(this.hdkey, ethereum_path)
+    this.ETH[account].privateKey = core.getEthPrivateKey(this.ETH[account].node)
+    this.ETH[account].privateKeyHex = '0x' + this.ETH[account].privateKey.toString('hex')
+    this.ETH[account].publicKey = core.getEthPublicKey(this.ETH[account].privateKey)
+    this.ETH[account].address = core.getEthAddress(this.ETH[account].publicKey)
+    this.ETH[account].dp = ethereum_path
   }
   
   /**
@@ -161,12 +178,18 @@ export default class Core {
    * @private
    */
   
-  _generateBCHcore () {
+  _generateBCHcore (type) {
+    if (!type) {
+      // TODO throw error
+    }
     const bitcoincash_external_path = 'm/44\'/145\'/0\'/0'
     const bitcoincash_internal_path = 'm/44\'/145\'/0\'/1'
-    this.BCH.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
-    this.BCH.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
-    this.BCH.address = core.getBtcAddress(this.BCH.externalNode, 0)
+    
+    this.BCH[type] = {}
+    this.BCH[type].externalNode = core.derive(this.hdkey, bitcoincash_external_path)
+    this.BCH[type].internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
+    this.BCH[type].address = core.getBtcAddress(this.BCH[type].externalNode, 0)
+    this.BCH[type].dp = {external: bitcoincash_external_path, internal: bitcoincash_internal_path}
   }
   
   /**
@@ -275,8 +298,7 @@ export default class Core {
       seedInHex: this.seed ? this.seed.toString('hex') : null,
       BTC: this.BTC,
       ETH: this.ETH,
-      BCH: this.BCH,
-      SEGWIT: this.SEGWIT
+      BCH: this.BCH
     }
   }
 }

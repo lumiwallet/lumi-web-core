@@ -25,11 +25,8 @@ export default class WalletWrapper {
     this.api = params.api
     this.core = null
     this.sync = {
-      BTC: {
-        p2pkh: null,
-        p2wpkh: null
-      },
-      ETH: null,
+      BTC: {},
+      ETH: {},
       BCH: null
     }
   }
@@ -42,6 +39,7 @@ export default class WalletWrapper {
   async Create () {
     try {
       this.core = new Core(this.data)
+      await this.core.generateWallet()
     }
     catch (e) {
       throw new Error(e.message)
@@ -59,13 +57,13 @@ export default class WalletWrapper {
   
   async Sync (data) {
     const {coin, type} = data
-
+    
     try {
       switch (coin) {
         case 'BTC':
           return await this.SyncBTC(type)
         case 'ETH':
-          return await this.SyncETH()
+          return await this.SyncETH(type)
         case 'BCH':
           return await this.SyncBCH()
       }
@@ -81,14 +79,12 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-  
+  // todo docs
   async SyncBTC (type = 'p2pkh') {
-    const currency = type === 'p2pkh' ? 'BTC' : 'SEGWIT'
-    
     if (!this.sync.BTC[type]) {
       this.sync.BTC[type] = new BitcoinSync(
-        this.core.DATA[currency].externalNode,
-        this.core.DATA[currency].internalNode,
+        this.core.DATA.BTC[type].externalNode,
+        this.core.DATA.BTC[type].internalNode,
         this.api,
         type
       )
@@ -108,15 +104,15 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-  
-  async SyncETH () {
-    if (!this.sync.ETH) {
-      this.sync.ETH = new EthereumSync(this.core.DATA.ETH.address, this.api)
+  // todo docs
+  async SyncETH (type = 0) {
+    if (!this.sync.ETH[type]) {
+      this.sync.ETH[type] = new EthereumSync(this.core.DATA.ETH[type].address, this.api)
     }
     
     try {
-      await this.sync.ETH.Start()
-      return this.sync.ETH.DATA
+      await this.sync.ETH[type].Start()
+      return this.sync.ETH[type].DATA
     }
     catch (e) {
       console.log('SyncETH error', e)
@@ -128,12 +124,13 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-  
+  // todo docs
   async SyncBCH () {
+    const type = 'p2pkh'
     if (!this.sync.BCH) {
       this.sync.BCH = new BitcoinCashSync(
-        this.core.DATA.BCH.externalNode,
-        this.core.DATA.BCH.internalNode,
+        this.core.DATA.BCH[type].externalNode,
+        this.core.DATA.BCH[type].internalNode,
         this.api
       )
     }
@@ -158,15 +155,13 @@ export default class WalletWrapper {
    */
   
   async Transaction (data) {
-    const {currency, method, tx} = data
+    const {currency, method, tx, addressType, account} = data
     
     switch (currency) {
       case 'BTC':
-        return this.createBTCTx(method, tx, 'p2pkh')
-      case 'SEGWIT':
-        return this.createBTCTx(method, tx, 'p2wpkh')
+        return this.createBTCTx(method, tx, addressType)
       case 'ETH':
-        return this.createETHTx(method, tx)
+        return this.createETHTx(method, tx, account)
       case 'BCH':
         return this.createBCHTx(method, tx)
       default:
@@ -181,10 +176,8 @@ export default class WalletWrapper {
    * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
    * @returns {Promise<Object>} Information about the transaction or fee
    */
-
+  
   async createBTCTx (method, txData, type = 'p2pkh') {
-    const currency = type === 'p2pkh' ? 'BTC' : 'SEGWIT'
-    
     let BTCdata = {
       unspent: this.sync.BTC[type].unspent,
       balance: this.sync.BTC[type].balance,
@@ -198,8 +191,8 @@ export default class WalletWrapper {
     if (method === 'make') {
       BTCdata.internalAddress = this.sync.BTC[type].addresses.empty.internal.address
       BTCdata.nodes = {
-        external: this.core.DATA[currency].externalNode,
-        internal: this.core.DATA[currency].internalNode
+        external: this.core.DATA.BTC[type].externalNode,
+        internal: this.core.DATA.BTC[type].internalNode
       }
     }
     
@@ -222,12 +215,12 @@ export default class WalletWrapper {
    * @returns {Promise<Object>} Information about the transaction or fee
    */
   
-  async createETHTx (method, txData) {
+  async createETHTx (method, txData, type = 0) {
     let ETHdata = {
-      address: this.sync.ETH.address,
-      gasPrice: this.sync.ETH.gasPrice,
-      balance: this.sync.ETH.balance,
-      privateKey: this.core.DATA.ETH.privateKey
+      address: this.sync.ETH[type].address,
+      gasPrice: this.sync.ETH[type].gasPrice,
+      balance: this.sync.ETH[type].balance,
+      privateKey: this.core.DATA.ETH[type].privateKey
     }
     
     let tx = new EthereumTx(ETHdata)
@@ -243,6 +236,8 @@ export default class WalletWrapper {
   }
   
   async createBCHTx (method, txData) {
+    const type = 'p2pkh'
+    
     let BCHdata = {
       unspent: this.sync.BCH.unspent,
       balance: this.sync.BCH.balance,
@@ -254,8 +249,8 @@ export default class WalletWrapper {
     if (method === 'make') {
       BCHdata.internalAddress = this.sync.BCH.addresses.empty.internal.address
       BCHdata.nodes = {
-        external: this.core.DATA.BCH.externalNode,
-        internal: this.core.DATA.BCH.internalNode
+        external: this.core.DATA.BCH[type].externalNode,
+        internal: this.core.DATA.BCH[type].internalNode
       }
     }
     
