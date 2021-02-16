@@ -27,6 +27,23 @@ async function create (payload, id) {
   }
 }
 
+// todo
+async function createCoins (payload, id) {
+  try {
+    const cores = await Wrapper.CreateCoins(payload)
+    postMessage({
+      id,
+      payload: cores
+    })
+  }
+  catch (e) {
+    postMessage({
+      id,
+      error: e.message
+    })
+  }
+}
+
 /**
  * Creating a transaction or getting fee
  *
@@ -78,6 +95,8 @@ onmessage = async (e) => {
   switch (payload.method) {
     case 'create':
       return await create(payload.value, id)
+    case 'createCoins':
+      return await createCoins(payload.value, id)
     case 'sync':
       const syncRes = await Wrapper.Sync(payload.value)
       postMessage({

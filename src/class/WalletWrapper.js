@@ -46,6 +46,16 @@ export default class WalletWrapper {
     }
   }
   
+  // todo
+  async CreateCoins (config) {
+    try {
+      return await this.core.createCoinsCores(config)
+    }
+    catch (e) {
+      throw new Error(e.message)
+    }
+  }
+  
   /**
    * Getting information about bitcoin or ether addresses
    * @param {Object} data - Type of synchronization method
@@ -57,7 +67,7 @@ export default class WalletWrapper {
   
   async Sync (data) {
     const {coin, type} = data
-    
+
     try {
       switch (coin) {
         case 'BTC':
@@ -83,8 +93,8 @@ export default class WalletWrapper {
   async SyncBTC (type = 'p2pkh') {
     if (!this.sync.BTC[type]) {
       this.sync.BTC[type] = new BitcoinSync(
-        this.core.DATA.BTC[type].externalNode,
-        this.core.DATA.BTC[type].internalNode,
+        this.core.COINS.BTC[type].externalNode,
+        this.core.COINS.BTC[type].internalNode,
         this.api,
         type
       )
@@ -107,7 +117,7 @@ export default class WalletWrapper {
   // todo docs
   async SyncETH (type = 0) {
     if (!this.sync.ETH[type]) {
-      this.sync.ETH[type] = new EthereumSync(this.core.DATA.ETH[type].address, this.api)
+      this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].address, this.api)
     }
     
     try {
@@ -129,8 +139,8 @@ export default class WalletWrapper {
     const type = 'p2pkh'
     if (!this.sync.BCH) {
       this.sync.BCH = new BitcoinCashSync(
-        this.core.DATA.BCH[type].externalNode,
-        this.core.DATA.BCH[type].internalNode,
+        this.core.COINS.BCH[type].externalNode,
+        this.core.COINS.BCH[type].internalNode,
         this.api
       )
     }
@@ -191,8 +201,8 @@ export default class WalletWrapper {
     if (method === 'make') {
       BTCdata.internalAddress = this.sync.BTC[type].addresses.empty.internal.address
       BTCdata.nodes = {
-        external: this.core.DATA.BTC[type].externalNode,
-        internal: this.core.DATA.BTC[type].internalNode
+        external: this.core.COINS.BTC[type].externalNode,
+        internal: this.core.COINS.BTC[type].internalNode
       }
     }
     
@@ -220,7 +230,7 @@ export default class WalletWrapper {
       address: this.sync.ETH[type].address,
       gasPrice: this.sync.ETH[type].gasPrice,
       balance: this.sync.ETH[type].balance,
-      privateKey: this.core.DATA.ETH[type].privateKey
+      privateKey: this.core.COINS.ETH[type].privateKey
     }
     
     let tx = new EthereumTx(ETHdata)
@@ -249,8 +259,8 @@ export default class WalletWrapper {
     if (method === 'make') {
       BCHdata.internalAddress = this.sync.BCH.addresses.empty.internal.address
       BCHdata.nodes = {
-        external: this.core.DATA.BCH[type].externalNode,
-        internal: this.core.DATA.BCH[type].internalNode
+        external: this.core.COINS.BCH[type].externalNode,
+        internal: this.core.COINS.BCH[type].internalNode
       }
     }
     

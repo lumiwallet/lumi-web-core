@@ -101,6 +101,15 @@ export default class Wallet {
     return this.core
   }
   
+  // todo
+  async createCoins (config) {
+    if (!config) {
+      // todo throw error
+    }
+    
+    return await this.wrapper.method('createCoins', config)
+  }
+  
   /**
    * Creating a wallet by xprv key
    *
@@ -131,27 +140,27 @@ export default class Wallet {
     return this.core
   }
   
-  /**
-   * The method starts synchronization of BTC and ETH
-   *
-   * @returns {Promise<Object>} An object with sync's information
-   * @returns {Object} sync.BTC - The BTC object contains the addresses used, the list of transactions, the unspent list, the balance in Satoshi, the latest block and the list of commissions
-   * @returns {Object} sync.ETH - The ETH object contains the ethereum address, the balance in wei, the list of transactions and gas price
-   */
-  
-  async syncAll () {
-    if (!this._apiReady) {
-      throw new CustomError('err_wallet_api')
-    }
-    
-    await Promise.all([
-      this.syncBTC(),
-      this.syncETH(),
-      this.syncBCH()
-    ])
-    
-    return this.sync
-  }
+  // /**
+  //  * The method starts synchronization of BTC and ETH
+  //  *
+  //  * @returns {Promise<Object>} An object with sync's information
+  //  * @returns {Object} sync.BTC - The BTC object contains the addresses used, the list of transactions, the unspent list, the balance in Satoshi, the latest block and the list of commissions
+  //  * @returns {Object} sync.ETH - The ETH object contains the ethereum address, the balance in wei, the list of transactions and gas price
+  //  */
+  //
+  // async syncAll () {
+  //   if (!this._apiReady) {
+  //     throw new CustomError('err_wallet_api')
+  //   }
+  //
+  //   await Promise.all([
+  //     this.syncBTC(),
+  //     this.syncETH(),
+  //     this.syncBCH()
+  //   ])
+  //
+  //   return this.sync
+  // }
   
   /**
    * The method returns node by derivation path
