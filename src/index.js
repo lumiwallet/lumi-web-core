@@ -319,22 +319,21 @@ export default class Wallet {
    * @param {Object} params.size - Transaction size. Relevant for bitcoin transactions
    * @returns {Promise<Array>} The list of transaction fees
    */
-  
+  // todo docs
   async calculateFee (params) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
     
-    let {currency, amount, customFee, addressType, size} = params
-    
     return await this.wrapper.method('transaction', {
       method: 'calcFee',
-      currency: currency,
-      addressType: addressType,
+      currency: params.currency,
+      addressType: params.addressType,
+      account: params.account,
       tx: {
-        amount: amount,
-        customFee: customFee,
-        size: size
+        amount: params.amount,
+        customFee: params.customFee,
+        size: params.size
       }
     })
   }
@@ -351,7 +350,7 @@ export default class Wallet {
    * @returns {string} hash - Transaction hash
    * @returns {string} tx - Raw bitcoin or ethereum transaction
    */
-  
+  // todo docs
   async makeTransaction (data) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
@@ -360,6 +359,8 @@ export default class Wallet {
     let params = {
       method: 'make',
       currency: data.currency,
+      addressType: data.addressType,
+      account: data.account,
       tx: data.tx
     }
     

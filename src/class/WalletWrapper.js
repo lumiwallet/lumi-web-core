@@ -166,7 +166,7 @@ export default class WalletWrapper {
   
   async Transaction (data) {
     const {currency, method, tx, addressType, account} = data
-    
+
     switch (currency) {
       case 'BTC':
         return this.createBTCTx(method, tx, addressType)
@@ -187,22 +187,22 @@ export default class WalletWrapper {
    * @returns {Promise<Object>} Information about the transaction or fee
    */
   
-  async createBTCTx (method, txData, type = 'p2pkh') {
+  async createBTCTx (method, txData, addressType = 'p2pkh') {
     let BTCdata = {
-      unspent: this.sync.BTC[type].unspent,
-      balance: this.sync.BTC[type].balance,
-      feeList: this.sync.BTC[type].fee,
+      unspent: this.sync.BTC[addressType].unspent,
+      balance: this.sync.BTC[addressType].balance,
+      feeList: this.sync.BTC[addressType].fee,
       amount: txData.amount,
       customFee: txData.customFee,
       api: this.api.bitcoin,
-      type
+      type: addressType
     }
     
     if (method === 'make') {
-      BTCdata.internalAddress = this.sync.BTC[type].addresses.empty.internal.address
+      BTCdata.internalAddress = this.sync.BTC[addressType].addresses.empty.internal.address
       BTCdata.nodes = {
-        external: this.core.COINS.BTC[type].externalNode,
-        internal: this.core.COINS.BTC[type].internalNode
+        external: this.core.COINS.BTC[addressType].externalNode,
+        internal: this.core.COINS.BTC[addressType].internalNode
       }
     }
     
@@ -225,14 +225,14 @@ export default class WalletWrapper {
    * @returns {Promise<Object>} Information about the transaction or fee
    */
   
-  async createETHTx (method, txData, type = 0) {
+  async createETHTx (method, txData, account = 0) {
     let ETHdata = {
-      address: this.sync.ETH[type].address,
-      gasPrice: this.sync.ETH[type].gasPrice,
-      balance: this.sync.ETH[type].balance,
-      privateKey: this.core.COINS.ETH[type].privateKey
+      address: this.sync.ETH[account].address,
+      gasPrice: this.sync.ETH[account].gasPrice,
+      balance: this.sync.ETH[account].balance,
+      privateKey: this.core.COINS.ETH[account].privateKey
     }
-    
+
     let tx = new EthereumTx(ETHdata)
     
     switch (method) {
