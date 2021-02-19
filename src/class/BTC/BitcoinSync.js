@@ -1,4 +1,4 @@
-import Request                          from '@/helpers/Request'
+import Request         from '@/helpers/Request'
 import {getBtcAddress} from '@/helpers/coreHelper'
 
 /**
@@ -91,7 +91,6 @@ export default class BitcoinSync {
       external: this.addresses.external[this.addresses.external.length - 1],
       internal: this.addresses.internal[this.addresses.internal.length - 1]
     }
-    
     this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) => item.address)
     
     await this.processTransactions()
@@ -215,8 +214,7 @@ export default class BitcoinSync {
         if (res.hasOwnProperty('addresses')) {
           for (let i = data.from; i < data.to; i++) {
             if (counter >= CONTROL_COUNT) break
-            
-            const index = i <= CONTROL_COUNT ? i : i - CONTROL_COUNT
+            const index = i < CONTROL_COUNT ? i : i - CONTROL_COUNT
             let item = res.addresses.find((itm) => itm.address === addresses[index])
             
             if (item && item.n_tx) {
@@ -236,17 +234,16 @@ export default class BitcoinSync {
                 } else {
                   item.address = getBtcAddress(this.internalNode, derive_index, this.type)
                 }
-                
                 empty.status = true
                 empty.data = item
               }
             }
             derive_index++
           }
-          
           if (counter < CONTROL_COUNT) {
             data.from += CONTROL_COUNT
             data.to += CONTROL_COUNT
+            
             await req()
           } else {
             list.push(empty.data)
