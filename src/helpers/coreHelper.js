@@ -139,7 +139,7 @@ export function derive (hd, path) {
  * @returns {string} Bitcoin address
  */
 
-export function getBtcAddress (node, childIndex = 0, type = 'p2pkh') {
+export function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network) {
   const types = ['p2pkh', 'p2wpkh']
   
   if (!types.includes(type)) {

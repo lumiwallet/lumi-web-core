@@ -1,8 +1,12 @@
-import {validateMnemonic}      from 'bip39'
+import {validateMnemonic} from 'bip39'
 import {normalize, checkWords} from 'bip39-checker'
-import CustomError             from '@/helpers/handleErrors'
-import * as core               from '@/helpers/coreHelper'
-import * as bitcoin            from 'bitcoinjs-lib'
+import CustomError from '@/helpers/handleErrors'
+import * as core from '@/helpers/coreHelper'
+import * as bitcoin from 'bitcoinjs-lib'
+
+// import coininfo from 'coininfo'
+//
+// console.log(coininfo)
 
 /**
  * Class Wallet
@@ -212,6 +216,18 @@ export default class Core {
   
   // todo docs
   async _generateBTCVcore () {
+    let network = {
+      messagePrefix: '\x18Bitcoin Signed Message:\n',
+      bech32: 'royale',
+      bip32: {
+        public: 0x0488b21e,
+        private: 0x0488ade4,
+      },
+      pubKeyHash: 0x4e,
+      scriptHash: 0x3c,
+      wif: 0x80,
+    }
+    
     const type = 'p2wpkh'
     console.log('start _generateBTCVcore 2')
     const bitcoinvault_external_path = `m/84'/440'/0'/0`
@@ -223,23 +239,13 @@ export default class Core {
     item.address = core.getBtcAddress(item.externalNode, 0, 'p2pkh')
     
     let types = ['p2pkh', 'p2sh', 'p2wpkh', 'p2wsh']
+    // let types = ['p2pkh', 'p2sh', 'p2wpkh', 'p2wsh']
     let pubKey = await item.externalNode.deriveChild(0).publicKey
   
-    for (let t of types) {
-      let address
-      if (t === 'p2sh') {
-        const pubkeys = [ pubKey ];
-        address = await bitcoin.payments[t]({
-          redeem: bitcoin.payments.p2ms({ m: 1, pubkeys })
-        }).address
-      } else {
-        address = await bitcoin.payments[t]({
-          pubkey: pubKey
-        }).address
-      }
-     
-      console.log(t, address)
-    }
+    let address = await bitcoin.payments.p2wpkh({pubkey: pubKey, network}).address
+    console.log('p2wpkh', address)
+    let address2 = await bitcoin.payments.p2pkh({pubkey: pubKey, network}).address
+    console.log('p2pkh', address2)
     item.dp = {external: bitcoinvault_external_path, internal: bitcoinvault_internal_path}
     
     if (!this.coins.hasOwnProperty('BTCV')) {
