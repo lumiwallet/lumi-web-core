@@ -1,7 +1,8 @@
-import {validateMnemonic} from 'bip39'
+import {validateMnemonic}      from 'bip39'
 import {normalize, checkWords} from 'bip39-checker'
-import CustomError from '@/helpers/handleErrors'
-import * as core from '@/helpers/coreHelper'
+import CustomError             from '@/helpers/handleErrors'
+import * as core               from '@/helpers/coreHelper'
+import * as bitcoin            from 'bitcoinjs-lib'
 
 /**
  * Class Wallet
@@ -101,7 +102,7 @@ export default class Core {
       if (!core.hasOwnProperty(coin)) {
         core[coin] = {}
       }
-  
+      console.log('createCoinsCores', coin, type)
       switch (coin) {
         case 'BTC':
           core[coin][type] = await this._generateBTCcore(type)
@@ -110,11 +111,14 @@ export default class Core {
           core[coin][type] = await this._generateETHcore(type)
           break
         case 'BCH':
-          core[coin][type] = await this._generateBCHcore(type)
+          core[coin][type] = await this._generateBCHcore()
+          break
+        case 'BTCV':
+          core[coin][type] = await this._generateBTCVcore()
           break
       }
     }
-
+    
     return core
   }
   
@@ -144,7 +148,7 @@ export default class Core {
       external: bitcoin_external_path,
       internal: bitcoin_internal_path
     }
-  
+    
     if (!this.coins.hasOwnProperty('BTC')) {
       this.coins.BTC = {}
     }
@@ -171,7 +175,7 @@ export default class Core {
     item.publicKey = core.getEthPublicKey(item.privateKey)
     item.address = core.getEthAddress(item.publicKey)
     item.dp = ethereum_path
-
+    
     if (!this.coins.hasOwnProperty('ETH')) {
       this.coins.ETH = {}
     }
@@ -187,24 +191,62 @@ export default class Core {
    * @private
    */
   
-  _generateBCHcore (type) {
-    if (!type) {
-      // TODO throw error
-    }
-    const bitcoincash_external_path = 'm/44\'/145\'/0\'/0'
-    const bitcoincash_internal_path = 'm/44\'/145\'/0\'/1'
+  _generateBCHcore () {
+    const type = 'p2pkh'
+    const bitcoincash_external_path = `m/44'/145'/0'/0`
+    const bitcoincash_internal_path = `m/44'/145'/0'/1`
     
     let item = {}
     item.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
     item.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
     item.address = core.getBtcAddress(item.externalNode, 0)
     item.dp = {external: bitcoincash_external_path, internal: bitcoincash_internal_path}
-  
+    
     if (!this.coins.hasOwnProperty('BCH')) {
       this.coins.BCH = {}
     }
-  
+    
     this.coins.BCH[type] = item
+    return item
+  }
+  
+  // todo docs
+  async _generateBTCVcore () {
+    const type = 'p2wpkh'
+    console.log('start _generateBTCVcore 2')
+    const bitcoinvault_external_path = `m/84'/440'/0'/0`
+    const bitcoinvault_internal_path = `m/84'/440'/0'/1`
+    
+    let item = {}
+    item.externalNode = core.derive(this.hdkey, bitcoinvault_external_path)
+    item.internalNode = core.derive(this.hdkey, bitcoinvault_internal_path)
+    item.address = core.getBtcAddress(item.externalNode, 0, 'p2pkh')
+    
+    let types = ['p2pkh', 'p2sh', 'p2wpkh', 'p2wsh']
+    let pubKey = await item.externalNode.deriveChild(0).publicKey
+  
+    for (let t of types) {
+      let address
+      if (t === 'p2sh') {
+        const pubkeys = [ pubKey ];
+        address = await bitcoin.payments[t]({
+          redeem: bitcoin.payments.p2ms({ m: 1, pubkeys })
+        }).address
+      } else {
+        address = await bitcoin.payments[t]({
+          pubkey: pubKey
+        }).address
+      }
+     
+      console.log(t, address)
+    }
+    item.dp = {external: bitcoinvault_external_path, internal: bitcoinvault_internal_path}
+    
+    if (!this.coins.hasOwnProperty('BTCV')) {
+      this.coins.BTCV = {}
+    }
+    console.log('BTCV core', item)
+    this.coins.BTCV[type] = item
     return item
   }
   
