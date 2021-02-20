@@ -33,10 +33,11 @@ export default class Wallet {
     this.core = null
     this.sync = {}
     this.api = {
-      bitcoin: '',
-      bitcoinFee: '',
-      ethereum: '',
-      bitcoinCash: ''
+      btc: '',
+      btcFee: '',
+      eth: '',
+      bch: '',
+      btcv: ''
     }
     this._apiReady = false
     
@@ -259,6 +260,21 @@ export default class Wallet {
     return this.sync.BCH
   }
   
+  
+  async syncBTCV () {
+    if (!this._apiReady) {
+      throw new CustomError('err_wallet_api')
+    }
+    
+    // if (!this.sync.BCH) {
+    //   this.sync.BCH = {}
+    // }
+    
+    this.sync.BTCV = await this.wrapper.method('sync', {coin: 'BTCV'})
+    
+    return this.sync.BTCV
+  }
+  
   /**
    * The method returns a raw BTC transaction
    *
@@ -371,10 +387,11 @@ export default class Wallet {
    * Sets the API Endpoint
    *
    * @type {Object} api
-   * @param {string} api.bitcoin - Url address of bitcoin endpoint
-   * @param {string} api.bitcoinFee - Url address of bitcoin fee endpoint
-   * @param {string} api.ethereum - Url address of ethereum endpoint
-   * @param {string} api.bitcoinCash - Url address of bitcoin cash endpoint
+   * @param {string} api.btc - Url address of bitcoin endpoint
+   * @param {string} api.btcFee - Url address of bitcoin fee endpoint
+   * @param {string} api.eth - Url address of ethereum endpoint
+   * @param {string} api.bch - Url address of bitcoin cash endpoint
+   * @param {string} api.btcv - Url address of bitcoin vault endpoint
    */
   
   setApiEndpoint (api) {

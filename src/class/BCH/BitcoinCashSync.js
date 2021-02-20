@@ -43,7 +43,7 @@ export default class BitcoinCashSync {
       }
     ]
     
-    this.request = new Request(this.api.bitcoinCash)
+    this.request = new Request(this.api.bch)
   }
   
   /**

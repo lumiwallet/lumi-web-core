@@ -2,9 +2,11 @@ import Core from '@/class/Core'
 import BitcoinSync from '@/class/BTC/BitcoinSync'
 import EthereumSync from '@/class/ETH/EthereumSync'
 import BitcoinCashSync from '@/class/BCH/BitcoinCashSync'
+import BitcoinVaultSync from '@/class/BTCV/BitcoinVaultSync'
 import BitcoinTx from '@/class/BTC/BitcoinTx'
 import EthereumTx from '@/class/ETH/EthereumTx'
 import BitcoinCashTx from '@/class/BCH/BitcoinCashTx'
+import BitcoinVaultTx from '@/class/BTCV/BitcoinVaultTx'
 
 /**
  * Class WalletWrapper
@@ -76,6 +78,8 @@ export default class WalletWrapper {
           return await this.SyncETH(type)
         case 'BCH':
           return await this.SyncBCH()
+        case 'BTCV':
+          return await this.SyncBTCV()
       }
     }
     catch (e) {
@@ -117,7 +121,7 @@ export default class WalletWrapper {
   // todo docs
   async SyncETH (type = 0) {
     if (!this.sync.ETH[type]) {
-      this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].address, this.api)
+      this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].externalAddress, this.api)
     }
     
     try {
@@ -150,7 +154,34 @@ export default class WalletWrapper {
       return this.sync.BCH.DATA
     }
     catch (e) {
-      console.log('SyncETH error', e)
+      console.log('SyncBCH error', e)
+    }
+  }
+  
+  
+  async SyncBTCV () {
+    const type = 'p2wpkh'
+
+    if (!this.sync.BTCV) {
+      let addresses = {
+        external:  this.core.COINS.BTCV[type].externalAddress,
+        internal: this.core.COINS.BTCV[type].internalAddress
+      }
+      
+      this.sync.BTCV = new BitcoinVaultSync(
+        this.core.COINS.BTCV[type].externalNode,
+        this.core.COINS.BTCV[type].internalNode,
+        addresses,
+        this.api
+      )
+    }
+    
+    try {
+      await this.sync.BTCV.Start()
+      return this.sync.BTCV.DATA
+    }
+    catch (e) {
+      console.log('SyncBTCV error', e)
     }
   }
   
@@ -174,6 +205,8 @@ export default class WalletWrapper {
         return this.createETHTx(method, tx, account)
       case 'BCH':
         return this.createBCHTx(method, tx)
+      case 'BTCV':
+        return this.createBTCVTx(method, tx)
       default:
         throw new Error('Unknown txs type (currency)')
     }
@@ -194,7 +227,7 @@ export default class WalletWrapper {
       feeList: this.sync.BTC[addressType].fee,
       amount: txData.amount,
       customFee: txData.customFee,
-      api: this.api.bitcoin,
+      api: this.api.btc,
       type: addressType
     }
     
@@ -265,6 +298,37 @@ export default class WalletWrapper {
     }
     
     let tx = new BitcoinCashTx(BCHdata)
+    
+    switch (method) {
+      case 'make':
+        return tx.make(txData)
+      case 'calcFee':
+        return tx.calcFee(txData.size)
+      default:
+        throw new Error('Unknown BCH txs method')
+    }
+  }
+  
+  async createBTCVTx (method, txData) {
+    const type = 'p2wpkh'
+    
+    let BTCVdata = {
+      unspent: this.sync.BTCV.unspent,
+      balance: this.sync.BTCV.balance,
+      feeList: this.sync.BTCV.fee,
+      amount: txData.amount,
+      customFee: txData.customFee
+    }
+    
+    if (method === 'make') {
+      BTCVdata.internalAddress = this.sync.BTCV.addresses.empty.internal.address
+      BTCVdata.nodes = {
+        external: this.core.COINS.BTCV[type].externalNode,
+        internal: this.core.COINS.BTCV[type].internalNode
+      }
+    }
+    
+    let tx = new BitcoinVaultTx(BTCVdata)
     
     switch (method) {
       case 'make':

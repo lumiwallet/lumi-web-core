@@ -1,4 +1,4 @@
-import Request                          from '@/helpers/Request'
+import Request         from '@/helpers/Request'
 import {getBtcAddress} from '@/helpers/coreHelper'
 
 /**
@@ -38,7 +38,7 @@ export default class BitcoinSync {
       unique: []
     }
     this.fee = []
-    this.request = new Request(this.api.bitcoin)
+    this.request = new Request(this.api.btc)
     this.type = type || 'p2pkh'
   }
   
@@ -198,7 +198,7 @@ export default class BitcoinSync {
       
       try {
         let res = await this.getMultiAddressRequest(addresses)
-
+        
         if (res.hasOwnProperty('txs')) {
           this.transactions.all = [...this.transactions.all, ...res.txs]
         }
@@ -391,7 +391,7 @@ export default class BitcoinSync {
   
   async getMultiAddressRequest (addresses) {
     if (!addresses) return false
-
+    
     const OFFSET_STEP = 100
     const TXS_COUNT = 100
     let offset = 0
@@ -408,7 +408,7 @@ export default class BitcoinSync {
       
       try {
         let res = await this.request.send(params)
-
+        
         if (res.status === 'success') {
           data = res.data || {}
           
@@ -442,7 +442,7 @@ export default class BitcoinSync {
   
   async getFeesRequest () {
     try {
-      const res = await fetch(this.api.bitcoinFee)
+      const res = await fetch(this.api.btcFee)
       const resJson = await res.json()
       this.fee = resJson.sort((a, b) => b.feePerByte - a.feePerByte)
     }

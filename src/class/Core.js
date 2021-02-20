@@ -2,11 +2,6 @@ import {validateMnemonic} from 'bip39'
 import {normalize, checkWords} from 'bip39-checker'
 import CustomError from '@/helpers/handleErrors'
 import * as core from '@/helpers/coreHelper'
-import * as bitcoin from 'bitcoinjs-lib'
-
-// import coininfo from 'coininfo'
-//
-// console.log(coininfo)
 
 /**
  * Class Wallet
@@ -106,7 +101,6 @@ export default class Core {
       if (!core.hasOwnProperty(coin)) {
         core[coin] = {}
       }
-      console.log('createCoinsCores', coin, type)
       switch (coin) {
         case 'BTC':
           core[coin][type] = await this._generateBTCcore(type)
@@ -128,8 +122,8 @@ export default class Core {
   
   /**
    * Creating a core for Bitcoin.
-   * At the output, we get a external and internal node
-   * and the first address of the external core
+   * At the output, we get a external and internal node,
+   * derivation path and the first addresses of the external and internal cores
    * @private
    */
   
@@ -147,7 +141,8 @@ export default class Core {
     let item = {}
     item.externalNode = core.derive(this.hdkey, bitcoin_external_path)
     item.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
-    item.address = core.getBtcAddress(item.externalNode, 0, type)
+    item.externalAddress = core.getBtcAddress(item.externalNode, 0, type)
+    item.internalAddress = core.getBtcAddress(item.internalNode, 0, type)
     item.dp = {
       external: bitcoin_external_path,
       internal: bitcoin_internal_path
@@ -156,13 +151,14 @@ export default class Core {
     if (!this.coins.hasOwnProperty('BTC')) {
       this.coins.BTC = {}
     }
+
     this.coins.BTC[type] = item
     return item
   }
   
   /**
    * Creating a core for Ethereum.
-   * At the output, we get a Ethereum node,
+   * At the output, we get a Ethereum node, derivation path,
    * a private and public key, and the Ethereum address
    * @private
    */
@@ -177,7 +173,7 @@ export default class Core {
     item.privateKey = core.getEthPrivateKey(item.node)
     item.privateKeyHex = '0x' + item.privateKey.toString('hex')
     item.publicKey = core.getEthPublicKey(item.privateKey)
-    item.address = core.getEthAddress(item.publicKey)
+    item.externalAddress = core.getEthAddress(item.publicKey)
     item.dp = ethereum_path
     
     if (!this.coins.hasOwnProperty('ETH')) {
@@ -190,8 +186,8 @@ export default class Core {
   
   /**
    * Creating a core for Bitcoin Cash.
-   * At the output, we get a external and internal node
-   * and the first address of the external core
+   * At the output, we get a external and internal node,
+   * derivation path and the first addresses of the external and internal cores
    * @private
    */
   
@@ -203,7 +199,8 @@ export default class Core {
     let item = {}
     item.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
     item.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
-    item.address = core.getBtcAddress(item.externalNode, 0)
+    item.externalAddress = core.getBtcAddress(item.externalNode, 0)
+    item.internalAddress = core.getBtcAddress(item.internalNode, 0)
     item.dp = {external: bitcoincash_external_path, internal: bitcoincash_internal_path}
     
     if (!this.coins.hasOwnProperty('BCH')) {
@@ -214,44 +211,29 @@ export default class Core {
     return item
   }
   
-  // todo docs
+  /**
+   * Creating a core for Bitcoin Vault.
+   * At the output, we get a external and internal node,
+   * derivation path and the first addresses of the external and internal cores
+   * @private
+   */
   async _generateBTCVcore () {
-    let network = {
-      messagePrefix: '\x18Bitcoin Signed Message:\n',
-      bech32: 'royale',
-      bip32: {
-        public: 0x0488b21e,
-        private: 0x0488ade4,
-      },
-      pubKeyHash: 0x4e,
-      scriptHash: 0x3c,
-      wif: 0x80,
-    }
-    
     const type = 'p2wpkh'
-    console.log('start _generateBTCVcore 2')
+    const network = 'btcv'
     const bitcoinvault_external_path = `m/84'/440'/0'/0`
     const bitcoinvault_internal_path = `m/84'/440'/0'/1`
     
     let item = {}
     item.externalNode = core.derive(this.hdkey, bitcoinvault_external_path)
     item.internalNode = core.derive(this.hdkey, bitcoinvault_internal_path)
-    item.address = core.getBtcAddress(item.externalNode, 0, 'p2pkh')
-    
-    let types = ['p2pkh', 'p2sh', 'p2wpkh', 'p2wsh']
-    // let types = ['p2pkh', 'p2sh', 'p2wpkh', 'p2wsh']
-    let pubKey = await item.externalNode.deriveChild(0).publicKey
-  
-    let address = await bitcoin.payments.p2wpkh({pubkey: pubKey, network}).address
-    console.log('p2wpkh', address)
-    let address2 = await bitcoin.payments.p2pkh({pubkey: pubKey, network}).address
-    console.log('p2pkh', address2)
+    item.externalAddress = core.getBtcAddress(item.externalNode, 0, 'p2wpkh', network)
+    item.internalAddress = core.getBtcAddress(item.internalNode, 0, 'p2wpkh', network)
     item.dp = {external: bitcoinvault_external_path, internal: bitcoinvault_internal_path}
     
     if (!this.coins.hasOwnProperty('BTCV')) {
       this.coins.BTCV = {}
     }
-    console.log('BTCV core', item)
+
     this.coins.BTCV[type] = item
     return item
   }
@@ -266,7 +248,8 @@ export default class Core {
    */
   
   getChildNodes (data = {}) {
-    let {from, to, path} = data
+    const types = ['p2pkh', 'p2wpkh']
+    let {from, to, path, coins} = data
     
     from = +from
     to = +to
@@ -292,10 +275,28 @@ export default class Core {
         child.path = `${ path }/${ i }`
         child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)
         child.publicKey = deriveChild.publicKey.toString('hex')
-        child.p2pkhAddress = core.getBtcAddress(node, i, 'p2pkh')
-        child.p2wpkhAddress = core.getBtcAddress(node, i, 'p2wpkh')
-        child.ethAddress = core.getEthAddressByNode(deriveChild)
-        child.bchAddress = core.getCashAddress(child.p2pkhAddress)
+        for (let item of coins) {
+          let {coin, type} = item
+
+          switch (coin) {
+            case 'BTC':
+              if (!types.includes(type)) continue
+              child[`${type}Address`] = core.getBtcAddress(node, i, type, 'btc')
+              break
+            case 'BCH':
+              if (!child.p2pkhAddress) {
+                child.p2pkhAddress = core.getBtcAddress(node, i, 'p2pkh', 'btc')
+              }
+              child.bchAddress = core.getCashAddress(child.p2pkhAddress)
+              break
+            case 'BTCV':
+              child.btcvAddress = core.getBtcAddress(node, i, 'p2wpkh', 'btcv')
+              break
+            case 'ETH':
+              child.ethAddress = core.getEthAddressByNode(deriveChild)
+              break
+          }
+        }
         info.list.push(child)
       }
       

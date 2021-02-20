@@ -19,7 +19,7 @@ export default class EthereumSync {
     this.balance = 0
     this.transactions = []
     this.gasPrice = 0
-    this.request = new Request(this.api.ethereum)
+    this.request = new Request(this.api.eth)
   }
   
   /**
