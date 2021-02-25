@@ -146,6 +146,7 @@ export default class BitcoinVaultSync {
   }
   
   async getHistory () {
+    this.transactions.all = []
     let history = await this.getHistoryRequest(this.addresses.list.all)
 
     for (let item of history) {
@@ -178,7 +179,6 @@ export default class BitcoinVaultSync {
       (value, index, self) =>
         self.findIndex((tx) => tx.txid === value.txid) === index
     )
-    
     const pubkeys = [this.addresses.external[0].pubkey, this.addresses.internal[0].pubkey]
     
     try {
