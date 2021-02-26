@@ -57,6 +57,11 @@ export default class BitcoinVaultSync {
    */
   
   async Start () {
+    this.transactions = {
+      all: [],
+      unique: []
+    }
+    this.unspent = []
     await Promise.all([
       await this.getAddresses(),
       await this.getHistory(),
@@ -146,22 +151,19 @@ export default class BitcoinVaultSync {
   }
   
   async getHistory () {
-    this.transactions.all = []
     let history = await this.getHistoryRequest(this.addresses.list.all)
 
     for (let item of history) {
       let {txs} = item
    
       if (txs.length) {
-        let formatted_txs = txs.map(tx => {
+        this.transactions.all = txs.map(tx => {
           
           return {
             ...tx.rawData,
             height: tx.height
           }
         })
-
-        this.transactions.all = [...this.transactions.all, ...formatted_txs]
       }
     }
     
@@ -259,14 +261,12 @@ export default class BitcoinVaultSync {
       
       if (unspent.length) {
         let derivationInfo = this._getDeriveIndexByAddress(address)
-        let utxos = unspent.map(utxo => {
+        this.unspent = unspent.map(utxo => {
           utxo.address = address
           utxo.deriveIndex = derivationInfo.index
           utxo.nodeType = derivationInfo.node
           return utxo
         })
-        
-        this.unspent = [...this.unspent, ...utxos]
       }
     })
     this.unspent = this.unspent.sort((a, b) => b.value - a.value)
