@@ -34,11 +34,11 @@ describe('BitcoinCashTx class', () => {
     const expected_amount = 150000000
     const expected_custom_fee = 10
 
-    const Bitcoin = new BitcoinCashTx(data)
+    const BitcoinCash = new BitcoinCashTx(data)
 
-    expect(Bitcoin).toBeDefined()
-    expect(Bitcoin.amount).toBe(expected_amount)
-    expect(Bitcoin.customFee).toBe(expected_custom_fee)
+    expect(BitcoinCash).toBeDefined()
+    expect(BitcoinCash.amount).toBe(expected_amount)
+    expect(BitcoinCash.customFee).toBe(expected_custom_fee)
   })
 
   test('it should create empty fees list', async () => {
@@ -121,12 +121,14 @@ describe('BitcoinCashTx class', () => {
       from: 'mnemonic',
       mnemonic: mock.test_mnemonic
     })
-
+    await CORE.generateWallet()
+    await CORE.createCoinsCores([{coin: 'BCH', type: ''}])
+  
     const data = mock.getData({
       amount: 0.001,
       nodes: {
-        external: CORE.BCH.externalNode,
-        internal: CORE.BCH.internalNode
+        external: CORE.COINS.BCH.p2pkh.externalNode,
+        internal: CORE.COINS.BCH.p2pkh.internalNode
       }
     })
 
@@ -197,12 +199,14 @@ describe('BitcoinCashTx class', () => {
       from: 'mnemonic',
       mnemonic: mock.test_mnemonic
     })
+    await CORE.generateWallet()
+    await CORE.createCoinsCores([{coin: 'BCH', type: ''}])
 
     const data = mock.getData({
       amount: 0.0133898,
       nodes: {
-        external: CORE.BCH.externalNode,
-        internal: CORE.BCH.internalNode
+        external: CORE.COINS.BCH.p2pkh.externalNode,
+        internal: CORE.COINS.BCH.p2pkh.internalNode
       }
     })
 

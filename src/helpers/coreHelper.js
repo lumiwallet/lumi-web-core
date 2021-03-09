@@ -118,11 +118,11 @@ export function derive (hd, path) {
     throw new CustomError('err_core_derivation_path')
   }
   let regex = new RegExp(/(^m\/\d+\')([\/{1}\d+\'{1}]+)/mg)
-  
+
   if (!regex.test(path)) {
     throw new CustomError('err_core_derivation_path')
   }
-  
+
   try {
     return hd.derive(path)
   }

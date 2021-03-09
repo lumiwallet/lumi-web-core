@@ -161,11 +161,11 @@ export default class BitcoinVaultTx {
     const {addressTo, fee} = data
   
     if (!this.amount) {
-      throw new CustomError('err_tx_btc_amount')
+      throw new CustomError('err_tx_btcv_amount')
     }
   
     if (isNaN(fee.SAT)) {
-      throw new CustomError('err_tx_btc_fee')
+      throw new CustomError('err_tx_btcv_fee')
     }
   
     const inputsAmount = +fee.inputsAmount
@@ -205,7 +205,7 @@ export default class BitcoinVaultTx {
      
       return makeRawBtcvTx(params)
     } else {
-      throw new CustomError('err_tx_bch_balance')
+      throw new CustomError('err_tx_btcv_balance')
     }
   }
 }

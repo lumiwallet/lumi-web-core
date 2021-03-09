@@ -101,7 +101,7 @@ export default class Core {
    * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
    * */
   
-  async createCoinsCores (coins = {}) {
+  async createCoinsCores (coins = []) {
     let core = {}
     
     for (let item of coins) {
@@ -117,10 +117,10 @@ export default class Core {
           core[coin][type] = await this._generateETHcore(type)
           break
         case 'BCH':
-          core[coin][type] = await this._generateBCHcore()
+          core[coin].p2pkh = await this._generateBCHcore()
           break
         case 'BTCV':
-          core[coin][type] = await this._generateBTCVcore()
+          core[coin].p2wpkh = await this._generateBTCVcore()
           break
       }
     }
@@ -163,7 +163,7 @@ export default class Core {
     if (!this.coins.hasOwnProperty('BTC')) {
       this.coins.BTC = {}
     }
-
+    
     this.coins.BTC[type] = item
     return item
   }
@@ -211,7 +211,6 @@ export default class Core {
     const type = 'p2pkh'
     const bitcoincash_external_path = `m/44'/145'/0'/0`
     const bitcoincash_internal_path = `m/44'/145'/0'/1`
-    
     let item = {}
     item.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
     item.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
@@ -249,7 +248,7 @@ export default class Core {
     if (!this.coins.hasOwnProperty('BTCV')) {
       this.coins.BTCV = {}
     }
-
+    
     this.coins.BTCV[type] = item
     return item
   }
@@ -260,23 +259,25 @@ export default class Core {
    * @param {number} data.from - Top of the derivation range
    * @param {number} data.to - End of the derivation range
    * @param {string} data.path - Derivation path
+   * @param {Array} data.coins - Array of coins for generating addresses. Includes the name (e.g. BTC) and type (e.g. p2pkh or account number) parameters
    * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}}
    */
-  
+
   getChildNodes (data = {}) {
     const types = ['p2pkh', 'p2wpkh']
     let {from, to, path, coins} = data
     
     from = +from
     to = +to
+    coins = coins || []
     
     if (!Number.isInteger(from) || !Number.isInteger(to) || from > to) {
       throw new CustomError('err_core_derivation_range')
     }
-    
+
     try {
       const node = core.derive(this.hdkey, path)
-      
+
       let info = {
         node: {
           privateExtendedKey: node.privateExtendedKey,
@@ -284,7 +285,7 @@ export default class Core {
         },
         list: []
       }
-      
+
       for (let i = from; i <= to; i++) {
         const child = {}
         const deriveChild = node.deriveChild(i)
@@ -297,7 +298,7 @@ export default class Core {
           switch (coin) {
             case 'BTC':
               if (!types.includes(type)) continue
-              child[`${type}Address`] = core.getBtcAddress(node, i, type, 'btc')
+              child[`${ type }Address`] = core.getBtcAddress(node, i, type, 'btc')
               break
             case 'BCH':
               if (!child.p2pkhAddress) {
@@ -363,7 +364,7 @@ export default class Core {
     }
     
     if (!bitsOfEntropy.hasOwnProperty(+words)) {
-      throw new CustomError('err_core_7')
+      throw new CustomError('err_core_entropy')
     }
     
     return bitsOfEntropy[words]
