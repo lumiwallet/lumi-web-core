@@ -295,16 +295,19 @@ export default class BitcoinVaultSync {
     return balance
   }
   
-  // todo
+  /**
+   * Getting a history of Bitcoin Vault wallet from a list of addresses
+   * @param {Array} addresses - The list of external and internal addresses
+   * @returns {Promise<Array>} The list of transactions
+   */
+  
   async getHistoryRequest (addresses) {
     if (!addresses) return []
     
-    const params = {
-      addresses: addresses
-    }
-    
     try {
-      let res = await this.request.send(params, 'history')
+      let res = await this.request.send({
+        addresses: addresses
+      }, 'history')
       
       if (res.status === 'success') {
         this.latestBlock = res.data.lastBlock || 0

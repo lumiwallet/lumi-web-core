@@ -27,7 +27,13 @@ async function create (payload, id) {
   }
 }
 
-// todo
+/**
+ * Creating a core for each supported currency type
+ *
+ * @param payload - Array of coins to create cores for
+ * @param id - Promise id
+ * */
+
 async function createCoins (payload, id) {
   try {
     const cores = await Wrapper.CreateCoins(payload)

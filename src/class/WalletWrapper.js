@@ -48,10 +48,18 @@ export default class WalletWrapper {
     }
   }
   
-  // todo
-  async CreateCoins (config) {
+  /**
+   * Creating a core for each supported currency type
+   *
+   * @param {Array<{coin: String, type: String}>} coins
+   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV
+   * @param {string|number} coins[].type - Coin type (additional).
+   * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
+   * */
+  
+  async CreateCoins (coins) {
     try {
-      return await this.core.createCoinsCores(config)
+      return await this.core.createCoinsCores(coins)
     }
     catch (e) {
       throw new Error(e.message)
@@ -93,7 +101,7 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-  // todo docs
+
   async SyncBTC (type = 'p2pkh') {
     if (!this.sync.BTC[type]) {
       this.sync.BTC[type] = new BitcoinSync(
@@ -115,10 +123,11 @@ export default class WalletWrapper {
   
   /**
    * Getting information about Ethereum wallet from blockchain
+   * @param {number} type - Ethereum account number. By default 0
    * @returns {Promise<Object>}
    * @constructor
    */
-  // todo docs
+
   async SyncETH (type = 0) {
     if (!this.sync.ETH[type]) {
       this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].externalAddress, this.api)
@@ -138,9 +147,10 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-  // todo docs
+
   async SyncBCH () {
     const type = 'p2pkh'
+    
     if (!this.sync.BCH) {
       this.sync.BCH = new BitcoinCashSync(
         this.core.COINS.BCH[type].externalNode,
@@ -188,9 +198,11 @@ export default class WalletWrapper {
   /**
    * Creating a transaction or getting information about fee
    * @param {Object} data
-   * @param {string} data.currency - Transaction currency. 'BTC' or 'ETH'
+   * @param {string} data.currency - Transaction currency. It can be of the following types: BTC, ETH, BCH or BTCV
    * @param {string} data.method - Methods 'make' or 'calcFee'
    * @param {Object} data.tx - Input data for the transaction
+   * @param {string} data.addressType - Bitcoin address type. It can be p2pkh or p2wpkh (only for BTC)
+   * @param {number} data.account - Ethereum account number (only for ETH)
    * @returns {Promise<Object>}
    * @constructor
    */
@@ -216,7 +228,7 @@ export default class WalletWrapper {
    * Creating a bitcoin transaction
    * @param {string} method - Method 'make' for creating a transaction and method 'calcFee' for calculating fee
    * @param {Object} txData - Input data for the transaction
-   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
+   * @param {string} addressType - Bitcoin type. There may be p2pkh or p2wpkh
    * @returns {Promise<Object>} Information about the transaction or fee
    */
   
@@ -255,6 +267,7 @@ export default class WalletWrapper {
    * Creating a ethereum transaction
    * @param {string} method - Method 'make' for creating a transaction and method 'calcFee' for calculating fee
    * @param {Object} txData - Input data for the transaction
+   * @param {number} account - Ethereum account number. By default 0
    * @returns {Promise<Object>} Information about the transaction or fee
    */
   

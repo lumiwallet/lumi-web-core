@@ -92,11 +92,19 @@ export default class Core {
     this.hdkey = core.hdFromXprv(this.xprv)
   }
   
+  /**
+   * Creating a core for each supported currency type
+   *
+   * @param {Array<{coin: String, type: String}>} coins
+   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV
+   * @param {string|number} coins[].type - Coin type (additional).
+   * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
+   * */
   
-  async createCoinsCores (config = {}) {
+  async createCoinsCores (coins = {}) {
     let core = {}
     
-    for (let item of config) {
+    for (let item of coins) {
       const {coin, type} = item
       if (!core.hasOwnProperty(coin)) {
         core[coin] = {}
@@ -124,6 +132,8 @@ export default class Core {
    * Creating a core for Bitcoin.
    * At the output, we get a external and internal node,
    * derivation path and the first addresses of the external and internal cores
+   *
+   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
    * @private
    */
   
@@ -132,9 +142,11 @@ export default class Core {
       p2pkh: `m/44'/0'/0'`,
       p2wpkh: `m/84'/0'/0'`
     }
+    
     if (!(type in bitcoin_paths)) {
-      // TODO throw error
+      throw new CustomError('err_core_btc_type')
     }
+    
     const bitcoin_external_path = bitcoin_paths[type] + '/0'
     const bitcoin_internal_path = bitcoin_paths[type] + '/1'
     
@@ -160,15 +172,19 @@ export default class Core {
    * Creating a core for Ethereum.
    * At the output, we get a Ethereum node, derivation path,
    * a private and public key, and the Ethereum address
+   *
+   * @param {number} type - Ethereum account number. By default 0
    * @private
    */
   
   _generateETHcore (type = 0) {
-    if (Number.isInteger(type)) {
-      // TODO throw error
+    if (!Number.isInteger(type)) {
+      throw new CustomError('err_core_eth_account')
     }
+    
     const ethereum_path = `m/44'/60'/${ type }'/0/0`
     let item = {}
+    
     item.node = core.derive(this.hdkey, ethereum_path)
     item.privateKey = core.getEthPrivateKey(item.node)
     item.privateKeyHex = '0x' + item.privateKey.toString('hex')

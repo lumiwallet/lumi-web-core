@@ -137,9 +137,9 @@ export function derive (hd, path) {
  * @param {Object} node - HDkey node
  * @param {number} childIndex - Index of the child node
  * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
+ * @param {string} network - Custom network for different coins
  * @returns {string} Bitcoin address
  */
-// todo docs
 
 export function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = 'btc') {
   const types = ['p2pkh', 'p2wpkh']
@@ -162,9 +162,17 @@ export function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = '
   }
 }
 
+/**
+ * Getting an address by public key
+ * @param {string} key - Coin public key
+ * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
+ * @param {string} network - Custom network for different coins
+ * @returns {string} Bitcoin address
+ */
+
 export function getBtcAddressByPublicKey (key, type = 'p2pkh', network = 'btc') {
   if (!key) return ''
-  
+
   try {
     return bitcoin.payments[type]({
       pubkey: new Buffer(key, 'hex'),

@@ -102,13 +102,24 @@ export default class Wallet {
     return this.core
   }
   
-  // todo
-  async createCoins (config) {
-    if (!config) {
-      // todo throw error
+  /**
+   * Creating a core for each supported currency type
+   *
+   * @param {Array<{coin: String, type: String}>} coins
+   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV
+   * @param {string|number} coins[].type - Coin type (additional).
+   * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
+   * */
+  
+  async createCoins (coins) {
+    if (!coins || !Array.isArray(coins)) {
+      coins = [
+        {coin: 'BTC', type: 'p2pkh'},
+        {coin: 'ETH', type: 0}
+      ]
     }
     
-    return await this.wrapper.method('createCoins', config)
+    return await this.wrapper.method('createCoins', coins)
   }
   
   /**
@@ -140,28 +151,6 @@ export default class Wallet {
     
     return this.core
   }
-  
-  // /**
-  //  * The method starts synchronization of BTC and ETH
-  //  *
-  //  * @returns {Promise<Object>} An object with sync's information
-  //  * @returns {Object} sync.BTC - The BTC object contains the addresses used, the list of transactions, the unspent list, the balance in Satoshi, the latest block and the list of commissions
-  //  * @returns {Object} sync.ETH - The ETH object contains the ethereum address, the balance in wei, the list of transactions and gas price
-  //  */
-  //
-  // async syncAll () {
-  //   if (!this._apiReady) {
-  //     throw new CustomError('err_wallet_api')
-  //   }
-  //
-  //   await Promise.all([
-  //     this.syncBTC(),
-  //     this.syncETH(),
-  //     this.syncBCH()
-  //   ])
-  //
-  //   return this.sync
-  // }
   
   /**
    * The method returns node by derivation path
@@ -211,7 +200,7 @@ export default class Wallet {
   
   /**
    * The method starts synchronization of Ethereum wallet
-   *
+   * @param {number} type - Ethereum account number. By default 0
    * @returns {Promise<Object>} Returns object with Ethereum synchronization information
    * @returns {Object} sync
    * @returns {string} sync.address - Ethereum wallet address
@@ -224,7 +213,7 @@ export default class Wallet {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-  
+    
     if (!this.sync.ETH) {
       this.sync.ETH = {}
     }
@@ -250,25 +239,28 @@ export default class Wallet {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-  
-    // if (!this.sync.BCH) {
-    //   this.sync.BCH = {}
-    // }
     
     this.sync.BCH = await this.wrapper.method('sync', {coin: 'BCH'})
     
     return this.sync.BCH
   }
   
+  /**
+   * The method starts synchronization of Bitcoin Vault wallet
+   * @returns {Promise<Object>} Returns object with Bitcoin Vault synchronization information
+   * @returns {Object} sync
+   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Vault address
+   * @returns {Array} sync.transactions - The list of Bitcoin Vault transactions
+   * @returns {Array} sync.unspent - The list of unspents addresses
+   * @returns {number} sync.balance - Bitcoin Vault balance in Satoshi
+   * @returns {number} sync.latestBlock - The last block of the Bitcoin Vault blockchain
+   * @returns {Array} sync.fee - The list of fee per byte
+   */
   
   async syncBTCV () {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    
-    // if (!this.sync.BCH) {
-    //   this.sync.BCH = {}
-    // }
     
     this.sync.BTCV = await this.wrapper.method('sync', {coin: 'BTCV'})
     
@@ -329,13 +321,15 @@ export default class Wallet {
   /**
    * This method generates a list of transaction fees for the selected currency
    * @param {Object} params
-   * @param {Object} params.currency - Selected currency. BTC or ETH
-   * @param {Object} params.amount - Amount of transaction
-   * @param {Object} params.customFee - Custom fee per byte
-   * @param {Object} params.size - Transaction size. Relevant for bitcoin transactions
+   * @param {string} params.currency - Selected currency. BTC, ETH, BCH or BTCV
+   * @param {string} params.addressType - Address type. Required for BTC transaction. Supported types are p2pkh or p2wpkh
+   * @param {string} params.account - Account number. Required for ETH transaction
+   * @param {number} params.amount - Amount of transaction
+   * @param {number} params.customFee - Custom fee per byte
+   * @param {number} params.size - Transaction size. Relevant for bitcoin transactions
    * @returns {Promise<Array>} The list of transaction fees
    */
-  // todo docs
+  
   async calculateFee (params) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
@@ -358,6 +352,8 @@ export default class Wallet {
    * Wrapper for the compilation of transactions of bitcoin and ether
    * @param {Object} data
    * @param {string} data.currency - Transaction currency
+   * @param {string} data.addressType - Address type. Required for BTC transaction. Supported types are p2pkh or p2wpkh
+   * @param {string} data.account - Account number. Required for ETH transaction
    * @param {Object} data.tx
    * @param {string} data.tx.addressTo - Recipient address
    * @param {number} data.tx.amount - Transaction amount
@@ -366,7 +362,7 @@ export default class Wallet {
    * @returns {string} hash - Transaction hash
    * @returns {string} tx - Raw bitcoin or ethereum transaction
    */
-  // todo docs
+  
   async makeTransaction (data) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
@@ -411,18 +407,6 @@ export default class Wallet {
   
   get Core () {
     return this.core
-  }
-  
-  get getSyncBTC () {
-    return this.sync.BTC
-  }
-  
-  get getSyncETH () {
-    return this.sync.ETH
-  }
-  
-  get getSyncBCH () {
-    return this.sync.BCH
   }
   
   get getApiState () {
