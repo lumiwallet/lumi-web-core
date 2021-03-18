@@ -178,9 +178,9 @@ export default class BitcoinCashSync {
       try {
         let res = await this.getMultiAddressRequest(addresses)
         
-        if (!res.length) return
-        
-        res.forEach((addr, i) => {
+        if (!res.length || res.error) return
+
+        res.forEach((addr) => {
           let item = {}
           
           if (addr.txs.length) {

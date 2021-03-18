@@ -32,10 +32,6 @@ export default class BitcoinVaultSync {
       empty: {},
       list: {}
     }
-    // this.deriveAddress = {
-    //   internal: {},
-    //   external: {}
-    // }
     this.transactions = {
       all: [],
       unique: []
@@ -75,30 +71,7 @@ export default class BitcoinVaultSync {
    */
   
   async getAddresses () {
-    if (!this.defaultAddresses.external && !this.defaultAddresses.internal) {
-      // const nodeData = [
-      //   {
-      //     node: this.externalNode,
-      //     type: 'external'
-      //   },
-      //   {
-      //     node: this.internalNode,
-      //     type: 'internal'
-      //   }
-      // ]
-      //
-      // const pArray = nodeData.map(async item => {
-      //   return await this.getAddressesByNode(
-      //     item.node,
-      //     item.type
-      //   )
-      // })
-      //
-      // const addresses = await Promise.all(pArray)
-      //
-      // this.addresses.external = addresses[0]
-      // this.addresses.internal = addresses[1]
-    } else {
+    if (this.defaultAddresses.external && this.defaultAddresses.internal) {
       this.addresses.external = [
         {
           address: this.defaultAddresses.external,
@@ -155,15 +128,16 @@ export default class BitcoinVaultSync {
 
     for (let item of history) {
       let {txs} = item
-   
+      
       if (txs.length) {
-        this.transactions.all = txs.map(tx => {
-          
+        let formatted_txs = txs.map(tx => {
           return {
             ...tx.rawData,
             height: tx.height
           }
         })
+        
+        this.transactions.all.push(...formatted_txs)
       }
     }
     
