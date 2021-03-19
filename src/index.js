@@ -54,8 +54,9 @@ export default class Wallet {
    * @returns {string} core.mnemonic - Imported mnemonic
    * @returns {string} core.xprv - xprv key
    * @returns {string} core.from - A import type
-   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address
-   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address
+   * @returns {Object} core.hdkey - A hierarchical deterministic keys
+   * @returns {Uint8Array} core.seed - Seed
+   * @returns {string} core.seedInHex - Seed in hex format
    */
   
   async createNew (count = 12) {
@@ -80,8 +81,9 @@ export default class Wallet {
    * @returns {string} core.mnemonic - Imported mnemonic
    * @returns {string} core.xprv - xprv key
    * @returns {string} core.from - A import type
-   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address
-   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address
+   * @returns {Object} core.hdkey - A hierarchical deterministic keys
+   * @returns {Uint8Array} core.seed - Seed
+   * @returns {string} core.seedInHex - Seed in hex format
    */
   
   async createByMnemonic (mnemonic = '') {
@@ -103,26 +105,6 @@ export default class Wallet {
   }
   
   /**
-   * Creating a core for each supported currency type
-   *
-   * @param {Array<{coin: String, type: String}>} coins
-   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV
-   * @param {string|number} coins[].type - Coin type (additional).
-   * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
-   * */
-  
-  async createCoins (coins) {
-    if (!coins || !Array.isArray(coins)) {
-      coins = [
-        {coin: 'BTC', type: 'p2pkh'},
-        {coin: 'ETH', type: 0}
-      ]
-    }
-    
-    return await this.wrapper.method('createCoins', coins)
-  }
-  
-  /**
    * Creating a wallet by xprv key
    *
    * @param {string} key - BIP32 Root Key
@@ -130,8 +112,9 @@ export default class Wallet {
    * @returns {string} core.mnemonic - Imported mnemonic
    * @returns {string} core.xprv - xprv key
    * @returns {string} core.from - A import type
-   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address
-   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address
+   * @returns {Object} core.hdkey - A hierarchical deterministic keys
+   * @returns {Uint8Array} core.seed - Seed
+   * @returns {string} core.seedInHex - Seed in hex format
    */
   
   async createByKey (key = '') {
@@ -153,14 +136,38 @@ export default class Wallet {
   }
   
   /**
+   * Creating a core for each supported currency type
+   *
+   * @param {Array<{coin: String, type: String}>} coins
+   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV
+   * @param {string|number} coins[].type - Coin type (additional). For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
+   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address
+   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address
+   * */
+  
+  async createCoins (coins) {
+    if (!coins || !Array.isArray(coins)) {
+      coins = [
+        {coin: 'BTC', type: 'p2pkh'},
+        {coin: 'ETH', type: 0}
+      ]
+    }
+    
+    return await this.wrapper.method('createCoins', coins)
+  }
+  
+  /**
    * The method returns node by derivation path
    *
-   * @returns {Promise<Object>} Returns object with node information. Every child node contains the following parameters:
-   * derivation path, private key in WIF format, public key in hex, btc and eth address
-   * @returns {Object} data
-   * @returns {number} sync.from - Top of the derivation range
-   * @returns {number} sync.to - End of the derivation range
-   * @returns {Object} sync.path - Derivation path. It is contains required parameters (purpose, coin, account) and optional (change, index)
+   * @param {Object} data
+   * @param {number} data.from - Top of the derivation range
+   * @param {number} data.to - End of the derivation range
+   * @param {string} data.path - Derivation path
+   * @param {Array} data.coins - Array of coins for generating addresses
+   * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}} Returns object with node information
+   * @returns {Object} node - Contains privateExtendedKey and publicExtendedKey
+   * @returns {Array} list - Array of child nodes. Every child node contains the following parameters:
+   * derivation path, publick key, private key in WIF format and addresses if a list of coins was sent
    */
   
   async getChildNodes (data) {

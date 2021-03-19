@@ -367,12 +367,9 @@ export function makeRawBtcvTx (data = {}) {
     const {inputs, outputs} = data
     const psbt = new bitcoin.Psbt({ network: networks.btcv })
     let keyPairs = []
-    // input
-    // hash, index, value
     psbt.setVersion(1)
     
     inputs.forEach(input => {
-      // const isSegwit = input.address.substring(0, 3) === 'bc1'
       const keyPair = bitcoin.ECPair.fromWIF(input.key, networks.btcv)
       
       keyPairs.push(keyPair)

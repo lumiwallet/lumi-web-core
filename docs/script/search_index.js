@@ -6,21 +6,15 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "lumi-web-core/src/class/btc/bitcoinsync.js~bitcoinsync",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html",
-    "<span>BitcoinSync</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BTC/BitcoinSync.js</span>",
-    "class"
-  ],
-  [
     "lumi-web-core/src/class/btc/bitcointx.js~bitcointx",
     "class/src/class/BTC/BitcoinTx.js~BitcoinTx.html",
     "<span>BitcoinTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BTC/BitcoinTx.js</span>",
     "class"
   ],
   [
-    "lumi-web-core/src/class/core.js~core",
-    "class/src/class/Core.js~Core.html",
-    "<span>Core</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/Core.js</span>",
+    "lumi-web-core/src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html",
+    "<span>BitcoinVaultTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BTCV/BitcoinVaultTx.js</span>",
     "class"
   ],
   [
@@ -81,6 +75,12 @@ window.esdocSearchIndex = [
     "lumi-web-core/src/helpers/corehelper.js~getbtcaddress",
     "function/index.html#static-function-getBtcAddress",
     "<span>getBtcAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/helpers/corehelper.js~getbtcaddressbypublickey",
+    "function/index.html#static-function-getBtcAddressByPublicKey",
+    "<span>getBtcAddressByPublicKey</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
   ],
   [
@@ -150,6 +150,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "lumi-web-core/src/helpers/corehelper.js~makerawbtcvtx",
+    "function/index.html#static-function-makeRawBtcvTx",
+    "<span>makeRawBtcvTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~makerawethtx",
     "function/index.html#static-function-makeRawEthTx",
     "<span>makeRawEthTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
@@ -166,6 +172,12 @@ window.esdocSearchIndex = [
     "function/index.html#static-function-mnemonicToSeed",
     "<span>mnemonicToSeed</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
+  ],
+  [
+    "lumi-web-core/src/helpers/networks.js~networks",
+    "variable/index.html#static-variable-networks",
+    "<span>networks</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/networks.js</span>",
+    "variable"
   ],
   [
     "lumi-web-core/src/helpers/corehelper.js~privatekeytowif",
@@ -582,174 +594,6 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/class/btc/bitcoinsync.js",
-    "file/src/class/BTC/BitcoinSync.js.html",
-    "src/class/BTC/BitcoinSync.js",
-    "file"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#data",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-get-DATA",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#DATA",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#start",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-Start",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#Start",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#_getarrayofaddresses",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-_getArrayOfAddresses",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#_getArrayOfAddresses",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#additionalcheckaddress",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-additionalCheckAddress",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#additionalCheckAddress",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#addresses",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-addresses",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#addresses",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#api",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-api",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#api",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#balance",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-balance",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#balance",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#checked200",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-checked200",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#checked200",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#constructor",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-constructor-constructor",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#constructor",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#deriveaddress",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-deriveAddress",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#deriveAddress",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#externalnode",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-externalNode",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#externalNode",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#fee",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-fee",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#fee",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getaddresses",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getAddresses",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getAddresses",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getaddressesbynode",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getAddressesByNode",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getAddressesByNode",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getbalance",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getBalance",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getBalance",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getfeesrequest",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getFeesRequest",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getFeesRequest",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getmultiaddressrequest",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getMultiAddressRequest",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getMultiAddressRequest",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getprivatekey",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getPrivateKey",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getPrivateKey",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getrawtxrequest",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getRawTxRequest",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getRawTxRequest",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getunspent",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getUnspent",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getUnspent",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#getunspentoutputsrequest",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-getUnspentOutputsRequest",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#getUnspentOutputsRequest",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#internalnode",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-internalNode",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#internalNode",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#latestblock",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-latestBlock",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#latestBlock",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#processtransactions",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-method-processTransactions",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#processTransactions",
-    "method"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#request",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-request",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#request",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#transactions",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-transactions",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#transactions",
-    "member"
-  ],
-  [
-    "src/class/btc/bitcoinsync.js~bitcoinsync#unspent",
-    "class/src/class/BTC/BitcoinSync.js~BitcoinSync.html#instance-member-unspent",
-    "src/class/BTC/BitcoinSync.js~BitcoinSync#unspent",
-    "member"
-  ],
-  [
     "src/class/btc/bitcointx.js",
     "file/src/class/BTC/BitcoinTx.js.html",
     "src/class/BTC/BitcoinTx.js",
@@ -816,6 +660,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/btc/bitcointx.js~bitcointx#getinputswithtxinfo",
+    "class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-method-getInputsWithTxInfo",
+    "src/class/BTC/BitcoinTx.js~BitcoinTx#getInputsWithTxInfo",
+    "method"
+  ],
+  [
+    "src/class/btc/bitcointx.js~bitcointx#getrawtxhex",
+    "class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-method-getRawTxHex",
+    "src/class/BTC/BitcoinTx.js~BitcoinTx#getRawTxHex",
+    "method"
+  ],
+  [
     "src/class/btc/bitcointx.js~bitcointx#internaladdress",
     "class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-member-internalAddress",
     "src/class/BTC/BitcoinTx.js~BitcoinTx#internalAddress",
@@ -828,141 +684,117 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/btc/bitcointx.js~bitcointx#nodes",
+    "class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-member-nodes",
+    "src/class/BTC/BitcoinTx.js~BitcoinTx#nodes",
+    "member"
+  ],
+  [
+    "src/class/btc/bitcointx.js~bitcointx#request",
+    "class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-member-request",
+    "src/class/BTC/BitcoinTx.js~BitcoinTx#request",
+    "member"
+  ],
+  [
+    "src/class/btc/bitcointx.js~bitcointx#type",
+    "class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-member-type",
+    "src/class/BTC/BitcoinTx.js~BitcoinTx#type",
+    "member"
+  ],
+  [
     "src/class/btc/bitcointx.js~bitcointx#unspent",
     "class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-member-unspent",
     "src/class/BTC/BitcoinTx.js~BitcoinTx#unspent",
     "member"
   ],
   [
-    "src/class/core.js",
-    "file/src/class/Core.js.html",
-    "src/class/Core.js",
+    "src/class/btcv/bitcoinvaulttx.js",
+    "file/src/class/BTCV/BitcoinVaultTx.js.html",
+    "src/class/BTCV/BitcoinVaultTx.js",
     "file"
   ],
   [
-    "src/class/core.js~core#bch",
-    "class/src/class/Core.js~Core.html#instance-member-BCH",
-    "src/class/Core.js~Core#BCH",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#amount",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-amount",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#amount",
     "member"
   ],
   [
-    "src/class/core.js~core#btc",
-    "class/src/class/Core.js~Core.html#instance-member-BTC",
-    "src/class/Core.js~Core#BTC",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#balance",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-balance",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#balance",
     "member"
   ],
   [
-    "src/class/core.js~core#data",
-    "class/src/class/Core.js~Core.html#instance-get-DATA",
-    "src/class/Core.js~Core#DATA",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#calcemptyfee",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-method-calcEmptyFee",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#calcEmptyFee",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#calcfee",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-method-calcFee",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#calcFee",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#constructor",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-constructor-constructor",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#constructor",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#customfee",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-customFee",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#customFee",
     "member"
   ],
   [
-    "src/class/core.js~core#eth",
-    "class/src/class/Core.js~Core.html#instance-member-ETH",
-    "src/class/Core.js~Core#ETH",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#dust",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-dust",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#dust",
     "member"
   ],
   [
-    "src/class/core.js~core#_generatebchcore",
-    "class/src/class/Core.js~Core.html#instance-method-_generateBCHcore",
-    "src/class/Core.js~Core#_generateBCHcore",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#_generatebtccore",
-    "class/src/class/Core.js~Core.html#instance-method-_generateBTCcore",
-    "src/class/Core.js~Core#_generateBTCcore",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#_generateethcore",
-    "class/src/class/Core.js~Core.html#instance-method-_generateETHcore",
-    "src/class/Core.js~Core#_generateETHcore",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#_generatenewmnemonic",
-    "class/src/class/Core.js~Core.html#instance-method-_generateNewMnemonic",
-    "src/class/Core.js~Core#_generateNewMnemonic",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#_getentropylength",
-    "class/src/class/Core.js~Core.html#instance-method-_getEntropyLength",
-    "src/class/Core.js~Core#_getEntropyLength",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#_importbykey",
-    "class/src/class/Core.js~Core.html#instance-method-_importByKey",
-    "src/class/Core.js~Core#_importByKey",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#_importbymnemonic",
-    "class/src/class/Core.js~Core.html#instance-method-_importByMnemonic",
-    "src/class/Core.js~Core#_importByMnemonic",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#checkmnemonic",
-    "class/src/class/Core.js~Core.html#instance-method-checkMnemonic",
-    "src/class/Core.js~Core#checkMnemonic",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#constructor",
-    "class/src/class/Core.js~Core.html#instance-constructor-constructor",
-    "src/class/Core.js~Core#constructor",
-    "method"
-  ],
-  [
-    "src/class/core.js~core#count",
-    "class/src/class/Core.js~Core.html#instance-member-count",
-    "src/class/Core.js~Core#count",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#fee",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-fee",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#fee",
     "member"
   ],
   [
-    "src/class/core.js~core#from",
-    "class/src/class/Core.js~Core.html#instance-member-from",
-    "src/class/Core.js~Core#from",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#feelist",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-feeList",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#feeList",
     "member"
   ],
   [
-    "src/class/core.js~core#generatewallet",
-    "class/src/class/Core.js~Core.html#instance-method-generateWallet",
-    "src/class/Core.js~Core#generateWallet",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#getinputs",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-method-getInputs",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#getInputs",
     "method"
   ],
   [
-    "src/class/core.js~core#getchildnodes",
-    "class/src/class/Core.js~Core.html#instance-method-getChildNodes",
-    "src/class/Core.js~Core#getChildNodes",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#internaladdress",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-internalAddress",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#internalAddress",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#make",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-method-make",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#make",
     "method"
   ],
   [
-    "src/class/core.js~core#hdkey",
-    "class/src/class/Core.js~Core.html#instance-member-hdkey",
-    "src/class/Core.js~Core#hdkey",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#nodes",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-nodes",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#nodes",
     "member"
   ],
   [
-    "src/class/core.js~core#mnemonic",
-    "class/src/class/Core.js~Core.html#instance-member-mnemonic",
-    "src/class/Core.js~Core#mnemonic",
-    "member"
-  ],
-  [
-    "src/class/core.js~core#seed",
-    "class/src/class/Core.js~Core.html#instance-member-seed",
-    "src/class/Core.js~Core#seed",
-    "member"
-  ],
-  [
-    "src/class/core.js~core#xprv",
-    "class/src/class/Core.js~Core.html#instance-member-xprv",
-    "src/class/Core.js~Core#xprv",
+    "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#unspent",
+    "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-unspent",
+    "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#unspent",
     "member"
   ],
   [
@@ -1122,6 +954,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#createcoins",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-CreateCoins",
+    "src/class/WalletWrapper.js~WalletWrapper#CreateCoins",
+    "method"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#sync",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-Sync",
     "src/class/WalletWrapper.js~WalletWrapper#Sync",
@@ -1137,6 +975,12 @@ window.esdocSearchIndex = [
     "src/class/walletwrapper.js~walletwrapper#syncbtc",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncBTC",
     "src/class/WalletWrapper.js~WalletWrapper#SyncBTC",
+    "method"
+  ],
+  [
+    "src/class/walletwrapper.js~walletwrapper#syncbtcv",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncBTCV",
+    "src/class/WalletWrapper.js~WalletWrapper#SyncBTCV",
     "method"
   ],
   [
@@ -1179,6 +1023,12 @@ window.esdocSearchIndex = [
     "src/class/walletwrapper.js~walletwrapper#createbtctx",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createBTCTx",
     "src/class/WalletWrapper.js~WalletWrapper#createBTCTx",
+    "method"
+  ],
+  [
+    "src/class/walletwrapper.js~walletwrapper#createbtcvtx",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createBTCVTx",
+    "src/class/WalletWrapper.js~WalletWrapper#createBTCVTx",
     "method"
   ],
   [
@@ -1248,6 +1098,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/helpers/networks.js",
+    "file/src/helpers/networks.js.html",
+    "src/helpers/networks.js",
+    "file"
+  ],
+  [
     "src/helpers/requesthandleerrors.js",
     "file/src/helpers/requestHandleErrors.js.html",
     "src/helpers/requestHandleErrors.js",
@@ -1314,6 +1170,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/index.js~wallet#createcoins",
+    "class/src/index.js~Wallet.html#instance-method-createCoins",
+    "src/index.js~Wallet#createCoins",
+    "method"
+  ],
+  [
     "src/index.js~wallet#createnew",
     "class/src/index.js~Wallet.html#instance-method-createNew",
     "src/index.js~Wallet#createNew",
@@ -1330,18 +1192,6 @@ window.esdocSearchIndex = [
     "class/src/index.js~Wallet.html#instance-method-getChildNodes",
     "src/index.js~Wallet#getChildNodes",
     "method"
-  ],
-  [
-    "src/index.js~wallet#getsyncbtc",
-    "class/src/index.js~Wallet.html#instance-get-getSyncBTC",
-    "src/index.js~Wallet#getSyncBTC",
-    "member"
-  ],
-  [
-    "src/index.js~wallet#getsynceth",
-    "class/src/index.js~Wallet.html#instance-get-getSyncETH",
-    "src/index.js~Wallet#getSyncETH",
-    "member"
   ],
   [
     "src/index.js~wallet#makerawbchtx",
@@ -1380,12 +1230,6 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/index.js~wallet#syncall",
-    "class/src/index.js~Wallet.html#instance-method-syncAll",
-    "src/index.js~Wallet#syncAll",
-    "method"
-  ],
-  [
     "src/index.js~wallet#syncbch",
     "class/src/index.js~Wallet.html#instance-method-syncBCH",
     "src/index.js~Wallet#syncBCH",
@@ -1395,6 +1239,12 @@ window.esdocSearchIndex = [
     "src/index.js~wallet#syncbtc",
     "class/src/index.js~Wallet.html#instance-method-syncBTC",
     "src/index.js~Wallet#syncBTC",
+    "method"
+  ],
+  [
+    "src/index.js~wallet#syncbtcv",
+    "class/src/index.js~Wallet.html#instance-method-syncBTCV",
+    "src/index.js~Wallet#syncBTCV",
     "method"
   ],
   [

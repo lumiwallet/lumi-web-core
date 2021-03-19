@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">src/helpers/converters.js | lumi-web-core</title>
+  <title data-ice="title">src/helpers/networks.js | lumi-web-core</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -66,47 +66,29 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/helpers/converters.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
- * Bitcoin and Ethereum converter
- */
-
-export default {
-  /**
-   * Convert Satoshi to Bitcoin
-   * @param {number} sat
-   * @returns {number} btc
-   */
-  sat_to_btc (sat) {
-    if (!+sat) return 0
-    return parseFloat((+sat / Math.pow(10, 8)).toFixed(8))
+<div class="content" data-ice="content"><h1 data-ice="title">src/helpers/networks.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">export const networks = {
+  btc: {
+    messagePrefix: &apos;\x18Bitcoin Signed Message:\n&apos;,
+    bech32: &apos;bc&apos;,
+    bip32: {
+      public: 0x0488b21e,
+      private: 0x0488ade4,
+    },
+    pubKeyHash: 0x00,
+    scriptHash: 0x05,
+    wif: 0x80,
   },
-  /**
-   * Convert Bitcoin to Satoshi
-   * @param {number} btc
-   * @returns {number} sat
-   */
-  btc_to_sat (btc) {
-    if (!+btc) return 0
-    return Math.round(+btc * Math.pow(10, 8))
-  },
-  /**
-   * Convert WEI to Ethereum
-   * @param {number} wei
-   * @returns {number} eth
-   */
-  wei_to_eth (wei) {
-    if (!+wei) return 0
-    return parseFloat(+wei / Math.pow(10, 18).toFixed(8))
-  },
-  /**
-   * Convert Ethereum to WEI
-   * @param {number} eth
-   * @returns {number} wei
-   */
-  eth_to_wei (eth) {
-    if (!+eth) return 0
-    return Math.round(+eth * Math.pow(10, 18))
+  btcv: {
+    messagePrefix: &apos;\x18Bitcoin Signed Message:\n&apos;,
+    bech32: &apos;royale&apos;,
+    bip32: {
+      public: 0x0488b21e,
+      private: 0x0488ade4
+    },
+    pubKeyHash: 0x4e,
+    scriptHash: 0x3c,
+    wif: 0x80
   }
 }
 </code></pre>

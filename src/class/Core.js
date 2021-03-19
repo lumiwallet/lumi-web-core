@@ -259,8 +259,11 @@ export default class Core {
    * @param {number} data.from - Top of the derivation range
    * @param {number} data.to - End of the derivation range
    * @param {string} data.path - Derivation path
-   * @param {Array} data.coins - Array of coins for generating addresses. Includes the name (e.g. BTC) and type (e.g. p2pkh or account number) parameters
-   * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}}
+   * @param {Array} data.coins - Array of coins for generating addresses. Includes the coin param (e.g. BTC) and the type param (e.g. p2pkh or account number) parameters
+   * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}} Returns object with node information
+   * @returns {Object} node - Contains privateExtendedKey and publicExtendedKey
+   * @returns {Array} list - Array of child nodes. Every child node contains the following parameters:
+   * derivation path, publick key, private key in WIF format and addresses if a list of coins was sent
    */
 
   getChildNodes (data = {}) {
