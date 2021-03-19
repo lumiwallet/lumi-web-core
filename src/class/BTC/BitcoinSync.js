@@ -38,7 +38,7 @@ export default class BitcoinSync {
       unique: []
     }
     this.fee = []
-    this.request = new Request(this.api.bitcoin)
+    this.request = new Request(this.api.btc)
     this.type = type || 'p2pkh'
   }
   
@@ -84,7 +84,6 @@ export default class BitcoinSync {
     })
     
     const addresses = await Promise.all(pArray)
-    
     this.addresses.external = addresses[0]
     this.addresses.internal = addresses[1]
     this.addresses.empty = {
@@ -440,7 +439,7 @@ export default class BitcoinSync {
   
   async getFeesRequest () {
     try {
-      const res = await fetch(this.api.bitcoinFee)
+      const res = await fetch(this.api.btcFee)
       const resJson = await res.json()
       this.fee = resJson.sort((a, b) => b.feePerByte - a.feePerByte)
     }

@@ -42,7 +42,7 @@ export default class BitcoinTx {
     this.nodes = data.nodes || {}
     this.feeList = []
     this.request = new Request(data.api)
-    this.type = data.type || 'p2pkh'
+    this.type = data.type ? data.type.toLowerCase() : 'p2pkh'
   }
   
   /**

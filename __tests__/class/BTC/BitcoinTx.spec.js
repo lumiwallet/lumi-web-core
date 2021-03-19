@@ -99,7 +99,7 @@ describe('BitcoinTx class', () => {
     expect(fees[2][2].BTC + available_amounts[2]).toBe(mock.test_balance_btc) // for 2 sat pre byte
   })
   
-  test('it should make transaction in the amount of 0.00001 BTC on 15xQAQWzpSf8Qjq4UvvtpSXk88KnCGixEa address', async () => {
+  test('it should make P2PKH transaction in the amount of 0.00001 BTC on 15xQAQWzpSf8Qjq4UvvtpSXk88KnCGixEa address', async () => {
     const data = mock.getData({amount: 0.00001})
     
     const Bitcoin = new BitcoinTx(data)

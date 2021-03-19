@@ -42,7 +42,8 @@ export default class BitcoinCashSync {
         level: 'Regular'
       }
     ]
-    this.request = new Request(this.api.bitcoinCash)
+    
+    this.request = new Request(this.api.bch)
   }
   
   /**
@@ -116,7 +117,7 @@ export default class BitcoinCashSync {
       if (this.deriveAddress[type].hasOwnProperty(i)) {
         address = this.deriveAddress[type][i]
       } else {
-        address = getBtcAddress(node, i)
+        address = getBtcAddress(node, i, 'p2pkh')
       }
       addresses.push(address)
     }
@@ -177,9 +178,9 @@ export default class BitcoinCashSync {
       try {
         let res = await this.getMultiAddressRequest(addresses)
         
-        if (!res.length) return
-        
-        res.forEach((addr, i) => {
+        if (!res.length || res.error) return
+
+        res.forEach((addr) => {
           let item = {}
           
           if (addr.txs.length) {

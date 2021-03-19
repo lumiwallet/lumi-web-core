@@ -4,47 +4,51 @@
     "filePath": "src/index.js",
     "lines": [
       {
-        "lineNumber": 322,
+        "lineNumber": 388,
         "line": "  /**"
       },
       {
-        "lineNumber": 323,
+        "lineNumber": 389,
         "line": "   * Sets the API Endpoint"
       },
       {
-        "lineNumber": 324,
+        "lineNumber": 390,
         "line": "   *"
       },
       {
-        "lineNumber": 325,
+        "lineNumber": 391,
         "line": "   * @type {Object} api"
       },
       {
-        "lineNumber": 326,
-        "line": "   * @param {string} api.bitcoin - Url address of bitcoin endpoint"
+        "lineNumber": 392,
+        "line": "   * @param {string} api.btc - Url address of bitcoin endpoint"
       },
       {
-        "lineNumber": 327,
-        "line": "   * @param {string} api.bitcoinFee - Url address of bitcoin fee endpoint"
+        "lineNumber": 393,
+        "line": "   * @param {string} api.btcFee - Url address of bitcoin fee endpoint"
       },
       {
-        "lineNumber": 328,
-        "line": "   * @param {string} api.ethereum - Url address of ethereum endpoint"
+        "lineNumber": 394,
+        "line": "   * @param {string} api.eth - Url address of ethereum endpoint"
       },
       {
-        "lineNumber": 329,
-        "line": "   * @param {string} api.bitcoinCash - Url address of bitcoin cash endpoint"
+        "lineNumber": 395,
+        "line": "   * @param {string} api.bch - Url address of bitcoin cash endpoint"
       },
       {
-        "lineNumber": 330,
+        "lineNumber": 396,
+        "line": "   * @param {string} api.btcv - Url address of bitcoin vault endpoint"
+      },
+      {
+        "lineNumber": 397,
         "line": "   */"
       },
       {
-        "lineNumber": 331,
+        "lineNumber": 398,
         "line": "  "
       },
       {
-        "lineNumber": 332,
+        "lineNumber": 399,
         "line": "  setApiEndpoint (api) {"
       }
     ],

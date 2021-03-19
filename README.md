@@ -4,7 +4,7 @@
 ![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)
 
 # LumiCore
-The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum and Bitcoin Cash. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
+The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash and Bitcoin Vault. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
 
 > Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).
 
@@ -32,7 +32,7 @@ import Wallet from 'lumi-web-core'
 
 const WALLET = new Wallet()
 ```
-You can create a new wallet by calling the method createNew(count). Count is the number of words for the new mnemonic.
+You can create a new wallet by calling the method `createNew(count)`. Count is the number of words for the new mnemonic.
 By default it is 12. It can be also  12, 15, 18, 21, and 24 words.
 ``` js
 // Create a new wallet
@@ -56,33 +56,84 @@ Example of the returned core:
     from: "mnemonic",
     hdkey: Object,
     seed: Uint8Array(64),
-    seedInHex: "1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39",
+    seedInHex: "1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39"
+}
+```
+After that, call the `createCoinsCores()` method to create cores for specific currencies.
+``` js
+const coins = [
+    {coin: 'BTC', type: 'p2pkh'},
+    {coin: 'BTC', type: 'p2wpkh'},
+    {coin: 'ETH', type: 0},
+    {coin: 'BCH'},
+    {coin: 'BTCV'}
+]
+const CORES = await WALLET.createCoins(coins)
+=> {
     BTC: {
-        address: "1MS1SjQ1...vrLhajoGLfiV"
-        externalNode: Object,
-        internalNode: Object,
+        p2pkh: {
+            externalNode: Object,
+            internalNode: Object,
+            externalAddress: "1PtMtCbtgb...bivNJU5Ww3bvF3",
+            internalAddress: "1LvXQnwCeq...GyfMNtxpyEd3Hx",
+            dp: {external: "m/44'/0'/0'/0", internal: "m/44'/0'/0'/1"}
+        },
+        p2wpkh: {
+            externalNode: Object,
+            internalNode: Object,
+            externalAddress: "bc1qyluu9yjfw6...xjfjy0ht8hszx",
+            internalAddress: "bc1qnk6r09q97m...w9vme4zjvpct0",
+            dp: {external: "m/84'/0'/0'/0", internal: "m/84'/0'/0'/1"}
+        }
     },
     ETH: {
-        address: "0x06c019a17...aa6d949c947a02"
-        node: Object,
-        privateKey: Uint8Array(32),
-        publicKey: Uint8Array(64),
+        0: {
+            dp: "m/44'/60'/0'/0/0",
+            externalAddress: "0xcf06fa556d8ad...cc285e2b7bdf58c58",
+            node: Object,
+            privateKey: Uint8Array(32),
+            privateKeyHex: "0xb1f8f5df78d5a00d...6b222e54ee8abbfe6af",
+            publicKey: Uint8Array(64),
+        }
+    },
+    BTCV: {
+        p2wpkh: {
+            dp: {external: "m/84'/440'/0'/0", internal: "m/84'/440'/0'/1"},
+            externalAddress: "royale1q2cy79nu...am6t5svnvt9d62",
+            externalNode: Object,
+            internalAddress: "royale1qe9286wc4...tlqxj9sz0t7m9dg5q",
+            internalNode: Object
+        }
     },
     BCH: {
-        address: "1657JTP...5pFAA75HrD",
-        externalNode:Object
-        internalNode: Object
+        p2pkh: {
+            dp: {external: "m/44'/145'/0'/0", internal: "m/44'/145'/0'/1"},
+            externalAddress: "1Nbi1Roep9...SeJKwQTdFESB",
+            externalNode: Object,
+            internalAddress: "1135Eji7Yoop...rKJmGFi2RyX",
+            internalNode: Object
+        }
     }
 }
 ```
+For BTC and ETH coins, the type parameter is required.
+For BTC, it can take the values p2pkh or p2wpkh (p2pkh by default).
+For ETH, the type parameter is set to the account number (0 by default).
 
 ### Derivation
 You can get information about a child node using the method `getChildNodes`.
 ``` js
 const data = {
-  path: 'm/44'/0'/0'/0',
-  from: 0,
-  to: 20
+    path: "m/44'/0'/0'/0",
+    from: 0,
+    to: 20,
+    coins: [
+        {coin: 'BTC', type: 'p2pkh'},
+        {coin: 'BTC', type: 'p2wpkh'},
+        {coin: 'ETH', type: 0},
+        {coin: 'BCH'},
+        {coin: 'BTCV'}
+    ]
 }
 
 const info = await WALLET.getChildNodes(data)
@@ -96,18 +147,20 @@ const info = await WALLET.getChildNodes(data)
             path: "m/44'/0'/0'/0/0",
             privateKey: "KzwMNQ93Dt96Qg...mRpaBCmEXGH2Lpgr2dGZsV",
             publicKey: "023b693fa7fa22e505...4cc450a463c024ab1e3ec526ba",
-            btcAddress: "1aVZBbZW...U6WvQF6w36H7",
-            ethAddress: "0xcd1594ae...a74ceb13d889d",
-            bchAddress: "bitcoincash:qzwpal7...c3djs884x56y9qptzl"
+            bchAddress: "bitcoincash:qqtne...l889v5ee6nawwvvx6t7mvkp",
+            btcvAddress: "royale1qzu70e44r...8eeet9xww5ltnnr6akytm",
+            ethAddress: "0xdd6f3cc0ed5f9...b09481090536e446ebd3",
+            p2pkhAddress: "137sbugaaqw3H...LZzNX3nTk1LDgCYd",
+            p2wpkhAddress: "bc1qzu70e44r...eet9xww5ltnnrm5mjxk"
         },
         ...
     ]
 }
-
 ```
 `path` this is a string with a derivation path. The path should begin with `m/44'`.
 `from` is top of the range derivation
 `to` is end of the range derivation
+`coins` is a list of currencies for which you need to generate addresses
 
 ### Creating a BTC transaction
 Creation of P2PKH or P2WPKH transactions is supported.
@@ -120,7 +173,6 @@ const data = {
             value: 10000,
             tx_output_n: 0,
             tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000', // Raw transaction (only for P2PKH transactions)
-            script: "76a91473a2...07d0bff2aee345ac88ac",
             tx_hash_big_endian: "de06df091735...afd145eecfcd5649634e1d5221",
             key: 'L3YFJ4cBDYhZ...bzqgSUxLjTAorR5Kc47mP6x1D'
         },
@@ -129,21 +181,20 @@ const data = {
             value: 10000,
             tx_output_n: 0,
             tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000', // Raw transaction (only for P2PKH transactions)
-            script: "76a91473a2...7d0bff2aee345ac88ac",
             tx_hash_big_endian: "47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9",
             key: 'L3YFJ4cBDYhZ...xLjTAorR5Kc4AorR5K7mP6x1D'
         }
-      ],
-      outputs: [
+    ],
+    outputs: [
         {
-          address: '1NuABwx...5V5tiXpshAWb8W',
-          value: 15000
-        }
+            address: '1NuABwx...5V5tiXpshAWb8W',
+            value: 15000
+        },
         {
-          address: '1PbQ36GvG...nimPD7gHPQFk3Nu',
-          value: 5000
+            address: '1PbQ36GvG...nimPD7gHPQFk3Nu',
+            value: 5000
         }
-      ]
+    ]
 }
 
 const btc_tx = await WALLET.makeRawBtcTx(data)
@@ -160,12 +211,12 @@ btc_tx => {
 To make a Ethereum transaction you need to fill in the following params:
 ``` js
 const data = {
-  nonce: 280,
-  amount: 100000000000000,
-  address: '0x1e8d99d2278...d89983e2920df33b485',
-  gasPrice: 19950000002,
-  gasLimit: 21000,
-  privateKey: '0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313'
+    nonce: 280,
+    amount: 100000000000000,
+    address: '0x1e8d99d2278...d89983e2920df33b485',
+    gasPrice: 19950000002,
+    gasLimit: 21000,
+    privateKey: '0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313'
 }
 
 const eth_tx = await WALLET.makeRawEthTx(data)
@@ -192,8 +243,8 @@ const data = {
             txId: "0488b0c6678e527...5307ce7ddaa8cbc986e616",
             key: "KxMvzeEuGyrBRo...mfR9uzU6bAuc6kyXTmN8h"
         }
-      ],
-      outputs: [
+    ],
+    outputs: [
         {
             address: "bitcoincash:qzdss...rfpnawutm9vlrh7wdcj",
             satoshis: 100000
@@ -202,7 +253,7 @@ const data = {
             address: "bitcoincash:qr30f7...23hykq2fu3axuxec3g6c6",
             satoshis: 504231
         }
-      ]
+    ]
 }
 
 const bch_tx = await WALLET.makeRawBchTx(data)
@@ -210,13 +261,47 @@ const bch_tx = await WALLET.makeRawBchTx(data)
 Addresses included in inputs and outputs can be CashAddr format or Legacy format.
 When the transaction is created successfully, an object with the transaction hash and raw tx data is returned
 ``` js
-btc_tx => {
+bch_tx => {
     hash: 'ac5cd881770c28aad990...5d181df4b7d5a9acfec3bdf',
     tx: '020000000116e686c9cba8da7dce075...edac9eff87677eccaa372580a4f23d3788ac00000000'
 }
 ```
 
 For more information, see the [docs](https://lumiwallet.github.io/lumi-web-core/).
+
+### Creating a BTCV transaction
+To create a Bitcoin Vault transaction you need to send a set of inputs and outputs to the `makeRawBtcvTx` method:
+``` js
+const data = {
+    inputs: [
+        {
+            hash: '6e87ad9bf88f7ad02bb4...65bdc31547de6c7293348',
+            index: 0,
+            value: 3000,
+            key: 'L4Whg5XDChoMm6YqfE...eDFmWwUJCxcuZ8Zk7edGUA' 
+        }
+    ],
+    outputs: [
+        {
+            address: 'royale1qy6wrkv3...7nqla7dlyjd8cj83kdn0',
+            value: 1000
+        },
+        {
+            address: 'royale1q8lvf3v...j9vlu3py02klanwmzshvk',
+            value: 1571
+        }
+    ]
+}
+
+const btcv_tx = await WALLET.makeRawBtcvTx(data)
+```
+When the transaction is created successfully, an object with the transaction hash and raw tx data is returned
+``` js
+btcv_tx => {
+    hash: '98f5f94267101de83364...b4a9c74a26a05b90d4381f9479710',
+    tx: '01000000000101483329c7e67d5431dc5...c6d8daeeb40e248438119513fb455d38100000000'
+}
+```
 
 ## Nist testing
 Testing [documentation](./nist/README.md).

@@ -1,6 +1,5 @@
 import EthereumTx from '@/class/ETH/EthereumTx'
 import * as mock from '@/../__mocks__/ethereumTxMock.js'
-import converter from '@/helpers/converters'
 
 describe('EthereumTx class', () => {
   test('it should create a EthereumTx class', () => {
