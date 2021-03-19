@@ -124,7 +124,7 @@ For ETH, the type parameter is set to the account number (0 by default).
 You can get information about a child node using the method `getChildNodes`.
 ``` js
 const data = {
-    path: 'm/44'/0'/0'/0',
+    path: "m/44'/0'/0'/0",
     from: 0,
     to: 20,
     coins: [
