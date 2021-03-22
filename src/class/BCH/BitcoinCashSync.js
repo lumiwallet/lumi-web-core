@@ -65,35 +65,14 @@ export default class BitcoinCashSync {
    */
   
   async getAddresses () {
-    const nodeData = [
-      {
-        node: this.externalNode,
-        type: 'external'
-      },
-      {
-        node: this.internalNode,
-        type: 'internal'
-      }
-    ]
-    
-    const pArray = nodeData.map(async item => {
-      return await this.getAddressesByNode(
-        item.node,
-        item.type
-      )
-    })
-    
-    const addresses = await Promise.all(pArray)
-    
-    this.addresses.external = addresses[0]
-    this.addresses.internal = addresses[1]
+    this.addresses.external = await this.getAddressesByNode(this.externalNode, 'external')
+    this.addresses.internal = await this.getAddressesByNode(this.internalNode, 'internal')
     this.addresses.empty = {
       external: this.addresses.external[this.addresses.external.length - 1],
       internal: this.addresses.internal[this.addresses.internal.length - 1]
     }
     
     this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) => item.address)
-    
     await this.getUnspent()
     await this.processTransactions()
   }
@@ -174,11 +153,21 @@ export default class BitcoinCashSync {
         data.from,
         data.to
       )
-      
+
       try {
         let res = await this.getMultiAddressRequest(addresses)
-        
-        if (!res.length || res.error) return
+
+        if (!res.length || res.error) {
+          let item = {
+            type,
+            deriveIndex: deriveIndex,
+            address: addresses[0],
+            legacyAddress: addresses[0]
+          }
+
+          list.push(item)
+          return
+        }
 
         res.forEach((addr) => {
           let item = {}
@@ -296,7 +285,7 @@ export default class BitcoinCashSync {
         .map(utxo => {
           const {cashAddress, legacyAddress, scriptPubKey} = item
           const derivationInfo = this._getDeriveIndexByAddress(legacyAddress)
-        
+
           return {
             ...utxo,
             cashAddress,
@@ -309,7 +298,7 @@ export default class BitcoinCashSync {
       
       unspent = [...utxos, ...unspent]
     })
-    
+
     this.unspent = unspent.sort((a, b) => b.value - a.value)
     this.balance = this.getBalance(this.unspent)
   }
