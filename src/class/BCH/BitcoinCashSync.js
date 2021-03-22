@@ -157,10 +157,10 @@ export default class BitcoinCashSync {
       try {
         let res = await this.getMultiAddressRequest(addresses)
 
-        if (!res.length || res.error) {
+        if (!Array.isArray(res) || res.error) {
           let item = {
             type,
-            deriveIndex: deriveIndex,
+            deriveIndex,
             address: addresses[0],
             legacyAddress: addresses[0]
           }
