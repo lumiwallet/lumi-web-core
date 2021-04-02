@@ -1044,6 +1044,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#headers",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-member-headers",
+    "src/class/WalletWrapper.js~WalletWrapper#headers",
+    "member"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#sync",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-member-sync",
     "src/class/WalletWrapper.js~WalletWrapper#sync",
@@ -1221,6 +1227,12 @@ window.esdocSearchIndex = [
     "src/index.js~wallet#setapiendpoint",
     "class/src/index.js~Wallet.html#instance-method-setApiEndpoint",
     "src/index.js~Wallet#setApiEndpoint",
+    "method"
+  ],
+  [
+    "src/index.js~wallet#setheaders",
+    "class/src/index.js~Wallet.html#instance-method-setHeaders",
+    "src/index.js~Wallet#setHeaders",
     "method"
   ],
   [

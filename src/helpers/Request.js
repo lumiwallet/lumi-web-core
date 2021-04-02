@@ -22,7 +22,6 @@ export default class Request {
       Authorization: 'ApiKey ',
       ...headers
     })
-    console.log('set', url, headers)
   }
   
   /**

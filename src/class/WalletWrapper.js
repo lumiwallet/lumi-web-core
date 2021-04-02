@@ -172,7 +172,12 @@ export default class WalletWrapper {
     }
   }
   
-  // todo
+  /**
+   * Getting information about Bitcoin Vault wallet from blockchain
+   * @returns {Promise<Object>}
+   * @constructor
+   */
+  
   async SyncBTCV () {
     const type = 'p2wpkh'
 
