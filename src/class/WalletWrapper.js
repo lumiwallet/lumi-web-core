@@ -26,10 +26,12 @@ export default class WalletWrapper {
     this.data = params.data
     this.api = params.api
     this.core = null
+    this.headers = {}
     this.sync = {
       BTC: {},
       ETH: {},
-      BCH: null
+      BCH: null,
+      BTCV: null
     }
   }
   
@@ -108,7 +110,8 @@ export default class WalletWrapper {
         this.core.COINS.BTC[type].externalNode,
         this.core.COINS.BTC[type].internalNode,
         this.api,
-        type
+        type,
+        this.headers
       )
     }
     
@@ -130,7 +133,7 @@ export default class WalletWrapper {
 
   async SyncETH (type = 0) {
     if (!this.sync.ETH[type]) {
-      this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].externalAddress, this.api)
+      this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].externalAddress, this.api, this.headers)
     }
     
     try {
@@ -155,7 +158,8 @@ export default class WalletWrapper {
       this.sync.BCH = new BitcoinCashSync(
         this.core.COINS.BCH[type].externalNode,
         this.core.COINS.BCH[type].internalNode,
-        this.api
+        this.api,
+        this.headers
       )
     }
     
@@ -168,6 +172,11 @@ export default class WalletWrapper {
     }
   }
   
+  /**
+   * Getting information about Bitcoin Vault wallet from blockchain
+   * @returns {Promise<Object>}
+   * @constructor
+   */
   
   async SyncBTCV () {
     const type = 'p2wpkh'
@@ -182,7 +191,8 @@ export default class WalletWrapper {
         this.core.COINS.BTCV[type].externalNode,
         this.core.COINS.BTCV[type].internalNode,
         addresses,
-        this.api
+        this.api,
+        this.headers
       )
     }
     
@@ -240,7 +250,8 @@ export default class WalletWrapper {
       amount: txData.amount,
       customFee: txData.customFee,
       api: this.api.btc,
-      type: addressType
+      type: addressType,
+      headers: this.headers
     }
     
     if (method === 'make') {

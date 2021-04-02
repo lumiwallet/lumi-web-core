@@ -1315,7 +1315,7 @@
     "__docId__": 78,
     "kind": "file",
     "name": "src/class/BTC/BitcoinTx.js",
-    "content": "import converter                                              from '@/helpers/converters'\nimport {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from '@/helpers/coreHelper'\nimport CustomError                                            from '@/helpers/handleErrors'\nimport Request                                                from '@/helpers/Request'\n\n/**\n * List of available commission types for Bitcoin transactions\n * @type {Array}\n */\n\nconst FEE_IDS = ['fast', 'regular', 'cheap', 'custom']\n\n/**\n * Class BitcoinTx.\n * This class is responsible for calculating the fee,\n * calculating the available amount to send, and generating and signing a Bitcoin transaction\n * @class\n */\n\nexport default class BitcoinTx {\n  /**\n   * Create a BitcoinTx\n   * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount\n   * @param {Array} data.unspent - Array of unspent addresses\n   * @param {string} data.internalAddress - Address for change\n   * @param {number} data.amount - Transaction amount\n   * @param {number} data.balance - Bitcoin wallet balance\n   * @param {Array} data.feeList - Set of bitcoin fees\n   * @param {Object} data.customFee - Custom fee entered by the user\n   * @param {Object} data.nodes - External and internal nodes required to generate private keys\n   * @param {String} data.type - Bitcoin type. There may be p2pkh or p2wpkh\n   */\n  \n  constructor (data) {\n    this.unspent = data.unspent\n    this.internalAddress = data.internalAddress\n    this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0\n    this.balance = data.balance\n    this.dust = 1000\n    this.fee = data.feeList\n    this.customFee = +data.customFee || 0\n    this.nodes = data.nodes || {}\n    this.feeList = []\n    this.request = new Request(data.api)\n    this.type = data.type ? data.type.toLowerCase() : 'p2pkh'\n  }\n  \n  /**\n   * Calculating the fee amount\n   * @param {number} size - Transaction size\n   * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount\n   */\n  \n  async calcFee (size = 0) {\n    const fees = [...this.fee.map(item => item.feePerByte), this.customFee]\n    \n    if (this.amount <= 0 || this.balance < this.amount) {\n      return this.calcEmptyFee(fees)\n    }\n    \n    const pArray = fees.map(async fee => {\n      return await this.getInputs(fee, size)\n    })\n    \n    const res = await Promise.all(pArray)\n    \n    this.feeList = res.map((item, i) => {\n      return {\n        id: FEE_IDS[i],\n        SAT: item.fee,\n        BTC: converter.sat_to_btc(item.fee),\n        fee: fees[i],\n        feeInBTC: converter.sat_to_btc(fees[i]),\n        inputs: item.inputs,\n        inputsAmount: item.inputsAmount,\n        custom: FEE_IDS[i] === 'custom'\n      }\n    })\n    \n    return this.feeList\n  }\n  \n  /**\n   * Sets an array of zero fees.\n   * Used when the user does not have enough funds for the transaction\n   * @returns {Array} Returns an array with zero fees\n   */\n  \n  calcEmptyFee (fees) {\n    this.feeList = fees.map((item, i) => {\n      return {\n        id: FEE_IDS[i],\n        SAT: 0,\n        BTC: 0,\n        fee: item,\n        feeInBTC: converter.sat_to_btc(item),\n        inputs: [],\n        inputsAmount: 0,\n        custom: FEE_IDS[i] === 'custom'\n      }\n    })\n    \n    return this.feeList\n  }\n  \n  /**\n   * Finds a list of inputs for a specific transaction\n   * @param {number} fee - Fee size\n   * @param {number} size - Transaction size\n   * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs\n   */\n  \n  async getInputs (fee, size) {\n    let index = 0\n    let inputsAmount = 0\n    let inputs = []\n    let res = {}\n    \n    this.dust = size ? 0 : 1000\n    \n    let req = async () => {\n      let item = this.unspent[index]\n      let defaultSize = calcBtcTxSize(index + 1, 2, this.type === 'p2wpkh')\n      let calcFee = size ? size * fee : defaultSize * fee\n      \n      inputsAmount += item.value\n      inputs.push(item)\n      \n      let total = this.amount + calcFee + this.dust\n      \n      if (total > inputsAmount) {\n        index++\n        \n        if (index >= this.unspent.length) {\n          res = {\n            fee: 0,\n            inputs: [],\n            inputsAmount: 0\n          }\n        } else {\n          await req()\n        }\n      } else {\n        res = {\n          fee: calcFee,\n          inputs: inputs,\n          inputsAmount: inputsAmount\n        }\n      }\n    }\n    await req()\n    \n    return res\n  }\n  \n  /**\n   * Creating a Bitcoin transaction\n   * @param {Object} data - Input data for a transaction\n   * @param {string} data.addressTo - Recipient address\n   * @param {Object} data.fee - The transaction fee and list of inputs\n   * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully\n   */\n  \n  async make (data) {\n    const {addressTo, fee} = data\n    \n    if (!this.amount) {\n      throw new CustomError('err_tx_btc_amount')\n    }\n    \n    if (isNaN(fee.SAT)) {\n      throw new CustomError('err_tx_btc_fee')\n    }\n    \n    let change = +fee.inputsAmount - +this.amount - +fee.SAT\n    let inputs = []\n    \n    try {\n      inputs = await this.getInputsWithTxInfo(fee.inputs)\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n    \n    if (change >= 0) {\n      let params = {\n        inputs: inputs,\n        outputs: [\n          {\n            address: addressTo,\n            value: this.amount\n          }\n        ]\n      }\n      \n      if (change) {\n        params.outputs[1] = {\n          address: this.internalAddress,\n          value: change\n        }\n      }\n      \n      return makeRawBtcTx(params)\n    } else {\n      throw new CustomError('err_tx_btc_balance')\n    }\n  }\n  \n  /**\n   * Returns the required data to create a transaction\n   * @param {Array} inputs - Array of inputs for tx\n   * @returns {Promise<Object>} Returns an array of inputs with a private keys and raw transaction data for p2pkh items\n   */\n  \n  async getInputsWithTxInfo (inputs) {\n    try {\n      let rawTxsData = []\n      \n      if (this.type === 'p2pkh') {\n        let hashes = []\n        \n        for (let input of inputs) {\n          if (!input.tx) {\n            if (input.tx_hash_big_endian) {\n              hashes.push(input.tx_hash_big_endian)\n            } else {\n              throw new CustomError('err_tx_btc_unspent')\n            }\n          }\n        }\n        const unique_hashes = [...new Set(hashes)]\n        \n        rawTxsData = await this.getRawTxHex(unique_hashes)\n        \n        for (let input of inputs) {\n          if (!input.tx) {\n            let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)\n            input.tx = data ? data.rawData : null\n          }\n          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)\n        }\n      } else {\n        for (let input of inputs) {\n          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)\n        }\n      }\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n    return inputs\n  }\n  \n  /**\n   * Raw transaction request\n   * @param {Array} hashes - List of hashes\n   * @returns {Promise<Array>} Array of raw Bitcoin transactions for each hash\n   */\n  \n  async getRawTxHex (hashes) {\n    if (!hashes || !hashes.length) return []\n    \n    const ARRAY_SIZE = 10\n    const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)\n    let txs = []\n    let arrays = []\n    let counter = 0\n    \n    for (let i = 0; i < ARRAYS_COUNT; i++) {\n      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)\n    }\n    \n    const req = async () => {\n      try {\n        let res = await this.request.send({\n          method: 'rawtx',\n          txs: arrays[counter]\n        })\n        \n        if (res.status === 'success' && res.data.length) {\n          txs = [...txs, ...res.data]\n          counter++\n          \n          if (counter !== ARRAYS_COUNT) {\n            await req()\n          }\n        } else {\n          throw new CustomError('err_tx_btc_raw_tx')\n        }\n      }\n      catch (e) {\n        throw new CustomError('err_tx_btc_raw_tx')\n      }\n    }\n    \n    await req()\n    \n    return txs\n  }\n}\n",
+    "content": "import converter from '@/helpers/converters'\nimport {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from '@/helpers/coreHelper'\nimport CustomError from '@/helpers/handleErrors'\nimport Request from '@/helpers/Request'\n\n/**\n * List of available commission types for Bitcoin transactions\n * @type {Array}\n */\n\nconst FEE_IDS = ['fast', 'regular', 'cheap', 'custom']\n\n/**\n * Class BitcoinTx.\n * This class is responsible for calculating the fee,\n * calculating the available amount to send, and generating and signing a Bitcoin transaction\n * @class\n */\n\nexport default class BitcoinTx {\n  /**\n   * Create a BitcoinTx\n   * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount\n   * @param {Array} data.unspent - Array of unspent addresses\n   * @param {string} data.internalAddress - Address for change\n   * @param {number} data.amount - Transaction amount\n   * @param {number} data.balance - Bitcoin wallet balance\n   * @param {Array} data.feeList - Set of bitcoin fees\n   * @param {Object} data.customFee - Custom fee entered by the user\n   * @param {Object} data.nodes - External and internal nodes required to generate private keys\n   * @param {String} data.type - Bitcoin type. There may be p2pkh or p2wpkh\n   * @param {Object} data.headers - Request headers\n   */\n  \n  constructor (data) {\n    this.unspent = data.unspent\n    this.internalAddress = data.internalAddress\n    this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0\n    this.balance = data.balance\n    this.dust = 1000\n    this.fee = data.feeList\n    this.customFee = +data.customFee || 0\n    this.nodes = data.nodes || {}\n    this.feeList = []\n    this.request = new Request(data.api, data.headers)\n    this.type = data.type ? data.type.toLowerCase() : 'p2pkh'\n  }\n  \n  /**\n   * Calculating the fee amount\n   * @param {number} size - Transaction size\n   * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount\n   */\n  \n  async calcFee (size = 0) {\n    const fees = [...this.fee.map(item => item.feePerByte), this.customFee]\n    \n    if (this.amount <= 0 || this.balance < this.amount) {\n      return this.calcEmptyFee(fees)\n    }\n    \n    const pArray = fees.map(async fee => {\n      return await this.getInputs(fee, size)\n    })\n    \n    const res = await Promise.all(pArray)\n    \n    this.feeList = res.map((item, i) => {\n      return {\n        id: FEE_IDS[i],\n        SAT: item.fee,\n        BTC: converter.sat_to_btc(item.fee),\n        fee: fees[i],\n        feeInBTC: converter.sat_to_btc(fees[i]),\n        inputs: item.inputs,\n        inputsAmount: item.inputsAmount,\n        custom: FEE_IDS[i] === 'custom'\n      }\n    })\n    \n    return this.feeList\n  }\n  \n  /**\n   * Sets an array of zero fees.\n   * Used when the user does not have enough funds for the transaction\n   * @returns {Array} Returns an array with zero fees\n   */\n  \n  calcEmptyFee (fees) {\n    this.feeList = fees.map((item, i) => {\n      return {\n        id: FEE_IDS[i],\n        SAT: 0,\n        BTC: 0,\n        fee: item,\n        feeInBTC: converter.sat_to_btc(item),\n        inputs: [],\n        inputsAmount: 0,\n        custom: FEE_IDS[i] === 'custom'\n      }\n    })\n    \n    return this.feeList\n  }\n  \n  /**\n   * Finds a list of inputs for a specific transaction\n   * @param {number} fee - Fee size\n   * @param {number} size - Transaction size\n   * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs\n   */\n  \n  async getInputs (fee, size) {\n    let index = 0\n    let inputsAmount = 0\n    let inputs = []\n    let res = {}\n    \n    this.dust = size ? 0 : 1000\n    \n    let req = async () => {\n      let item = this.unspent[index]\n      let defaultSize = calcBtcTxSize(index + 1, 2, this.type === 'p2wpkh')\n      let calcFee = size ? size * fee : defaultSize * fee\n      \n      inputsAmount += item.value\n      inputs.push(item)\n      \n      let total = this.amount + calcFee + this.dust\n      \n      if (total > inputsAmount) {\n        index++\n        \n        if (index >= this.unspent.length) {\n          res = {\n            fee: 0,\n            inputs: [],\n            inputsAmount: 0\n          }\n        } else {\n          await req()\n        }\n      } else {\n        res = {\n          fee: calcFee,\n          inputs: inputs,\n          inputsAmount: inputsAmount\n        }\n      }\n    }\n    await req()\n    \n    return res\n  }\n  \n  /**\n   * Creating a Bitcoin transaction\n   * @param {Object} data - Input data for a transaction\n   * @param {string} data.addressTo - Recipient address\n   * @param {Object} data.fee - The transaction fee and list of inputs\n   * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully\n   */\n  \n  async make (data) {\n    const {addressTo, fee} = data\n    \n    if (!this.amount) {\n      throw new CustomError('err_tx_btc_amount')\n    }\n    \n    if (isNaN(fee.SAT)) {\n      throw new CustomError('err_tx_btc_fee')\n    }\n    \n    let change = +fee.inputsAmount - +this.amount - +fee.SAT\n    let inputs = []\n    \n    try {\n      inputs = await this.getInputsWithTxInfo(fee.inputs)\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n    \n    if (change >= 0) {\n      let params = {\n        inputs: inputs,\n        outputs: [\n          {\n            address: addressTo,\n            value: this.amount\n          }\n        ]\n      }\n      \n      if (change) {\n        params.outputs[1] = {\n          address: this.internalAddress,\n          value: change\n        }\n      }\n      \n      return makeRawBtcTx(params)\n    } else {\n      throw new CustomError('err_tx_btc_balance')\n    }\n  }\n  \n  /**\n   * Returns the required data to create a transaction\n   * @param {Array} inputs - Array of inputs for tx\n   * @returns {Promise<Object>} Returns an array of inputs with a private keys and raw transaction data for p2pkh items\n   */\n  \n  async getInputsWithTxInfo (inputs) {\n    try {\n      let rawTxsData = []\n      \n      if (this.type === 'p2pkh') {\n        let hashes = []\n        \n        for (let input of inputs) {\n          if (!input.tx) {\n            if (input.tx_hash_big_endian) {\n              hashes.push(input.tx_hash_big_endian)\n            } else {\n              throw new CustomError('err_tx_btc_unspent')\n            }\n          }\n        }\n        const unique_hashes = [...new Set(hashes)]\n        \n        rawTxsData = await this.getRawTxHex(unique_hashes)\n        \n        for (let input of inputs) {\n          if (!input.tx) {\n            let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)\n            input.tx = data ? data.rawData : null\n          }\n          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)\n        }\n      } else {\n        for (let input of inputs) {\n          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)\n        }\n      }\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n    return inputs\n  }\n  \n  /**\n   * Raw transaction request\n   * @param {Array} hashes - List of hashes\n   * @returns {Promise<Array>} Array of raw Bitcoin transactions for each hash\n   */\n  \n  async getRawTxHex (hashes) {\n    if (!hashes || !hashes.length) return []\n    \n    const ARRAY_SIZE = 10\n    const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)\n    let txs = []\n    let arrays = []\n    let counter = 0\n    \n    for (let i = 0; i < ARRAYS_COUNT; i++) {\n      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)\n    }\n    \n    const req = async () => {\n      try {\n        let res = await this.request.send({\n          method: 'rawtx',\n          txs: arrays[counter]\n        })\n        \n        if (res.status === 'success' && res.data.length) {\n          txs = [...txs, ...res.data]\n          counter++\n          \n          if (counter !== ARRAYS_COUNT) {\n            await req()\n          }\n        } else {\n          throw new CustomError('err_tx_btc_raw_tx')\n        }\n      }\n      catch (e) {\n        throw new CustomError('err_tx_btc_raw_tx')\n      }\n    }\n    \n    await req()\n    \n    return txs\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/class/BTC/BitcoinTx.js",
     "access": "public",
@@ -1377,7 +1377,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#constructor",
     "access": "public",
     "description": "Create a BitcoinTx",
-    "lineNumber": 34,
+    "lineNumber": 35,
     "params": [
       {
         "nullable": null,
@@ -1468,6 +1468,16 @@
         "optional": false,
         "name": "data.type",
         "description": "Bitcoin type. There may be p2pkh or p2wpkh"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.headers",
+        "description": "Request headers"
       }
     ]
   },
@@ -1480,7 +1490,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#unspent",
     "access": "public",
     "description": null,
-    "lineNumber": 35,
+    "lineNumber": 36,
     "undocument": true,
     "type": {
       "types": [
@@ -1497,7 +1507,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#internalAddress",
     "access": "public",
     "description": null,
-    "lineNumber": 36,
+    "lineNumber": 37,
     "undocument": true,
     "type": {
       "types": [
@@ -1514,7 +1524,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#amount",
     "access": "public",
     "description": null,
-    "lineNumber": 37,
+    "lineNumber": 38,
     "undocument": true,
     "type": {
       "types": [
@@ -1531,7 +1541,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#balance",
     "access": "public",
     "description": null,
-    "lineNumber": 38,
+    "lineNumber": 39,
     "undocument": true,
     "type": {
       "types": [
@@ -1548,7 +1558,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#dust",
     "access": "public",
     "description": null,
-    "lineNumber": 39,
+    "lineNumber": 40,
     "undocument": true,
     "type": {
       "types": [
@@ -1565,7 +1575,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#fee",
     "access": "public",
     "description": null,
-    "lineNumber": 40,
+    "lineNumber": 41,
     "undocument": true,
     "type": {
       "types": [
@@ -1582,7 +1592,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#customFee",
     "access": "public",
     "description": null,
-    "lineNumber": 41,
+    "lineNumber": 42,
     "undocument": true,
     "type": {
       "types": [
@@ -1599,7 +1609,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#nodes",
     "access": "public",
     "description": null,
-    "lineNumber": 42,
+    "lineNumber": 43,
     "undocument": true,
     "type": {
       "types": [
@@ -1616,7 +1626,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#feeList",
     "access": "public",
     "description": null,
-    "lineNumber": 43,
+    "lineNumber": 44,
     "undocument": true,
     "type": {
       "types": [
@@ -1633,7 +1643,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#request",
     "access": "public",
     "description": null,
-    "lineNumber": 44,
+    "lineNumber": 45,
     "undocument": true,
     "type": {
       "types": [
@@ -1650,7 +1660,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#type",
     "access": "public",
     "description": null,
-    "lineNumber": 45,
+    "lineNumber": 46,
     "undocument": true,
     "type": {
       "types": [
@@ -1669,7 +1679,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#calcFee",
     "access": "public",
     "description": "Calculating the fee amount",
-    "lineNumber": 54,
+    "lineNumber": 55,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1708,7 +1718,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#calcEmptyFee",
     "access": "public",
     "description": "Sets an array of zero fees.\nUsed when the user does not have enough funds for the transaction",
-    "lineNumber": 89,
+    "lineNumber": 90,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1743,7 +1753,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#getInputs",
     "access": "public",
     "description": "Finds a list of inputs for a specific transaction",
-    "lineNumber": 113,
+    "lineNumber": 114,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1792,7 +1802,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#make",
     "access": "public",
     "description": "Creating a Bitcoin transaction",
-    "lineNumber": 164,
+    "lineNumber": 165,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1851,7 +1861,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#getInputsWithTxInfo",
     "access": "public",
     "description": "Returns the required data to create a transaction",
-    "lineNumber": 215,
+    "lineNumber": 216,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1890,7 +1900,7 @@
     "longname": "src/class/BTC/BitcoinTx.js~BitcoinTx#getRawTxHex",
     "access": "public",
     "description": "Raw transaction request",
-    "lineNumber": 260,
+    "lineNumber": 261,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2411,7 +2421,7 @@
     "__docId__": 122,
     "kind": "file",
     "name": "src/class/ETH/EthereumSync.js",
-    "content": "import Request from '@/helpers/Request'\n\n/**\n * Class EthereumSync\n * This class allows you to get information about the balance on a ethereum wallet,\n * the list of transactions and optimal gas price\n * @class\n */\n\nexport default class EthereumSync {\n  /**\n   * Create a EthereumSync\n   * @param {string} address - Ethereum wallet address\n   * @param {Object} api - A set of URLs for getting information about ethereum address\n   */\n  constructor (address, api) {\n    this.address = address\n    this.api = api\n    this.balance = 0\n    this.transactions = []\n    this.gasPrice = 0\n    this.request = new Request(this.api.eth)\n  }\n  \n  /**\n   * The method that starts the synchronization Ethereum part of the wallet\n   * @returns {Promise<number>}\n   * @constructor\n   */\n  \n  async Start () {\n    this.balance = await this.getBalance()\n    this.transactions = await this.getTransactions()\n    this.gasPrice = await this.getGasPrice()\n  }\n  \n  /**\n   * Request to receive a balance of Ethereum wallet\n   * @returns {Promise<number>}\n   */\n  \n  async getBalance () {\n    this.balance = 0\n    \n    let params = {\n      module: 'account',\n      action: 'balance',\n      address: this.address,\n      tag: 'latest'\n    }\n    \n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0\n  }\n  \n  /**\n   * Request to receive Ethereum transaction list\n   * @returns {Promise<Array>}\n   */\n  \n  async getTransactions () {\n    this.transactions = []\n    \n    let params = {\n      module: 'account',\n      action: 'txlist',\n      address: this.address,\n      sort: 'asc'\n    }\n    \n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') && Array.isArray(res.result) ? res.result : []\n  }\n  \n  /**\n   * Request to receive a amount of gas price\n   * @returns {Promise<number>}\n   */\n  \n  async getGasPrice () {\n    let params = {\n      module: 'proxy',\n      action: 'eth_gasPrice'\n    }\n    \n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 0\n  }\n  \n  get DATA () {\n    return {\n      address: this.address,\n      balance: this.balance,\n      transactions: this.transactions,\n      gasPrice: this.gasPrice\n    }\n  }\n}\n",
+    "content": "import Request from '@/helpers/Request'\n\n/**\n * Class EthereumSync\n * This class allows you to get information about the balance on a ethereum wallet,\n * the list of transactions and optimal gas price\n * @class\n */\n\nexport default class EthereumSync {\n  /**\n   * Create a EthereumSync\n   * @param {string} address - Ethereum wallet address\n   * @param {Object} api - A set of URLs for getting information about ethereum address\n   * @param {Object} headers - Request headers\n   */\n  constructor (address, api, headers) {\n    this.address = address\n    this.api = api\n    this.balance = 0\n    this.transactions = []\n    this.gasPrice = 0\n    this.request = new Request(this.api.eth, headers)\n  }\n  \n  /**\n   * The method that starts the synchronization Ethereum part of the wallet\n   * @returns {Promise<number>}\n   * @constructor\n   */\n  \n  async Start () {\n    this.balance = await this.getBalance()\n    this.transactions = await this.getTransactions()\n    this.gasPrice = await this.getGasPrice()\n  }\n  \n  /**\n   * Request to receive a balance of Ethereum wallet\n   * @returns {Promise<number>}\n   */\n  \n  async getBalance () {\n    this.balance = 0\n    \n    let params = {\n      module: 'account',\n      action: 'balance',\n      address: this.address,\n      tag: 'latest'\n    }\n    \n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0\n  }\n  \n  /**\n   * Request to receive Ethereum transaction list\n   * @returns {Promise<Array>}\n   */\n  \n  async getTransactions () {\n    this.transactions = []\n    \n    let params = {\n      module: 'account',\n      action: 'txlist',\n      address: this.address,\n      sort: 'asc'\n    }\n    \n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') && Array.isArray(res.result) ? res.result : []\n  }\n  \n  /**\n   * Request to receive a amount of gas price\n   * @returns {Promise<number>}\n   */\n  \n  async getGasPrice () {\n    let params = {\n      module: 'proxy',\n      action: 'eth_gasPrice'\n    }\n    \n    let res = await this.request.send(params)\n    \n    return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 0\n  }\n  \n  get DATA () {\n    return {\n      address: this.address,\n      balance: this.balance,\n      transactions: this.transactions,\n      gasPrice: this.gasPrice\n    }\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/class/ETH/EthereumSync.js",
     "access": "public",
@@ -2450,7 +2460,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#constructor",
     "access": "public",
     "description": "Create a EthereumSync",
-    "lineNumber": 16,
+    "lineNumber": 17,
     "params": [
       {
         "nullable": null,
@@ -2471,6 +2481,16 @@
         "optional": false,
         "name": "api",
         "description": "A set of URLs for getting information about ethereum address"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "headers",
+        "description": "Request headers"
       }
     ]
   },
@@ -2483,7 +2503,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#address",
     "access": "public",
     "description": null,
-    "lineNumber": 17,
+    "lineNumber": 18,
     "undocument": true,
     "type": {
       "types": [
@@ -2500,7 +2520,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#api",
     "access": "public",
     "description": null,
-    "lineNumber": 18,
+    "lineNumber": 19,
     "undocument": true,
     "type": {
       "types": [
@@ -2517,7 +2537,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#balance",
     "access": "public",
     "description": null,
-    "lineNumber": 19,
+    "lineNumber": 20,
     "undocument": true,
     "type": {
       "types": [
@@ -2534,7 +2554,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#transactions",
     "access": "public",
     "description": null,
-    "lineNumber": 20,
+    "lineNumber": 21,
     "undocument": true,
     "type": {
       "types": [
@@ -2551,7 +2571,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#gasPrice",
     "access": "public",
     "description": null,
-    "lineNumber": 21,
+    "lineNumber": 22,
     "undocument": true,
     "type": {
       "types": [
@@ -2568,7 +2588,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#request",
     "access": "public",
     "description": null,
-    "lineNumber": 22,
+    "lineNumber": 23,
     "undocument": true,
     "type": {
       "types": [
@@ -2587,7 +2607,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#Start",
     "access": "public",
     "description": "The method that starts the synchronization Ethereum part of the wallet",
-    "lineNumber": 31,
+    "lineNumber": 32,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2619,7 +2639,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#getBalance",
     "access": "public",
     "description": "Request to receive a balance of Ethereum wallet",
-    "lineNumber": 42,
+    "lineNumber": 43,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2647,7 +2667,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#getTransactions",
     "access": "public",
     "description": "Request to receive Ethereum transaction list",
-    "lineNumber": 62,
+    "lineNumber": 63,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2675,7 +2695,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#getGasPrice",
     "access": "public",
     "description": "Request to receive a amount of gas price",
-    "lineNumber": 82,
+    "lineNumber": 83,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2703,7 +2723,7 @@
     "longname": "src/class/ETH/EthereumSync.js~EthereumSync#DATA",
     "access": "public",
     "description": null,
-    "lineNumber": 93,
+    "lineNumber": 94,
     "undocument": true,
     "type": {
       "types": [
@@ -3061,7 +3081,7 @@
     "__docId__": 154,
     "kind": "file",
     "name": "src/class/WalletWrapper.js",
-    "content": "import Core from '@/class/Core'\nimport BitcoinSync from '@/class/BTC/BitcoinSync'\nimport EthereumSync from '@/class/ETH/EthereumSync'\nimport BitcoinCashSync from '@/class/BCH/BitcoinCashSync'\nimport BitcoinVaultSync from '@/class/BTCV/BitcoinVaultSync'\nimport BitcoinTx from '@/class/BTC/BitcoinTx'\nimport EthereumTx from '@/class/ETH/EthereumTx'\nimport BitcoinCashTx from '@/class/BCH/BitcoinCashTx'\nimport BitcoinVaultTx from '@/class/BTCV/BitcoinVaultTx'\n\n/**\n * Class WalletWrapper\n * @class\n */\n\nexport default class WalletWrapper {\n  /**\n   * Create a wallet wrapper\n   * @param {Object} params\n   * @param {Object} params.data - Input information for creating the core.\n   * Contains a method for the creation and optionally a key or mnemonics\n   * @param {Object} params.api - A set of URLs for getting information about addresses\n   */\n  \n  constructor (params) {\n    this.data = params.data\n    this.api = params.api\n    this.core = null\n    this.sync = {\n      BTC: {},\n      ETH: {},\n      BCH: null\n    }\n  }\n  \n  /**\n   * Creating a wallet core\n   * @constructor\n   */\n  \n  async Create () {\n    try {\n      this.core = new Core(this.data)\n      await this.core.generateWallet()\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n  }\n  \n  /**\n   * Creating a core for each supported currency type\n   *\n   * @param {Array<{coin: String, type: String}>} coins\n   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV\n   * @param {string|number} coins[].type - Coin type (additional).\n   * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).\n   * */\n  \n  async CreateCoins (coins) {\n    try {\n      return await this.core.createCoinsCores(coins)\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n  }\n  \n  /**\n   * Getting information about bitcoin or ether addresses\n   * @param {Object} data - Type of synchronization method\n   * @param {string} data.coin - Coin name for synchronization\n   * @param {string} data.type - Coin type. There may be p2pkh or p2wpkh\n   * @returns {Promise<Object>} Returns object with bitcoin or ethereum synchronization information\n   * @constructor\n   */\n  \n  async Sync (data) {\n    const {coin, type} = data\n\n    try {\n      switch (coin) {\n        case 'BTC':\n          return await this.SyncBTC(type)\n        case 'ETH':\n          return await this.SyncETH(type)\n        case 'BCH':\n          return await this.SyncBCH()\n        case 'BTCV':\n          return await this.SyncBTCV()\n      }\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n  }\n  \n  /**\n   * Getting information about Bitcoin wallet from blockchain\n   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n\n  async SyncBTC (type = 'p2pkh') {\n    if (!this.sync.BTC[type]) {\n      this.sync.BTC[type] = new BitcoinSync(\n        this.core.COINS.BTC[type].externalNode,\n        this.core.COINS.BTC[type].internalNode,\n        this.api,\n        type\n      )\n    }\n    \n    try {\n      await this.sync.BTC[type].Start()\n      return this.sync.BTC[type].DATA\n    }\n    catch (e) {\n      console.log('SyncBTC error', e)\n    }\n  }\n  \n  /**\n   * Getting information about Ethereum wallet from blockchain\n   * @param {number} type - Ethereum account number. By default 0\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n\n  async SyncETH (type = 0) {\n    if (!this.sync.ETH[type]) {\n      this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].externalAddress, this.api)\n    }\n    \n    try {\n      await this.sync.ETH[type].Start()\n      return this.sync.ETH[type].DATA\n    }\n    catch (e) {\n      console.log('SyncETH error', e)\n    }\n  }\n  \n  /**\n   * Getting information about Bitcoin Cash wallet from blockchain\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n\n  async SyncBCH () {\n    const type = 'p2pkh'\n    \n    if (!this.sync.BCH) {\n      this.sync.BCH = new BitcoinCashSync(\n        this.core.COINS.BCH[type].externalNode,\n        this.core.COINS.BCH[type].internalNode,\n        this.api\n      )\n    }\n    \n    try {\n      await this.sync.BCH.Start()\n      return this.sync.BCH.DATA\n    }\n    catch (e) {\n      console.log('SyncBCH error', e)\n    }\n  }\n  \n  \n  async SyncBTCV () {\n    const type = 'p2wpkh'\n\n    if (!this.sync.BTCV) {\n      let addresses = {\n        external:  this.core.COINS.BTCV[type].externalAddress,\n        internal: this.core.COINS.BTCV[type].internalAddress\n      }\n      \n      this.sync.BTCV = new BitcoinVaultSync(\n        this.core.COINS.BTCV[type].externalNode,\n        this.core.COINS.BTCV[type].internalNode,\n        addresses,\n        this.api\n      )\n    }\n    \n    try {\n      await this.sync.BTCV.Start()\n      return this.sync.BTCV.DATA\n    }\n    catch (e) {\n      console.log('SyncBTCV error', e)\n    }\n  }\n  \n  /**\n   * Creating a transaction or getting information about fee\n   * @param {Object} data\n   * @param {string} data.currency - Transaction currency. It can be of the following types: BTC, ETH, BCH or BTCV\n   * @param {string} data.method - Methods 'make' or 'calcFee'\n   * @param {Object} data.tx - Input data for the transaction\n   * @param {string} data.addressType - Bitcoin address type. It can be p2pkh or p2wpkh (only for BTC)\n   * @param {number} data.account - Ethereum account number (only for ETH)\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n  \n  async Transaction (data) {\n    const {currency, method, tx, addressType, account} = data\n\n    switch (currency) {\n      case 'BTC':\n        return this.createBTCTx(method, tx, addressType)\n      case 'ETH':\n        return this.createETHTx(method, tx, account)\n      case 'BCH':\n        return this.createBCHTx(method, tx)\n      case 'BTCV':\n        return this.createBTCVTx(method, tx)\n      default:\n        throw new Error('Unknown txs type (currency)')\n    }\n  }\n  \n  /**\n   * Creating a bitcoin transaction\n   * @param {string} method - Method 'make' for creating a transaction and method 'calcFee' for calculating fee\n   * @param {Object} txData - Input data for the transaction\n   * @param {string} addressType - Bitcoin type. There may be p2pkh or p2wpkh\n   * @returns {Promise<Object>} Information about the transaction or fee\n   */\n  \n  async createBTCTx (method, txData, addressType = 'p2pkh') {\n    let BTCdata = {\n      unspent: this.sync.BTC[addressType].unspent,\n      balance: this.sync.BTC[addressType].balance,\n      feeList: this.sync.BTC[addressType].fee,\n      amount: txData.amount,\n      customFee: txData.customFee,\n      api: this.api.btc,\n      type: addressType\n    }\n    \n    if (method === 'make') {\n      BTCdata.internalAddress = this.sync.BTC[addressType].addresses.empty.internal.address\n      BTCdata.nodes = {\n        external: this.core.COINS.BTC[addressType].externalNode,\n        internal: this.core.COINS.BTC[addressType].internalNode\n      }\n    }\n    \n    let tx = new BitcoinTx(BTCdata)\n    \n    switch (method) {\n      case 'make':\n        return tx.make(txData)\n      case 'calcFee':\n        return tx.calcFee(txData.size)\n      default:\n        throw new Error('Unknown btc txs method')\n    }\n  }\n  \n  /**\n   * Creating a ethereum transaction\n   * @param {string} method - Method 'make' for creating a transaction and method 'calcFee' for calculating fee\n   * @param {Object} txData - Input data for the transaction\n   * @param {number} account - Ethereum account number. By default 0\n   * @returns {Promise<Object>} Information about the transaction or fee\n   */\n  \n  async createETHTx (method, txData, account = 0) {\n    let ETHdata = {\n      address: this.sync.ETH[account].address,\n      gasPrice: this.sync.ETH[account].gasPrice,\n      balance: this.sync.ETH[account].balance,\n      privateKey: this.core.COINS.ETH[account].privateKey\n    }\n\n    let tx = new EthereumTx(ETHdata)\n    \n    switch (method) {\n      case 'make':\n        return tx.make(txData)\n      case 'calcFee':\n        return tx.calcFee()\n      default:\n        throw new Error('Unknown eth txs method')\n    }\n  }\n  \n  async createBCHTx (method, txData) {\n    const type = 'p2pkh'\n    \n    let BCHdata = {\n      unspent: this.sync.BCH.unspent,\n      balance: this.sync.BCH.balance,\n      feeList: this.sync.BCH.fee,\n      amount: txData.amount,\n      customFee: txData.customFee\n    }\n    \n    if (method === 'make') {\n      BCHdata.internalAddress = this.sync.BCH.addresses.empty.internal.address\n      BCHdata.nodes = {\n        external: this.core.COINS.BCH[type].externalNode,\n        internal: this.core.COINS.BCH[type].internalNode\n      }\n    }\n    \n    let tx = new BitcoinCashTx(BCHdata)\n    \n    switch (method) {\n      case 'make':\n        return tx.make(txData)\n      case 'calcFee':\n        return tx.calcFee(txData.size)\n      default:\n        throw new Error('Unknown BCH txs method')\n    }\n  }\n  \n  async createBTCVTx (method, txData) {\n    const type = 'p2wpkh'\n    \n    let BTCVdata = {\n      unspent: this.sync.BTCV.unspent,\n      balance: this.sync.BTCV.balance,\n      feeList: this.sync.BTCV.fee,\n      amount: txData.amount,\n      customFee: txData.customFee\n    }\n    \n    if (method === 'make') {\n      BTCVdata.internalAddress = this.sync.BTCV.addresses.empty.internal.address\n      BTCVdata.nodes = {\n        external: this.core.COINS.BTCV[type].externalNode,\n        internal: this.core.COINS.BTCV[type].internalNode\n      }\n    }\n    \n    let tx = new BitcoinVaultTx(BTCVdata)\n    \n    switch (method) {\n      case 'make':\n        return tx.make(txData)\n      case 'calcFee':\n        return tx.calcFee(txData.size)\n      default:\n        throw new Error('Unknown BCH txs method')\n    }\n  }\n}\n",
+    "content": "import Core from '@/class/Core'\nimport BitcoinSync from '@/class/BTC/BitcoinSync'\nimport EthereumSync from '@/class/ETH/EthereumSync'\nimport BitcoinCashSync from '@/class/BCH/BitcoinCashSync'\nimport BitcoinVaultSync from '@/class/BTCV/BitcoinVaultSync'\nimport BitcoinTx from '@/class/BTC/BitcoinTx'\nimport EthereumTx from '@/class/ETH/EthereumTx'\nimport BitcoinCashTx from '@/class/BCH/BitcoinCashTx'\nimport BitcoinVaultTx from '@/class/BTCV/BitcoinVaultTx'\n\n/**\n * Class WalletWrapper\n * @class\n */\n\nexport default class WalletWrapper {\n  /**\n   * Create a wallet wrapper\n   * @param {Object} params\n   * @param {Object} params.data - Input information for creating the core.\n   * Contains a method for the creation and optionally a key or mnemonics\n   * @param {Object} params.api - A set of URLs for getting information about addresses\n   */\n  \n  constructor (params) {\n    this.data = params.data\n    this.api = params.api\n    this.core = null\n    this.headers = {}\n    this.sync = {\n      BTC: {},\n      ETH: {},\n      BCH: null,\n      BTCV: null\n    }\n  }\n  \n  /**\n   * Creating a wallet core\n   * @constructor\n   */\n  \n  async Create () {\n    try {\n      this.core = new Core(this.data)\n      await this.core.generateWallet()\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n  }\n  \n  /**\n   * Creating a core for each supported currency type\n   *\n   * @param {Array<{coin: String, type: String}>} coins\n   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV\n   * @param {string|number} coins[].type - Coin type (additional).\n   * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).\n   * */\n  \n  async CreateCoins (coins) {\n    try {\n      return await this.core.createCoinsCores(coins)\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n  }\n  \n  /**\n   * Getting information about bitcoin or ether addresses\n   * @param {Object} data - Type of synchronization method\n   * @param {string} data.coin - Coin name for synchronization\n   * @param {string} data.type - Coin type. There may be p2pkh or p2wpkh\n   * @returns {Promise<Object>} Returns object with bitcoin or ethereum synchronization information\n   * @constructor\n   */\n  \n  async Sync (data) {\n    const {coin, type} = data\n\n    try {\n      switch (coin) {\n        case 'BTC':\n          return await this.SyncBTC(type)\n        case 'ETH':\n          return await this.SyncETH(type)\n        case 'BCH':\n          return await this.SyncBCH()\n        case 'BTCV':\n          return await this.SyncBTCV()\n      }\n    }\n    catch (e) {\n      throw new Error(e.message)\n    }\n  }\n  \n  /**\n   * Getting information about Bitcoin wallet from blockchain\n   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n\n  async SyncBTC (type = 'p2pkh') {\n    if (!this.sync.BTC[type]) {\n      this.sync.BTC[type] = new BitcoinSync(\n        this.core.COINS.BTC[type].externalNode,\n        this.core.COINS.BTC[type].internalNode,\n        this.api,\n        type,\n        this.headers\n      )\n    }\n    \n    try {\n      await this.sync.BTC[type].Start()\n      return this.sync.BTC[type].DATA\n    }\n    catch (e) {\n      console.log('SyncBTC error', e)\n    }\n  }\n  \n  /**\n   * Getting information about Ethereum wallet from blockchain\n   * @param {number} type - Ethereum account number. By default 0\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n\n  async SyncETH (type = 0) {\n    if (!this.sync.ETH[type]) {\n      this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].externalAddress, this.api, this.headers)\n    }\n    \n    try {\n      await this.sync.ETH[type].Start()\n      return this.sync.ETH[type].DATA\n    }\n    catch (e) {\n      console.log('SyncETH error', e)\n    }\n  }\n  \n  /**\n   * Getting information about Bitcoin Cash wallet from blockchain\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n\n  async SyncBCH () {\n    const type = 'p2pkh'\n    \n    if (!this.sync.BCH) {\n      this.sync.BCH = new BitcoinCashSync(\n        this.core.COINS.BCH[type].externalNode,\n        this.core.COINS.BCH[type].internalNode,\n        this.api,\n        this.headers\n      )\n    }\n    \n    try {\n      await this.sync.BCH.Start()\n      return this.sync.BCH.DATA\n    }\n    catch (e) {\n      console.log('SyncBCH error', e)\n    }\n  }\n  \n  /**\n   * Getting information about Bitcoin Vault wallet from blockchain\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n  \n  async SyncBTCV () {\n    const type = 'p2wpkh'\n\n    if (!this.sync.BTCV) {\n      let addresses = {\n        external:  this.core.COINS.BTCV[type].externalAddress,\n        internal: this.core.COINS.BTCV[type].internalAddress\n      }\n      \n      this.sync.BTCV = new BitcoinVaultSync(\n        this.core.COINS.BTCV[type].externalNode,\n        this.core.COINS.BTCV[type].internalNode,\n        addresses,\n        this.api,\n        this.headers\n      )\n    }\n    \n    try {\n      await this.sync.BTCV.Start()\n      return this.sync.BTCV.DATA\n    }\n    catch (e) {\n      console.log('SyncBTCV error', e)\n    }\n  }\n  \n  /**\n   * Creating a transaction or getting information about fee\n   * @param {Object} data\n   * @param {string} data.currency - Transaction currency. It can be of the following types: BTC, ETH, BCH or BTCV\n   * @param {string} data.method - Methods 'make' or 'calcFee'\n   * @param {Object} data.tx - Input data for the transaction\n   * @param {string} data.addressType - Bitcoin address type. It can be p2pkh or p2wpkh (only for BTC)\n   * @param {number} data.account - Ethereum account number (only for ETH)\n   * @returns {Promise<Object>}\n   * @constructor\n   */\n  \n  async Transaction (data) {\n    const {currency, method, tx, addressType, account} = data\n\n    switch (currency) {\n      case 'BTC':\n        return this.createBTCTx(method, tx, addressType)\n      case 'ETH':\n        return this.createETHTx(method, tx, account)\n      case 'BCH':\n        return this.createBCHTx(method, tx)\n      case 'BTCV':\n        return this.createBTCVTx(method, tx)\n      default:\n        throw new Error('Unknown txs type (currency)')\n    }\n  }\n  \n  /**\n   * Creating a bitcoin transaction\n   * @param {string} method - Method 'make' for creating a transaction and method 'calcFee' for calculating fee\n   * @param {Object} txData - Input data for the transaction\n   * @param {string} addressType - Bitcoin type. There may be p2pkh or p2wpkh\n   * @returns {Promise<Object>} Information about the transaction or fee\n   */\n  \n  async createBTCTx (method, txData, addressType = 'p2pkh') {\n    let BTCdata = {\n      unspent: this.sync.BTC[addressType].unspent,\n      balance: this.sync.BTC[addressType].balance,\n      feeList: this.sync.BTC[addressType].fee,\n      amount: txData.amount,\n      customFee: txData.customFee,\n      api: this.api.btc,\n      type: addressType,\n      headers: this.headers\n    }\n    \n    if (method === 'make') {\n      BTCdata.internalAddress = this.sync.BTC[addressType].addresses.empty.internal.address\n      BTCdata.nodes = {\n        external: this.core.COINS.BTC[addressType].externalNode,\n        internal: this.core.COINS.BTC[addressType].internalNode\n      }\n    }\n    \n    let tx = new BitcoinTx(BTCdata)\n    \n    switch (method) {\n      case 'make':\n        return tx.make(txData)\n      case 'calcFee':\n        return tx.calcFee(txData.size)\n      default:\n        throw new Error('Unknown btc txs method')\n    }\n  }\n  \n  /**\n   * Creating a ethereum transaction\n   * @param {string} method - Method 'make' for creating a transaction and method 'calcFee' for calculating fee\n   * @param {Object} txData - Input data for the transaction\n   * @param {number} account - Ethereum account number. By default 0\n   * @returns {Promise<Object>} Information about the transaction or fee\n   */\n  \n  async createETHTx (method, txData, account = 0) {\n    let ETHdata = {\n      address: this.sync.ETH[account].address,\n      gasPrice: this.sync.ETH[account].gasPrice,\n      balance: this.sync.ETH[account].balance,\n      privateKey: this.core.COINS.ETH[account].privateKey\n    }\n\n    let tx = new EthereumTx(ETHdata)\n    \n    switch (method) {\n      case 'make':\n        return tx.make(txData)\n      case 'calcFee':\n        return tx.calcFee()\n      default:\n        throw new Error('Unknown eth txs method')\n    }\n  }\n  \n  async createBCHTx (method, txData) {\n    const type = 'p2pkh'\n    \n    let BCHdata = {\n      unspent: this.sync.BCH.unspent,\n      balance: this.sync.BCH.balance,\n      feeList: this.sync.BCH.fee,\n      amount: txData.amount,\n      customFee: txData.customFee\n    }\n    \n    if (method === 'make') {\n      BCHdata.internalAddress = this.sync.BCH.addresses.empty.internal.address\n      BCHdata.nodes = {\n        external: this.core.COINS.BCH[type].externalNode,\n        internal: this.core.COINS.BCH[type].internalNode\n      }\n    }\n    \n    let tx = new BitcoinCashTx(BCHdata)\n    \n    switch (method) {\n      case 'make':\n        return tx.make(txData)\n      case 'calcFee':\n        return tx.calcFee(txData.size)\n      default:\n        throw new Error('Unknown BCH txs method')\n    }\n  }\n  \n  async createBTCVTx (method, txData) {\n    const type = 'p2wpkh'\n    \n    let BTCVdata = {\n      unspent: this.sync.BTCV.unspent,\n      balance: this.sync.BTCV.balance,\n      feeList: this.sync.BTCV.fee,\n      amount: txData.amount,\n      customFee: txData.customFee\n    }\n    \n    if (method === 'make') {\n      BTCVdata.internalAddress = this.sync.BTCV.addresses.empty.internal.address\n      BTCVdata.nodes = {\n        external: this.core.COINS.BTCV[type].externalNode,\n        internal: this.core.COINS.BTCV[type].internalNode\n      }\n    }\n    \n    let tx = new BitcoinVaultTx(BTCVdata)\n    \n    switch (method) {\n      case 'make':\n        return tx.make(txData)\n      case 'calcFee':\n        return tx.calcFee(txData.size)\n      default:\n        throw new Error('Unknown BCH txs method')\n    }\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/class/WalletWrapper.js",
     "access": "public",
@@ -3188,22 +3208,39 @@
   {
     "__docId__": 160,
     "kind": "member",
-    "name": "sync",
+    "name": "headers",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
     "static": false,
-    "longname": "src/class/WalletWrapper.js~WalletWrapper#sync",
+    "longname": "src/class/WalletWrapper.js~WalletWrapper#headers",
     "access": "public",
     "description": null,
     "lineNumber": 29,
     "undocument": true,
     "type": {
       "types": [
-        "{\"BTC\": *, \"ETH\": *, \"BCH\": *}"
+        "{}"
       ]
     }
   },
   {
     "__docId__": 161,
+    "kind": "member",
+    "name": "sync",
+    "memberof": "src/class/WalletWrapper.js~WalletWrapper",
+    "static": false,
+    "longname": "src/class/WalletWrapper.js~WalletWrapper#sync",
+    "access": "public",
+    "description": null,
+    "lineNumber": 30,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"BTC\": *, \"ETH\": *, \"BCH\": *, \"BTCV\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 162,
     "kind": "method",
     "name": "Create",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3213,7 +3250,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#Create",
     "access": "public",
     "description": "Creating a wallet core",
-    "lineNumber": 41,
+    "lineNumber": 43,
     "unknown": [
       {
         "tagName": "@constructor",
@@ -3224,7 +3261,7 @@
     "return": null
   },
   {
-    "__docId__": 163,
+    "__docId__": 164,
     "kind": "method",
     "name": "CreateCoins",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3234,7 +3271,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#CreateCoins",
     "access": "public",
     "description": "Creating a core for each supported currency type",
-    "lineNumber": 60,
+    "lineNumber": 62,
     "params": [
       {
         "nullable": null,
@@ -3275,7 +3312,7 @@
     }
   },
   {
-    "__docId__": 164,
+    "__docId__": 165,
     "kind": "method",
     "name": "Sync",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3285,7 +3322,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#Sync",
     "access": "public",
     "description": "Getting information about bitcoin or ether addresses",
-    "lineNumber": 78,
+    "lineNumber": 80,
     "unknown": [
       {
         "tagName": "@returns",
@@ -3338,7 +3375,7 @@
     }
   },
   {
-    "__docId__": 165,
+    "__docId__": 166,
     "kind": "method",
     "name": "SyncBTC",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3348,7 +3385,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#SyncBTC",
     "access": "public",
     "description": "Getting information about Bitcoin wallet from blockchain",
-    "lineNumber": 105,
+    "lineNumber": 107,
     "unknown": [
       {
         "tagName": "@returns",
@@ -3381,7 +3418,7 @@
     }
   },
   {
-    "__docId__": 166,
+    "__docId__": 167,
     "kind": "method",
     "name": "SyncETH",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3391,7 +3428,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#SyncETH",
     "access": "public",
     "description": "Getting information about Ethereum wallet from blockchain",
-    "lineNumber": 131,
+    "lineNumber": 134,
     "unknown": [
       {
         "tagName": "@returns",
@@ -3424,7 +3461,7 @@
     }
   },
   {
-    "__docId__": 167,
+    "__docId__": 168,
     "kind": "method",
     "name": "SyncBCH",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3434,7 +3471,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#SyncBCH",
     "access": "public",
     "description": "Getting information about Bitcoin Cash wallet from blockchain",
-    "lineNumber": 151,
+    "lineNumber": 154,
     "unknown": [
       {
         "tagName": "@returns",
@@ -3456,7 +3493,7 @@
     "params": []
   },
   {
-    "__docId__": 168,
+    "__docId__": 169,
     "kind": "method",
     "name": "SyncBTCV",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3465,18 +3502,30 @@
     "static": false,
     "longname": "src/class/WalletWrapper.js~WalletWrapper#SyncBTCV",
     "access": "public",
-    "description": null,
-    "lineNumber": 172,
-    "undocument": true,
-    "params": [],
+    "description": "Getting information about Bitcoin Vault wallet from blockchain",
+    "lineNumber": 181,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Promise<Object>}"
+      },
+      {
+        "tagName": "@constructor",
+        "tagValue": ""
+      }
+    ],
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Promise<Object>"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
   },
   {
-    "__docId__": 169,
+    "__docId__": 170,
     "kind": "method",
     "name": "Transaction",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3486,7 +3535,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#Transaction",
     "access": "public",
     "description": "Creating a transaction or getting information about fee",
-    "lineNumber": 210,
+    "lineNumber": 220,
     "unknown": [
       {
         "tagName": "@returns",
@@ -3569,7 +3618,7 @@
     }
   },
   {
-    "__docId__": 170,
+    "__docId__": 171,
     "kind": "method",
     "name": "createBTCTx",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3579,7 +3628,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#createBTCTx",
     "access": "public",
     "description": "Creating a bitcoin transaction",
-    "lineNumber": 235,
+    "lineNumber": 245,
     "unknown": [
       {
         "tagName": "@returns",
@@ -3628,7 +3677,7 @@
     }
   },
   {
-    "__docId__": 171,
+    "__docId__": 172,
     "kind": "method",
     "name": "createETHTx",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3638,7 +3687,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#createETHTx",
     "access": "public",
     "description": "Creating a ethereum transaction",
-    "lineNumber": 274,
+    "lineNumber": 285,
     "unknown": [
       {
         "tagName": "@returns",
@@ -3687,7 +3736,7 @@
     }
   },
   {
-    "__docId__": 172,
+    "__docId__": 173,
     "kind": "method",
     "name": "createBCHTx",
     "memberof": "src/class/WalletWrapper.js~WalletWrapper",
@@ -3697,40 +3746,7 @@
     "longname": "src/class/WalletWrapper.js~WalletWrapper#createBCHTx",
     "access": "public",
     "description": null,
-    "lineNumber": 294,
-    "undocument": true,
-    "params": [
-      {
-        "name": "method",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "txData",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 173,
-    "kind": "method",
-    "name": "createBTCVTx",
-    "memberof": "src/class/WalletWrapper.js~WalletWrapper",
-    "generator": false,
-    "async": true,
-    "static": false,
-    "longname": "src/class/WalletWrapper.js~WalletWrapper#createBTCVTx",
-    "access": "public",
-    "description": null,
-    "lineNumber": 325,
+    "lineNumber": 305,
     "undocument": true,
     "params": [
       {
@@ -3754,6 +3770,39 @@
   },
   {
     "__docId__": 174,
+    "kind": "method",
+    "name": "createBTCVTx",
+    "memberof": "src/class/WalletWrapper.js~WalletWrapper",
+    "generator": false,
+    "async": true,
+    "static": false,
+    "longname": "src/class/WalletWrapper.js~WalletWrapper#createBTCVTx",
+    "access": "public",
+    "description": null,
+    "lineNumber": 336,
+    "undocument": true,
+    "params": [
+      {
+        "name": "method",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "txData",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 175,
     "kind": "file",
     "name": "src/helpers/converters.js",
     "content": "/**\n * Bitcoin and Ethereum converter\n */\n\nexport default {\n  /**\n   * Convert Satoshi to Bitcoin\n   * @param {number} sat\n   * @returns {number} btc\n   */\n  sat_to_btc (sat) {\n    if (!+sat) return 0\n    return parseFloat((+sat / Math.pow(10, 8)).toFixed(8))\n  },\n  /**\n   * Convert Bitcoin to Satoshi\n   * @param {number} btc\n   * @returns {number} sat\n   */\n  btc_to_sat (btc) {\n    if (!+btc) return 0\n    return Math.round(+btc * Math.pow(10, 8))\n  },\n  /**\n   * Convert WEI to Ethereum\n   * @param {number} wei\n   * @returns {number} eth\n   */\n  wei_to_eth (wei) {\n    if (!+wei) return 0\n    return parseFloat(+wei / Math.pow(10, 18).toFixed(8))\n  },\n  /**\n   * Convert Ethereum to WEI\n   * @param {number} eth\n   * @returns {number} wei\n   */\n  eth_to_wei (eth) {\n    if (!+eth) return 0\n    return Math.round(+eth * Math.pow(10, 18))\n  }\n}\n",
@@ -3764,10 +3813,10 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 175,
+    "__docId__": 176,
     "kind": "file",
     "name": "src/helpers/coreHelper.js",
-    "content": "import * as bip39 from 'bip39'\nimport * as bitcoin from 'bitcoinjs-lib'\nimport {Transaction} from 'ethereumjs-tx'\nimport * as ethUtil from 'ethereumjs-util'\nimport * as HDkey from 'hdkey'\nimport * as utils from 'web3-utils'\nimport wif from 'wif'\nimport * as bchaddr from 'bchaddrjs'\nimport * as bitcore from 'bitcore-lib-cash'\nimport CustomError from '@/helpers/handleErrors'\nimport {networks} from '@/helpers/networks'\n\n/**\n * Generation of mnemonics.\n * The number of words in a mnemonic depends on the length of the entropy\n * @param {number} entropyLength - The number of bits in the entropy. It can be equal to 128, 160, 192, 224 or 256 bits\n * @returns {string} - A mnemonic whose words are separated by spaces\n */\nexport function generateMnemonic (entropyLength = 128) {\n  try {\n    return bip39.generateMnemonic(entropyLength)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_entropy')\n  }\n}\n\n/**\n * Converting a mnemonic to seed\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {Buffer} - Seed in Uint8Array format\n */\nexport function mnemonicToSeed (mnemonic) {\n  try {\n    return bip39.mnemonicToSeedSync(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a mnemonic to entropy\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {string} HEX strings entropy\n */\nexport function mnemonicToEntropy (mnemonic) {\n  try {\n    return bip39.mnemonicToEntropy(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a seed to hdkey (Hierarchical Deterministic Key)\n * @param {Buffer} seed - Mnemonic seed in Buffer\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromSeed (seed) {\n  try {\n    return HDkey.fromMasterSeed(seed)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_seed')\n  }\n}\n\n\n/**\n * Converting a xprv to hdkey (Hierarchical Deterministic Key)\n * @param {string} xprv - Extended private key\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromXprv (xprv) {\n  try {\n    return HDkey.fromExtendedKey(xprv)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_xprv')\n  }\n}\n\n/**\n * Getting xprv by hdkey\n * @param {Object} hd - HDkey node\n * @returns {string} Extended private key\n */\nexport function getXprv (hd) {\n  try {\n    return hd.privateExtendedKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_hdkey')\n  }\n}\n\n/**\n * Derivation of node. Getting child node by path\n * @param {Object} hd - HDkey node\n * @param {string} path - Derivation path\n * @returns {Object} - Child node\n */\n\nexport function derive (hd, path) {\n  if (!hd) {\n    throw new CustomError('err_core_derivation_hdkey')\n  }\n  \n  if (!path) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  let regex = new RegExp(/(^m\\/\\d+\\')([\\/{1}\\d+\\'{1}]+)/mg)\n\n  if (!regex.test(path)) {\n    throw new CustomError('err_core_derivation_path')\n  }\n\n  try {\n    return hd.derive(path)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_derivation')\n  }\n}\n\n/**\n * Getting a bitcoin address by node and child index\n * @param {Object} node - HDkey node\n * @param {number} childIndex - Index of the child node\n * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh\n * @param {string} network - Custom network for different coins\n * @returns {string} Bitcoin address\n */\n\nexport function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = 'btc') {\n  const types = ['p2pkh', 'p2wpkh']\n  \n  if (!types.includes(type)) {\n    throw new CustomError('err_core_btc_type')\n  }\n  \n  try {\n    let pubKey = node.deriveChild(childIndex).publicKey\n    \n    return bitcoin.payments[type]({\n      pubkey: pubKey,\n      network: networks[network] || network.btc\n    }).address\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_btc_address')\n  }\n}\n\n/**\n * Getting an address by public key\n * @param {string} key - Coin public key\n * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh\n * @param {string} network - Custom network for different coins\n * @returns {string} Bitcoin address\n */\n\nexport function getBtcAddressByPublicKey (key, type = 'p2pkh', network = 'btc') {\n  if (!key) return ''\n\n  try {\n    return bitcoin.payments[type]({\n      pubkey: new Buffer(key, 'hex'),\n      network: networks[network]\n    }).address\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_btc_address')\n  }\n  \n}\n\n/**\n * Getting a Ethereum private key by node\n * @param {Object} node - Ethereum node\n * @returns {Buffer} Ethereum private key in Uint8Array format\n */\n\nexport function getEthPrivateKey (node) {\n  try {\n    return node._privateKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_node')\n  }\n}\n\n/**\n * Getting a Ethereum public key by private key\n * @param {Buffer} privateKey - Ethereum private key\n * @returns {Buffer} Ethereum public key in Uint8Array format\n */\n\nexport function getEthPublicKey (privateKey) {\n  try {\n    return ethUtil.privateToPublic(privateKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_private_key')\n  }\n}\n\n/**\n * Getting a Ethereum wallet address by public key\n * @param {Buffer} publicKey - Ethereum public key\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddress (publicKey) {\n  try {\n    let addrBuffer = ethUtil\n      .publicToAddress(publicKey)\n      .toString('hex')\n    return ethUtil.toChecksumAddress(addrBuffer).toLowerCase()\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Getting Ethereum wallet address by node\n * @param {Object} node - Ethereum node\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddressByNode (node) {\n  try {\n    let privateKey = getEthPrivateKey(node)\n    let publicKey = getEthPublicKey(privateKey)\n    return getEthAddress(publicKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Convert a Bitcoin private key to the WIF (Wallet Import Format)\n * @param {Buffer} privateKey - Private key in Uint8Array format\n * @returns {string} Private key in WIF\n */\nexport function privateKeyToWIF (privateKey) {\n  try {\n    return wif.encode(128, privateKey, true)\n  }\n  catch (e) {\n    throw new CustomError('err_core_private_key')\n  }\n}\n\n/**\n * Calculating the transaction size by the number of inputs and outputs\n * @param {number} i - Number of inputs. By default 1\n * @param {number} o - Number of outputs. By default 2\n * @param {boolean} isWitness - Flag signaling that there is a witness in the transaction\n * @returns {number} Transaction size\n */\n\nexport function calcBtcTxSize (i = 1, o = 2, isWitness = false) {\n  let result = 0\n\n  if (isWitness) {\n    let base_size = (41 * i) + (32 * o) + 10\n    let total_size = (149 * i) + (32 * o) + 12\n    \n    result = ((3 * base_size) + total_size) / 4\n  } else {\n    result = i * 148 + o * 34 + 10\n  }\n  \n  return Math.ceil(result)\n}\n\n/**\n * Creating a raw Bitcoin transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin transaction and transaction hash\n */\n\nexport function makeRawBtcTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    const psbt = new bitcoin.Psbt()\n    let keyPairs = []\n    \n    psbt.setVersion(1)\n    \n    inputs.forEach(input => {\n      const isSegwit = input.address.substring(0, 3) === 'bc1'\n      const keyPair = bitcoin.ECPair.fromWIF(input.key)\n      \n      keyPairs.push(keyPair)\n      \n      let data = {\n        hash: input.tx_hash_big_endian,\n        index: input.tx_output_n\n      }\n      \n      if (isSegwit) {\n        const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey})\n        const script = p2wpkh.output.toString('hex')\n        \n        data.witnessUtxo = {\n          script: Buffer.from(script, 'hex'),\n          value: input.value\n        }\n      } else {\n        data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')\n      }\n      psbt.addInput(data)\n    })\n    \n    outputs.forEach(output => {\n      psbt.addOutput({\n        address: output.address,\n        value: output.value\n      })\n    })\n    \n    keyPairs.forEach((key, i) => {\n      psbt.signInput(i, key)\n    })\n    \n    psbt.validateSignaturesOfAllInputs()\n    psbt.finalizeAllInputs()\n    \n    const transaction = psbt.extractTransaction()\n    const signedTransaction = transaction.toHex()\n    const hash = transaction.getId()\n    \n    return {\n      hash,\n      tx: signedTransaction\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_btc_build')\n  }\n}\n\nexport function makeRawBtcvTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    const psbt = new bitcoin.Psbt({ network: networks.btcv })\n    let keyPairs = []\n    psbt.setVersion(1)\n    \n    inputs.forEach(input => {\n      const keyPair = bitcoin.ECPair.fromWIF(input.key, networks.btcv)\n      \n      keyPairs.push(keyPair)\n      \n      let data = {\n        hash: input.hash,\n        index: input.index\n      }\n      \n      \n      const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: networks.btcv})\n      const script = p2wpkh.output.toString('hex')\n      \n      data.witnessUtxo = {\n        script: Buffer.from(script, 'hex'),\n        value: input.value\n      }\n      \n      psbt.addInput(data)\n    })\n    \n    outputs.forEach(output => {\n      psbt.addOutput({\n        address: output.address,\n        value: output.value\n      })\n    })\n    \n    keyPairs.forEach((key, i) => {\n      psbt.signInput(i, key)\n    })\n    \n    psbt.validateSignaturesOfAllInputs()\n    psbt.finalizeAllInputs()\n    \n    const transaction = psbt.extractTransaction()\n    const signedTransaction = transaction.toHex()\n    const hash = transaction.getId()\n    \n    return {\n      hash,\n      tx: signedTransaction\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_btc_build')\n  }\n}\n/**\n * Creating a raw Ethereum transaction\n * @param {Object} data - Input data for a transaction\n * @param {string} data.to - Recipient address or contract address\n * @param {number} data.value - Transaction amount\n * @param {number} data.nonce - Nonce, transaction count of an account\n * @param {number} data.gasPrice - Transaction gas price\n * @param {number} data.gasLimit - Transaction gas limit\n * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)\n * @param {string} data.data - Data in hex representation (required for ERC20 transactions)\n * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format\n * @returns {Object} Returns raw Ethereum transaction and transaction hash\n */\n\nexport function makeRawEthTx (data = {}) {\n  const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data\n  \n  if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||\n    isNaN(gasLimit)) {\n    throw new CustomError('err_tx_eth_invalid_params')\n  }\n  \n  if (typeof to !== 'string') {\n    throw new CustomError('err_tx_eth_invalid_params_string')\n  }\n  \n  try {\n    let params = {\n      to: to,\n      nonce: utils.toHex(parseInt(nonce)),\n      value: utils.toHex(parseInt(value)),\n      gasPrice: utils.toHex(parseInt(gasPrice)),\n      gasLimit: utils.toHex(parseInt(gasLimit)),\n      chainId: utils.toHex(1)\n    }\n    \n    if (data.hasOwnProperty('from') && data.from) {\n      params.from = data.from\n    }\n    \n    if (data.hasOwnProperty('data') && data.data) {\n      params.data = data.data\n    }\n    \n    const tx = new Transaction(params)\n    const privateKeyBuffer = ethUtil.toBuffer(privateKey)\n    \n    tx.sign(privateKeyBuffer)\n    \n    const serializedTx = tx.serialize()\n    const hash = tx.hash().toString('hex')\n    \n    return {\n      hash: `0x${ hash }`,\n      tx: `0x${ serializedTx.toString('hex') }`\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_eth_build')\n  }\n}\n\n/**\n * Creating a raw Bitcoin Cash transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin Cash transaction and transaction hash\n */\n\nexport function makeRawBchTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    const privateKeys = inputs.map(item => item.key)\n    const utxos = inputs.map(item => {\n      item.outputIndex = +item.outputIndex\n      item.satoshis = +item.satoshis\n      item.address = getCashAddress(item.address)\n      \n      return item\n    })\n    \n    const outputsInCashFormat = outputs.map(item => {\n      item.address = getCashAddress(item.address)\n      item.satoshis = +item.satoshis\n      \n      return item\n    })\n    const tx = new bitcore.Transaction()\n      .from(utxos)\n      .to(outputsInCashFormat)\n      .sign(privateKeys)\n    \n    const txData = tx.serialize()\n    \n    return {\n      tx: txData.toString('hex'),\n      hash: tx.hash\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_bch_build')\n  }\n}\n\n/**\n * Convert a Bitcoin Cash address from Legacy format to CashAddr format\n * @param {string} address - Bitcoin Cash address in Legacy format\n * @returns {string} Returns Bitcoin Cash address in CashAddr format\n */\n\nexport function getCashAddress (address = '') {\n  try {\n    const toCashAddress = bchaddr.toCashAddress\n    \n    return toCashAddress(address)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_get_bch_address')\n  }\n}\n\n/**\n * Getting Bitcoin private key for address by derivation index\n * @param {Object} node - Input data for a transaction\n * @param {number} index - Derivation index\n * @returns {string} Returns Private key in WIF format\n */\n\nexport function getBtcPrivateKeyByIndex (node, index) {\n  try {\n    const key = node.deriveChild(index).privateKey\n    \n    return privateKeyToWIF(key)\n  }\n  catch (e) {\n    throw new CustomError('err_btc_private_key_by_index')\n  }\n}\n",
+    "content": "import * as bip39 from 'bip39'\nimport * as bitcoin from 'bitcoinjs-lib'\nimport {Transaction} from 'ethereumjs-tx'\nimport * as ethUtil from 'ethereumjs-util'\nimport * as HDkey from 'hdkey'\nimport * as utils from 'web3-utils'\nimport wif from 'wif'\nimport * as bchaddr from 'bchaddrjs'\nimport * as bitcore from 'bitcore-lib-cash'\nimport CustomError from '@/helpers/handleErrors'\nimport {networks} from '@/helpers/networks'\n\n/**\n * Generation of mnemonics.\n * The number of words in a mnemonic depends on the length of the entropy\n * @param {number} entropyLength - The number of bits in the entropy. It can be equal to 128, 160, 192, 224 or 256 bits\n * @returns {string} - A mnemonic whose words are separated by spaces\n */\nexport function generateMnemonic (entropyLength = 128) {\n  try {\n    return bip39.generateMnemonic(entropyLength)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_entropy')\n  }\n}\n\n/**\n * Converting a mnemonic to seed\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {Buffer} - Seed in Uint8Array format\n */\nexport function mnemonicToSeed (mnemonic) {\n  try {\n    return bip39.mnemonicToSeedSync(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a mnemonic to entropy\n * @param {string} mnemonic - Mnemonic phrase\n * @returns {string} HEX strings entropy\n */\nexport function mnemonicToEntropy (mnemonic) {\n  try {\n    return bip39.mnemonicToEntropy(mnemonic)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_mnemonic')\n  }\n}\n\n/**\n * Converting a seed to hdkey (Hierarchical Deterministic Key)\n * @param {Buffer} seed - Mnemonic seed in Buffer\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromSeed (seed) {\n  try {\n    return HDkey.fromMasterSeed(seed)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_seed')\n  }\n}\n\n\n/**\n * Converting a xprv to hdkey (Hierarchical Deterministic Key)\n * @param {string} xprv - Extended private key\n * @returns {Object} hdkey object with private and public key\n */\nexport function hdFromXprv (xprv) {\n  try {\n    return HDkey.fromExtendedKey(xprv)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_xprv')\n  }\n}\n\n/**\n * Getting xprv by hdkey\n * @param {Object} hd - HDkey node\n * @returns {string} Extended private key\n */\nexport function getXprv (hd) {\n  try {\n    return hd.privateExtendedKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_hdkey')\n  }\n}\n\n/**\n * Derivation of node. Getting child node by path\n * @param {Object} hd - HDkey node\n * @param {string} path - Derivation path\n * @returns {Object} - Child node\n */\n\nexport function derive (hd, path) {\n  if (!hd) {\n    throw new CustomError('err_core_derivation_hdkey')\n  }\n  \n  if (!path) {\n    throw new CustomError('err_core_derivation_path')\n  }\n  let regex = new RegExp(/(^m\\/\\d+\\')([\\/{1}\\d+\\'{1}]+)/mg)\n\n  if (!regex.test(path)) {\n    throw new CustomError('err_core_derivation_path')\n  }\n\n  try {\n    return hd.derive(path)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_derivation')\n  }\n}\n\n/**\n * Getting a bitcoin address by node and child index\n * @param {Object} node - HDkey node\n * @param {number} childIndex - Index of the child node\n * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh\n * @param {string} network - Custom network for different coins\n * @returns {string} Bitcoin address\n */\n\nexport function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = 'btc') {\n  const types = ['p2pkh', 'p2wpkh']\n  \n  if (!types.includes(type)) {\n    throw new CustomError('err_core_btc_type')\n  }\n  \n  try {\n    let pubKey = node.deriveChild(childIndex).publicKey\n    \n    return bitcoin.payments[type]({\n      pubkey: pubKey,\n      network: networks[network] || network.btc\n    }).address\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_btc_address')\n  }\n}\n\n/**\n * Getting an address by public key\n * @param {string} key - Coin public key\n * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh\n * @param {string} network - Custom network for different coins\n * @returns {string} Bitcoin address\n */\n\nexport function getBtcAddressByPublicKey (key, type = 'p2pkh', network = 'btc') {\n  if (!key) return ''\n\n  try {\n    return bitcoin.payments[type]({\n      pubkey: new Buffer(key, 'hex'),\n      network: networks[network]\n    }).address\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_btc_address')\n  }\n  \n}\n\n/**\n * Getting a Ethereum private key by node\n * @param {Object} node - Ethereum node\n * @returns {Buffer} Ethereum private key in Uint8Array format\n */\n\nexport function getEthPrivateKey (node) {\n  try {\n    return node._privateKey\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_node')\n  }\n}\n\n/**\n * Getting a Ethereum public key by private key\n * @param {Buffer} privateKey - Ethereum private key\n * @returns {Buffer} Ethereum public key in Uint8Array format\n */\n\nexport function getEthPublicKey (privateKey) {\n  try {\n    return ethUtil.privateToPublic(privateKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_private_key')\n  }\n}\n\n/**\n * Getting a Ethereum wallet address by public key\n * @param {Buffer} publicKey - Ethereum public key\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddress (publicKey) {\n  try {\n    let addrBuffer = ethUtil\n      .publicToAddress(publicKey)\n      .toString('hex')\n    return ethUtil.toChecksumAddress(addrBuffer).toLowerCase()\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Getting Ethereum wallet address by node\n * @param {Object} node - Ethereum node\n * @returns {string} Ethereum wallet address\n */\n\nexport function getEthAddressByNode (node) {\n  try {\n    let privateKey = getEthPrivateKey(node)\n    let publicKey = getEthPublicKey(privateKey)\n    return getEthAddress(publicKey)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_core_eth_public_key')\n  }\n}\n\n/**\n * Convert a Bitcoin private key to the WIF (Wallet Import Format)\n * @param {Buffer} privateKey - Private key in Uint8Array format\n * @returns {string} Private key in WIF\n */\nexport function privateKeyToWIF (privateKey) {\n  try {\n    return wif.encode(128, privateKey, true)\n  }\n  catch (e) {\n    throw new CustomError('err_core_private_key')\n  }\n}\n\n/**\n * Calculating the transaction size by the number of inputs and outputs\n * @param {number} i - Number of inputs. By default 1\n * @param {number} o - Number of outputs. By default 2\n * @param {boolean} isWitness - Flag signaling that there is a witness in the transaction\n * @returns {number} Transaction size\n */\n\nexport function calcBtcTxSize (i = 1, o = 2, isWitness = false) {\n  let result = 0\n\n  if (isWitness) {\n    let base_size = (41 * i) + (32 * o) + 10\n    let total_size = (149 * i) + (32 * o) + 12\n    \n    result = ((3 * base_size) + total_size) / 4\n  } else {\n    result = i * 148 + o * 34 + 10\n  }\n  \n  return Math.ceil(result)\n}\n\n/**\n * Creating a raw Bitcoin transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin transaction and transaction hash\n */\n\nexport function makeRawBtcTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    const psbt = new bitcoin.Psbt()\n    let keyPairs = []\n    \n    psbt.setVersion(1)\n    \n    inputs.forEach(input => {\n      const isSegwit = input.address.substring(0, 3) === 'bc1'\n      const keyPair = bitcoin.ECPair.fromWIF(input.key)\n      \n      keyPairs.push(keyPair)\n      \n      let data = {\n        hash: input.tx_hash_big_endian,\n        index: input.tx_output_n\n      }\n      \n      if (isSegwit) {\n        const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey})\n        const script = p2wpkh.output.toString('hex')\n        \n        data.witnessUtxo = {\n          script: Buffer.from(script, 'hex'),\n          value: input.value\n        }\n      } else {\n        data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')\n      }\n      psbt.addInput(data)\n    })\n    \n    outputs.forEach(output => {\n      psbt.addOutput({\n        address: output.address,\n        value: output.value\n      })\n    })\n    \n    keyPairs.forEach((key, i) => {\n      psbt.signInput(i, key)\n    })\n    \n    psbt.validateSignaturesOfAllInputs()\n    psbt.finalizeAllInputs()\n    \n    const transaction = psbt.extractTransaction()\n    const signedTransaction = transaction.toHex()\n    const hash = transaction.getId()\n    \n    return {\n      hash,\n      tx: signedTransaction\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_btc_build')\n  }\n}\n\n/**\n * Creating a raw Bitcoin Vault transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin Vault transaction and transaction hash\n */\n\nexport function makeRawBtcvTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    const psbt = new bitcoin.Psbt({ network: networks.btcv })\n    let keyPairs = []\n    psbt.setVersion(1)\n    \n    inputs.forEach(input => {\n      const keyPair = bitcoin.ECPair.fromWIF(input.key, networks.btcv)\n      \n      keyPairs.push(keyPair)\n      \n      let data = {\n        hash: input.hash,\n        index: input.index\n      }\n      \n      \n      const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: networks.btcv})\n      const script = p2wpkh.output.toString('hex')\n      \n      data.witnessUtxo = {\n        script: Buffer.from(script, 'hex'),\n        value: input.value\n      }\n      \n      psbt.addInput(data)\n    })\n    \n    outputs.forEach(output => {\n      psbt.addOutput({\n        address: output.address,\n        value: output.value\n      })\n    })\n    \n    keyPairs.forEach((key, i) => {\n      psbt.signInput(i, key)\n    })\n    \n    psbt.validateSignaturesOfAllInputs()\n    psbt.finalizeAllInputs()\n    \n    const transaction = psbt.extractTransaction()\n    const signedTransaction = transaction.toHex()\n    const hash = transaction.getId()\n    \n    return {\n      hash,\n      tx: signedTransaction\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_btc_build')\n  }\n}\n\n/**\n * Creating a raw Ethereum transaction\n * @param {Object} data - Input data for a transaction\n * @param {string} data.to - Recipient address or contract address\n * @param {number} data.value - Transaction amount\n * @param {number} data.nonce - Nonce, transaction count of an account\n * @param {number} data.gasPrice - Transaction gas price\n * @param {number} data.gasLimit - Transaction gas limit\n * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)\n * @param {string} data.data - Data in hex representation (required for ERC20 transactions)\n * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format\n * @returns {Object} Returns raw Ethereum transaction and transaction hash\n */\n\nexport function makeRawEthTx (data = {}) {\n  const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data\n  \n  if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||\n    isNaN(gasLimit)) {\n    throw new CustomError('err_tx_eth_invalid_params')\n  }\n  \n  if (typeof to !== 'string') {\n    throw new CustomError('err_tx_eth_invalid_params_string')\n  }\n  \n  try {\n    let params = {\n      to: to,\n      nonce: utils.toHex(parseInt(nonce)),\n      value: utils.toHex(parseInt(value)),\n      gasPrice: utils.toHex(parseInt(gasPrice)),\n      gasLimit: utils.toHex(parseInt(gasLimit)),\n      chainId: utils.toHex(1)\n    }\n    \n    if (data.hasOwnProperty('from') && data.from) {\n      params.from = data.from\n    }\n    \n    if (data.hasOwnProperty('data') && data.data) {\n      params.data = data.data\n    }\n    \n    const tx = new Transaction(params)\n    const privateKeyBuffer = ethUtil.toBuffer(privateKey)\n    \n    tx.sign(privateKeyBuffer)\n    \n    const serializedTx = tx.serialize()\n    const hash = tx.hash().toString('hex')\n    \n    return {\n      hash: `0x${ hash }`,\n      tx: `0x${ serializedTx.toString('hex') }`\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_eth_build')\n  }\n}\n\n/**\n * Creating a raw Bitcoin Cash transaction\n * @param {Object} data - Input data for a transaction\n * @param {Array} data.inputs - List of inputs\n * @param {Array} data.outputs - List of outputs\n * @returns {Object} Returns raw Bitcoin Cash transaction and transaction hash\n */\n\nexport function makeRawBchTx (data = {}) {\n  try {\n    const {inputs, outputs} = data\n    let privateKeys = []\n    let utxos = []\n\n    for (let item of inputs) {\n      item.outputIndex = +item.outputIndex\n      item.satoshis = +item.satoshis\n      item.address = getCashAddress(item.address)\n      privateKeys.push(item.key)\n      utxos.push(item)\n    }\n\n    const outputsInCashFormat = outputs.map(item => {\n      item.address = getCashAddress(item.address)\n      item.satoshis = +item.satoshis\n      \n      return item\n    })\n    const tx = new bitcore.Transaction()\n      .from(utxos)\n      .to(outputsInCashFormat)\n      .sign(privateKeys)\n\n    const txData = tx.serialize()\n    \n    return {\n      tx: txData.toString('hex'),\n      hash: tx.hash\n    }\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_tx_bch_build')\n  }\n}\n\n/**\n * Convert a Bitcoin Cash address from Legacy format to CashAddr format\n * @param {string} address - Bitcoin Cash address in Legacy format\n * @returns {string} Returns Bitcoin Cash address in CashAddr format\n */\n\nexport function getCashAddress (address = '') {\n  try {\n    const toCashAddress = bchaddr.toCashAddress\n    \n    return toCashAddress(address)\n  }\n  catch (e) {\n    console.log(e)\n    throw new CustomError('err_get_bch_address')\n  }\n}\n\n/**\n * Getting Bitcoin private key for address by derivation index\n * @param {Object} node - Input data for a transaction\n * @param {number} index - Derivation index\n * @returns {string} Returns Private key in WIF format\n */\n\nexport function getBtcPrivateKeyByIndex (node, index) {\n  try {\n    const key = node.deriveChild(index).privateKey\n    \n    return privateKeyToWIF(key)\n  }\n  catch (e) {\n    throw new CustomError('err_btc_private_key_by_index')\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/helpers/coreHelper.js",
     "access": "public",
@@ -3775,7 +3824,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 176,
+    "__docId__": 177,
     "kind": "function",
     "name": "generateMnemonic",
     "memberof": "src/helpers/coreHelper.js",
@@ -3817,7 +3866,7 @@
     }
   },
   {
-    "__docId__": 177,
+    "__docId__": 178,
     "kind": "function",
     "name": "mnemonicToSeed",
     "memberof": "src/helpers/coreHelper.js",
@@ -3859,7 +3908,7 @@
     }
   },
   {
-    "__docId__": 178,
+    "__docId__": 179,
     "kind": "function",
     "name": "mnemonicToEntropy",
     "memberof": "src/helpers/coreHelper.js",
@@ -3901,7 +3950,7 @@
     }
   },
   {
-    "__docId__": 179,
+    "__docId__": 180,
     "kind": "function",
     "name": "hdFromSeed",
     "memberof": "src/helpers/coreHelper.js",
@@ -3943,7 +3992,7 @@
     }
   },
   {
-    "__docId__": 180,
+    "__docId__": 181,
     "kind": "function",
     "name": "hdFromXprv",
     "memberof": "src/helpers/coreHelper.js",
@@ -3985,7 +4034,7 @@
     }
   },
   {
-    "__docId__": 181,
+    "__docId__": 182,
     "kind": "function",
     "name": "getXprv",
     "memberof": "src/helpers/coreHelper.js",
@@ -4027,7 +4076,7 @@
     }
   },
   {
-    "__docId__": 182,
+    "__docId__": 183,
     "kind": "function",
     "name": "derive",
     "memberof": "src/helpers/coreHelper.js",
@@ -4079,7 +4128,7 @@
     }
   },
   {
-    "__docId__": 183,
+    "__docId__": 184,
     "kind": "function",
     "name": "getBtcAddress",
     "memberof": "src/helpers/coreHelper.js",
@@ -4151,7 +4200,7 @@
     }
   },
   {
-    "__docId__": 184,
+    "__docId__": 185,
     "kind": "function",
     "name": "getBtcAddressByPublicKey",
     "memberof": "src/helpers/coreHelper.js",
@@ -4213,7 +4262,7 @@
     }
   },
   {
-    "__docId__": 185,
+    "__docId__": 186,
     "kind": "function",
     "name": "getEthPrivateKey",
     "memberof": "src/helpers/coreHelper.js",
@@ -4255,7 +4304,7 @@
     }
   },
   {
-    "__docId__": 186,
+    "__docId__": 187,
     "kind": "function",
     "name": "getEthPublicKey",
     "memberof": "src/helpers/coreHelper.js",
@@ -4297,7 +4346,7 @@
     }
   },
   {
-    "__docId__": 187,
+    "__docId__": 188,
     "kind": "function",
     "name": "getEthAddress",
     "memberof": "src/helpers/coreHelper.js",
@@ -4339,7 +4388,7 @@
     }
   },
   {
-    "__docId__": 188,
+    "__docId__": 189,
     "kind": "function",
     "name": "getEthAddressByNode",
     "memberof": "src/helpers/coreHelper.js",
@@ -4381,7 +4430,7 @@
     }
   },
   {
-    "__docId__": 189,
+    "__docId__": 190,
     "kind": "function",
     "name": "privateKeyToWIF",
     "memberof": "src/helpers/coreHelper.js",
@@ -4423,7 +4472,7 @@
     }
   },
   {
-    "__docId__": 190,
+    "__docId__": 191,
     "kind": "function",
     "name": "calcBtcTxSize",
     "memberof": "src/helpers/coreHelper.js",
@@ -4485,7 +4534,7 @@
     }
   },
   {
-    "__docId__": 191,
+    "__docId__": 192,
     "kind": "function",
     "name": "makeRawBtcTx",
     "memberof": "src/helpers/coreHelper.js",
@@ -4547,7 +4596,7 @@
     }
   },
   {
-    "__docId__": 192,
+    "__docId__": 193,
     "kind": "function",
     "name": "makeRawBtcvTx",
     "memberof": "src/helpers/coreHelper.js",
@@ -4559,28 +4608,57 @@
     "export": true,
     "importPath": "lumi-web-core/src/helpers/coreHelper.js",
     "importStyle": "{makeRawBtcvTx}",
-    "description": null,
-    "lineNumber": 365,
-    "undocument": true,
+    "description": "Creating a raw Bitcoin Vault transaction",
+    "lineNumber": 373,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Object} Returns raw Bitcoin Vault transaction and transaction hash"
+      }
+    ],
     "params": [
       {
-        "name": "data",
-        "optional": true,
+        "nullable": null,
         "types": [
-          "{}"
+          "Object"
         ],
-        "defaultRaw": {},
-        "defaultValue": "{}"
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": "Input data for a transaction"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.inputs",
+        "description": "List of inputs"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.outputs",
+        "description": "List of outputs"
       }
     ],
     "return": {
+      "nullable": null,
       "types": [
-        "{\"hash\": *, \"tx\": *}"
-      ]
+        "Object"
+      ],
+      "spread": false,
+      "description": "Returns raw Bitcoin Vault transaction and transaction hash"
     }
   },
   {
-    "__docId__": 193,
+    "__docId__": 194,
     "kind": "function",
     "name": "makeRawEthTx",
     "memberof": "src/helpers/coreHelper.js",
@@ -4593,7 +4671,7 @@
     "importPath": "lumi-web-core/src/helpers/coreHelper.js",
     "importStyle": "{makeRawEthTx}",
     "description": "Creating a raw Ethereum transaction",
-    "lineNumber": 436,
+    "lineNumber": 445,
     "unknown": [
       {
         "tagName": "@returns",
@@ -4703,7 +4781,7 @@
     }
   },
   {
-    "__docId__": 194,
+    "__docId__": 195,
     "kind": "function",
     "name": "makeRawBchTx",
     "memberof": "src/helpers/coreHelper.js",
@@ -4716,7 +4794,7 @@
     "importPath": "lumi-web-core/src/helpers/coreHelper.js",
     "importStyle": "{makeRawBchTx}",
     "description": "Creating a raw Bitcoin Cash transaction",
-    "lineNumber": 493,
+    "lineNumber": 502,
     "unknown": [
       {
         "tagName": "@returns",
@@ -4765,7 +4843,7 @@
     }
   },
   {
-    "__docId__": 195,
+    "__docId__": 196,
     "kind": "function",
     "name": "getCashAddress",
     "memberof": "src/helpers/coreHelper.js",
@@ -4778,7 +4856,7 @@
     "importPath": "lumi-web-core/src/helpers/coreHelper.js",
     "importStyle": "{getCashAddress}",
     "description": "Convert a Bitcoin Cash address from Legacy format to CashAddr format",
-    "lineNumber": 535,
+    "lineNumber": 546,
     "unknown": [
       {
         "tagName": "@returns",
@@ -4807,7 +4885,7 @@
     }
   },
   {
-    "__docId__": 196,
+    "__docId__": 197,
     "kind": "function",
     "name": "getBtcPrivateKeyByIndex",
     "memberof": "src/helpers/coreHelper.js",
@@ -4820,7 +4898,7 @@
     "importPath": "lumi-web-core/src/helpers/coreHelper.js",
     "importStyle": "{getBtcPrivateKeyByIndex}",
     "description": "Getting Bitcoin private key for address by derivation index",
-    "lineNumber": 554,
+    "lineNumber": 565,
     "unknown": [
       {
         "tagName": "@returns",
@@ -4859,7 +4937,7 @@
     }
   },
   {
-    "__docId__": 197,
+    "__docId__": 198,
     "kind": "file",
     "name": "src/helpers/errors.js",
     "content": "export default {\n  err_core_mnemonic: 'Wrong mnemonic phrase. Please, check the spelling and try again',\n  err_core_mnemonic_length: 'Bad word count for mnemonic',\n  err_core_mnemonic_empty: 'Invalid mnemonic',\n  err_core_seed: 'Invalid seed',\n  err_core_entropy: 'Bad entropy',\n  err_core_xprv: 'Invalid xprv',\n  err_core_hdkey: 'Invalid hdkey',\n  err_core_btc_node: 'Error generating address. Check BTC node',\n  err_core_btc_type: 'Invalid bitcoin address type. Supported types are p2pkh and p2wpkh',\n  err_core_eth_node: 'Error generating ETH private key. Check ETH node',\n  err_core_eth_private_key: 'Error generating ETH public key. Check ETH private key',\n  err_core_eth_public_key: 'Error generating ETH address. Check ETH public key',\n  err_core_eth_account: 'Invalid account. It must be an integer',\n  err_core_derivation: 'Problem with derivation. Check node and derivation path',\n  err_core_derivation_hdkey: 'HDkey is required',\n  err_core_derivation_path: 'Invalid derivation path',\n  err_core_derivation_range: 'Bad range. Check from/to params',\n  err_core_private_key: 'Invalid private key. Expect buffer',\n  err_tx_btc_balance: 'Insufficient balance',\n  err_tx_btc_build: 'BTC transaction failed. Check all parameters',\n  err_tx_btc_amount: 'Invalid amount. Amount must be a Number',\n  err_tx_btc_fee: 'Invalid fee. Fee must be a Object with \\`SAT\\` parameter',\n  err_tx_btc_unspent: 'Invalid unspent. Try to resync the BTC wallet',\n  err_tx_btc_raw_tx: 'Problem getting raw transaction. Try to send again',\n  err_tx_bch_amount: 'Invalid amount. Amount must be a Number',\n  err_tx_bch_fee: 'Invalid fee. Fee must be a Object with \\`SAT\\` parameter',\n  err_tx_bch_balance: 'Insufficient balance',\n  err_tx_bch_build: 'BCH transaction failed. Check all parameters',\n  err_tx_eth_balance: 'Insufficient balance',\n  err_tx_eth_address: 'Invalid ethereum address',\n  err_tx_eth_build: 'ETH transaction failed. Check all parameters',\n  err_tx_eth_invalid_params: 'Invalid params. Nonce, value, gas price and gas limit have to be a number',\n  err_tx_eth_invalid_params_string: 'Invalid params. Parameters \"to\" must be string based',\n  err_tx_btcv_balance: 'Insufficient balance',\n  err_tx_btcv_amount: 'Invalid amount. Amount must be a Number',\n  err_tx_btcv_fee: 'Invalid fee. Fee must be a Object with \\`SAT\\` parameter',\n  err_wallet_exist: 'Wallet not created. Use this method after creating a wallet',\n  err_wallet_api: 'Api is not found! Please, use the setter apiEndpoint to install',\n  err_wallet_api_type: 'Api must be an object!',\n  err_btc_private_key_by_index: 'Key generation problem. Check the node and derivation index',\n  err_get_bch_address: 'Problem with address conversion. Check the format of the source address'\n}\n",
@@ -4870,7 +4948,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 198,
+    "__docId__": 199,
     "kind": "file",
     "name": "src/helpers/handleErrors.js",
     "content": "import errors from '@/helpers/errors'\n\n/**\n * Custom error object.\n * By the error code it substitutes the desired message from object 'errors'\n * @extends Error\n */\n\nclass CustomError extends Error {\n  constructor(code) {\n    super(code)\n    this.name = 'CustomError'\n    this.message = errors.hasOwnProperty(code) ? `${code}: ${errors[code]}` : 'Uncaught error'\n  \n    if (Error.captureStackTrace) {\n      Error.captureStackTrace(this, this.constructor)\n    } else {\n      this.stack = (new Error()).stack\n    }\n  }\n}\n\nexport default CustomError\n",
@@ -4881,7 +4959,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 199,
+    "__docId__": 200,
     "kind": "class",
     "name": "CustomError",
     "memberof": "src/helpers/handleErrors.js",
@@ -4899,7 +4977,7 @@
     ]
   },
   {
-    "__docId__": 200,
+    "__docId__": 201,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/helpers/handleErrors.js~CustomError",
@@ -4913,7 +4991,7 @@
     "undocument": true
   },
   {
-    "__docId__": 201,
+    "__docId__": 202,
     "kind": "member",
     "name": "name",
     "memberof": "src/helpers/handleErrors.js~CustomError",
@@ -4930,7 +5008,7 @@
     }
   },
   {
-    "__docId__": 202,
+    "__docId__": 203,
     "kind": "member",
     "name": "message",
     "memberof": "src/helpers/handleErrors.js~CustomError",
@@ -4947,7 +5025,7 @@
     }
   },
   {
-    "__docId__": 203,
+    "__docId__": 204,
     "kind": "member",
     "name": "stack",
     "memberof": "src/helpers/handleErrors.js~CustomError",
@@ -4964,7 +5042,7 @@
     }
   },
   {
-    "__docId__": 204,
+    "__docId__": 205,
     "kind": "file",
     "name": "src/helpers/networks.js",
     "content": "export const networks = {\n  btc: {\n    messagePrefix: '\\x18Bitcoin Signed Message:\\n',\n    bech32: 'bc',\n    bip32: {\n      public: 0x0488b21e,\n      private: 0x0488ade4,\n    },\n    pubKeyHash: 0x00,\n    scriptHash: 0x05,\n    wif: 0x80,\n  },\n  btcv: {\n    messagePrefix: '\\x18Bitcoin Signed Message:\\n',\n    bech32: 'royale',\n    bip32: {\n      public: 0x0488b21e,\n      private: 0x0488ade4\n    },\n    pubKeyHash: 0x4e,\n    scriptHash: 0x3c,\n    wif: 0x80\n  }\n}\n",
@@ -4975,7 +5053,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 205,
+    "__docId__": 206,
     "kind": "variable",
     "name": "networks",
     "memberof": "src/helpers/networks.js",
@@ -4995,7 +5073,7 @@
     }
   },
   {
-    "__docId__": 206,
+    "__docId__": 207,
     "kind": "file",
     "name": "src/helpers/requestHandleErrors.js",
     "content": "/**\n * Handling requests\n * @param response\n * @returns {any | Promise<any>} Response decoded in json or error if the request failed\n */\nexport default function (response) {\n  if (response.ok) {\n    const contentType = response.headers.get('content-type')\n    if (contentType && contentType.indexOf('application/json') !== -1) {\n      return response.json()\n    } else {\n      return response.text()\n    }\n  } else {\n    throw new Error(response.statusText)\n  }\n}\n",
@@ -5006,7 +5084,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 207,
+    "__docId__": 208,
     "kind": "function",
     "name": "requestHandleErrors",
     "memberof": "src/helpers/requestHandleErrors.js",
@@ -5049,7 +5127,7 @@
     }
   },
   {
-    "__docId__": 208,
+    "__docId__": 209,
     "kind": "file",
     "name": "src/helpers/toFormatDecimal.js",
     "content": "/**\n * Formatting numbers with the number of digits after the decimal point\n * @param {number|string} value - Value for formatting\n * @param {number} x - Number of digits after the decimal point\n * @param {boolean} floor - type of rounding\n * @returns {string} Formatted value or 0 if no value is specified\n */\nexport default function (value, x = 8, floor = false) {\n  value = parseFloat(value)\n  \n  if (!value) return '0'\n  \n  let num = 0\n  \n  if (floor) {\n    let pow = Math.pow(10, 8)\n    num = Math.floor(value * pow) / pow\n  } else {\n    num = value.toFixed(x)\n  }\n  \n  while (num[num.length - 1] === '0') {\n    num = num.slice(0, -1)\n  }\n  \n  if (num[num.length - 1] === '.') {\n    num = num.slice(0, -1)\n  }\n  \n  return num\n}\n",
@@ -5060,7 +5138,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 209,
+    "__docId__": 210,
     "kind": "function",
     "name": "toFormatDecimal",
     "memberof": "src/helpers/toFormatDecimal.js",
@@ -5123,10 +5201,10 @@
     }
   },
   {
-    "__docId__": 210,
+    "__docId__": 211,
     "kind": "file",
     "name": "src/index.js",
-    "content": "import Wrapper from '@/Wrapper'\nimport CustomError from '@/helpers/handleErrors'\nimport {\n  makeRawBtcTx,\n  makeRawEthTx,\n  makeRawBchTx,\n  getBtcPrivateKeyByIndex,\n  calcBtcTxSize\n} from '@/helpers/coreHelper'\n\nexport {default as converter} from '@/helpers/converters'\nexport {default as toDecimal} from '@/helpers/toFormatDecimal'\nexport {\n  makeRawBtcTx,\n  makeRawEthTx,\n  makeRawBchTx,\n  getBtcPrivateKeyByIndex,\n  calcBtcTxSize\n}\n\n/**\n * Class Wallet\n * @class\n */\n\nexport default class Wallet {\n  /**\n   * Create a Wallet\n   * @param {Object} api - A set of URLs for getting information about addresses\n   */\n  constructor (api) {\n    this.wrapper = new Wrapper()\n    this.core = null\n    this.sync = {}\n    this.api = {\n      btc: '',\n      btcFee: '',\n      eth: '',\n      bch: '',\n      btcv: ''\n    }\n    this._apiReady = false\n    \n    if (api) {\n      this.setApiEndpoint(api)\n    }\n  }\n  \n  /**\n   * Creating a new wallet\n   *\n   * @param {number} count - Mnemonic words count\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.hdkey - A hierarchical deterministic keys\n   * @returns {Uint8Array} core.seed - Seed\n   * @returns {string} core.seedInHex - Seed in hex format\n   */\n  \n  async createNew (count = 12) {\n    let data = {\n      data: {\n        from: 'new',\n        count: count\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * Creating a wallet by mnemonic\n   *\n   * @param {string} mnemonic\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.hdkey - A hierarchical deterministic keys\n   * @returns {Uint8Array} core.seed - Seed\n   * @returns {string} core.seedInHex - Seed in hex format\n   */\n  \n  async createByMnemonic (mnemonic = '') {\n    if (!mnemonic) {\n      throw new CustomError('err_core_mnemonic_empty')\n    }\n    \n    let data = {\n      data: {\n        from: 'mnemonic',\n        mnemonic: mnemonic\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * Creating a wallet by xprv key\n   *\n   * @param {string} key - BIP32 Root Key\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.hdkey - A hierarchical deterministic keys\n   * @returns {Uint8Array} core.seed - Seed\n   * @returns {string} core.seedInHex - Seed in hex format\n   */\n  \n  async createByKey (key = '') {\n    if (!key) {\n      throw new CustomError('err_core_xprv')\n    }\n    \n    let data = {\n      data: {\n        from: 'xprv',\n        key: key\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * Creating a core for each supported currency type\n   *\n   * @param {Array<{coin: String, type: String}>} coins\n   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV\n   * @param {string|number} coins[].type - Coin type (additional). For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).\n   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address\n   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address\n   * */\n  \n  async createCoins (coins) {\n    if (!coins || !Array.isArray(coins)) {\n      coins = [\n        {coin: 'BTC', type: 'p2pkh'},\n        {coin: 'ETH', type: 0}\n      ]\n    }\n    \n    return await this.wrapper.method('createCoins', coins)\n  }\n  \n  /**\n   * The method returns node by derivation path\n   *\n   * @param {Object} data\n   * @param {number} data.from - Top of the derivation range\n   * @param {number} data.to - End of the derivation range\n   * @param {string} data.path - Derivation path\n   * @param {Array} data.coins - Array of coins for generating addresses\n   * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}} Returns object with node information\n   * @returns {Object} node - Contains privateExtendedKey and publicExtendedKey\n   * @returns {Array} list - Array of child nodes. Every child node contains the following parameters:\n   * derivation path, publick key, private key in WIF format and addresses if a list of coins was sent\n   */\n  \n  async getChildNodes (data) {\n    if (!this.core) {\n      throw new CustomError('err_wallet_exist')\n    }\n    \n    return await this.wrapper.method('getNodes', data)\n  }\n  \n  /**\n   * The method starts synchronization of Bitcoin wallet\n   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh\n   * @returns {Promise<Object>} Returns object with Bitcoin synchronization information\n   * @returns {Object} sync\n   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin address\n   * @returns {Array} sync.transactions - The list of Bitcoin transactions\n   * @returns {Array} sync.unspent - The list of unspents addresses\n   * @returns {number} sync.balance - Bitcoin balance in Satoshi\n   * @returns {number} sync.latestBlock - The last block of the Bitcoin blockchain\n   * @returns {Array} sync.fee - The list of fee per byte\n   */\n  \n  async syncBTC (type = 'p2pkh') {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    if (!this.sync.BTC) {\n      this.sync.BTC = {}\n    }\n    \n    this.sync.BTC[type] = await this.wrapper.method('sync', {coin: 'BTC', type})\n    \n    return this.sync.BTC[type]\n  }\n  \n  /**\n   * The method starts synchronization of Ethereum wallet\n   * @param {number} type - Ethereum account number. By default 0\n   * @returns {Promise<Object>} Returns object with Ethereum synchronization information\n   * @returns {Object} sync\n   * @returns {string} sync.address - Ethereum wallet address\n   * @returns {number} sync.balance - Ethereum balance in wei\n   * @returns {Array} sync.transactions - The list of Ethereum transactions\n   * @returns {number} sync.gasPrice - Gas price\n   */\n  \n  async syncETH (type = 0) {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    if (!this.sync.ETH) {\n      this.sync.ETH = {}\n    }\n    \n    this.sync.ETH[type] = await this.wrapper.method('sync', {coin: 'ETH', type})\n    \n    return this.sync.ETH[type]\n  }\n  \n  /**\n   * The method starts synchronization of Bitcoin Cash wallet\n   * @returns {Promise<Object>} Returns object with Bitcoin Cash synchronization information\n   * @returns {Object} sync\n   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Cash address\n   * @returns {Array} sync.transactions - The list of Bitcoin Cash transactions\n   * @returns {Array} sync.unspent - The list of unspents addresses\n   * @returns {number} sync.balance - Bitcoin Cash balance in Satoshi\n   * @returns {number} sync.latestBlock - The last block of the Bitcoin Cash blockchain\n   * @returns {Array} sync.fee - The list of fee per byte\n   */\n  \n  async syncBCH () {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    this.sync.BCH = await this.wrapper.method('sync', {coin: 'BCH'})\n    \n    return this.sync.BCH\n  }\n  \n  /**\n   * The method starts synchronization of Bitcoin Vault wallet\n   * @returns {Promise<Object>} Returns object with Bitcoin Vault synchronization information\n   * @returns {Object} sync\n   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Vault address\n   * @returns {Array} sync.transactions - The list of Bitcoin Vault transactions\n   * @returns {Array} sync.unspent - The list of unspents addresses\n   * @returns {number} sync.balance - Bitcoin Vault balance in Satoshi\n   * @returns {number} sync.latestBlock - The last block of the Bitcoin Vault blockchain\n   * @returns {Array} sync.fee - The list of fee per byte\n   */\n  \n  async syncBTCV () {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    this.sync.BTCV = await this.wrapper.method('sync', {coin: 'BTCV'})\n    \n    return this.sync.BTCV\n  }\n  \n  /**\n   * The method returns a raw BTC transaction\n   *\n   * @param {Object} data\n   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:\n   * transaction hash, output n, address, value, script and private key in WIF format\n   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Bitcoin transaction\n   */\n  \n  async makeRawBtcTx (data) {\n    return await makeRawBtcTx(data)\n  }\n  \n  /**\n   * The method returns a raw BCH transaction\n   *\n   * @param {Object} data\n   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:\n   * transaction hash, output n, address, value in satoshis, script and private key in WIF format\n   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value in satoshis\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Bitcoin Cash transaction\n   */\n  \n  async makeRawBchTx (data) {\n    return await makeRawBchTx(data)\n  }\n  \n  /**\n   * The method returns a raw ETH transaction\n   *\n   * @param {Object} data\n   * @param {string} data.address - Ethereum address\n   * @param {number} data.amount - The transaction's amount in wei\n   * @param {number} data.nonce - The transaction's nonce\n   * @param {number} data.gasPrice - The transaction's gas price in wei\n   * @param {number} data.gasLimit - The transaction's gas limit\n   * @param {string} data.privateKey - Private key of ether wallet in hex\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Ethereum transaction\n   */\n  \n  async makeRawEthTx (data) {\n    return await makeRawEthTx(data)\n  }\n  \n  /**\n   * This method generates a list of transaction fees for the selected currency\n   * @param {Object} params\n   * @param {string} params.currency - Selected currency. BTC, ETH, BCH or BTCV\n   * @param {string} params.addressType - Address type. Required for BTC transaction. Supported types are p2pkh or p2wpkh\n   * @param {string} params.account - Account number. Required for ETH transaction\n   * @param {number} params.amount - Amount of transaction\n   * @param {number} params.customFee - Custom fee per byte\n   * @param {number} params.size - Transaction size. Relevant for bitcoin transactions\n   * @returns {Promise<Array>} The list of transaction fees\n   */\n  \n  async calculateFee (params) {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    return await this.wrapper.method('transaction', {\n      method: 'calcFee',\n      currency: params.currency,\n      addressType: params.addressType,\n      account: params.account,\n      tx: {\n        amount: params.amount,\n        customFee: params.customFee,\n        size: params.size\n      }\n    })\n  }\n  \n  /**\n   * Wrapper for the compilation of transactions of bitcoin and ether\n   * @param {Object} data\n   * @param {string} data.currency - Transaction currency\n   * @param {string} data.addressType - Address type. Required for BTC transaction. Supported types are p2pkh or p2wpkh\n   * @param {string} data.account - Account number. Required for ETH transaction\n   * @param {Object} data.tx\n   * @param {string} data.tx.addressTo - Recipient address\n   * @param {number} data.tx.amount - Transaction amount\n   * @param {number} data.tx.fee - Transaction fee\n   * @returns {Promise<Object>}\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw bitcoin or ethereum transaction\n   */\n  \n  async makeTransaction (data) {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    let params = {\n      method: 'make',\n      currency: data.currency,\n      addressType: data.addressType,\n      account: data.account,\n      tx: data.tx\n    }\n    \n    return await this.wrapper.method('transaction', params)\n  }\n  \n  /**\n   * Sets the API Endpoint\n   *\n   * @type {Object} api\n   * @param {string} api.btc - Url address of bitcoin endpoint\n   * @param {string} api.btcFee - Url address of bitcoin fee endpoint\n   * @param {string} api.eth - Url address of ethereum endpoint\n   * @param {string} api.bch - Url address of bitcoin cash endpoint\n   * @param {string} api.btcv - Url address of bitcoin vault endpoint\n   */\n  \n  setApiEndpoint (api) {\n    if (!api || typeof api !== 'object' || Array.isArray(api)) {\n      throw new CustomError('err_wallet_api_type')\n    }\n    \n    for (let key in this.api) {\n      if (api.hasOwnProperty(key)) {\n        this.api[key] = api[key]\n      } else {\n        throw Error(`Api must be contains ${ key } value`)\n      }\n    }\n    this._apiReady = true\n  }\n  \n  get Core () {\n    return this.core\n  }\n  \n  get getApiState () {\n    return this._apiReady\n  }\n}\n",
+    "content": "import Wrapper from '@/Wrapper'\nimport CustomError from '@/helpers/handleErrors'\nimport {\n  makeRawBtcTx,\n  makeRawEthTx,\n  makeRawBchTx,\n  getBtcPrivateKeyByIndex,\n  calcBtcTxSize\n} from '@/helpers/coreHelper'\n\nexport {default as converter} from '@/helpers/converters'\nexport {default as toDecimal} from '@/helpers/toFormatDecimal'\nexport {\n  makeRawBtcTx,\n  makeRawEthTx,\n  makeRawBchTx,\n  getBtcPrivateKeyByIndex,\n  calcBtcTxSize\n}\n\n/**\n * Class Wallet\n * @class\n */\n\nexport default class Wallet {\n  /**\n   * Create a Wallet\n   * @param {Object} api - A set of URLs for getting information about addresses\n   */\n  constructor (api) {\n    this.wrapper = new Wrapper()\n    this.core = null\n    this.sync = {}\n    this.api = {\n      btc: '',\n      btcFee: '',\n      eth: '',\n      bch: '',\n      btcv: ''\n    }\n    this._apiReady = false\n    \n    if (api) {\n      this.setApiEndpoint(api)\n    }\n  }\n  \n  /**\n   * Creating a new wallet\n   *\n   * @param {number} count - Mnemonic words count\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.hdkey - A hierarchical deterministic keys\n   * @returns {Uint8Array} core.seed - Seed\n   * @returns {string} core.seedInHex - Seed in hex format\n   */\n  \n  async createNew (count = 12) {\n    let data = {\n      data: {\n        from: 'new',\n        count: count\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * Creating a wallet by mnemonic\n   *\n   * @param {string} mnemonic\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.hdkey - A hierarchical deterministic keys\n   * @returns {Uint8Array} core.seed - Seed\n   * @returns {string} core.seedInHex - Seed in hex format\n   */\n  \n  async createByMnemonic (mnemonic = '') {\n    if (!mnemonic) {\n      throw new CustomError('err_core_mnemonic_empty')\n    }\n    \n    let data = {\n      data: {\n        from: 'mnemonic',\n        mnemonic: mnemonic\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * Creating a wallet by xprv key\n   *\n   * @param {string} key - BIP32 Root Key\n   * @returns {Promise<Object>} An object with core's information\n   * @returns {string} core.mnemonic - Imported mnemonic\n   * @returns {string} core.xprv - xprv key\n   * @returns {string} core.from - A import type\n   * @returns {Object} core.hdkey - A hierarchical deterministic keys\n   * @returns {Uint8Array} core.seed - Seed\n   * @returns {string} core.seedInHex - Seed in hex format\n   */\n  \n  async createByKey (key = '') {\n    if (!key) {\n      throw new CustomError('err_core_xprv')\n    }\n    \n    let data = {\n      data: {\n        from: 'xprv',\n        key: key\n      },\n      api: this.api\n    }\n    \n    this.core = await this.wrapper.method('create', data)\n    \n    return this.core\n  }\n  \n  /**\n   * Creating a core for each supported currency type\n   *\n   * @param {Array<{coin: String, type: String}>} coins\n   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH and BTCV\n   * @param {string|number} coins[].type - Coin type (additional). For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).\n   * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address\n   * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address\n   * */\n  \n  async createCoins (coins) {\n    if (!coins || !Array.isArray(coins)) {\n      coins = [\n        {coin: 'BTC', type: 'p2pkh'},\n        {coin: 'ETH', type: 0}\n      ]\n    }\n    \n    return await this.wrapper.method('createCoins', coins)\n  }\n  \n  /**\n   * The method returns node by derivation path\n   *\n   * @param {Object} data\n   * @param {number} data.from - Top of the derivation range\n   * @param {number} data.to - End of the derivation range\n   * @param {string} data.path - Derivation path\n   * @param {Array} data.coins - Array of coins for generating addresses\n   * @returns {{node: {privateExtendedKey: *, publicExtendedKey: *}, list: []}} Returns object with node information\n   * @returns {Object} node - Contains privateExtendedKey and publicExtendedKey\n   * @returns {Array} list - Array of child nodes. Every child node contains the following parameters:\n   * derivation path, publick key, private key in WIF format and addresses if a list of coins was sent\n   */\n  \n  async getChildNodes (data) {\n    if (!this.core) {\n      throw new CustomError('err_wallet_exist')\n    }\n    \n    return await this.wrapper.method('getNodes', data)\n  }\n  \n  /**\n   * The method starts synchronization of Bitcoin wallet\n   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh\n   * @returns {Promise<Object>} Returns object with Bitcoin synchronization information\n   * @returns {Object} sync\n   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin address\n   * @returns {Array} sync.transactions - The list of Bitcoin transactions\n   * @returns {Array} sync.unspent - The list of unspents addresses\n   * @returns {number} sync.balance - Bitcoin balance in Satoshi\n   * @returns {number} sync.latestBlock - The last block of the Bitcoin blockchain\n   * @returns {Array} sync.fee - The list of fee per byte\n   */\n  \n  async syncBTC (type = 'p2pkh') {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    if (!this.sync.BTC) {\n      this.sync.BTC = {}\n    }\n    \n    this.sync.BTC[type] = await this.wrapper.method('sync', {coin: 'BTC', type})\n    \n    return this.sync.BTC[type]\n  }\n  \n  /**\n   * The method starts synchronization of Ethereum wallet\n   * @param {number} type - Ethereum account number. By default 0\n   * @returns {Promise<Object>} Returns object with Ethereum synchronization information\n   * @returns {Object} sync\n   * @returns {string} sync.address - Ethereum wallet address\n   * @returns {number} sync.balance - Ethereum balance in wei\n   * @returns {Array} sync.transactions - The list of Ethereum transactions\n   * @returns {number} sync.gasPrice - Gas price\n   */\n  \n  async syncETH (type = 0) {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    if (!this.sync.ETH) {\n      this.sync.ETH = {}\n    }\n    \n    this.sync.ETH[type] = await this.wrapper.method('sync', {coin: 'ETH', type})\n    \n    return this.sync.ETH[type]\n  }\n  \n  /**\n   * The method starts synchronization of Bitcoin Cash wallet\n   * @returns {Promise<Object>} Returns object with Bitcoin Cash synchronization information\n   * @returns {Object} sync\n   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Cash address\n   * @returns {Array} sync.transactions - The list of Bitcoin Cash transactions\n   * @returns {Array} sync.unspent - The list of unspents addresses\n   * @returns {number} sync.balance - Bitcoin Cash balance in Satoshi\n   * @returns {number} sync.latestBlock - The last block of the Bitcoin Cash blockchain\n   * @returns {Array} sync.fee - The list of fee per byte\n   */\n  \n  async syncBCH () {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    this.sync.BCH = await this.wrapper.method('sync', {coin: 'BCH'})\n    \n    return this.sync.BCH\n  }\n  \n  /**\n   * The method starts synchronization of Bitcoin Vault wallet\n   * @returns {Promise<Object>} Returns object with Bitcoin Vault synchronization information\n   * @returns {Object} sync\n   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Vault address\n   * @returns {Array} sync.transactions - The list of Bitcoin Vault transactions\n   * @returns {Array} sync.unspent - The list of unspents addresses\n   * @returns {number} sync.balance - Bitcoin Vault balance in Satoshi\n   * @returns {number} sync.latestBlock - The last block of the Bitcoin Vault blockchain\n   * @returns {Array} sync.fee - The list of fee per byte\n   */\n  \n  async syncBTCV () {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    this.sync.BTCV = await this.wrapper.method('sync', {coin: 'BTCV'})\n    \n    return this.sync.BTCV\n  }\n  \n  /**\n   * The method returns a raw BTC transaction\n   *\n   * @param {Object} data\n   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:\n   * transaction hash, output n, address, value, script and private key in WIF format\n   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Bitcoin transaction\n   */\n  \n  async makeRawBtcTx (data) {\n    return await makeRawBtcTx(data)\n  }\n  \n  /**\n   * The method returns a raw BCH transaction\n   *\n   * @param {Object} data\n   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:\n   * transaction hash, output n, address, value in satoshis, script and private key in WIF format\n   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value in satoshis\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Bitcoin Cash transaction\n   */\n  \n  async makeRawBchTx (data) {\n    return await makeRawBchTx(data)\n  }\n  \n  /**\n   * The method returns a raw ETH transaction\n   *\n   * @param {Object} data\n   * @param {string} data.address - Ethereum address\n   * @param {number} data.amount - The transaction's amount in wei\n   * @param {number} data.nonce - The transaction's nonce\n   * @param {number} data.gasPrice - The transaction's gas price in wei\n   * @param {number} data.gasLimit - The transaction's gas limit\n   * @param {string} data.privateKey - Private key of ether wallet in hex\n   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw Ethereum transaction\n   */\n  \n  async makeRawEthTx (data) {\n    return await makeRawEthTx(data)\n  }\n  \n  /**\n   * This method generates a list of transaction fees for the selected currency\n   * @param {Object} params\n   * @param {string} params.currency - Selected currency. BTC, ETH, BCH or BTCV\n   * @param {string} params.addressType - Address type. Required for BTC transaction. Supported types are p2pkh or p2wpkh\n   * @param {string} params.account - Account number. Required for ETH transaction\n   * @param {number} params.amount - Amount of transaction\n   * @param {number} params.customFee - Custom fee per byte\n   * @param {number} params.size - Transaction size. Relevant for bitcoin transactions\n   * @returns {Promise<Array>} The list of transaction fees\n   */\n  \n  async calculateFee (params) {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    return await this.wrapper.method('transaction', {\n      method: 'calcFee',\n      currency: params.currency,\n      addressType: params.addressType,\n      account: params.account,\n      tx: {\n        amount: params.amount,\n        customFee: params.customFee,\n        size: params.size\n      }\n    })\n  }\n  \n  /**\n   * Wrapper for the compilation of transactions of bitcoin and ether\n   * @param {Object} data\n   * @param {string} data.currency - Transaction currency\n   * @param {string} data.addressType - Address type. Required for BTC transaction. Supported types are p2pkh or p2wpkh\n   * @param {string} data.account - Account number. Required for ETH transaction\n   * @param {Object} data.tx\n   * @param {string} data.tx.addressTo - Recipient address\n   * @param {number} data.tx.amount - Transaction amount\n   * @param {number} data.tx.fee - Transaction fee\n   * @returns {Promise<Object>}\n   * @returns {string} hash - Transaction hash\n   * @returns {string} tx - Raw bitcoin or ethereum transaction\n   */\n  \n  async makeTransaction (data) {\n    if (!this._apiReady) {\n      throw new CustomError('err_wallet_api')\n    }\n    \n    let params = {\n      method: 'make',\n      currency: data.currency,\n      addressType: data.addressType,\n      account: data.account,\n      tx: data.tx\n    }\n    \n    return await this.wrapper.method('transaction', params)\n  }\n  \n  /**\n   * Sets the API Endpoint\n   *\n   * @type {Object} api\n   * @param {string} api.btc - Url address of bitcoin endpoint\n   * @param {string} api.btcFee - Url address of bitcoin fee endpoint\n   * @param {string} api.eth - Url address of ethereum endpoint\n   * @param {string} api.bch - Url address of bitcoin cash endpoint\n   * @param {string} api.btcv - Url address of bitcoin vault endpoint\n   */\n  \n  setApiEndpoint (api) {\n    if (!api || typeof api !== 'object' || Array.isArray(api)) {\n      throw new CustomError('err_wallet_api_type')\n    }\n    \n    for (let key in this.api) {\n      if (api.hasOwnProperty(key)) {\n        this.api[key] = api[key]\n      } else {\n        throw Error(`Api must be contains ${ key } value`)\n      }\n    }\n    this._apiReady = true\n  }\n  \n  /**\n   * Set request headers\n   *\n   * @type {Object} headers - Set of HTTP headers\n   */\n  \n  setHeaders(headers) {\n    this.wrapper.method('setHeaders', headers)\n  }\n  \n  get Core () {\n    return this.core\n  }\n  \n  get getApiState () {\n    return this._apiReady\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/index.js",
     "access": "public",
@@ -5134,7 +5212,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 211,
+    "__docId__": 212,
     "kind": "class",
     "name": "Wallet",
     "memberof": "src/index.js",
@@ -5155,7 +5233,7 @@
     "interface": false
   },
   {
-    "__docId__": 212,
+    "__docId__": 213,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/index.js~Wallet",
@@ -5180,7 +5258,7 @@
     ]
   },
   {
-    "__docId__": 213,
+    "__docId__": 214,
     "kind": "member",
     "name": "wrapper",
     "memberof": "src/index.js~Wallet",
@@ -5197,7 +5275,7 @@
     }
   },
   {
-    "__docId__": 214,
+    "__docId__": 215,
     "kind": "member",
     "name": "core",
     "memberof": "src/index.js~Wallet",
@@ -5214,7 +5292,7 @@
     }
   },
   {
-    "__docId__": 215,
+    "__docId__": 216,
     "kind": "member",
     "name": "sync",
     "memberof": "src/index.js~Wallet",
@@ -5231,7 +5309,7 @@
     }
   },
   {
-    "__docId__": 216,
+    "__docId__": 217,
     "kind": "member",
     "name": "api",
     "memberof": "src/index.js~Wallet",
@@ -5248,7 +5326,7 @@
     }
   },
   {
-    "__docId__": 217,
+    "__docId__": 218,
     "kind": "member",
     "name": "_apiReady",
     "memberof": "src/index.js~Wallet",
@@ -5265,7 +5343,7 @@
     }
   },
   {
-    "__docId__": 218,
+    "__docId__": 219,
     "kind": "method",
     "name": "createNew",
     "memberof": "src/index.js~Wallet",
@@ -5328,7 +5406,7 @@
     }
   },
   {
-    "__docId__": 220,
+    "__docId__": 221,
     "kind": "method",
     "name": "createByMnemonic",
     "memberof": "src/index.js~Wallet",
@@ -5391,7 +5469,7 @@
     }
   },
   {
-    "__docId__": 222,
+    "__docId__": 223,
     "kind": "method",
     "name": "createByKey",
     "memberof": "src/index.js~Wallet",
@@ -5454,7 +5532,7 @@
     }
   },
   {
-    "__docId__": 224,
+    "__docId__": 225,
     "kind": "method",
     "name": "createCoins",
     "memberof": "src/index.js~Wallet",
@@ -5518,7 +5596,7 @@
     }
   },
   {
-    "__docId__": 225,
+    "__docId__": 226,
     "kind": "method",
     "name": "getChildNodes",
     "memberof": "src/index.js~Wallet",
@@ -5605,7 +5683,7 @@
     }
   },
   {
-    "__docId__": 226,
+    "__docId__": 227,
     "kind": "method",
     "name": "syncBTC",
     "memberof": "src/index.js~Wallet",
@@ -5672,7 +5750,7 @@
     }
   },
   {
-    "__docId__": 227,
+    "__docId__": 228,
     "kind": "method",
     "name": "syncETH",
     "memberof": "src/index.js~Wallet",
@@ -5731,7 +5809,7 @@
     }
   },
   {
-    "__docId__": 228,
+    "__docId__": 229,
     "kind": "method",
     "name": "syncBCH",
     "memberof": "src/index.js~Wallet",
@@ -5787,7 +5865,7 @@
     "params": []
   },
   {
-    "__docId__": 229,
+    "__docId__": 230,
     "kind": "method",
     "name": "syncBTCV",
     "memberof": "src/index.js~Wallet",
@@ -5843,7 +5921,7 @@
     "params": []
   },
   {
-    "__docId__": 230,
+    "__docId__": 231,
     "kind": "method",
     "name": "makeRawBtcTx",
     "memberof": "src/index.js~Wallet",
@@ -5910,7 +5988,7 @@
     }
   },
   {
-    "__docId__": 231,
+    "__docId__": 232,
     "kind": "method",
     "name": "makeRawBchTx",
     "memberof": "src/index.js~Wallet",
@@ -5977,7 +6055,7 @@
     }
   },
   {
-    "__docId__": 232,
+    "__docId__": 233,
     "kind": "method",
     "name": "makeRawEthTx",
     "memberof": "src/index.js~Wallet",
@@ -6084,7 +6162,7 @@
     }
   },
   {
-    "__docId__": 233,
+    "__docId__": 234,
     "kind": "method",
     "name": "calculateFee",
     "memberof": "src/index.js~Wallet",
@@ -6183,7 +6261,7 @@
     }
   },
   {
-    "__docId__": 234,
+    "__docId__": 235,
     "kind": "method",
     "name": "makeTransaction",
     "memberof": "src/index.js~Wallet",
@@ -6300,7 +6378,7 @@
     }
   },
   {
-    "__docId__": 235,
+    "__docId__": 236,
     "kind": "method",
     "name": "setApiEndpoint",
     "memberof": "src/index.js~Wallet",
@@ -6374,7 +6452,37 @@
     "return": null
   },
   {
-    "__docId__": 237,
+    "__docId__": 238,
+    "kind": "method",
+    "name": "setHeaders",
+    "memberof": "src/index.js~Wallet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/index.js~Wallet#setHeaders",
+    "access": "public",
+    "description": "Set request headers",
+    "lineNumber": 421,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    },
+    "params": [
+      {
+        "name": "headers",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 239,
     "kind": "get",
     "name": "Core",
     "memberof": "src/index.js~Wallet",
@@ -6384,7 +6492,7 @@
     "longname": "src/index.js~Wallet#Core",
     "access": "public",
     "description": null,
-    "lineNumber": 415,
+    "lineNumber": 425,
     "undocument": true,
     "type": {
       "types": [
@@ -6393,7 +6501,7 @@
     }
   },
   {
-    "__docId__": 238,
+    "__docId__": 240,
     "kind": "get",
     "name": "getApiState",
     "memberof": "src/index.js~Wallet",
@@ -6403,7 +6511,7 @@
     "longname": "src/index.js~Wallet#getApiState",
     "access": "public",
     "description": null,
-    "lineNumber": 419,
+    "lineNumber": 429,
     "undocument": true,
     "type": {
       "types": [
@@ -6412,10 +6520,10 @@
     }
   },
   {
-    "__docId__": 239,
+    "__docId__": 241,
     "kind": "file",
     "name": "src/workers/wallet.worker.js",
-    "content": "import WalletWrapper from '@/class/WalletWrapper'\n\nlet Wrapper = {}\n\n/**\n * Creating a wallet core\n *\n * @param {Object} payload - Data for creating a core. Include in the creation method and mnemonic or key\n * @param {number} id - Promise id\n * @returns {Promise<Object>} Returns information about the core\n */\n\nasync function create (payload, id) {\n  try {\n    Wrapper = new WalletWrapper(payload)\n    await Wrapper.Create()\n    postMessage({\n      id,\n      payload: Wrapper.core.DATA\n    })\n  }\n  catch (e) {\n    postMessage({\n      id,\n      error: e.message\n    })\n  }\n}\n\n/**\n * Creating a core for each supported currency type\n *\n * @param payload - Array of coins to create cores for\n * @param id - Promise id\n * */\n\nasync function createCoins (payload, id) {\n  try {\n    const cores = await Wrapper.CreateCoins(payload)\n    postMessage({\n      id,\n      payload: cores\n    })\n  }\n  catch (e) {\n    postMessage({\n      id,\n      error: e.message\n    })\n  }\n}\n\n/**\n * Creating a transaction or getting fee\n *\n * @param payload - Transaction method and input data for the transaction\n * @param id - Promise id\n * @returns {Promise<Object>} Returns information about the success or failure of sending a transaction.\n * Or it returns the fee list\n */\n\nasync function transaction (payload, id) {\n  try {\n    let txs = await Wrapper.Transaction(payload)\n    postMessage({\n      id,\n      payload: txs\n    })\n  }\n  catch (e) {\n    postMessage({\n      id,\n      error: e.message\n    })\n  }\n}\n\n/**\n * Handler that runs the main wallet methods.\n * Methods such as create, sync, transaction and getNodes\n * @param e - event. Get parameters id and payload from the e.data object\n * @returns {Promise<Object>} Returns a data set that depends on the specific method\n */\n\n/* eslint-disable no-undef */\nonmessage = async (e) => {\n  const {id, payload} = e.data\n  \n  if (\n    !payload ||\n    !payload.hasOwnProperty('method') ||\n    !payload.hasOwnProperty('value')\n  ) {\n    postMessage({\n      id,\n      payload: 'error'\n    })\n    return\n  }\n  \n  switch (payload.method) {\n    case 'create':\n      return await create(payload.value, id)\n    case 'createCoins':\n      return await createCoins(payload.value, id)\n    case 'sync':\n      const syncRes = await Wrapper.Sync(payload.value)\n      postMessage({\n        id,\n        payload: syncRes\n      })\n      break\n    case 'transaction':\n      return transaction(payload.value, id)\n    case 'getNodes':\n      const nodes = await Wrapper.core.getChildNodes(payload.value)\n      postMessage({\n        id,\n        payload: nodes\n      })\n      break\n    default:\n      postMessage({\n        id,\n        payload: 'worker error'\n      })\n  }\n}\n",
+    "content": "import WalletWrapper from '@/class/WalletWrapper'\n\nlet Wrapper = {}\n\n/**\n * Creating a wallet core\n *\n * @param {Object} payload - Data for creating a core. Include in the creation method and mnemonic or key\n * @param {number} id - Promise id\n * @returns {Promise<Object>} Returns information about the core\n */\n\nasync function create (payload, id) {\n  try {\n    Wrapper = new WalletWrapper(payload)\n    await Wrapper.Create()\n    postMessage({\n      id,\n      payload: Wrapper.core.DATA\n    })\n  }\n  catch (e) {\n    postMessage({\n      id,\n      error: e.message\n    })\n  }\n}\n\n/**\n * Creating a core for each supported currency type\n *\n * @param payload - Array of coins to create cores for\n * @param id - Promise id\n * */\n\nasync function createCoins (payload, id) {\n  try {\n    const cores = await Wrapper.CreateCoins(payload)\n    postMessage({\n      id,\n      payload: cores\n    })\n  }\n  catch (e) {\n    postMessage({\n      id,\n      error: e.message\n    })\n  }\n}\n\n/**\n * Creating a transaction or getting fee\n *\n * @param payload - Transaction method and input data for the transaction\n * @param id - Promise id\n * @returns {Promise<Object>} Returns information about the success or failure of sending a transaction.\n * Or it returns the fee list\n */\n\nasync function transaction (payload, id) {\n  try {\n    let txs = await Wrapper.Transaction(payload)\n    postMessage({\n      id,\n      payload: txs\n    })\n  }\n  catch (e) {\n    postMessage({\n      id,\n      error: e.message\n    })\n  }\n}\n\n/**\n * Handler that runs the main wallet methods.\n * Methods such as create, sync, transaction and getNodes\n * @param e - event. Get parameters id and payload from the e.data object\n * @returns {Promise<Object>} Returns a data set that depends on the specific method\n */\n\n/* eslint-disable no-undef */\nonmessage = async (e) => {\n  const {id, payload} = e.data\n  \n  if (\n    !payload ||\n    !payload.hasOwnProperty('method') ||\n    !payload.hasOwnProperty('value')\n  ) {\n    postMessage({\n      id,\n      payload: 'error'\n    })\n    return\n  }\n  \n  switch (payload.method) {\n    case 'create':\n      return await create(payload.value, id)\n    case 'createCoins':\n      return await createCoins(payload.value, id)\n    case 'sync':\n      const syncRes = await Wrapper.Sync(payload.value)\n      postMessage({\n        id,\n        payload: syncRes\n      })\n      break\n    case 'transaction':\n      return transaction(payload.value, id)\n    case 'getNodes':\n      const nodes = await Wrapper.core.getChildNodes(payload.value)\n      postMessage({\n        id,\n        payload: nodes\n      })\n      break\n    case 'setHeaders':\n      Wrapper.headers = payload.value\n      break\n    default:\n      postMessage({\n        id,\n        payload: 'worker error'\n      })\n  }\n}\n",
     "static": true,
     "longname": "/Users/user/work/lumi-web-core/src/workers/wallet.worker.js",
     "access": "public",
@@ -6423,7 +6531,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 240,
+    "__docId__": 242,
     "kind": "variable",
     "name": "Wrapper",
     "memberof": "src/workers/wallet.worker.js",
@@ -6444,7 +6552,7 @@
     "ignore": true
   },
   {
-    "__docId__": 241,
+    "__docId__": 243,
     "kind": "function",
     "name": "create",
     "memberof": "src/workers/wallet.worker.js",
@@ -6497,7 +6605,7 @@
     "ignore": true
   },
   {
-    "__docId__": 242,
+    "__docId__": 244,
     "kind": "function",
     "name": "createCoins",
     "memberof": "src/workers/wallet.worker.js",
@@ -6537,7 +6645,7 @@
     "ignore": true
   },
   {
-    "__docId__": 243,
+    "__docId__": 245,
     "kind": "function",
     "name": "transaction",
     "memberof": "src/workers/wallet.worker.js",
@@ -6591,7 +6699,7 @@
   },
   {
     "kind": "index",
-    "content": "[![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://mit-license.org)\n[![NPM](https://img.shields.io/npm/v/lumi-web-core.svg)](https://www.npmjs.org/package/lumi-web-core)\n\n![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)\n\n# LumiCore\nThe LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash and Bitcoin Vault. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.\n\n> Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).\n\n**Note**: Node version >= 10.19.0\n\n## Installation\nYou can install the package via npm\n``` console\nnpm install lumi-web-core\n```\nOr via yarn:\n``` console\nyarn add lumi-web-core\n```\n\n## Usage\n\n> **Warning!** Do not use the mnemonic, keys, and addresses provided in this readme for real transactions!\n>\n### Create/import\nImport the module and create a new class:\n``` js\n// typical import\nimport Wallet from 'lumi-web-core'\n\nconst WALLET = new Wallet()\n```\nYou can create a new wallet by calling the method `createNew(count)`. Count is the number of words for the new mnemonic.\nBy default it is 12. It can be also  12, 15, 18, 21, and 24 words.\n``` js\n// Create a new wallet\nconst CORE = await WALLET.createNew(15)\n```\nYou can create a wallet based on an existing mnemonic, where mnemonic is a string consisting of words and spaces:\n``` js\n// Create wallet by new mnemonic\nconst CORE = await WALLET.createByMnemonic('ramp grief anger ... olive main into throw')\n```\nOr xprv key: \n``` js\n// Create wallet by xprv key\nconst CORE = await WALLET.createByKey('xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ')\n```\nExample of the returned core:\n``` js\n{\n    mnemonic: \"ramp grief anger ... olive main into throw\",\n    xprv: \"xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ\",\n    from: \"mnemonic\",\n    hdkey: Object,\n    seed: Uint8Array(64),\n    seedInHex: \"1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39\"\n}\n```\nAfter that, call the `createCoinsCores()` method to create cores for specific currencies.\n``` js\nconst coins = [\n    {coin: 'BTC', type: 'p2pkh'},\n    {coin: 'BTC', type: 'p2wpkh'},\n    {coin: 'ETH', type: 0},\n    {coin: 'BCH'},\n    {coin: 'BTCV'}\n]\nconst CORES = await WALLET.createCoins(coins)\n=> {\n    BTC: {\n        p2pkh: {\n            externalNode: Object,\n            internalNode: Object,\n            externalAddress: \"1PtMtCbtgb...bivNJU5Ww3bvF3\",\n            internalAddress: \"1LvXQnwCeq...GyfMNtxpyEd3Hx\",\n            dp: {external: \"m/44'/0'/0'/0\", internal: \"m/44'/0'/0'/1\"}\n        },\n        p2wpkh: {\n            externalNode: Object,\n            internalNode: Object,\n            externalAddress: \"bc1qyluu9yjfw6...xjfjy0ht8hszx\",\n            internalAddress: \"bc1qnk6r09q97m...w9vme4zjvpct0\",\n            dp: {external: \"m/84'/0'/0'/0\", internal: \"m/84'/0'/0'/1\"}\n        }\n    },\n    ETH: {\n        0: {\n            dp: \"m/44'/60'/0'/0/0\",\n            externalAddress: \"0xcf06fa556d8ad...cc285e2b7bdf58c58\",\n            node: Object,\n            privateKey: Uint8Array(32),\n            privateKeyHex: \"0xb1f8f5df78d5a00d...6b222e54ee8abbfe6af\",\n            publicKey: Uint8Array(64),\n        }\n    },\n    BTCV: {\n        p2wpkh: {\n            dp: {external: \"m/84'/440'/0'/0\", internal: \"m/84'/440'/0'/1\"},\n            externalAddress: \"royale1q2cy79nu...am6t5svnvt9d62\",\n            externalNode: Object,\n            internalAddress: \"royale1qe9286wc4...tlqxj9sz0t7m9dg5q\",\n            internalNode: Object\n        }\n    },\n    BCH: {\n        p2pkh: {\n            dp: {external: \"m/44'/145'/0'/0\", internal: \"m/44'/145'/0'/1\"},\n            externalAddress: \"1Nbi1Roep9...SeJKwQTdFESB\",\n            externalNode: Object,\n            internalAddress: \"1135Eji7Yoop...rKJmGFi2RyX\",\n            internalNode: Object\n        }\n    }\n}\n```\nFor BTC and ETH coins, the type parameter is required.\nFor BTC, it can take the values p2pkh or p2wpkh (p2pkh by default).\nFor ETH, the type parameter is set to the account number (0 by default).\n\n### Derivation\nYou can get information about a child node using the method `getChildNodes`.\n``` js\nconst data = {\n    path: 'm/44'/0'/0'/0',\n    from: 0,\n    to: 20,\n    coins: [\n        {coin: 'BTC', type: 'p2pkh'},\n        {coin: 'BTC', type: 'p2wpkh'},\n        {coin: 'ETH', type: 0},\n        {coin: 'BCH'},\n        {coin: 'BTCV'}\n    ]\n}\n\nconst info = await WALLET.getChildNodes(data)\n=> {\n    node: {\n        privateExtendedKey: \"xprvA1CHKT9koKiKuhkeZ6XJxWXEQ1r...va4RtZfFmdYaQeNW72vX9q2DjMo3fsJwxCtkrVXyo2QP8\",\n        publicExtendedKey: \"xpub6EBdixgedhGd8Bq7f84KKeTxx3gYWQ...bn9YVZ8PVXb6tTnCWTorLQPKqRggvdzyHH1TkoR7vuz\"\n    },\n    list: [\n        {\n            path: \"m/44'/0'/0'/0/0\",\n            privateKey: \"KzwMNQ93Dt96Qg...mRpaBCmEXGH2Lpgr2dGZsV\",\n            publicKey: \"023b693fa7fa22e505...4cc450a463c024ab1e3ec526ba\",\n            bchAddress: \"bitcoincash:qqtne...l889v5ee6nawwvvx6t7mvkp\",\n            btcvAddress: \"royale1qzu70e44r...8eeet9xww5ltnnr6akytm\",\n            ethAddress: \"0xdd6f3cc0ed5f9...b09481090536e446ebd3\",\n            p2pkhAddress: \"137sbugaaqw3H...LZzNX3nTk1LDgCYd\",\n            p2wpkhAddress: \"bc1qzu70e44r...eet9xww5ltnnrm5mjxk\"\n        },\n        ...\n    ]\n}\n```\n`path` this is a string with a derivation path. The path should begin with `m/44'`.\n`from` is top of the range derivation\n`to` is end of the range derivation\n`coins` is a list of currencies for which you need to generate addresses\n\n### Creating a BTC transaction\nCreation of P2PKH or P2WPKH transactions is supported.\nTo create a Bitcoin transaction you need to send a set of inputs and outputs to the `makeRawBtcTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            address: \"1BYRALP...ypWzTQE8BkEL\",\n            value: 10000,\n            tx_output_n: 0,\n            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000', // Raw transaction (only for P2PKH transactions)\n            tx_hash_big_endian: \"de06df091735...afd145eecfcd5649634e1d5221\",\n            key: 'L3YFJ4cBDYhZ...bzqgSUxLjTAorR5Kc47mP6x1D'\n        },\n        {\n            address: \"1BYRALPU...kLypWzTQE8BkEL\",\n            value: 10000,\n            tx_output_n: 0,\n            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000', // Raw transaction (only for P2PKH transactions)\n            tx_hash_big_endian: \"47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9\",\n            key: 'L3YFJ4cBDYhZ...xLjTAorR5Kc4AorR5K7mP6x1D'\n        }\n    ],\n    outputs: [\n        {\n            address: '1NuABwx...5V5tiXpshAWb8W',\n            value: 15000\n        },\n        {\n            address: '1PbQ36GvG...nimPD7gHPQFk3Nu',\n            value: 5000\n        }\n    ]\n}\n\nconst btc_tx = await WALLET.makeRawBtcTx(data)\n```\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbtc_tx => {\n    hash: '6b4a00f9fd4e5c263b5af65fed0...14cafb97e0f5738cb4a8717',\n    tx: '010000000221521d4e634956cdcfee45d1afbe79080a...04f3d76f2c65501976a914fbf7f38b23308227a308fffff88ac00000000'\n}\n```\n\n### Creating an ETH transaction\nTo make a Ethereum transaction you need to fill in the following params:\n``` js\nconst data = {\n    nonce: 280,\n    amount: 100000000000000,\n    address: '0x1e8d99d2278...d89983e2920df33b485',\n    gasPrice: 19950000002,\n    gasLimit: 21000,\n    privateKey: '0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313'\n}\n\nconst eth_tx = await WALLET.makeRawEthTx(data)\n```\n\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\neth_tx => {\n    hash: '0xcb3869c19f2462a572a5ff13...d67ca71c181452e52a698d035209',\n    tx: '0xf86c8201188504a51cd782825208...6df4207768a01789b726296195a956ceb3dbe73798'\n}\n```\n\n### Creating a BCH transaction\nTo create a Bitcoin Cash transaction you need to send a set of inputs and outputs to the `makeRawBchTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            address: \"bitcoincash:qzq29...rfavhxrhwvgm49vlhq\",\n            outputIndex: 1,\n            satoshis: 604909,\n            script: \"76a91480a2a2...81a7acb98777388ac\",\n            txId: \"0488b0c6678e527...5307ce7ddaa8cbc986e616\",\n            key: \"KxMvzeEuGyrBRo...mfR9uzU6bAuc6kyXTmN8h\"\n        }\n    ],\n    outputs: [\n        {\n            address: \"bitcoincash:qzdss...rfpnawutm9vlrh7wdcj\",\n            satoshis: 100000\n        },\n        {\n            address: \"bitcoincash:qr30f7...23hykq2fu3axuxec3g6c6\",\n            satoshis: 504231\n        }\n    ]\n}\n\nconst bch_tx = await WALLET.makeRawBchTx(data)\n```\nAddresses included in inputs and outputs can be CashAddr format or Legacy format.\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbch_tx => {\n    hash: 'ac5cd881770c28aad990...5d181df4b7d5a9acfec3bdf',\n    tx: '020000000116e686c9cba8da7dce075...edac9eff87677eccaa372580a4f23d3788ac00000000'\n}\n```\n\nFor more information, see the [docs](https://lumiwallet.github.io/lumi-web-core/).\n\n### Creating a BTCV transaction\nTo create a Bitcoin Vault transaction you need to send a set of inputs and outputs to the `makeRawBtcvTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            hash: '6e87ad9bf88f7ad02bb4...65bdc31547de6c7293348',\n            index: 0,\n            value: 3000,\n            key: 'L4Whg5XDChoMm6YqfE...eDFmWwUJCxcuZ8Zk7edGUA' \n        }\n    ],\n    outputs: [\n        {\n            address: 'royale1qy6wrkv3...7nqla7dlyjd8cj83kdn0',\n            value: 1000\n        },\n        {\n            address: 'royale1q8lvf3v...j9vlu3py02klanwmzshvk',\n            value: 1571\n        }\n    ]\n}\n\nconst btcv_tx = await WALLET.makeRawBtcvTx(data)\n```\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbtcv_tx => {\n    hash: '98f5f94267101de83364...b4a9c74a26a05b90d4381f9479710',\n    tx: '01000000000101483329c7e67d5431dc5...c6d8daeeb40e248438119513fb455d38100000000'\n}\n```\n\n## Nist testing\nTesting [documentation](./nist/README.md).\n\n## Created using\n* [bip39](https://github.com/bitcoinjs/bip39)\n* [bip39-checker](https://github.com/jcalfee/bip39-checker)\n* [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib)\n* [ethereumjs-tx](https://github.com/ethereumjs/ethereumjs-vm/tree/master/packages/tx)\n* [ethereumjs-util](https://github.com/ethereumjs/ethereumjs-util)\n* [hdkey](https://github.com/cryptocoinjs/hdkey)\n* [web3-utils](https://github.com/ethereum/web3.js)\n* [wif](https://github.com/bitcoinjs/wif)\n* [worker-loader](https://github.com/webpack-contrib/worker-loader)\n* [bitcore-lib-cash](https://github.com/bitpay/bitcore/tree/master/packages/bitcore-lib-cash)\n* [bchaddrjs](https://github.com/ealmansi/bchaddrjs)\n## License\n\nLumiCore is available under the MIT license. See the [LICENSE](LICENSE) file for more info.\n",
+    "content": "[![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://mit-license.org)\n[![NPM](https://img.shields.io/npm/v/lumi-web-core.svg)](https://www.npmjs.org/package/lumi-web-core)\n\n![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)\n\n# LumiCore\nThe LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash and Bitcoin Vault. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.\n\n> Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).\n\n**Note**: Node version >= 10.19.0\n\n## Installation\nYou can install the package via npm\n``` console\nnpm install lumi-web-core\n```\nOr via yarn:\n``` console\nyarn add lumi-web-core\n```\n\n## Usage\n\n> **Warning!** Do not use the mnemonic, keys, and addresses provided in this readme for real transactions!\n>\n### Create/import\nImport the module and create a new class:\n``` js\n// typical import\nimport Wallet from 'lumi-web-core'\n\nconst WALLET = new Wallet()\n```\nYou can create a new wallet by calling the method `createNew(count)`. Count is the number of words for the new mnemonic.\nBy default it is 12. It can be also  12, 15, 18, 21, and 24 words.\n``` js\n// Create a new wallet\nconst CORE = await WALLET.createNew(15)\n```\nYou can create a wallet based on an existing mnemonic, where mnemonic is a string consisting of words and spaces:\n``` js\n// Create wallet by new mnemonic\nconst CORE = await WALLET.createByMnemonic('ramp grief anger ... olive main into throw')\n```\nOr xprv key: \n``` js\n// Create wallet by xprv key\nconst CORE = await WALLET.createByKey('xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ')\n```\nExample of the returned core:\n``` js\n{\n    mnemonic: \"ramp grief anger ... olive main into throw\",\n    xprv: \"xprv9s21ZrQH143K49Xa838YbhNq...VtL5sLB9JsijRG51jHjuUSDVfDXPh5PFYNTqQ\",\n    from: \"mnemonic\",\n    hdkey: Object,\n    seed: Uint8Array(64),\n    seedInHex: \"1f53c65842ed3d0c54052f7f7315dbd9dcb...4af426ffb27234a0a571c44e29c1f4d1b181082e62d0a39\"\n}\n```\nAfter that, call the `createCoinsCores()` method to create cores for specific currencies.\n``` js\nconst coins = [\n    {coin: 'BTC', type: 'p2pkh'},\n    {coin: 'BTC', type: 'p2wpkh'},\n    {coin: 'ETH', type: 0},\n    {coin: 'BCH'},\n    {coin: 'BTCV'}\n]\nconst CORES = await WALLET.createCoins(coins)\n=> {\n    BTC: {\n        p2pkh: {\n            externalNode: Object,\n            internalNode: Object,\n            externalAddress: \"1PtMtCbtgb...bivNJU5Ww3bvF3\",\n            internalAddress: \"1LvXQnwCeq...GyfMNtxpyEd3Hx\",\n            dp: {external: \"m/44'/0'/0'/0\", internal: \"m/44'/0'/0'/1\"}\n        },\n        p2wpkh: {\n            externalNode: Object,\n            internalNode: Object,\n            externalAddress: \"bc1qyluu9yjfw6...xjfjy0ht8hszx\",\n            internalAddress: \"bc1qnk6r09q97m...w9vme4zjvpct0\",\n            dp: {external: \"m/84'/0'/0'/0\", internal: \"m/84'/0'/0'/1\"}\n        }\n    },\n    ETH: {\n        0: {\n            dp: \"m/44'/60'/0'/0/0\",\n            externalAddress: \"0xcf06fa556d8ad...cc285e2b7bdf58c58\",\n            node: Object,\n            privateKey: Uint8Array(32),\n            privateKeyHex: \"0xb1f8f5df78d5a00d...6b222e54ee8abbfe6af\",\n            publicKey: Uint8Array(64),\n        }\n    },\n    BTCV: {\n        p2wpkh: {\n            dp: {external: \"m/84'/440'/0'/0\", internal: \"m/84'/440'/0'/1\"},\n            externalAddress: \"royale1q2cy79nu...am6t5svnvt9d62\",\n            externalNode: Object,\n            internalAddress: \"royale1qe9286wc4...tlqxj9sz0t7m9dg5q\",\n            internalNode: Object\n        }\n    },\n    BCH: {\n        p2pkh: {\n            dp: {external: \"m/44'/145'/0'/0\", internal: \"m/44'/145'/0'/1\"},\n            externalAddress: \"1Nbi1Roep9...SeJKwQTdFESB\",\n            externalNode: Object,\n            internalAddress: \"1135Eji7Yoop...rKJmGFi2RyX\",\n            internalNode: Object\n        }\n    }\n}\n```\nFor BTC and ETH coins, the type parameter is required.\nFor BTC, it can take the values p2pkh or p2wpkh (p2pkh by default).\nFor ETH, the type parameter is set to the account number (0 by default).\n\n### Derivation\nYou can get information about a child node using the method `getChildNodes`.\n``` js\nconst data = {\n    path: \"m/44'/0'/0'/0\",\n    from: 0,\n    to: 20,\n    coins: [\n        {coin: 'BTC', type: 'p2pkh'},\n        {coin: 'BTC', type: 'p2wpkh'},\n        {coin: 'ETH', type: 0},\n        {coin: 'BCH'},\n        {coin: 'BTCV'}\n    ]\n}\n\nconst info = await WALLET.getChildNodes(data)\n=> {\n    node: {\n        privateExtendedKey: \"xprvA1CHKT9koKiKuhkeZ6XJxWXEQ1r...va4RtZfFmdYaQeNW72vX9q2DjMo3fsJwxCtkrVXyo2QP8\",\n        publicExtendedKey: \"xpub6EBdixgedhGd8Bq7f84KKeTxx3gYWQ...bn9YVZ8PVXb6tTnCWTorLQPKqRggvdzyHH1TkoR7vuz\"\n    },\n    list: [\n        {\n            path: \"m/44'/0'/0'/0/0\",\n            privateKey: \"KzwMNQ93Dt96Qg...mRpaBCmEXGH2Lpgr2dGZsV\",\n            publicKey: \"023b693fa7fa22e505...4cc450a463c024ab1e3ec526ba\",\n            bchAddress: \"bitcoincash:qqtne...l889v5ee6nawwvvx6t7mvkp\",\n            btcvAddress: \"royale1qzu70e44r...8eeet9xww5ltnnr6akytm\",\n            ethAddress: \"0xdd6f3cc0ed5f9...b09481090536e446ebd3\",\n            p2pkhAddress: \"137sbugaaqw3H...LZzNX3nTk1LDgCYd\",\n            p2wpkhAddress: \"bc1qzu70e44r...eet9xww5ltnnrm5mjxk\"\n        },\n        ...\n    ]\n}\n```\n`path` this is a string with a derivation path. The path should begin with `m/44'`.\n`from` is top of the range derivation\n`to` is end of the range derivation\n`coins` is a list of currencies for which you need to generate addresses\n\n### Creating a BTC transaction\nCreation of P2PKH or P2WPKH transactions is supported.\nTo create a Bitcoin transaction you need to send a set of inputs and outputs to the `makeRawBtcTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            address: \"1BYRALP...ypWzTQE8BkEL\",\n            value: 10000,\n            tx_output_n: 0,\n            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000', // Raw transaction (only for P2PKH transactions)\n            tx_hash_big_endian: \"de06df091735...afd145eecfcd5649634e1d5221\",\n            key: 'L3YFJ4cBDYhZ...bzqgSUxLjTAorR5Kc47mP6x1D'\n        },\n        {\n            address: \"1BYRALPU...kLypWzTQE8BkEL\",\n            value: 10000,\n            tx_output_n: 0,\n            tx: '01000000014b172c2...0983ce0e044d91cea88ac00000000', // Raw transaction (only for P2PKH transactions)\n            tx_hash_big_endian: \"47e497fd8f6f4...5c2043e0a3c7ee0463cbc68e9\",\n            key: 'L3YFJ4cBDYhZ...xLjTAorR5Kc4AorR5K7mP6x1D'\n        }\n    ],\n    outputs: [\n        {\n            address: '1NuABwx...5V5tiXpshAWb8W',\n            value: 15000\n        },\n        {\n            address: '1PbQ36GvG...nimPD7gHPQFk3Nu',\n            value: 5000\n        }\n    ]\n}\n\nconst btc_tx = await WALLET.makeRawBtcTx(data)\n```\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbtc_tx => {\n    hash: '6b4a00f9fd4e5c263b5af65fed0...14cafb97e0f5738cb4a8717',\n    tx: '010000000221521d4e634956cdcfee45d1afbe79080a...04f3d76f2c65501976a914fbf7f38b23308227a308fffff88ac00000000'\n}\n```\n\n### Creating an ETH transaction\nTo make a Ethereum transaction you need to fill in the following params:\n``` js\nconst data = {\n    nonce: 280,\n    amount: 100000000000000,\n    address: '0x1e8d99d2278...d89983e2920df33b485',\n    gasPrice: 19950000002,\n    gasLimit: 21000,\n    privateKey: '0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313'\n}\n\nconst eth_tx = await WALLET.makeRawEthTx(data)\n```\n\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\neth_tx => {\n    hash: '0xcb3869c19f2462a572a5ff13...d67ca71c181452e52a698d035209',\n    tx: '0xf86c8201188504a51cd782825208...6df4207768a01789b726296195a956ceb3dbe73798'\n}\n```\n\n### Creating a BCH transaction\nTo create a Bitcoin Cash transaction you need to send a set of inputs and outputs to the `makeRawBchTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            address: \"bitcoincash:qzq29...rfavhxrhwvgm49vlhq\",\n            outputIndex: 1,\n            satoshis: 604909,\n            script: \"76a91480a2a2...81a7acb98777388ac\",\n            txId: \"0488b0c6678e527...5307ce7ddaa8cbc986e616\",\n            key: \"KxMvzeEuGyrBRo...mfR9uzU6bAuc6kyXTmN8h\"\n        }\n    ],\n    outputs: [\n        {\n            address: \"bitcoincash:qzdss...rfpnawutm9vlrh7wdcj\",\n            satoshis: 100000\n        },\n        {\n            address: \"bitcoincash:qr30f7...23hykq2fu3axuxec3g6c6\",\n            satoshis: 504231\n        }\n    ]\n}\n\nconst bch_tx = await WALLET.makeRawBchTx(data)\n```\nAddresses included in inputs and outputs can be CashAddr format or Legacy format.\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbch_tx => {\n    hash: 'ac5cd881770c28aad990...5d181df4b7d5a9acfec3bdf',\n    tx: '020000000116e686c9cba8da7dce075...edac9eff87677eccaa372580a4f23d3788ac00000000'\n}\n```\n\nFor more information, see the [docs](https://lumiwallet.github.io/lumi-web-core/).\n\n### Creating a BTCV transaction\nTo create a Bitcoin Vault transaction you need to send a set of inputs and outputs to the `makeRawBtcvTx` method:\n``` js\nconst data = {\n    inputs: [\n        {\n            hash: '6e87ad9bf88f7ad02bb4...65bdc31547de6c7293348',\n            index: 0,\n            value: 3000,\n            key: 'L4Whg5XDChoMm6YqfE...eDFmWwUJCxcuZ8Zk7edGUA' \n        }\n    ],\n    outputs: [\n        {\n            address: 'royale1qy6wrkv3...7nqla7dlyjd8cj83kdn0',\n            value: 1000\n        },\n        {\n            address: 'royale1q8lvf3v...j9vlu3py02klanwmzshvk',\n            value: 1571\n        }\n    ]\n}\n\nconst btcv_tx = await WALLET.makeRawBtcvTx(data)\n```\nWhen the transaction is created successfully, an object with the transaction hash and raw tx data is returned\n``` js\nbtcv_tx => {\n    hash: '98f5f94267101de83364...b4a9c74a26a05b90d4381f9479710',\n    tx: '01000000000101483329c7e67d5431dc5...c6d8daeeb40e248438119513fb455d38100000000'\n}\n```\n\n## Nist testing\nTesting [documentation](./nist/README.md).\n\n## Created using\n* [bip39](https://github.com/bitcoinjs/bip39)\n* [bip39-checker](https://github.com/jcalfee/bip39-checker)\n* [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib)\n* [ethereumjs-tx](https://github.com/ethereumjs/ethereumjs-vm/tree/master/packages/tx)\n* [ethereumjs-util](https://github.com/ethereumjs/ethereumjs-util)\n* [hdkey](https://github.com/cryptocoinjs/hdkey)\n* [web3-utils](https://github.com/ethereum/web3.js)\n* [wif](https://github.com/bitcoinjs/wif)\n* [worker-loader](https://github.com/webpack-contrib/worker-loader)\n* [bitcore-lib-cash](https://github.com/bitpay/bitcore/tree/master/packages/bitcore-lib-cash)\n* [bchaddrjs](https://github.com/ealmansi/bchaddrjs)\n## License\n\nLumiCore is available under the MIT license. See the [LICENSE](LICENSE) file for more info.\n",
     "longname": "/Users/user/work/lumi-web-core/README.md",
     "name": "./README.md",
     "static": true,
@@ -6599,7 +6707,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"lumi-web-core\",\n  \"description\": \"Lumi Wallet Core - Web Version\",\n  \"version\": \"1.3.1\",\n  \"author\": {\n    \"name\": \"vikowl\",\n    \"email\": \"vd@lumiwallet.com\"\n  },\n  \"main\": \"dist/index.js\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core\"\n  },\n  \"homepage\": \"https://github.com/lumiwallet/lumi-web-core\",\n  \"keywords\": [\n    \"lumi\",\n    \"crypto\",\n    \"wallet\",\n    \"client-side\",\n    \"web\",\n    \"app\"\n  ],\n  \"bugs\": {\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core/issues\"\n  },\n  \"dependencies\": {\n    \"@babel/runtime\": \"^7.11.2\",\n    \"bchaddrjs\": \"^0.4.9\",\n    \"bip39\": \"^3.0.2\",\n    \"bip39-checker\": \"^1.1.7\",\n    \"bitcoinjs-lib\": \"^5.2.0\",\n    \"bitcore-lib-cash\": \"^8.22.0\",\n    \"ethereumjs-tx\": \"^2.1.2\",\n    \"ethereumjs-util\": \"^6.2.1\",\n    \"hdkey\": \"^1.1.2\",\n    \"web3-utils\": \"^1.2.11\",\n    \"wif\": \"^2.0.6\",\n    \"worker-loader\": \"^2.0.0\"\n  },\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.11.6\",\n    \"@babel/core\": \"^7.11.6\",\n    \"@babel/plugin-syntax-dynamic-import\": \"^7.8.3\",\n    \"@babel/plugin-transform-runtime\": \"^7.11.5\",\n    \"@babel/preset-env\": \"^7.11.5\",\n    \"babel-jest\": \"^26.5.2\",\n    \"babel-loader\": \"^8.1.0\",\n    \"babel-plugin-module-resolver\": \"^4.0.0\",\n    \"commitizen\": \"^4.2.1\",\n    \"cz-conventional-changelog\": \"^3.2.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^6.8.0\",\n    \"eslint-plugin-import\": \"^2.22.0\",\n    \"eslint-plugin-promise\": \"^4.2.1\",\n    \"eslint-plugin-sonarjs\": \"^0.5.0\",\n    \"eslint-plugin-standard\": \"^4.0.1\",\n    \"jest\": \"^26.5.2\",\n    \"jest-fetch-mock\": \"^3.0.3\",\n    \"randombytes\": \"^2.1.0\",\n    \"webpack\": \"^4.44.1\"\n  },\n  \"engines\": {\n    \"node\": \">= 10.19.0\"\n  },\n  \"files\": [\n    \"dist/\"\n  ],\n  \"scripts\": {\n    \"clean\": \"rm -rf dist\",\n    \"lint\": \"eslint --ext .js --ignore-path .gitignore .\",\n    \"precommit\": \"npm run lint\",\n    \"commit\": \"git-cz\",\n    \"prepare\": \"npm run build\",\n    \"build\": \"npm run clean && babel src --out-dir dist\",\n    \"test\": \"jest --updateSnapshot\",\n    \"test:coverage\": \"npm run test -- --coverage --watchAll=false\",\n    \"preversion\": \"npm run test\",\n    \"version\": \"npm run clean && npm run build\",\n    \"postversion\": \"git add . && git push && git push --tags\",\n    \"doc\": \"esdoc -c ./.esdoc\"\n  },\n  \"config\": {\n    \"commitizen\": {\n      \"path\": \"./node_modules/cz-conventional-changelog\"\n    }\n  },\n  \"jest\": {\n    \"moduleFileExtensions\": [\n      \"js\",\n      \"json\"\n    ],\n    \"roots\": [\n      \"<rootDir>/__tests__\"\n    ],\n    \"transform\": {\n      \"^.+\\\\.js$\": \"<rootDir>/node_modules/babel-jest\"\n    },\n    \"moduleNameMapper\": {\n      \"^@/(.*)$\": \"<rootDir>/src/$1\",\n      \"\\\\.worker.js\": \"<rootDir>/__mocks__/workerMock.js\"\n    },\n    \"collectCoverage\": true,\n    \"coverageReporters\": [\n      \"html\"\n    ]\n  }\n}\n",
+    "content": "{\n  \"name\": \"lumi-web-core\",\n  \"description\": \"Lumi Wallet Core - Web Version\",\n  \"version\": \"1.4.2\",\n  \"author\": {\n    \"name\": \"vikowl\",\n    \"email\": \"vd@lumiwallet.com\"\n  },\n  \"main\": \"dist/index.js\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core\"\n  },\n  \"homepage\": \"https://github.com/lumiwallet/lumi-web-core\",\n  \"keywords\": [\n    \"lumi\",\n    \"crypto\",\n    \"wallet\",\n    \"client-side\",\n    \"web\",\n    \"app\"\n  ],\n  \"bugs\": {\n    \"url\": \"https://github.com/lumiwallet/lumi-web-core/issues\"\n  },\n  \"dependencies\": {\n    \"@babel/runtime\": \"^7.11.2\",\n    \"bchaddrjs\": \"^0.4.9\",\n    \"bip39\": \"^3.0.2\",\n    \"bip39-checker\": \"^1.1.7\",\n    \"bitcoinjs-lib\": \"^5.2.0\",\n    \"bitcore-lib-cash\": \"=8.22.1\",\n    \"ethereumjs-tx\": \"^2.1.2\",\n    \"ethereumjs-util\": \"^6.2.1\",\n    \"hdkey\": \"^1.1.2\",\n    \"web3-utils\": \"^1.2.11\",\n    \"wif\": \"^2.0.6\",\n    \"worker-loader\": \"^3.0.8\"\n  },\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.11.6\",\n    \"@babel/core\": \"^7.11.6\",\n    \"@babel/plugin-syntax-dynamic-import\": \"^7.8.3\",\n    \"@babel/plugin-transform-runtime\": \"^7.11.5\",\n    \"@babel/preset-env\": \"^7.11.5\",\n    \"babel-jest\": \"^26.5.2\",\n    \"babel-loader\": \"^8.1.0\",\n    \"babel-plugin-module-resolver\": \"^4.0.0\",\n    \"commitizen\": \"^4.2.1\",\n    \"cz-conventional-changelog\": \"^3.2.0\",\n    \"esdoc\": \"^1.0.4\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^6.8.0\",\n    \"eslint-plugin-import\": \"^2.22.0\",\n    \"eslint-plugin-promise\": \"^4.2.1\",\n    \"eslint-plugin-sonarjs\": \"^0.5.0\",\n    \"eslint-plugin-standard\": \"^4.0.1\",\n    \"jest\": \"^26.5.2\",\n    \"jest-fetch-mock\": \"^3.0.3\",\n    \"randombytes\": \"^2.1.0\",\n    \"webpack\": \"^4.44.1\"\n  },\n  \"engines\": {\n    \"node\": \">= 10.19.0\"\n  },\n  \"files\": [\n    \"dist/\"\n  ],\n  \"scripts\": {\n    \"clean\": \"rm -rf dist\",\n    \"lint\": \"eslint --ext .js --ignore-path .gitignore .\",\n    \"precommit\": \"npm run lint\",\n    \"commit\": \"git-cz\",\n    \"prepare\": \"npm run build\",\n    \"build\": \"npm run clean && babel src --out-dir dist\",\n    \"test\": \"jest --updateSnapshot\",\n    \"test:coverage\": \"npm run test -- --coverage --watchAll=false\",\n    \"preversion\": \"npm run test\",\n    \"version\": \"npm run clean && npm run build\",\n    \"postversion\": \"git add . && git push && git push --tags\",\n    \"doc\": \"esdoc -c ./.esdoc\"\n  },\n  \"config\": {\n    \"commitizen\": {\n      \"path\": \"./node_modules/cz-conventional-changelog\"\n    }\n  },\n  \"jest\": {\n    \"moduleFileExtensions\": [\n      \"js\",\n      \"json\"\n    ],\n    \"roots\": [\n      \"<rootDir>/__tests__\"\n    ],\n    \"transform\": {\n      \"^.+\\\\.js$\": \"<rootDir>/node_modules/babel-jest\"\n    },\n    \"moduleNameMapper\": {\n      \"^@/(.*)$\": \"<rootDir>/src/$1\",\n      \"\\\\.worker.js\": \"<rootDir>/__mocks__/workerMock.js\"\n    },\n    \"collectCoverage\": true,\n    \"coverageReporters\": [\n      \"html\"\n    ]\n  }\n}\n",
     "longname": "/Users/user/work/lumi-web-core/package.json",
     "name": "package.json",
     "static": true,

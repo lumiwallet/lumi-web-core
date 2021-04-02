@@ -412,6 +412,16 @@ export default class Wallet {
     this._apiReady = true
   }
   
+  /**
+   * Set request headers
+   *
+   * @type {Object} headers - Set of HTTP headers
+   */
+  
+  setHeaders(headers) {
+    this.wrapper.method('setHeaders', headers)
+  }
+  
   get Core () {
     return this.core
   }

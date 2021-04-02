@@ -15,8 +15,9 @@ export default class BitcoinSync {
    * @param {Object} internalNode - Internal Bitcoin node
    * @param {Object} api - A set of URLs for getting information about Bitcoin addresses
    * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
+   * @param {Object} headers - Request headers
    */
-  constructor (externalNode, internalNode, api, type) {
+  constructor (externalNode, internalNode, api, type, headers) {
     this.externalNode = externalNode
     this.internalNode = internalNode
     this.api = api
@@ -38,7 +39,8 @@ export default class BitcoinSync {
       unique: []
     }
     this.fee = []
-    this.request = new Request(this.api.btc)
+    this.headers = headers
+    this.request = new Request(this.api.btc, headers)
     this.type = type || 'p2pkh'
   }
   
@@ -439,7 +441,7 @@ export default class BitcoinSync {
   
   async getFeesRequest () {
     try {
-      const res = await fetch(this.api.btcFee)
+      const res = await fetch(this.api.btcFee, {headers: this.headers})
       const resJson = await res.json()
       this.fee = resJson.sort((a, b) => b.feePerByte - a.feePerByte)
     }

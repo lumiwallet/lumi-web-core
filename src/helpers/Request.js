@@ -10,15 +10,17 @@ export default class Request {
   /**
    * Create a Request
    * @param {string} url - Base url
+   * @param {Object} headers - Request headers
    * @param {Object} basicData - A set of basic data that will participate in all requests in the 'body' object
    */
-  constructor (url, basicData = {}) {
+  constructor (url, headers = {}, basicData = {}) {
     this.url = url
     this.basicData = basicData
     this.headers = new Headers({
       'Content-Type': 'application/json',
       'Cache-Control': 'no-cache',
-      Authorization: 'ApiKey '
+      Authorization: 'ApiKey ',
+      ...headers
     })
   }
   

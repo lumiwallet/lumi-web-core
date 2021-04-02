@@ -12,14 +12,15 @@ export default class EthereumSync {
    * Create a EthereumSync
    * @param {string} address - Ethereum wallet address
    * @param {Object} api - A set of URLs for getting information about ethereum address
+   * @param {Object} headers - Request headers
    */
-  constructor (address, api) {
+  constructor (address, api, headers) {
     this.address = address
     this.api = api
     this.balance = 0
     this.transactions = []
     this.gasPrice = 0
-    this.request = new Request(this.api.eth)
+    this.request = new Request(this.api.eth, headers)
   }
   
   /**

@@ -119,6 +119,9 @@ onmessage = async (e) => {
         payload: nodes
       })
       break
+    case 'setHeaders':
+      Wrapper.headers = payload.value
+      break
     default:
       postMessage({
         id,

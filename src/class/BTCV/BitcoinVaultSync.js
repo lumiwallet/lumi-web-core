@@ -13,9 +13,11 @@ export default class BitcoinVaultSync {
    * Create a BitcoinVaultSync
    * @param {Object} externalNode - External Bitcoin Vault node
    * @param {Object} internalNode - Internal Bitcoin Vault node
+   * @param {Object} addresses - Internal and external Bitcoin Vault addresses
    * @param {Object} api - A set of URLs for getting information about Bitcoin Vault addresses
+   * @param {Object} headers - Request headers
    */
-  constructor (externalNode, internalNode, addresses, api) {
+  constructor (externalNode, internalNode, addresses, api, headers) {
     const {external, internal} = addresses
     this.externalNode = externalNode
     this.internalNode = internalNode
@@ -43,7 +45,7 @@ export default class BitcoinVaultSync {
       }
     ]
     
-    this.request = new Request(this.api.btcv)
+    this.request = new Request(this.api.btcv, headers)
   }
   
   /**

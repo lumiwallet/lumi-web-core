@@ -14,8 +14,9 @@ export default class BitcoinCashSync {
    * @param {Object} externalNode - External Bitcoin Cash node
    * @param {Object} internalNode - Internal Bitcoin Cash node
    * @param {Object} api - A set of URLs for getting information about Bitcoin Cash addresses
+   * @param {Object} headers - Request headers
    */
-  constructor (externalNode, internalNode, api) {
+  constructor (externalNode, internalNode, api, headers) {
     this.externalNode = externalNode
     this.internalNode = internalNode
     this.api = api
@@ -43,7 +44,7 @@ export default class BitcoinCashSync {
       }
     ]
     
-    this.request = new Request(this.api.bch)
+    this.request = new Request(this.api.bch, headers)
   }
   
   /**
