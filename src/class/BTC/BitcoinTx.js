@@ -1,7 +1,7 @@
-import converter                                              from '@/helpers/converters'
+import converter from '@/helpers/converters'
 import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from '@/helpers/coreHelper'
-import CustomError                                            from '@/helpers/handleErrors'
-import Request                                                from '@/helpers/Request'
+import CustomError from '@/helpers/handleErrors'
+import Request from '@/helpers/Request'
 
 /**
  * List of available commission types for Bitcoin transactions
@@ -29,6 +29,7 @@ export default class BitcoinTx {
    * @param {Object} data.customFee - Custom fee entered by the user
    * @param {Object} data.nodes - External and internal nodes required to generate private keys
    * @param {String} data.type - Bitcoin type. There may be p2pkh or p2wpkh
+   * @param {Object} data.headers - Request headers
    */
   
   constructor (data) {
@@ -41,7 +42,7 @@ export default class BitcoinTx {
     this.customFee = +data.customFee || 0
     this.nodes = data.nodes || {}
     this.feeList = []
-    this.request = new Request(data.api)
+    this.request = new Request(data.api, data.headers)
     this.type = data.type ? data.type.toLowerCase() : 'p2pkh'
   }
   

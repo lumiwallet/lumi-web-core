@@ -362,6 +362,14 @@ export function makeRawBtcTx (data = {}) {
   }
 }
 
+/**
+ * Creating a raw Bitcoin Vault transaction
+ * @param {Object} data - Input data for a transaction
+ * @param {Array} data.inputs - List of inputs
+ * @param {Array} data.outputs - List of outputs
+ * @returns {Object} Returns raw Bitcoin Vault transaction and transaction hash
+ */
+
 export function makeRawBtcvTx (data = {}) {
   try {
     const {inputs, outputs} = data
@@ -419,6 +427,7 @@ export function makeRawBtcvTx (data = {}) {
     throw new CustomError('err_tx_btc_build')
   }
 }
+
 /**
  * Creating a raw Ethereum transaction
  * @param {Object} data - Input data for a transaction
@@ -493,15 +502,17 @@ export function makeRawEthTx (data = {}) {
 export function makeRawBchTx (data = {}) {
   try {
     const {inputs, outputs} = data
-    const privateKeys = inputs.map(item => item.key)
-    const utxos = inputs.map(item => {
+    let privateKeys = []
+    let utxos = []
+
+    for (let item of inputs) {
       item.outputIndex = +item.outputIndex
       item.satoshis = +item.satoshis
       item.address = getCashAddress(item.address)
-      
-      return item
-    })
-    
+      privateKeys.push(item.key)
+      utxos.push(item)
+    }
+
     const outputsInCashFormat = outputs.map(item => {
       item.address = getCashAddress(item.address)
       item.satoshis = +item.satoshis
@@ -512,7 +523,7 @@ export function makeRawBchTx (data = {}) {
       .from(utxos)
       .to(outputsInCashFormat)
       .sign(privateKeys)
-    
+
     const txData = tx.serialize()
     
     return {

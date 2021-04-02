@@ -1,7 +1,7 @@
 {
-  "coverage": "56.87%",
+  "coverage": "57.5%",
   "expectCount": 160,
-  "actualCount": 91,
+  "actualCount": 92,
   "files": {
     "src/Wrapper.js": {
       "expectCount": 9,
@@ -102,10 +102,8 @@
     },
     "src/helpers/coreHelper.js": {
       "expectCount": 21,
-      "actualCount": 20,
-      "undocumentLines": [
-        365
-      ]
+      "actualCount": 21,
+      "undocumentLines": []
     },
     "src/helpers/handleErrors.js": {
       "expectCount": 5,
