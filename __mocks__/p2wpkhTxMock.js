@@ -7,25 +7,16 @@ export const test_unspent = [
   {
     address: 'bc1qwds7c6u5q9kcw88nhx9r587v65tqx0et0kc24c',
     key: 'L4sVqqcR7ydQsL6iPspuuHgawbbvsCA7QdtMVqeXG9r8DigVzkqN',
-    script: '76a914b66be3501d119fd998e2e1d9b156644c92820d0d88ac',
-    tx_hash: 'c4aa6886cf6e2e667457c10b3c485fbbae06e0b71e8e334fcd2ebc7016b3b01b',
-    tx_hash_big_endian: '1bb0b31670bc2ecd4f338e1eb7e006aebb5f483c0bc15774662e6ecf8668aac4',
-    tx_index: 1,
-    tx_output_n: 1,
-    value: 3627,
-    value_hex: '000e2b'
+    transaction_hash: '1bb0b31670bc2ecd4f338e1eb7e006aebb5f483c0bc15774662e6ecf8668aac4',
+    index: 1,
+    value: 3627
   },
   {
     address: 'bc1q6duxh4wn0yra346l67psurshhrvh97csgw3de7',
-    derive_index: 1,
     key: 'Ky9wSZcKm4h3x9mCLoGbCuF9N8MNpYMmoHU69Kg2Wn5TEfEKjQUw',
-    script: '00149e605d026fdb13564f1ef014841e8e2ce05b91ef',
-    tx_hash: '9fff7e2b36c71cea053a6715ab5375dbcaf4d8814aea3e85a74dd9d82e09e5a8',
-    tx_hash_big_endian: 'a8e5092ed8d94da7853eea4a81d8f4cadb7553ab15673a05ea1cc7362b7eff9f',
-    tx_index: 1,
-    tx_output_n: 1,
-    value: 2306,
-    value_hex: '000902'
+    transaction_hash: 'a8e5092ed8d94da7853eea4a81d8f4cadb7553ab15673a05ea1cc7362b7eff9f',
+    index: 1,
+    value: 2306
   }
 ]
 export const test_balance = test_unspent.reduce((a, b) => a + b.value, 0)

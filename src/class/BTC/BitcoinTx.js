@@ -210,20 +210,21 @@ export default class BitcoinTx {
   /**
    * Returns the required data to create a transaction
    * @param {Array} inputs - Array of inputs for tx
-   * @returns {Promise<Object>} Returns an array of inputs with a private keys and raw transaction data for p2pkh items
+   * @returns {Promise<Array>} Returns an array of inputs with a private keys and raw transaction data for p2pkh items
    */
   
   async getInputsWithTxInfo (inputs) {
     try {
       let rawTxsData = []
+      let finalInputs = []
       
       if (this.type === 'p2pkh') {
         let hashes = []
         
         for (let input of inputs) {
           if (!input.tx) {
-            if (input.tx_hash_big_endian) {
-              hashes.push(input.tx_hash_big_endian)
+            if (input.transaction_hash) {
+              hashes.push(input.transaction_hash)
             } else {
               throw new CustomError('err_tx_btc_unspent')
             }
@@ -234,22 +235,41 @@ export default class BitcoinTx {
         rawTxsData = await this.getRawTxHex(unique_hashes)
         
         for (let input of inputs) {
-          if (!input.tx) {
-            let data = rawTxsData.find(item => item.hash === input.tx_hash_big_endian)
-            input.tx = data ? data.rawData : null
+          let item = {
+            hash: input.transaction_hash,
+            index: input.index,
+            address: input.address,
+            value: input.value
           }
-          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          if (!input.tx) {
+            let data = rawTxsData.find(item => item.hash === input.transaction_hash)
+            item.tx = data ? data.rawData : null
+          } else {
+            item.tx = input.tx
+          }
+          item.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          
+          finalInputs.push(item)
         }
       } else {
         for (let input of inputs) {
-          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          let item = {
+            hash: input.transaction_hash,
+            index: input.index,
+            address: input.address,
+            value: input.value
+          }
+          item.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          
+          finalInputs.push(item)
         }
       }
+  
+      return finalInputs
     }
     catch (e) {
       throw new Error(e.message)
     }
-    return inputs
   }
   
   /**

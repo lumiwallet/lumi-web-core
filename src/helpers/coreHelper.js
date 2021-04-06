@@ -315,8 +315,8 @@ export function makeRawBtcTx (data = {}) {
       keyPairs.push(keyPair)
       
       let data = {
-        hash: input.tx_hash_big_endian,
-        index: input.tx_output_n
+        hash: input.hash,
+        index: input.index
       }
       
       if (isSegwit) {

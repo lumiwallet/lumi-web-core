@@ -1,4 +1,4 @@
-import Request         from '@/helpers/Request'
+import Request from '@/helpers/Request'
 import {getBtcAddress} from '@/helpers/coreHelper'
 
 /**
@@ -129,25 +129,6 @@ export default class BitcoinSync {
   }
   
   /**
-   * Finds the bitcoin address for unspent in the list of all transactions
-   *
-   * @param {string} hash - Transaction hash for current unspent
-   * @param {number} index - Unspent transaction output index
-   * @returns {null|string} - Returns address or null
-   * @private
-   */
-  
-  _getAddressByHash (hash, index) {
-    const tx = this.transactions.unique.find(item => item.hash === hash)
-    
-    if (tx) {
-      return tx.out[index] ? tx.out[index].addr : null
-    }
-    
-    return null
-  }
-  
-  /**
    * Returns the derivation index for an address
    * @param {string} address - Legacy Bitcoin address
    */
@@ -200,68 +181,65 @@ export default class BitcoinSync {
       try {
         let res = await this.getMultiAddressRequest(addresses)
         
-        if (res.hasOwnProperty('txs')) {
-          this.transactions.all = [...this.transactions.all, ...res.txs]
+        if (res.hasOwnProperty('utxo')) {
+          this.unspent = [...this.unspent, ...res.utxo]
         }
         
-        if (res.hasOwnProperty('unspent_outputs')) {
-          this.unspent = [...this.unspent, ...res.unspent_outputs]
+        if (res.hasOwnProperty('lastblock')) {
+          this.latestBlock = res.lastblock
         }
         
-        if (res.hasOwnProperty('last_block')) {
-          this.latestBlock = res.last_block
-        }
-        
-        if (res.hasOwnProperty('addresses')) {
+        if (res.hasOwnProperty('transactions') && res.transactions.length) {
+          this.transactions.all = [...this.transactions.all, ...res.transactions]
+          
           for (let i = data.from; i < data.to; i++) {
             if (counter >= CONTROL_COUNT) break
             const index = i < CONTROL_COUNT ? i : i - CONTROL_COUNT
-            let item = res.addresses.find((itm) => itm.address === addresses[index])
+            let address = addresses[index]
+            let find = res.transactions.find((itm) => itm.address === address)
+            let item = {
+              type,
+              derive_index,
+              address
+            }
             
-            if (item && item.n_tx) {
+            if (find) {
               counter = 0
-              item.type = type
-              item.derive_index = derive_index
               list.push(item)
             } else {
               counter++
               if (!empty.status) {
-                item = {}
-                item.type = type
-                item.derive_index = derive_index
-                
-                if (type === 'external') {
-                  item.address = getBtcAddress(this.externalNode, derive_index, this.type)
-                } else {
-                  item.address = getBtcAddress(this.internalNode, derive_index, this.type)
-                }
                 empty.status = true
                 empty.data = item
               }
             }
             derive_index++
           }
+          
           if (counter < CONTROL_COUNT) {
             data.from += CONTROL_COUNT
             data.to += CONTROL_COUNT
-            
             await req()
           } else {
             list.push(empty.data)
           }
         } else {
-          let data = {
-            type: type,
-            derive_index: derive_index
+          if (!empty.status) {
+            let item = {
+              type,
+              derive_index
+            }
+            
+            if (type === 'external') {
+              item.address = getBtcAddress(this.externalNode, derive_index, this.type)
+            } else {
+              item.address = getBtcAddress(this.internalNode, derive_index, this.type)
+            }
+            empty.status = true
+            empty.data = item
           }
           
-          if (type === 'external') {
-            data.address = getBtcAddress(this.externalNode, derive_index, this.type)
-          } else {
-            data.address = getBtcAddress(this.internalNode, derive_index, this.type)
-          }
-          
-          list.push(data)
+          list.push(empty.data)
         }
       }
       catch (e) {
@@ -286,48 +264,9 @@ export default class BitcoinSync {
         self.findIndex((tx) => tx.hash === value.hash) === index
     )
     
-    try {
-      this.transactions.unique.forEach((tx) => {
-        let isMyInAddress = false
-        
-        for (let input of tx.inputs) {
-          if (input.prev_out?.addr) {
-            if (this.addresses.all.includes(input.prev_out.addr)) {
-              isMyInAddress = true
-              break
-            }
-          }
-        }
-        
-        tx.action = isMyInAddress ? 'outgoing' : 'incoming'
-        tx.self = isMyInAddress ? tx.out.every(item => this.addresses.all.includes(item.addr)) : false
-        
-        if (tx.self) {
-          tx.action = 'outgoing'
-        }
-        
-        tx.from = tx.inputs[0].prev_out.addr
-        
-        if (tx.action === 'incoming') {
-          let to = tx.out.find(item => {
-            return this.addresses.all.includes(item.addr)
-          })
-          if (to) {
-            tx.to = to.addr
-            tx.value = to.value
-          } else {
-            tx.to = tx.out[0].addr
-            tx.value = tx.out[0].value
-          }
-        } else {
-          tx.to = tx.out[0].addr
-          tx.value = tx.out[0].value
-        }
-      })
-    }
-    catch (e) {
-      console.log('BTC processTransactions', e)
-    }
+    this.transactions.unique.forEach(tx => {
+      tx.action = tx.balance_change > 0 ? 'incoming' : 'outgoing'
+    })
   }
   
   /**
@@ -339,14 +278,10 @@ export default class BitcoinSync {
     const unspent = []
     
     for (let item of this.unspent) {
-      const address = this._getAddressByHash(item.tx_hash_big_endian, item.tx_output_n)
-      
-      if (!address) {
+      if (!item.address) {
         console.log('Can\'t find the unspent address')
         continue
       }
-      
-      item.address = address
       
       const derivationInfo = this._getDeriveIndexByAddress(item.address)
       
@@ -399,10 +334,10 @@ export default class BitcoinSync {
     
     const req = async () => {
       let params = {
-        method: 'multiaddr',
+        method: 'all',
         active: addresses,
-        n: TXS_COUNT,
-        offset: offset
+        offset: offset,
+        limit: TXS_COUNT
       }
       
       try {
@@ -411,15 +346,15 @@ export default class BitcoinSync {
         if (res.status === 'success') {
           data = res.data || {}
           
-          if (res.data.hasOwnProperty('txs')) {
-            txs = [...txs, ...res.data.txs]
-            if (res.data.txs.length === TXS_COUNT) {
+          if (res.data.hasOwnProperty('transactions')) {
+            txs = [...txs, ...res.data.transactions]
+            if (res.data.transactions.length === TXS_COUNT) {
               offset += OFFSET_STEP
               await req()
             }
           }
           
-          data.txs = txs
+          data.transactions = txs
         } else {
           console.log('BTC getMultiAddressRequest', res.error)
         }
