@@ -259,14 +259,23 @@ export default class BitcoinSync {
    */
   
   async processTransactions () {
-    this.transactions.unique = this.transactions.all.filter(
-      (value, index, self) =>
-        self.findIndex((tx) => tx.hash === value.hash) === index
-    )
+    const hashes = this.transactions.all.map(item => item.hash)
+    const unique_hashes = [...new Set(hashes)]
     
-    this.transactions.unique.forEach(tx => {
-      tx.action = tx.balance_change > 0 ? 'incoming' : 'outgoing'
-    })
+    for (let hash of unique_hashes) {
+      const group = this.transactions.all.filter(item => item.hash === hash)
+      const balance_change = group.reduce((a, b) => ({balance_change: a.balance_change + b.balance_change})).balance_change
+      
+      let tx = {
+        hash,
+        balance_change,
+        block_id: group[0].block_id,
+        time: group[0].time,
+        action: balance_change > 0 ? 'incoming' : 'outgoing'
+      }
+      
+      this.transactions.unique.push(tx)
+    }
   }
   
   /**
