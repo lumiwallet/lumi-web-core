@@ -60,6 +60,7 @@ export default class BitcoinSync {
       await this.getAddresses(),
       await this.getFeesRequest()
     ])
+    this.getBalance()
   }
   
   /**
@@ -96,7 +97,6 @@ export default class BitcoinSync {
     
     await this.processTransactions()
     await this.getTxInfoForUnspent()
-    this.getBalance(this.unspent)
   }
   
   /**
@@ -144,7 +144,7 @@ export default class BitcoinSync {
     
     return {
       index: find ? find.derive_index : null,
-      node: node
+      node
     }
   }
   
@@ -254,8 +254,7 @@ export default class BitcoinSync {
   
   /**
    * Processing transaction information: setting the type (incoming or outgoing),
-   * getting addresses from and to, getting a transaction amount
-   * @returns {Promise<Boolean>}
+   * getting balance, hash, time and block id
    */
   
   async processTransactions () {
@@ -306,18 +305,12 @@ export default class BitcoinSync {
   
   /**
    * Getting a balance of Bitcoin wallet from a list of unspent
-   * @param {Array} unspent - The list of unspent transaction output
-   * @returns {number} The balance of the Bitcoin Cash wallet
    */
   
-  getBalance (unspent) {
-    if (!Array.isArray(unspent)) {
-      return 0
-    }
-    
+  getBalance () {
     let balance = 0
     
-    unspent.forEach((item) => {
+    this.unspent.forEach((item) => {
       if (item && item.hasOwnProperty('value')) {
         balance += +item.value
       }

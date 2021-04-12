@@ -118,11 +118,11 @@ export function derive (hd, path) {
     throw new CustomError('err_core_derivation_path')
   }
   let regex = new RegExp(/(^m\/\d+\')([\/{1}\d+\'{1}]+)/mg)
-
+  
   if (!regex.test(path)) {
     throw new CustomError('err_core_derivation_path')
   }
-
+  
   try {
     return hd.derive(path)
   }
@@ -172,7 +172,7 @@ export function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = '
 
 export function getBtcAddressByPublicKey (key, type = 'p2pkh', network = 'btc') {
   if (!key) return ''
-
+  
   try {
     return bitcoin.payments[type]({
       pubkey: new Buffer(key, 'hex'),
@@ -279,7 +279,7 @@ export function privateKeyToWIF (privateKey) {
 
 export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
   let result = 0
-
+  
   if (isWitness) {
     let base_size = (41 * i) + (32 * o) + 10
     let total_size = (149 * i) + (32 * o) + 12
@@ -373,7 +373,7 @@ export function makeRawBtcTx (data = {}) {
 export function makeRawBtcvTx (data = {}) {
   try {
     const {inputs, outputs} = data
-    const psbt = new bitcoin.Psbt({ network: networks.btcv })
+    const psbt = new bitcoin.Psbt({network: networks.btcv})
     let keyPairs = []
     psbt.setVersion(1)
     
@@ -504,26 +504,31 @@ export function makeRawBchTx (data = {}) {
     const {inputs, outputs} = data
     let privateKeys = []
     let utxos = []
-
-    for (let item of inputs) {
-      item.outputIndex = +item.outputIndex
-      item.satoshis = +item.satoshis
-      item.address = getCashAddress(item.address)
-      privateKeys.push(item.key)
+    
+    for (let input of inputs) {
+      let item = {
+        outputIndex: +input.index,
+        satoshis: +input.value,
+        address: convertToCashAddress(input.address),
+        txId: input.hash
+      }
+      item.script = new bitcore.Script.buildPublicKeyHashOut(item.address)
+      privateKeys.push(input.key)
       utxos.push(item)
     }
-
-    const outputsInCashFormat = outputs.map(item => {
-      item.address = getCashAddress(item.address)
-      item.satoshis = +item.satoshis
-      
-      return item
+    
+    const outputsInCashFormat = outputs.map(output => {
+      return {
+        address: convertToCashAddress(output.address),
+        satoshis: +output.value
+      }
     })
+    
     const tx = new bitcore.Transaction()
       .from(utxos)
       .to(outputsInCashFormat)
       .sign(privateKeys)
-
+    
     const txData = tx.serialize()
     
     return {
@@ -538,12 +543,31 @@ export function makeRawBchTx (data = {}) {
 }
 
 /**
+ * Getting Bitcoin Cash address by node and derivation index
+ * @param {Object} node - Input data for a transaction
+ * @param {number} childIndex - Derivation index
+ * @returns {string} Returns address
+ */
+
+export function getCashAddress (node, childIndex) {
+  try {
+    let pubKey = node.deriveChild(childIndex).pubKeyHash
+    let address = new bitcore.Address.fromPublicKeyHash(pubKey)
+    return address.toCashAddress(true)
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_core_bch_address')
+  }
+}
+
+/**
  * Convert a Bitcoin Cash address from Legacy format to CashAddr format
  * @param {string} address - Bitcoin Cash address in Legacy format
  * @returns {string} Returns Bitcoin Cash address in CashAddr format
  */
 
-export function getCashAddress (address = '') {
+export function convertToCashAddress (address = '') {
   try {
     const toCashAddress = bchaddr.toCashAddress
     

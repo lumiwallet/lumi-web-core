@@ -307,7 +307,7 @@ export default class Core {
               if (!child.p2pkhAddress) {
                 child.p2pkhAddress = core.getBtcAddress(node, i, 'p2pkh', 'btc')
               }
-              child.bchAddress = core.getCashAddress(child.p2pkhAddress)
+              child.bchAddress = core.convertToCashAddress(child.p2pkhAddress)
               break
             case 'BTCV':
               child.btcvAddress = core.getBtcAddress(node, i, 'p2wpkh', 'btcv')

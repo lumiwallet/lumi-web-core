@@ -4,28 +4,24 @@ export const test_fees = [
 
 export const test_unspent = [
   {
-    nodeType: 'external',
-    deriveIndex: 0,
-    legacyAddress: '1657JTP3m3hqnhpS6EkRe2iJ5pFAA75HrD',
-    cashAddress: 'qqmelrtj5r8vynz8mvc8m8auuz9jxa8m7u8kg7m0xe',
-    vout: 0,
-    satoshis: 140000,
-    scriptPubKey: '76a914379f8d72a0cec24c47db307d9fbce08b2374fbf788ac',
-    txid: 'b76b7373961c49bf8850047c4304383094a3da4e18ad436f4b741b17457103d7',
+    node_type: 'external',
+    derive_index: 0,
+    address: 'qqmelrtj5r8vynz8mvc8m8auuz9jxa8m7u8kg7m0xe',
+    index: 0,
+    value: 140000,
+    transaction_hash: 'b76b7373961c49bf8850047c4304383094a3da4e18ad436f4b741b17457103d7',
   },
   {
-    nodeType: 'external',
-    deriveIndex: 0,
-    legacyAddress: '1657JTP3m3hqnhpS6EkRe2iJ5pFAA75HrD',
-    cashAddress: 'qqmelrtj5r8vynz8mvc8m8auuz9jxa8m7u8kg7m0xe',
-    vout: 0,
-    satoshis: 1200000,
-    scriptPubKey: '76a914379f8d72a0cec24c47db307d9fbce08b2374fbf788ac',
-    txid: 'b317dbfe7594cc41a22de934d86929c0ac11c94e212812a017495a2df8fae4ab',
+    node_type: 'external',
+    derive_index: 0,
+    address: '1657JTP3m3hqnhpS6EkRe2iJ5pFAA75HrD',
+    index: 0,
+    value: 1200000,
+    transaction_hash: 'b317dbfe7594cc41a22de934d86929c0ac11c94e212812a017495a2df8fae4ab',
   }
 ]
 
-export const test_balance = test_unspent.reduce((a, b) => a + b.satoshis, 0) // 1340000 sat
+export const test_balance = test_unspent.reduce((a, b) => a + b.value, 0) // 1340000 sat
 export const test_balance_bch = test_balance / Math.pow(10, 8) // 0.0134 BCH
 export const internal_address = '1A4eD3w4Bi3dpSVx4hC3ti9pMk54zv9QPx'
 export const recipient_address = '115uEfQMqpZXWbbyLBqx9m9oa3szkoWm4e'

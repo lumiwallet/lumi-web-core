@@ -1,5 +1,5 @@
 import Request from '@/helpers/Request'
-import {getBtcAddress} from '@/helpers/coreHelper'
+import {getCashAddress, convertToCashAddress} from '@/helpers/coreHelper'
 
 /**
  * Class BitcoinCashSync.
@@ -54,10 +54,13 @@ export default class BitcoinCashSync {
    */
   
   async Start () {
-    await Promise.all([
-      await this.getAddresses(),
-      await this.getBlockchainInfo()
-    ])
+    this.transactions = {
+      all: [],
+      unique: []
+    }
+    this.unspent = []
+    await this.getAddresses()
+    this.getBalance()
   }
   
   /**
@@ -74,8 +77,8 @@ export default class BitcoinCashSync {
     }
     
     this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) => item.address)
-    await this.getUnspent()
     await this.processTransactions()
+    await this.getTxInfoForUnspent()
   }
   
   /**
@@ -97,7 +100,7 @@ export default class BitcoinCashSync {
       if (this.deriveAddress[type].hasOwnProperty(i)) {
         address = this.deriveAddress[type][i]
       } else {
-        address = getBtcAddress(node, i, 'p2pkh')
+        address = getCashAddress(node, i)
       }
       addresses.push(address)
     }
@@ -120,8 +123,8 @@ export default class BitcoinCashSync {
     }
     
     return {
-      index: find.deriveIndex,
-      node: node
+      index: find ? find.derive_index : null,
+      node
     }
   }
   
@@ -134,10 +137,10 @@ export default class BitcoinCashSync {
    */
   
   async getAddressesByNode (node, type) {
-    const CONTROL_COUNT = 20
+    const CONTROL_COUNT = 100
     let list = []
     let counter = 0
-    let deriveIndex = 0
+    let derive_index = 0
     let empty = {
       status: false,
       data: null
@@ -154,54 +157,68 @@ export default class BitcoinCashSync {
         data.from,
         data.to
       )
-
+      
       try {
         let res = await this.getMultiAddressRequest(addresses)
-
-        if (!Array.isArray(res) || res.error) {
-          let item = {
-            type,
-            deriveIndex,
-            address: addresses[0],
-            legacyAddress: addresses[0]
-          }
-
-          list.push(item)
-          return
+  
+        if (res.hasOwnProperty('utxo')) {
+          this.unspent = [...this.unspent, ...res.utxo]
         }
-
-        res.forEach((addr) => {
-          let item = {}
+  
+        if (res.hasOwnProperty('lastblock')) {
+          this.latestBlock = res.lastblock
+        }
+        
+        if (res.hasOwnProperty('transactions') && res.transactions.length) {
+          this.transactions.all = [...this.transactions.all, ...res.transactions]
           
-          if (addr.txs.length) {
-            this.transactions.all = [...addr.txs, ...this.transactions.all]
-            
-            item.type = type
-            item.deriveIndex = deriveIndex
-            item.address = addr.legacyAddress
-            
-            list.push(item)
-          } else {
-            counter++
-            if (!empty.status) {
-              empty.status = true
-              empty.data = {
-                type: type,
-                address: addr.legacyAddress,
-                legacyAddress: addr.legacyAddress,
-                cashAddress: addr.cashAddress,
-                deriveIndex: deriveIndex
+          for (let i = data.from; i < data.to; i++) {
+            if (counter >= CONTROL_COUNT) break
+            const index = i < CONTROL_COUNT ? i : i - CONTROL_COUNT
+            let address = addresses[index]
+            let find = res.transactions.find((itm) => itm.address === address)
+            let item = {
+              type,
+              derive_index,
+              address
+            }
+  
+            if (find) {
+              counter = 0
+              list.push(item)
+            } else {
+              counter++
+              if (!empty.status) {
+                empty.status = true
+                empty.data = item
               }
             }
+            derive_index++
           }
-          deriveIndex++
-        })
-        
-        if (counter < CONTROL_COUNT) {
-          data.from += CONTROL_COUNT
-          data.to += CONTROL_COUNT
-          await req()
+          
+          if (counter < CONTROL_COUNT) {
+            data.from += CONTROL_COUNT
+            data.to += CONTROL_COUNT
+            await req()
+          } else {
+            list.push(empty.data)
+          }
         } else {
+          if (!empty.status) {
+            let item = {
+              type,
+              derive_index
+            }
+    
+            if (type === 'external') {
+              item.address = getCashAddress(this.externalNode, derive_index)
+            } else {
+              item.address = getCashAddress(this.internalNode, derive_index)
+            }
+            empty.status = true
+            empty.data = item
+          }
+  
           list.push(empty.data)
         }
       }
@@ -217,113 +234,69 @@ export default class BitcoinCashSync {
   
   /**
    * Processing transaction information: setting the type (incoming or outgoing),
-   * getting addresses from and to, getting a transaction amount
-   * @returns {Promise<Boolean>}
+   * getting balance, hash, time and block id
    */
   
   async processTransactions () {
-    this.transactions.unique = this.transactions.all.filter(
-      (value, index, self) =>
-        self.findIndex((tx) => tx.txid === value.txid) === index
-    )
+    const hashes = this.transactions.all.map(item => item.hash)
+    const unique_hashes = [...new Set(hashes)]
+  
+    for (let hash of unique_hashes) {
+      const group = this.transactions.all.filter(item => item.hash === hash)
+      const balance_change = group.reduce((a, b) => ({balance_change: a.balance_change + b.balance_change})).balance_change
     
-    try {
-      this.transactions.unique.forEach((tx) => {
-        let isMyInAddress = this.addresses.all.some((address) => {
-          return tx.vin.map(item => item.addr).includes(address)
-        })
-        
-        tx.action = isMyInAddress ? 'outgoing' : 'incoming'
-        tx.self = isMyInAddress ? tx.vout.every(item => this.addresses.all.includes(item.addr)) : false
-        
-        if (tx.self) {
-          tx.action = 'outgoing'
-        }
-        
-        let vout
-        
-        if (tx.action === 'incoming') {
-          vout = tx.vout.find(item => {
-            return item.scriptPubKey.hasOwnProperty('addresses') &&
-              item.scriptPubKey.addresses.length &&
-              this.addresses.all.includes(item.scriptPubKey.addresses[0])
-          })
-        }
-        
-        if (tx.action === 'outgoing' || !vout) {
-          vout = tx.vout.find(item => {
-            return item.scriptPubKey.hasOwnProperty('addresses') &&
-              item.scriptPubKey.addresses.length
-          })
-        }
-        
-        
-        tx.to = vout.scriptPubKey.addresses[0]
-        tx.from = tx.vin[0].addr
-        tx.value = vout.value
-      })
-    }
-    catch (e) {
-      console.log('BCH processTransactions error', e)
+      let tx = {
+        hash,
+        balance_change,
+        block_id: group[0].block_id,
+        time: group[0].time,
+        action: balance_change > 0 ? 'incoming' : 'outgoing'
+      }
+    
+      this.transactions.unique.push(tx)
     }
   }
   
   /**
-   * Getting a unspent transaction output for
-   * all addresses in the wallet with the transaction.
-   * Calculates the balance of the wallet for unspent
-   * @returns {Promise<boolean>}
+   * Gets information necessary to create a Bitcoin transaction
    */
   
-  async getUnspent () {
-    let res = await this.getUnspentOutputsRequest(this.addresses.all)
-    let unspent = []
+  async getTxInfoForUnspent () {
+    if (!this.unspent.length) return
+    const unspent = []
+
+    for (let item of this.unspent) {
+      if (!item.address) {
+        console.log('Can\'t find the unspent address')
+        continue
+      }
+      
+      const derivationInfo = this._getDeriveIndexByAddress(item.address)
+      
+      if (derivationInfo.index === null) continue
+      
+      item.derive_index = derivationInfo.index
+      item.node_type = derivationInfo.node
+      unspent.push(item)
+    }
     
-    res.forEach(item => {
-      if (!item.utxos || !item.utxos.length) return
-      
-      let utxos = item.utxos.filter(utxo => utxo.satoshis)
-        .map(utxo => {
-          const {cashAddress, legacyAddress, scriptPubKey} = item
-          const derivationInfo = this._getDeriveIndexByAddress(legacyAddress)
-
-          return {
-            ...utxo,
-            cashAddress,
-            legacyAddress,
-            scriptPubKey,
-            deriveIndex: derivationInfo.index,
-            nodeType: derivationInfo.node
-          }
-        })
-      
-      unspent = [...utxos, ...unspent]
-    })
-
-    this.unspent = unspent.sort((a, b) => b.value - a.value)
-    this.balance = this.getBalance(this.unspent)
+    this.unspent = unspent
   }
   
   /**
    * Getting a balance of Bitcoin Cash wallet from a list of unspent
-   * @param {Array} unspent - The list of unspent transaction output
-   * @returns {number} The balance of the Bitcoin Cash wallet
    */
-  
-  getBalance (unspent) {
-    if (!Array.isArray(unspent)) {
-      return 0
-    }
-    
+
+  getBalance () {
     let balance = 0
-    
-    unspent.forEach((item) => {
-      if (item && item.hasOwnProperty('satoshis')) {
-        balance += +item.satoshis
+  
+    this.unspent.forEach((item) => {
+      if (item && item.hasOwnProperty('value')) {
+        balance += +item.value
       }
     })
-    
-    return balance
+  
+    this.balance = balance
   }
   
   /**
@@ -334,97 +307,49 @@ export default class BitcoinCashSync {
   
   async getMultiAddressRequest (addresses) {
     if (!addresses) return false
-    
-    const params = {
-      method: 'addressTransactions',
-      params: {
-        addresses: addresses
-      }
-    }
-    
-    try {
-      let res = await this.request.send(params)
-      
-      if (!res.hasOwnProperty('error')) {
-        return res
-      } else {
-        throw new Error(res.error)
-      }
-    }
-    catch (e) {
-      console.log('BCH getAddressTransactions error', e)
-      return []
-    }
-  }
   
-  /**
-   * Request to receive unspent outputs
-   * @param {Array} addresses - A set of addresses to get the unspent output from
-   * @returns {Promise<Array>} - Information about unspent output
-   */
+    const OFFSET_STEP = 100
+    const TXS_COUNT = 100
+    let offset = 0
+    let data = {}
+    let txs = []
+    
+    const req = async () => {
+      let params = {
+        method: 'all',
+        active: addresses,
+        offset: offset,
+        limit: TXS_COUNT
+      }
   
-  async getUnspentOutputsRequest (addresses) {
-    if (!addresses) return []
-    
-    const length = 20
-    let arraysCount = Math.ceil(addresses.length / length)
-    let arrays = []
-    
-    for (let i = 0; i < arraysCount; i++) {
-      let arr = addresses.slice(i * length, (i + 1) * length)
-      arrays.push(arr)
-    }
-    
-    const res = await Promise.all(arrays.map((array) => {
-      return new Promise((resolve) => {
-        const params = {
-          method: 'addressUtxo',
-          params: {
-            addresses: array
-          }
-        }
+      try {
+        let res = await this.request.send(params)
         
-        this.request.send(params).then(res => {
-          if (!res.hasOwnProperty('error')) {
-            return resolve(res)
-          } else {
-            throw new Error(res.error)
+        if (res.status === 'success') {
+          data = res.data || {}
+  
+          if (res.data.hasOwnProperty('transactions')) {
+            txs = [...txs, ...res.data.transactions]
+            if (res.data.transactions.length === TXS_COUNT) {
+              offset += OFFSET_STEP
+              await req()
+            }
           }
-        }).catch(e => {
-          console.log('BCH getUnspentOutputsRequest error', e)
-          resolve([])
-        })
-      })
-    }))
-    
-    return [].concat.apply([], res)
-  }
   
-  /**
-   * Bitcoin Cash blockchain information request.
-   * Getting the latest block number.
-   * @returns {Promise<boolean>}
-   */
-  
-  
-  async getBlockchainInfo () {
-    const params = {
-      method: 'blockchainInfo',
-      params: {}
-    }
-    
-    try {
-      const res = await this.request.send(params)
-      
-      if (!res.hasOwnProperty('error')) {
-        this.latestBlock = res.blocks || 0
-      } else {
-        throw new Error(res.error)
+          data.transactions = txs
+        } else {
+          console.log('BCH getAddressTransactions', res.error)
+        }
+      }
+      catch (e) {
+        console.log('BCH getAddressTransactions error', e)
+        return []
       }
     }
-    catch (e) {
-      console.log('BCH getBlockchainInfo error', e)
-    }
+  
+    await req()
+  
+    return data
   }
   
   get DATA () {

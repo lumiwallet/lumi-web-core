@@ -19,7 +19,7 @@ export default class Request {
     this.headers = new Headers({
       'Content-Type': 'application/json',
       'Cache-Control': 'no-cache',
-      Authorization: 'ApiKey ',
+      //Authorization: 'ApiKey ',
       ...headers
     })
   }
