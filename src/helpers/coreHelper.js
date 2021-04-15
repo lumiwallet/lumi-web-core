@@ -546,14 +546,15 @@ export function makeRawBchTx (data = {}) {
  * Getting Bitcoin Cash address by node and derivation index
  * @param {Object} node - Input data for a transaction
  * @param {number} childIndex - Derivation index
+ * @param {boolean} withoutPrefix - Flag for prefix
  * @returns {string} Returns address
  */
 
-export function getCashAddress (node, childIndex) {
+export function getCashAddress (node, childIndex, withoutPrefix = true) {
   try {
     let pubKey = node.deriveChild(childIndex).pubKeyHash
     let address = new bitcore.Address.fromPublicKeyHash(pubKey)
-    return address.toCashAddress(true)
+    return address.toCashAddress(withoutPrefix)
   }
   catch (e) {
     console.log(e)

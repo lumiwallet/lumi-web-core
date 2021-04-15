@@ -101,6 +101,7 @@ export default class BitcoinCashSync {
         address = this.deriveAddress[type][i]
       } else {
         address = getCashAddress(node, i)
+        this.deriveAddress[type][i] = address
       }
       addresses.push(address)
     }
