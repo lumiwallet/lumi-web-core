@@ -32,13 +32,16 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashSync.js~BitcoinCashSync.html">BitcoinCashSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btcv">class/BTCV</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html">BitcoinVaultTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-convertToCashAddress">convertToCashAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
@@ -187,11 +190,11 @@ export function derive (hd, path) {
     throw new CustomError(&apos;err_core_derivation_path&apos;)
   }
   let regex = new RegExp(/(^m\/\d+\&apos;)([\/{1}\d+\&apos;{1}]+)/mg)
-
+  
   if (!regex.test(path)) {
     throw new CustomError(&apos;err_core_derivation_path&apos;)
   }
-
+  
   try {
     return hd.derive(path)
   }
@@ -241,7 +244,7 @@ export function getBtcAddress (node, childIndex = 0, type = &apos;p2pkh&apos;, n
 
 export function getBtcAddressByPublicKey (key, type = &apos;p2pkh&apos;, network = &apos;btc&apos;) {
   if (!key) return &apos;&apos;
-
+  
   try {
     return bitcoin.payments[type]({
       pubkey: new Buffer(key, &apos;hex&apos;),
@@ -348,7 +351,7 @@ export function privateKeyToWIF (privateKey) {
 
 export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
   let result = 0
-
+  
   if (isWitness) {
     let base_size = (41 * i) + (32 * o) + 10
     let total_size = (149 * i) + (32 * o) + 12
@@ -384,8 +387,8 @@ export function makeRawBtcTx (data = {}) {
       keyPairs.push(keyPair)
       
       let data = {
-        hash: input.tx_hash_big_endian,
-        index: input.tx_output_n
+        hash: input.hash,
+        index: input.index
       }
       
       if (isSegwit) {
@@ -442,7 +445,7 @@ export function makeRawBtcTx (data = {}) {
 export function makeRawBtcvTx (data = {}) {
   try {
     const {inputs, outputs} = data
-    const psbt = new bitcoin.Psbt({ network: networks.btcv })
+    const psbt = new bitcoin.Psbt({network: networks.btcv})
     let keyPairs = []
     psbt.setVersion(1)
     
@@ -573,26 +576,31 @@ export function makeRawBchTx (data = {}) {
     const {inputs, outputs} = data
     let privateKeys = []
     let utxos = []
-
-    for (let item of inputs) {
-      item.outputIndex = +item.outputIndex
-      item.satoshis = +item.satoshis
-      item.address = getCashAddress(item.address)
-      privateKeys.push(item.key)
+    
+    for (let input of inputs) {
+      let item = {
+        outputIndex: +input.index,
+        satoshis: +input.value,
+        address: convertToCashAddress(input.address),
+        txId: input.hash
+      }
+      item.script = new bitcore.Script.buildPublicKeyHashOut(item.address)
+      privateKeys.push(input.key)
       utxos.push(item)
     }
-
-    const outputsInCashFormat = outputs.map(item =&gt; {
-      item.address = getCashAddress(item.address)
-      item.satoshis = +item.satoshis
-      
-      return item
+    
+    const outputsInCashFormat = outputs.map(output =&gt; {
+      return {
+        address: convertToCashAddress(output.address),
+        satoshis: +output.value
+      }
     })
+    
     const tx = new bitcore.Transaction()
       .from(utxos)
       .to(outputsInCashFormat)
       .sign(privateKeys)
-
+    
     const txData = tx.serialize()
     
     return {
@@ -607,12 +615,32 @@ export function makeRawBchTx (data = {}) {
 }
 
 /**
+ * Getting Bitcoin Cash address by node and derivation index
+ * @param {Object} node - Input data for a transaction
+ * @param {number} childIndex - Derivation index
+ * @param {boolean} withoutPrefix - Flag for prefix
+ * @returns {string} Returns address
+ */
+
+export function getCashAddress (node, childIndex, withoutPrefix = true) {
+  try {
+    let pubKey = node.deriveChild(childIndex).pubKeyHash
+    let address = new bitcore.Address.fromPublicKeyHash(pubKey)
+    return address.toCashAddress(withoutPrefix)
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError(&apos;err_core_bch_address&apos;)
+  }
+}
+
+/**
  * Convert a Bitcoin Cash address from Legacy format to CashAddr format
  * @param {string} address - Bitcoin Cash address in Legacy format
  * @returns {string} Returns Bitcoin Cash address in CashAddr format
  */
 
-export function getCashAddress (address = &apos;&apos;) {
+export function convertToCashAddress (address = &apos;&apos;) {
   try {
     const toCashAddress = bchaddr.toCashAddress
     

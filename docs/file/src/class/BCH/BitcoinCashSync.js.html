@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../../">
-  <title data-ice="title">src/class/ETH/EthereumSync.js | lumi-web-core</title>
+  <title data-ice="title">src/class/BCH/BitcoinCashSync.js | lumi-web-core</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -69,106 +69,370 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/class/ETH/EthereumSync.js</h1>
+<div class="content" data-ice="content"><h1 data-ice="title">src/class/BCH/BitcoinCashSync.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Request from &apos;@/helpers/Request&apos;
+import {getCashAddress, convertToCashAddress} from &apos;@/helpers/coreHelper&apos;
 
 /**
- * Class EthereumSync
- * This class allows you to get information about the balance on a ethereum wallet,
- * the list of transactions and optimal gas price
+ * Class BitcoinCashSync.
+ * This class allows you to get information about the balance on a Bitcoin Cash wallet,
+ * the list of unspent, a set of addresses that participated in transactions, and a list of transactions
  * @class
  */
 
-export default class EthereumSync {
+export default class BitcoinCashSync {
   /**
-   * Create a EthereumSync
-   * @param {string} address - Ethereum wallet address
-   * @param {Object} api - A set of URLs for getting information about ethereum address
+   * Create a BitcoinCashSync
+   * @param {Object} externalNode - External Bitcoin Cash node
+   * @param {Object} internalNode - Internal Bitcoin Cash node
+   * @param {Object} api - A set of URLs for getting information about Bitcoin Cash addresses
    * @param {Object} headers - Request headers
    */
-  constructor (address, api, headers) {
-    this.address = address
+  constructor (externalNode, internalNode, api, headers) {
+    this.externalNode = externalNode
+    this.internalNode = internalNode
     this.api = api
     this.balance = 0
-    this.transactions = []
-    this.gasPrice = 0
-    this.request = new Request(this.api.eth, headers)
+    this.latestBlock = 0
+    this.unspent = []
+    this.addresses = {
+      external: [],
+      internal: [],
+      empty: {},
+      all: []
+    }
+    this.deriveAddress = {
+      internal: {},
+      external: {}
+    }
+    this.transactions = {
+      all: [],
+      unique: []
+    }
+    this.fee = [
+      {
+        feePerByte: 3,
+        level: &apos;Regular&apos;
+      }
+    ]
+    
+    this.request = new Request(this.api.bch, headers)
   }
   
   /**
-   * The method that starts the synchronization Ethereum part of the wallet
-   * @returns {Promise&lt;number&gt;}
+   * The method that starts the synchronization Bitcoin Cash part of wallet
+   * @returns {Promise&lt;boolean&gt;}
    * @constructor
    */
   
   async Start () {
-    this.balance = await this.getBalance()
-    this.transactions = await this.getTransactions()
-    this.gasPrice = await this.getGasPrice()
+    this.transactions = {
+      all: [],
+      unique: []
+    }
+    this.unspent = []
+    await this.getAddresses()
+    this.getBalance()
   }
   
   /**
-   * Request to receive a balance of Ethereum wallet
-   * @returns {Promise&lt;number&gt;}
+   * Getting internal and external addresses that were involved in transactions
+   * @returns {Promise&lt;boolean&gt;}
    */
   
-  async getBalance () {
-    this.balance = 0
-    
-    let params = {
-      module: &apos;account&apos;,
-      action: &apos;balance&apos;,
-      address: this.address,
-      tag: &apos;latest&apos;
+  async getAddresses () {
+    this.addresses.external = await this.getAddressesByNode(this.externalNode, &apos;external&apos;)
+    this.addresses.internal = await this.getAddressesByNode(this.internalNode, &apos;internal&apos;)
+    this.addresses.empty = {
+      external: this.addresses.external[this.addresses.external.length - 1],
+      internal: this.addresses.internal[this.addresses.internal.length - 1]
     }
     
-    let res = await this.request.send(params)
-    
-    return res &amp;&amp; res.hasOwnProperty(&apos;result&apos;) &amp;&amp; !isNaN(res.result) ? +res.result : 0
+    this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) =&gt; item.address)
+    await this.processTransactions()
+    await this.getTxInfoForUnspent()
   }
   
   /**
-   * Request to receive Ethereum transaction list
-   * @returns {Promise&lt;Array&gt;}
+   * Auxiliary method that gets the Bitcoin Cash address by node and index
+   * @param {Object} node - Bitcoin Cash node
+   * @param {string} type - Node type (external or internal)
+   * @param {number} from - The index that the derivation starts from
+   * @param {number} to - Index to which deprivation occurs
+   * @returns {Promise&lt;Array&gt;} Returns array of addresses
+   * @private
    */
   
-  async getTransactions () {
-    this.transactions = []
+  async _getArrayOfAddresses (node, type, from, to) {
+    let addresses = []
     
-    let params = {
-      module: &apos;account&apos;,
-      action: &apos;txlist&apos;,
-      address: this.address,
-      sort: &apos;asc&apos;
+    for (let i = from; i &lt; to; i++) {
+      let address = &apos;&apos;
+      
+      if (this.deriveAddress[type].hasOwnProperty(i)) {
+        address = this.deriveAddress[type][i]
+      } else {
+        address = getCashAddress(node, i)
+        this.deriveAddress[type][i] = address
+      }
+      addresses.push(address)
     }
     
-    let res = await this.request.send(params)
-    
-    return res &amp;&amp; res.hasOwnProperty(&apos;result&apos;) &amp;&amp; Array.isArray(res.result) ? res.result : []
+    return addresses
   }
   
   /**
-   * Request to receive a amount of gas price
-   * @returns {Promise&lt;number&gt;}
+   * Returns the derivation index for an address
+   * @param {string} address - Legacy Bitcoin Cash address
    */
   
-  async getGasPrice () {
-    let params = {
-      module: &apos;proxy&apos;,
-      action: &apos;eth_gasPrice&apos;
+  _getDeriveIndexByAddress (address) {
+    let find = this.addresses.external.find(item =&gt; item.address === address)
+    let node = &apos;external&apos;
+    
+    if (!find) {
+      find = this.addresses.internal.find(item =&gt; item.address === address)
+      node = &apos;internal&apos;
     }
     
-    let res = await this.request.send(params)
+    return {
+      index: find ? find.derive_index : null,
+      node
+    }
+  }
+  
+  /**
+   * Getting information about addresses and forming an array of addresses.
+   * Makes a request for a bundle of addresses and gets a list of transactions
+   * @param node - Bitcoin Cash node
+   * @param type - Node type (external or internal)
+   * @returns {Promise&lt;Array&gt;} A list of addresses with transactions
+   */
+  
+  async getAddressesByNode (node, type) {
+    const CONTROL_COUNT = 100
+    let list = []
+    let counter = 0
+    let derive_index = 0
+    let empty = {
+      status: false,
+      data: null
+    }
+    let data = {
+      from: 0,
+      to: CONTROL_COUNT
+    }
     
-    return res &amp;&amp; res.hasOwnProperty(&apos;result&apos;) ? parseInt(res.result, 16) : 0
+    const req = async () =&gt; {
+      let addresses = await this._getArrayOfAddresses(
+        node,
+        type,
+        data.from,
+        data.to
+      )
+      
+      try {
+        let res = await this.getMultiAddressRequest(addresses)
+  
+        if (res.hasOwnProperty(&apos;utxo&apos;)) {
+          this.unspent = [...this.unspent, ...res.utxo]
+        }
+  
+        if (res.hasOwnProperty(&apos;lastblock&apos;)) {
+          this.latestBlock = res.lastblock
+        }
+        
+        if (res.hasOwnProperty(&apos;transactions&apos;) &amp;&amp; res.transactions.length) {
+          this.transactions.all = [...this.transactions.all, ...res.transactions]
+          
+          for (let i = data.from; i &lt; data.to; i++) {
+            if (counter &gt;= CONTROL_COUNT) break
+            const index = i &lt; CONTROL_COUNT ? i : i - CONTROL_COUNT
+            let address = addresses[index]
+            let find = res.transactions.find((itm) =&gt; itm.address === address)
+            let item = {
+              type,
+              derive_index,
+              address
+            }
+  
+            if (find) {
+              counter = 0
+              list.push(item)
+            } else {
+              counter++
+              if (!empty.status) {
+                empty.status = true
+                empty.data = item
+              }
+            }
+            derive_index++
+          }
+          
+          if (counter &lt; CONTROL_COUNT) {
+            data.from += CONTROL_COUNT
+            data.to += CONTROL_COUNT
+            await req()
+          } else {
+            list.push(empty.data)
+          }
+        } else {
+          if (!empty.status) {
+            let item = {
+              type,
+              derive_index
+            }
+    
+            if (type === &apos;external&apos;) {
+              item.address = getCashAddress(this.externalNode, derive_index)
+            } else {
+              item.address = getCashAddress(this.internalNode, derive_index)
+            }
+            empty.status = true
+            empty.data = item
+          }
+  
+          list.push(empty.data)
+        }
+      }
+      catch (e) {
+        console.log(&apos;BCH getAddressesByNode error&apos;, e)
+      }
+    }
+    
+    await req()
+    
+    return list
+  }
+  
+  /**
+   * Processing transaction information: setting the type (incoming or outgoing),
+   * getting balance, hash, time and block id
+   */
+  
+  async processTransactions () {
+    const hashes = this.transactions.all.map(item =&gt; item.hash)
+    const unique_hashes = [...new Set(hashes)]
+  
+    for (let hash of unique_hashes) {
+      const group = this.transactions.all.filter(item =&gt; item.hash === hash)
+      const balance_change = group.reduce((a, b) =&gt; ({balance_change: a.balance_change + b.balance_change})).balance_change
+    
+      let tx = {
+        hash,
+        balance_change,
+        block_id: group[0].block_id,
+        time: group[0].time,
+        action: balance_change &gt; 0 ? &apos;incoming&apos; : &apos;outgoing&apos;
+      }
+    
+      this.transactions.unique.push(tx)
+    }
+  }
+  
+  /**
+   * Gets information necessary to create a Bitcoin transaction
+   */
+  
+  async getTxInfoForUnspent () {
+    if (!this.unspent.length) return
+    const unspent = []
+
+    for (let item of this.unspent) {
+      if (!item.address) {
+        console.log(&apos;Can\&apos;t find the unspent address&apos;)
+        continue
+      }
+      
+      const derivationInfo = this._getDeriveIndexByAddress(item.address)
+      
+      if (derivationInfo.index === null) continue
+      
+      item.derive_index = derivationInfo.index
+      item.node_type = derivationInfo.node
+      unspent.push(item)
+    }
+    
+    this.unspent = unspent
+  }
+  
+  /**
+   * Getting a balance of Bitcoin Cash wallet from a list of unspent
+   */
+
+  getBalance () {
+    let balance = 0
+  
+    this.unspent.forEach((item) =&gt; {
+      if (item &amp;&amp; item.hasOwnProperty(&apos;value&apos;)) {
+        balance += +item.value
+      }
+    })
+  
+    this.balance = balance
+  }
+  
+  /**
+   * Request for information at multiple addresses
+   * @param {Array} addresses - List of addresses to get data from
+   * @returns {Promise&lt;Object&gt;} Address information, including a list of transactions
+   */
+  
+  async getMultiAddressRequest (addresses) {
+    if (!addresses) return false
+  
+    const OFFSET_STEP = 100
+    const TXS_COUNT = 100
+    let offset = 0
+    let data = {}
+    let txs = []
+    
+    const req = async () =&gt; {
+      let params = {
+        method: &apos;all&apos;,
+        active: addresses,
+        offset: offset,
+        limit: TXS_COUNT
+      }
+  
+      try {
+        let res = await this.request.send(params)
+        
+        if (res.status === &apos;success&apos;) {
+          data = res.data || {}
+  
+          if (res.data.hasOwnProperty(&apos;transactions&apos;)) {
+            txs = [...txs, ...res.data.transactions]
+            if (res.data.transactions.length === TXS_COUNT) {
+              offset += OFFSET_STEP
+              await req()
+            }
+          }
+  
+          data.transactions = txs
+        } else {
+          console.log(&apos;BCH getAddressTransactions&apos;, res.error)
+        }
+      }
+      catch (e) {
+        console.log(&apos;BCH getAddressTransactions error&apos;, e)
+        return []
+      }
+    }
+  
+    await req()
+  
+    return data
   }
   
   get DATA () {
     return {
-      address: this.address,
-      balance: this.balance,
+      addresses: this.addresses,
       transactions: this.transactions,
-      gasPrice: this.gasPrice
+      unspent: this.unspent,
+      balance: this.balance,
+      latestBlock: this.latestBlock,
+      fee: this.fee
     }
   }
 }

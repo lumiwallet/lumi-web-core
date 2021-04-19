@@ -32,13 +32,16 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashSync.js~BitcoinCashSync.html">BitcoinCashSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btcv">class/BTCV</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html">BitcoinVaultTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-convertToCashAddress">convertToCashAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
@@ -92,6 +95,35 @@
         
         
         <div data-ice="description"><p>Calculating the transaction size by the number of inputs and outputs</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-convertToCashAddress">convertToCashAddress</a></span></span><span class="code" data-ice="signature">(address: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Convert a Bitcoin Cash address from Legacy format to CashAddr format</p>
 </div>
       </div>
     </td>
@@ -259,13 +291,13 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-getCashAddress">getCashAddress</a></span></span><span class="code" data-ice="signature">(address: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-getCashAddress">getCashAddress</a></span></span><span class="code" data-ice="signature">(node: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, childIndex: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, withoutPrefix: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Convert a Bitcoin Cash address from Legacy format to CashAddr format</p>
+        <div data-ice="description"><p>Getting Bitcoin Cash address by node and derivation index</p>
 </div>
       </div>
     </td>
@@ -832,6 +864,80 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="static-function-convertToCashAddress">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">convertToCashAddress</span><span class="code" data-ice="signature">(address: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber571">source</a></span></span>
+    </span>
+  </h3>
+
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {convertToCashAddress} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber571">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  
+  
+  <div data-ice="description"><p>Convert a Bitcoin Cash address from Legacy format to CashAddr format</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">address</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Bitcoin Cash address in Legacy format</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns Bitcoin Cash address in CashAddr format</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="static-function-derive">
     <span class="access" data-ice="access">public</span>
     
@@ -1182,11 +1288,11 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber565">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber590">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getBtcPrivateKeyByIndex} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber565">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getBtcPrivateKeyByIndex} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber590">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Getting Bitcoin private key for address by derivation index</p>
@@ -1259,18 +1365,18 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     
     
     
-    <span class="code" data-ice="name">getCashAddress</span><span class="code" data-ice="signature">(address: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="code" data-ice="name">getCashAddress</span><span class="code" data-ice="signature">(node: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, childIndex: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, withoutPrefix: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber546">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/helpers/coreHelper.js.html#lineNumber553">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getCashAddress} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber546">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {getCashAddress} from &apos;<span><a href="file/src/helpers/coreHelper.js.html#lineNumber553">lumi-web-core/src/helpers/coreHelper.js</a></span>&apos;</code></pre></div>
   
   
-  <div data-ice="description"><p>Convert a Bitcoin Cash address from Legacy format to CashAddr format</p>
+  <div data-ice="description"><p>Getting Bitcoin Cash address by node and derivation index</p>
 </div>
 
   
@@ -1284,10 +1390,24 @@ The number of words in a mnemonic depends on the length of the entropy</p>
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">address</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="name" class="code" data-depth="0">node</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"><p>Bitcoin Cash address in Legacy format</p>
+      <td data-ice="description"><p>Input data for a transaction</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">childIndex</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Derivation index</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">withoutPrefix</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Flag for prefix</p>
 </td>
     </tr>
 </tbody>
@@ -1301,7 +1421,7 @@ The number of words in a mnemonic depends on the length of the entropy</p>
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns Bitcoin Cash address in CashAddr format</p>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns address</p>
 </td>
         </tr>
       </tbody>
