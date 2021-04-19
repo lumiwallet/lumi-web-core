@@ -32,13 +32,16 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashSync.js~BitcoinCashSync.html">BitcoinCashSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btcv">class/BTCV</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html">BitcoinVaultTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-convertToCashAddress">convertToCashAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
@@ -188,7 +191,7 @@ export default class BitcoinCashTx {
       let defaultSize = calcBtcTxSize(index + 1, 2)
       let calcFee = size ? size * fee : defaultSize * fee
       
-      inputsAmount += item.satoshis
+      inputsAmount += item.value
       inputs.push(item)
       
       let total = this.amount + calcFee + this.dust
@@ -242,41 +245,41 @@ export default class BitcoinCashTx {
     const sat = +fee.SAT
     const change = inputsAmount - amount - sat
     let inputs = []
-    
+
+    if (change &lt; 0) {
+      throw new CustomError(&apos;err_tx_bch_balance&apos;)
+    }
+
     for (const utxo of fee.inputs) {
       let item = {
-        txId: utxo.txid,
-        outputIndex: utxo.vout,
-        address: utxo.cashAddress,
-        script: utxo.scriptPubKey,
-        satoshis: utxo.satoshis,
-        key: getBtcPrivateKeyByIndex(this.nodes[utxo.nodeType], utxo.deriveIndex)
+        hash: utxo.transaction_hash,
+        index: utxo.index,
+        address: utxo.address,
+        value: utxo.value,
+        key: getBtcPrivateKeyByIndex(this.nodes[utxo.node_type], utxo.derive_index)
       }
       
       inputs.push(item)
     }
     
-    if (change &gt;= 0) {
-      let params = {
-        inputs: inputs,
-        outputs: [
-          {
-            address: addressTo,
-            satoshis: amount
-          }
-        ]
-      }
-      
-      if (change !== 0) {
-        params.outputs[1] = {
-          address: this.internalAddress,
-          satoshis: change
+    let params = {
+      inputs: inputs,
+      outputs: [
+        {
+          address: addressTo,
+          value: amount
         }
-      }
-      return makeRawBchTx(params)
-    } else {
-      throw new CustomError(&apos;err_tx_bch_balance&apos;)
+      ]
     }
+  
+    if (change !== 0) {
+      params.outputs[1] = {
+        address: this.internalAddress,
+        value: change
+      }
+    }
+
+    return makeRawBchTx(params)
   }
 }
 </code></pre>

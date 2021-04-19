@@ -32,13 +32,16 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashSync.js~BitcoinCashSync.html">BitcoinCashSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btcv">class/BTCV</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html">BitcoinVaultTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-convertToCashAddress">convertToCashAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
@@ -279,20 +282,21 @@ export default class BitcoinTx {
   /**
    * Returns the required data to create a transaction
    * @param {Array} inputs - Array of inputs for tx
-   * @returns {Promise&lt;Object&gt;} Returns an array of inputs with a private keys and raw transaction data for p2pkh items
+   * @returns {Promise&lt;Array&gt;} Returns an array of inputs with a private keys and raw transaction data for p2pkh items
    */
   
   async getInputsWithTxInfo (inputs) {
     try {
       let rawTxsData = []
+      let finalInputs = []
       
       if (this.type === &apos;p2pkh&apos;) {
         let hashes = []
         
         for (let input of inputs) {
           if (!input.tx) {
-            if (input.tx_hash_big_endian) {
-              hashes.push(input.tx_hash_big_endian)
+            if (input.transaction_hash) {
+              hashes.push(input.transaction_hash)
             } else {
               throw new CustomError(&apos;err_tx_btc_unspent&apos;)
             }
@@ -303,22 +307,41 @@ export default class BitcoinTx {
         rawTxsData = await this.getRawTxHex(unique_hashes)
         
         for (let input of inputs) {
-          if (!input.tx) {
-            let data = rawTxsData.find(item =&gt; item.hash === input.tx_hash_big_endian)
-            input.tx = data ? data.rawData : null
+          let item = {
+            hash: input.transaction_hash,
+            index: input.index,
+            address: input.address,
+            value: input.value
           }
-          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          if (!input.tx) {
+            let data = rawTxsData.find(item =&gt; item.hash === input.transaction_hash)
+            item.tx = data ? data.rawData : null
+          } else {
+            item.tx = input.tx
+          }
+          item.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          
+          finalInputs.push(item)
         }
       } else {
         for (let input of inputs) {
-          input.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          let item = {
+            hash: input.transaction_hash,
+            index: input.index,
+            address: input.address,
+            value: input.value
+          }
+          item.key = input.key || getBtcPrivateKeyByIndex(this.nodes[input.node_type], input.derive_index)
+          
+          finalInputs.push(item)
         }
       }
+  
+      return finalInputs
     }
     catch (e) {
       throw new Error(e.message)
     }
-    return inputs
   }
   
   /**

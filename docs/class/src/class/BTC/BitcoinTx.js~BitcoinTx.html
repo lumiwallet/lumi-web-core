@@ -32,13 +32,16 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashSync.js~BitcoinCashSync.html">BitcoinCashSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btcv">class/BTCV</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html">BitcoinVaultTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-convertToCashAddress">convertToCashAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
@@ -566,7 +569,7 @@ calculating the available amount to send, and generating and signing a Bitcoin t
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-method-getInputsWithTxInfo">getInputsWithTxInfo</a></span></span><span class="code" data-ice="signature">(inputs: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html#instance-method-getInputsWithTxInfo">getInputsWithTxInfo</a></span></span><span class="code" data-ice="signature">(inputs: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&gt;</span>
         </p>
       </div>
       <div>
@@ -1489,7 +1492,7 @@ Used when the user does not have enough funds for the transaction</p>
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getInputsWithTxInfo</span><span class="code" data-ice="signature">(inputs: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</span>
+    <span class="code" data-ice="name">getInputsWithTxInfo</span><span class="code" data-ice="signature">(inputs: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&gt;</span>
     <span class="right-info">
       
       
@@ -1530,7 +1533,7 @@ Used when the user does not have enough funds for the transaction</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>&gt;</td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&gt;</td>
           <td class="return-desc" data-ice="returnDescription"><p>Returns an array of inputs with a private keys and raw transaction data for p2pkh items</p>
 </td>
         </tr>
@@ -1567,7 +1570,7 @@ Used when the user does not have enough funds for the transaction</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/class/BTC/BitcoinTx.js.html#lineNumber261">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/class/BTC/BitcoinTx.js.html#lineNumber281">source</a></span></span>
     </span>
   </h3>
 

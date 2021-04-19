@@ -115,7 +115,7 @@ describe('BitcoinCashTx class', () => {
 
     expect(fees[0][0].BCH + available_amounts[0]).toBe(mock.test_balance_bch)
   })
-
+  
   test('it should make transaction in the amount of 0.001 BCH on 115uEfQMqpZXWbbyLBqx9m9oa3szkoWm4e address', async () => {
     const CORE = new Core({
       from: 'mnemonic',

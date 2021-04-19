@@ -1,7 +1,7 @@
 {
   "name": "lumi-web-core",
   "description": "Lumi Wallet Core - Web Version",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "author": {
     "name": "vikowl",
     "email": "vd@lumiwallet.com"
@@ -76,7 +76,7 @@
     "build": "npm run clean && babel src --out-dir dist",
     "test": "jest --updateSnapshot",
     "test:coverage": "npm run test -- --coverage --watchAll=false",
-    "preversion": "npm run test",
+    "preversion": "npm run test && npm run doc",
     "version": "npm run clean && npm run build",
     "postversion": "git add . && git push && git push --tags",
     "doc": "esdoc -c ./.esdoc"

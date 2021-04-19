@@ -1,7 +1,7 @@
 {
-  "coverage": "58.02%",
-  "expectCount": 162,
-  "actualCount": 94,
+  "coverage": "56.13%",
+  "expectCount": 212,
+  "actualCount": 119,
   "files": {
     "src/Wrapper.js": {
       "expectCount": 9,
@@ -12,6 +12,24 @@
         5,
         15,
         16
+      ]
+    },
+    "src/class/BCH/BitcoinCashSync.js": {
+      "expectCount": 23,
+      "actualCount": 11,
+      "undocumentLines": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        32,
+        36,
+        40,
+        47,
+        356
       ]
     },
     "src/class/BCH/BitcoinCashTx.js": {
@@ -27,6 +45,25 @@
         38,
         39,
         40
+      ]
+    },
+    "src/class/BTC/BitcoinSync.js": {
+      "expectCount": 26,
+      "actualCount": 13,
+      "undocumentLines": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        33,
+        37,
+        41,
+        42,
+        43,
+        44
       ]
     },
     "src/class/BTC/BitcoinTx.js": {
@@ -101,8 +138,8 @@
       ]
     },
     "src/helpers/coreHelper.js": {
-      "expectCount": 21,
-      "actualCount": 21,
+      "expectCount": 22,
+      "actualCount": 22,
       "undocumentLines": []
     },
     "src/helpers/handleErrors.js": {

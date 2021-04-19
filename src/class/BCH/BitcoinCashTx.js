@@ -119,7 +119,7 @@ export default class BitcoinCashTx {
       let defaultSize = calcBtcTxSize(index + 1, 2)
       let calcFee = size ? size * fee : defaultSize * fee
       
-      inputsAmount += item.satoshis
+      inputsAmount += item.value
       inputs.push(item)
       
       let total = this.amount + calcFee + this.dust
@@ -173,40 +173,40 @@ export default class BitcoinCashTx {
     const sat = +fee.SAT
     const change = inputsAmount - amount - sat
     let inputs = []
-    
+
+    if (change < 0) {
+      throw new CustomError('err_tx_bch_balance')
+    }
+
     for (const utxo of fee.inputs) {
       let item = {
-        txId: utxo.txid,
-        outputIndex: utxo.vout,
-        address: utxo.cashAddress,
-        script: utxo.scriptPubKey,
-        satoshis: utxo.satoshis,
-        key: getBtcPrivateKeyByIndex(this.nodes[utxo.nodeType], utxo.deriveIndex)
+        hash: utxo.transaction_hash,
+        index: utxo.index,
+        address: utxo.address,
+        value: utxo.value,
+        key: getBtcPrivateKeyByIndex(this.nodes[utxo.node_type], utxo.derive_index)
       }
       
       inputs.push(item)
     }
     
-    if (change >= 0) {
-      let params = {
-        inputs: inputs,
-        outputs: [
-          {
-            address: addressTo,
-            satoshis: amount
-          }
-        ]
-      }
-      
-      if (change !== 0) {
-        params.outputs[1] = {
-          address: this.internalAddress,
-          satoshis: change
+    let params = {
+      inputs: inputs,
+      outputs: [
+        {
+          address: addressTo,
+          value: amount
         }
-      }
-      return makeRawBchTx(params)
-    } else {
-      throw new CustomError('err_tx_bch_balance')
+      ]
     }
+  
+    if (change !== 0) {
+      params.outputs[1] = {
+        address: this.internalAddress,
+        value: change
+      }
+    }
+
+    return makeRawBchTx(params)
   }
 }
