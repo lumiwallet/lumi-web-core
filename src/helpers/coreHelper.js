@@ -1,5 +1,6 @@
 import * as bip39 from 'bip39'
 import * as bitcoin from 'bitcoinjs-lib'
+import * as coininfo from 'coininfo'
 import {Transaction} from 'ethereumjs-tx'
 import * as ethUtil from 'ethereumjs-util'
 import * as HDkey from 'hdkey'
@@ -113,16 +114,16 @@ export function derive (hd, path) {
   if (!hd) {
     throw new CustomError('err_core_derivation_hdkey')
   }
-  
+
   if (!path) {
     throw new CustomError('err_core_derivation_path')
   }
   let regex = new RegExp(/(^m\/\d+\')([\/{1}\d+\'{1}]+)/mg)
-  
+
   if (!regex.test(path)) {
     throw new CustomError('err_core_derivation_path')
   }
-  
+
   try {
     return hd.derive(path)
   }
@@ -143,14 +144,14 @@ export function derive (hd, path) {
 
 export function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = 'btc') {
   const types = ['p2pkh', 'p2wpkh']
-  
+
   if (!types.includes(type)) {
     throw new CustomError('err_core_btc_type')
   }
-  
+
   try {
     let pubKey = node.deriveChild(childIndex).publicKey
-    
+
     return bitcoin.payments[type]({
       pubkey: pubKey,
       network: networks[network] || network.btc
@@ -172,7 +173,7 @@ export function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = '
 
 export function getBtcAddressByPublicKey (key, type = 'p2pkh', network = 'btc') {
   if (!key) return ''
-  
+
   try {
     return bitcoin.payments[type]({
       pubkey: new Buffer(key, 'hex'),
@@ -183,7 +184,7 @@ export function getBtcAddressByPublicKey (key, type = 'p2pkh', network = 'btc') 
     console.log(e)
     throw new CustomError('err_core_btc_address')
   }
-  
+
 }
 
 /**
@@ -279,16 +280,16 @@ export function privateKeyToWIF (privateKey) {
 
 export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
   let result = 0
-  
+
   if (isWitness) {
     let base_size = (41 * i) + (32 * o) + 10
     let total_size = (149 * i) + (32 * o) + 12
-    
+
     result = ((3 * base_size) + total_size) / 4
   } else {
     result = i * 148 + o * 34 + 10
   }
-  
+
   return Math.ceil(result)
 }
 
@@ -305,24 +306,24 @@ export function makeRawBtcTx (data = {}) {
     const {inputs, outputs} = data
     const psbt = new bitcoin.Psbt()
     let keyPairs = []
-    
+
     psbt.setVersion(1)
-    
+
     inputs.forEach(input => {
       const isSegwit = input.address.substring(0, 3) === 'bc1'
       const keyPair = bitcoin.ECPair.fromWIF(input.key)
-      
+
       keyPairs.push(keyPair)
-      
+
       let data = {
         hash: input.hash,
         index: input.index
       }
-      
+
       if (isSegwit) {
         const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey})
         const script = p2wpkh.output.toString('hex')
-        
+
         data.witnessUtxo = {
           script: Buffer.from(script, 'hex'),
           value: input.value
@@ -332,25 +333,25 @@ export function makeRawBtcTx (data = {}) {
       }
       psbt.addInput(data)
     })
-    
+
     outputs.forEach(output => {
       psbt.addOutput({
         address: output.address,
         value: output.value
       })
     })
-    
+
     keyPairs.forEach((key, i) => {
       psbt.signInput(i, key)
     })
-    
+
     psbt.validateSignaturesOfAllInputs()
     psbt.finalizeAllInputs()
-    
+
     const transaction = psbt.extractTransaction()
     const signedTransaction = transaction.toHex()
     const hash = transaction.getId()
-    
+
     return {
       hash,
       tx: signedTransaction
@@ -376,47 +377,47 @@ export function makeRawBtcvTx (data = {}) {
     const psbt = new bitcoin.Psbt({network: networks.btcv})
     let keyPairs = []
     psbt.setVersion(1)
-    
+
     inputs.forEach(input => {
       const keyPair = bitcoin.ECPair.fromWIF(input.key, networks.btcv)
-      
+
       keyPairs.push(keyPair)
-      
+
       let data = {
         hash: input.hash,
         index: input.index
       }
-      
-      
+
+
       const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: networks.btcv})
       const script = p2wpkh.output.toString('hex')
-      
+
       data.witnessUtxo = {
         script: Buffer.from(script, 'hex'),
         value: input.value
       }
-      
+
       psbt.addInput(data)
     })
-    
+
     outputs.forEach(output => {
       psbt.addOutput({
         address: output.address,
         value: output.value
       })
     })
-    
+
     keyPairs.forEach((key, i) => {
       psbt.signInput(i, key)
     })
-    
+
     psbt.validateSignaturesOfAllInputs()
     psbt.finalizeAllInputs()
-    
+
     const transaction = psbt.extractTransaction()
     const signedTransaction = transaction.toHex()
     const hash = transaction.getId()
-    
+
     return {
       hash,
       tx: signedTransaction
@@ -444,16 +445,16 @@ export function makeRawBtcvTx (data = {}) {
 
 export function makeRawEthTx (data = {}) {
   const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data
-  
+
   if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||
     isNaN(gasLimit)) {
     throw new CustomError('err_tx_eth_invalid_params')
   }
-  
+
   if (typeof to !== 'string') {
     throw new CustomError('err_tx_eth_invalid_params_string')
   }
-  
+
   try {
     let params = {
       to: to,
@@ -463,23 +464,23 @@ export function makeRawEthTx (data = {}) {
       gasLimit: utils.toHex(parseInt(gasLimit)),
       chainId: utils.toHex(1)
     }
-    
+
     if (data.hasOwnProperty('from') && data.from) {
       params.from = data.from
     }
-    
+
     if (data.hasOwnProperty('data') && data.data) {
       params.data = data.data
     }
-    
+
     const tx = new Transaction(params)
     const privateKeyBuffer = ethUtil.toBuffer(privateKey)
-    
+
     tx.sign(privateKeyBuffer)
-    
+
     const serializedTx = tx.serialize()
     const hash = tx.hash().toString('hex')
-    
+
     return {
       hash: `0x${ hash }`,
       tx: `0x${ serializedTx.toString('hex') }`
@@ -504,7 +505,7 @@ export function makeRawBchTx (data = {}) {
     const {inputs, outputs} = data
     let privateKeys = []
     let utxos = []
-    
+
     for (let input of inputs) {
       let item = {
         outputIndex: +input.index,
@@ -516,21 +517,21 @@ export function makeRawBchTx (data = {}) {
       privateKeys.push(input.key)
       utxos.push(item)
     }
-    
+
     const outputsInCashFormat = outputs.map(output => {
       return {
         address: convertToCashAddress(output.address),
         satoshis: +output.value
       }
     })
-    
+
     const tx = new bitcore.Transaction()
       .from(utxos)
       .to(outputsInCashFormat)
       .sign(privateKeys)
-    
+
     const txData = tx.serialize()
-    
+
     return {
       tx: txData.toString('hex'),
       hash: tx.hash
@@ -571,7 +572,7 @@ export function getCashAddress (node, childIndex, withoutPrefix = true) {
 export function convertToCashAddress (address = '') {
   try {
     const toCashAddress = bchaddr.toCashAddress
-    
+
     return toCashAddress(address)
   }
   catch (e) {
@@ -579,6 +580,106 @@ export function convertToCashAddress (address = '') {
     throw new CustomError('err_get_bch_address')
   }
 }
+
+/**
+ * Creating a raw Dogecoin transaction
+ * @param {Object} data - Input data for a transaction
+ * @param {Array} data.inputs - List of inputs
+ * @param {Array} data.outputs - List of outputs
+ * @returns {Object} Returns raw Dogecoin transaction and transaction hash
+ */
+
+export function makeRawDogeTx (data = {}) {
+  try {
+    const {inputs, outputs} = data
+    let privateKeys = []
+    let utxos = []
+
+    for (let input of inputs) {
+      let item = {
+        outputIndex: +input.index,
+        satoshis: +input.value,
+        address: convertToDogeAddress(input.address),
+        txId: input.hash
+      }
+      item.script = new bitcore.Script.buildPublicKeyHashOut(item.address)
+      privateKeys.push(input.key)
+      utxos.push(item)
+    }
+
+    const outputsInDogeFormat = outputs.map(output => {
+      return {
+        address: convertToDogeAddress(output.address),
+        satoshis: +output.value
+      }
+    })
+
+    const tx = new bitcore.Transaction()
+      .from(utxos)
+      .to(outputsInDogeFormat)
+      .sign(privateKeys)
+
+    const txData = tx.serialize()
+
+    return {
+      tx: txData.toString('hex'),
+      hash: tx.hash
+    }
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_tx_doge_build')
+  }
+}
+
+/**
+ * Getting Dogecoin address by node and derivation index
+ * @param {Object} node - Input data for a transaction
+ * @param {number} childIndex - Derivation index
+ * @param {boolean} withoutPrefix - Flag for prefix
+ * @returns {string} Returns address
+ */
+
+export function getDogeAddress (node, childIndex, withoutPrefix = true) {
+  try {
+    let curr = coininfo.dogecoin.main;
+    let frmt = curr.toBitcoinJS();
+    const netGain = {
+      messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
+      bip32: {
+        public: frmt.bip32.public,
+        private: frmt.bip32.private
+      },
+      pubKeyHash: frmt.pubKeyHash,
+      scriptHash: frmt.scriptHash,
+      wif: frmt.wif
+    }
+    const address = bitcoin.payments.p2pkh({ pubkey: node.deriveChild(childIndex).publicKey, network: netGain })
+    return address.address
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_core_doge_address')
+  }
+}
+
+/**
+ * Convert a Dogecoin address from Legacy format to CashAddr format
+ * @param {string} address - Bitcoin Cash address in Legacy format
+ * @returns {string} Returns Bitcoin Cash address in CashAddr format
+ */
+
+export function convertToDogeAddress (address = '') {
+  try {
+    const toDogeAddress = dogeaddr.toDogeAddress
+    return toDogeAddress(address)
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_get_doge_address')
+  }
+}
+
 
 /**
  * Getting Bitcoin private key for address by derivation index
@@ -590,7 +691,7 @@ export function convertToCashAddress (address = '') {
 export function getBtcPrivateKeyByIndex (node, index) {
   try {
     const key = node.deriveChild(index).privateKey
-    
+
     return privateKeyToWIF(key)
   }
   catch (e) {

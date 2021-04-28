@@ -31,6 +31,7 @@
     "bip39-checker": "^1.1.7",
     "bitcoinjs-lib": "^5.2.0",
     "bitcore-lib-cash": "=8.22.1",
+    "coininfo": "^5.1.0",
     "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^6.2.1",
     "hdkey": "^1.1.2",
