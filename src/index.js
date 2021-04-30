@@ -37,15 +37,17 @@ export default class Wallet {
       btcFee: '',
       eth: '',
       bch: '',
-      btcv: ''
+      btcv: '',
+      doge: '',
+      dogeFee: ''
     }
     this._apiReady = false
-    
+
     if (api) {
       this.setApiEndpoint(api)
     }
   }
-  
+
   /**
    * Creating a new wallet
    *
@@ -58,7 +60,7 @@ export default class Wallet {
    * @returns {Uint8Array} core.seed - Seed
    * @returns {string} core.seedInHex - Seed in hex format
    */
-  
+
   async createNew (count = 12) {
     let data = {
       data: {
@@ -67,12 +69,12 @@ export default class Wallet {
       },
       api: this.api
     }
-    
+
     this.core = await this.wrapper.method('create', data)
-    
+
     return this.core
   }
-  
+
   /**
    * Creating a wallet by mnemonic
    *
@@ -85,12 +87,12 @@ export default class Wallet {
    * @returns {Uint8Array} core.seed - Seed
    * @returns {string} core.seedInHex - Seed in hex format
    */
-  
+
   async createByMnemonic (mnemonic = '') {
     if (!mnemonic) {
       throw new CustomError('err_core_mnemonic_empty')
     }
-    
+
     let data = {
       data: {
         from: 'mnemonic',
@@ -98,12 +100,12 @@ export default class Wallet {
       },
       api: this.api
     }
-    
+
     this.core = await this.wrapper.method('create', data)
-    
+
     return this.core
   }
-  
+
   /**
    * Creating a wallet by xprv key
    *
@@ -116,12 +118,12 @@ export default class Wallet {
    * @returns {Uint8Array} core.seed - Seed
    * @returns {string} core.seedInHex - Seed in hex format
    */
-  
+
   async createByKey (key = '') {
     if (!key) {
       throw new CustomError('err_core_xprv')
     }
-    
+
     let data = {
       data: {
         from: 'xprv',
@@ -129,12 +131,12 @@ export default class Wallet {
       },
       api: this.api
     }
-    
+
     this.core = await this.wrapper.method('create', data)
-    
+
     return this.core
   }
-  
+
   /**
    * Creating a core for each supported currency type
    *
@@ -144,7 +146,7 @@ export default class Wallet {
    * @returns {Object} core.BTC - A BTC core that contains internal and external nodes, private and public keys and the first external user address
    * @returns {Object} core.ETH - A ETH core that contains node, private and public keys and user address
    * */
-  
+
   async createCoins (coins) {
     if (!coins || !Array.isArray(coins)) {
       coins = [
@@ -152,10 +154,10 @@ export default class Wallet {
         {coin: 'ETH', type: 0}
       ]
     }
-    
+
     return await this.wrapper.method('createCoins', coins)
   }
-  
+
   /**
    * The method returns node by derivation path
    *
@@ -169,15 +171,15 @@ export default class Wallet {
    * @returns {Array} list - Array of child nodes. Every child node contains the following parameters:
    * derivation path, publick key, private key in WIF format and addresses if a list of coins was sent
    */
-  
+
   async getChildNodes (data) {
     if (!this.core) {
       throw new CustomError('err_wallet_exist')
     }
-    
+
     return await this.wrapper.method('getNodes', data)
   }
-  
+
   /**
    * The method starts synchronization of Bitcoin wallet
    * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
@@ -190,21 +192,21 @@ export default class Wallet {
    * @returns {number} sync.latestBlock - The last block of the Bitcoin blockchain
    * @returns {Array} sync.fee - The list of fee per byte
    */
-  
+
   async syncBTC (type = 'p2pkh') {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    
+
     if (!this.sync.BTC) {
       this.sync.BTC = {}
     }
-    
+
     this.sync.BTC[type] = await this.wrapper.method('sync', {coin: 'BTC', type})
-    
+
     return this.sync.BTC[type]
   }
-  
+
   /**
    * The method starts synchronization of Ethereum wallet
    * @param {number} type - Ethereum account number. By default 0
@@ -215,21 +217,21 @@ export default class Wallet {
    * @returns {Array} sync.transactions - The list of Ethereum transactions
    * @returns {number} sync.gasPrice - Gas price
    */
-  
+
   async syncETH (type = 0) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    
+
     if (!this.sync.ETH) {
       this.sync.ETH = {}
     }
-    
+
     this.sync.ETH[type] = await this.wrapper.method('sync', {coin: 'ETH', type})
-    
+
     return this.sync.ETH[type]
   }
-  
+
   /**
    * The method starts synchronization of Bitcoin Cash wallet
    * @returns {Promise<Object>} Returns object with Bitcoin Cash synchronization information
@@ -241,17 +243,39 @@ export default class Wallet {
    * @returns {number} sync.latestBlock - The last block of the Bitcoin Cash blockchain
    * @returns {Array} sync.fee - The list of fee per byte
    */
-  
+
   async syncBCH () {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    
+
     this.sync.BCH = await this.wrapper.method('sync', {coin: 'BCH'})
-    
+
     return this.sync.BCH
   }
-  
+
+  /**
+   * The method starts synchronization of Bitcoin Cash wallet
+   * @returns {Promise<Object>} Returns object with Bitcoin Cash synchronization information
+   * @returns {Object} sync
+   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Cash address
+   * @returns {Array} sync.transactions - The list of Bitcoin Cash transactions
+   * @returns {Array} sync.unspent - The list of unspents addresses
+   * @returns {number} sync.balance - Bitcoin Cash balance in Satoshi
+   * @returns {number} sync.latestBlock - The last block of the Bitcoin Cash blockchain
+   * @returns {Array} sync.fee - The list of fee per byte
+   */
+
+  async syncDOGE () {
+    if (!this._apiReady) {
+      throw new CustomError('err_wallet_api')
+    }
+
+    this.sync.DOGE = await this.wrapper.method('sync', {coin: 'DOGE'})
+
+    return this.sync.DOGE
+  }
+
   /**
    * The method starts synchronization of Bitcoin Vault wallet
    * @returns {Promise<Object>} Returns object with Bitcoin Vault synchronization information
@@ -263,17 +287,17 @@ export default class Wallet {
    * @returns {number} sync.latestBlock - The last block of the Bitcoin Vault blockchain
    * @returns {Array} sync.fee - The list of fee per byte
    */
-  
+
   async syncBTCV () {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    
+
     this.sync.BTCV = await this.wrapper.method('sync', {coin: 'BTCV'})
-    
+
     return this.sync.BTCV
   }
-  
+
   /**
    * The method returns a raw BTC transaction
    *
@@ -285,11 +309,11 @@ export default class Wallet {
    * @returns {string} hash - Transaction hash
    * @returns {string} tx - Raw Bitcoin transaction
    */
-  
+
   async makeRawBtcTx (data) {
     return await makeRawBtcTx(data)
   }
-  
+
   /**
    * The method returns a raw BCH transaction
    *
@@ -301,11 +325,27 @@ export default class Wallet {
    * @returns {string} hash - Transaction hash
    * @returns {string} tx - Raw Bitcoin Cash transaction
    */
-  
+
   async makeRawBchTx (data) {
     return await makeRawBchTx(data)
   }
-  
+
+    /**
+   * The method returns a raw BCH transaction
+   *
+   * @param {Object} data
+   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
+   * transaction hash, output n, address, value in satoshis, script and private key in WIF format
+   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value in satoshis
+   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data
+   * @returns {string} hash - Transaction hash
+   * @returns {string} tx - Raw Bitcoin Cash transaction
+   */
+
+  async makeRawDogeTx (data) {
+    return await makeRawDogeTx(data)
+  }
+
   /**
    * The method returns a raw ETH transaction
    *
@@ -320,11 +360,11 @@ export default class Wallet {
    * @returns {string} hash - Transaction hash
    * @returns {string} tx - Raw Ethereum transaction
    */
-  
+
   async makeRawEthTx (data) {
     return await makeRawEthTx(data)
   }
-  
+
   /**
    * This method generates a list of transaction fees for the selected currency
    * @param {Object} params
@@ -336,12 +376,12 @@ export default class Wallet {
    * @param {number} params.size - Transaction size. Relevant for bitcoin transactions
    * @returns {Promise<Array>} The list of transaction fees
    */
-  
+
   async calculateFee (params) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    
+
     return await this.wrapper.method('transaction', {
       method: 'calcFee',
       currency: params.currency,
@@ -354,7 +394,7 @@ export default class Wallet {
       }
     })
   }
-  
+
   /**
    * Wrapper for the compilation of transactions of bitcoin and ether
    * @param {Object} data
@@ -369,12 +409,12 @@ export default class Wallet {
    * @returns {string} hash - Transaction hash
    * @returns {string} tx - Raw bitcoin or ethereum transaction
    */
-  
+
   async makeTransaction (data) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    
+
     let params = {
       method: 'make',
       currency: data.currency,
@@ -382,10 +422,10 @@ export default class Wallet {
       account: data.account,
       tx: data.tx
     }
-    
+
     return await this.wrapper.method('transaction', params)
   }
-  
+
   /**
    * Sets the API Endpoint
    *
@@ -395,13 +435,15 @@ export default class Wallet {
    * @param {string} api.eth - Url address of ethereum endpoint
    * @param {string} api.bch - Url address of bitcoin cash endpoint
    * @param {string} api.btcv - Url address of bitcoin vault endpoint
+   * @param {string} api.doge - Url address of dogecoin endpoint
+   * @param {string} api.dogeFee - Url address of dogecoin endpoint
    */
-  
+
   setApiEndpoint (api) {
     if (!api || typeof api !== 'object' || Array.isArray(api)) {
       throw new CustomError('err_wallet_api_type')
     }
-    
+
     for (let key in this.api) {
       if (api.hasOwnProperty(key)) {
         this.api[key] = api[key]
@@ -411,21 +453,21 @@ export default class Wallet {
     }
     this._apiReady = true
   }
-  
+
   /**
    * Set request headers
    *
    * @type {Object} headers - Set of HTTP headers
    */
-  
+
   setHeaders(headers) {
     this.wrapper.method('setHeaders', headers)
   }
-  
+
   get Core () {
     return this.core
   }
-  
+
   get getApiState () {
     return this._apiReady
   }

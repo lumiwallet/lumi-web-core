@@ -1,5 +1,5 @@
 import Request from '@/helpers/Request'
-import {getDogecoinAddress} from '@/helpers/coreHelper'
+import {getDogeAddress} from '@/helpers/coreHelper'
 
 /**
  * Class DogecoinSync.
@@ -54,7 +54,10 @@ export default class DogecoinSync {
       unique: []
     }
     this.unspent = []
-    await this.getAddresses()
+    await Promise.all([
+      await this.getAddresses(),
+      await this.getFeesRequest()
+    ])
     this.getBalance()
   }
 
@@ -95,7 +98,7 @@ export default class DogecoinSync {
       if (this.deriveAddress[type].hasOwnProperty(i)) {
         address = this.deriveAddress[type][i]
       } else {
-        address = getDogecoinAddress(node, i)
+        address = getDogeAddress(node, i)
         this.deriveAddress[type][i] = address
       }
 
@@ -356,7 +359,7 @@ export default class DogecoinSync {
     try {
       const res = await fetch(this.api.dogeFee, {headers: this.headers})
       const resJson = await res.json()
-      this.fee = resJson.data[0]
+      this.fee = resJson.data
     } catch (err) {
       console.log('DOGE getFeesRequest', err)
     }
