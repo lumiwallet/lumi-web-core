@@ -592,38 +592,60 @@ export function convertToCashAddress (address = '') {
 export function makeRawDogeTx (data = {}) {
   try {
     const {inputs, outputs} = data
-    let privateKeys = []
-    let utxos = []
 
-    for (let input of inputs) {
-      let item = {
-        outputIndex: +input.index,
-        satoshis: +input.value,
-        address: convertToDogeAddress(input.address),
-        txId: input.hash
-      }
-      item.script = new bitcore.Script.buildPublicKeyHashOut(item.address)
-      privateKeys.push(input.key)
-      utxos.push(item)
+    let curr = coininfo.dogecoin.main;
+    let frmt = curr.toBitcoinJS();
+    const netGain = {
+      messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
+      bip32: {
+        public: frmt.bip32.public,
+        private: frmt.bip32.private
+      },
+      pubKeyHash: frmt.pubKeyHash,
+      scriptHash: frmt.scriptHash,
+      wif: frmt.wif
     }
 
-    const outputsInDogeFormat = outputs.map(output => {
-      return {
-        address: convertToDogeAddress(output.address),
-        satoshis: +output.value
+    const psbt = new bitcoin.Psbt({network: netGain, maximumFeeRate: 2000000})
+    let keyPairs = []
+    psbt.setVersion(1)
+
+    inputs.forEach(input => {
+      const keyPair = bitcoin.ECPair.fromWIF(input.key)
+      keyPair.network = netGain
+      keyPairs.push(keyPair)
+
+      let data = {
+        hash: input.hash,
+        index: input.index
       }
+
+      data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')
+
+      psbt.addInput(data)
     })
 
-    const tx = new bitcore.Transaction()
-      .from(utxos)
-      .to(outputsInDogeFormat)
-      .sign(privateKeys)
+    outputs.forEach(output => {
+      psbt.addOutput({
+        address: output.address,
+        value: output.value
+      })
+    })
 
-    const txData = tx.serialize()
+    keyPairs.forEach((key, i) => {
+      psbt.signInput(i, key)
+    })
+
+    psbt.validateSignaturesOfAllInputs()
+    psbt.finalizeAllInputs()
+
+    const transaction = psbt.extractTransaction()
+    const signedTransaction = transaction.toHex()
+    const hash = transaction.getId()
 
     return {
-      tx: txData.toString('hex'),
-      hash: tx.hash
+      hash,
+      tx: signedTransaction
     }
   }
   catch (e) {
@@ -660,23 +682,6 @@ export function getDogeAddress (node, childIndex, withoutPrefix = true) {
   catch (e) {
     console.log(e)
     throw new CustomError('err_core_doge_address')
-  }
-}
-
-/**
- * Convert a Dogecoin address from Legacy format to CashAddr format
- * @param {string} address - Bitcoin Cash address in Legacy format
- * @returns {string} Returns Bitcoin Cash address in CashAddr format
- */
-
-export function convertToDogeAddress (address = '') {
-  try {
-    const toDogeAddress = dogeaddr.toDogeAddress
-    return toDogeAddress(address)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_get_doge_address')
   }
 }
 

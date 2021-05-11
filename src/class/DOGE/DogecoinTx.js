@@ -1,6 +1,7 @@
 import converter from '@/helpers/converters'
 import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawDogeTx} from '@/helpers/coreHelper'
 import CustomError from '@/helpers/handleErrors'
+import Request from '@/helpers/Request'
 
 /**
  * List of available commission types for Dogecoin transactions
@@ -37,6 +38,7 @@ export default class DogecoinTx {
     this.internalAddress = data.internalAddress
     this.fee = data.feeList
     this.feeList = []
+    this.request = new Request(data.api, data.headers)
     this.dust = 1000
   }
 
@@ -65,7 +67,7 @@ export default class DogecoinTx {
         SAT: item.fee,
         DOGE: converter.sat_to_btc(item.fee),
         fee: fees[i],
-        feeInDOGE: converter.sat_to_btc(fees[i]),
+        feeInBTC: converter.sat_to_btc(fees[i]),
         inputs: item.inputs,
         inputsAmount: item.inputsAmount,
         custom: FEE_IDS[i] === 'custom'
@@ -89,7 +91,7 @@ export default class DogecoinTx {
         SAT: 0,
         DOGE: 0,
         fee: item,
-        feeInDOGE: converter.sat_to_btc(item),
+        feeInBTC: converter.sat_to_btc(item),
         inputs: [],
         inputsAmount: 0,
         custom: FEE_IDS[i] === 'custom'
@@ -173,15 +175,27 @@ export default class DogecoinTx {
     const feeSat = +fee.SAT
     const change = inputsAmount - amount - feeSat
     let inputs = []
+    let rawTxsData = []
+    let hashes = []
+
+    for (let input of fee.inputs) {
+      hashes.push(input.transaction_hash)
+    }
+    const unique_hashes = [...new Set(hashes)]
+    rawTxsData = await this.getRawTxHex(unique_hashes)
 
     for (const utxo of fee.inputs) {
+      hashes.push(utxo.transaction_hash)
+
       let item = {
-        hash: utxo.tx_hash,
+        hash: utxo.transaction_hash,
         index: utxo.index,
         address: utxo.address,
         value: utxo.value,
-        key: getBtcPrivateKeyByIndex(this.nodes[utxo.nodeType], utxo.deriveIndex)
+        key: getBtcPrivateKeyByIndex(this.nodes[utxo.node_type], utxo.derive_index),
       }
+      let data = rawTxsData.find(item => item.hash === utxo.transaction_hash)
+      item.tx = data ? data.rawData : null
 
       inputs.push(item)
     }
@@ -204,5 +218,53 @@ export default class DogecoinTx {
     }
 
     return makeRawDogeTx(params)
+  }
+
+
+  /**
+   * Raw transaction request
+   * @param {Array} hashes - List of hashes
+   * @returns {Promise<Array>} Array of raw Dogecoin transactions for each hash
+   */
+
+  async getRawTxHex (hashes) {
+    if (!hashes || !hashes.length) return []
+
+    const ARRAY_SIZE = 10
+    const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)
+    let txs = []
+    let arrays = []
+    let counter = 0
+
+    for (let i = 0; i < ARRAYS_COUNT; i++) {
+      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)
+    }
+
+    const req = async () => {
+      try {
+        let res = await this.request.send({
+          method: 'rawtx',
+          txs: arrays[counter]
+        })
+
+        if (res.status === 'success' && res.data.length) {
+          txs = [...txs, ...res.data]
+          counter++
+
+          if (counter !== ARRAYS_COUNT) {
+            await req()
+          }
+        } else {
+          throw new CustomError('err_tx_doge_raw_tx')
+        }
+      }
+      catch (e) {
+        throw new CustomError('err_tx_doge_raw_tx')
+      }
+    }
+
+    await req()
+
+    return txs
   }
 }
