@@ -118,7 +118,7 @@ export default class DogecoinTx {
 
     let req = async () => {
       let item = this.unspent[index]
-      let defaultSize = calcBtcTxSize(index + 1, 2, true)
+      let defaultSize = calcBtcTxSize(index + 1, 2)
       let calcFee = size ? size * fee : defaultSize * fee
 
       inputsAmount += item.value
