@@ -1,6 +1,7 @@
 export const test_data = {
   from: 'mnemonic',
-  mnemonic: 'magic disorder cable gym napkin gather relief vapor daring main capable armor'
+  mnemonic: 'Spawn fade knife prison oak absurd also proud refuse bitter job nephew'
+  // mnemonic: 'magic disorder cable gym napkin gather relief vapor daring main capable armor'
 }
 
 export const test_derivation_path = `m/44'/0'/0'/0`

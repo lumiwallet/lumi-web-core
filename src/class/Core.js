@@ -2,6 +2,8 @@ import {validateMnemonic} from 'bip39'
 import {normalize, checkWords} from 'bip39-checker'
 import CustomError from '@/helpers/handleErrors'
 import * as core from '@/helpers/coreHelper'
+import * as crypto from '@/utils/crypto'
+import * as address from '@/utils/address'
 
 /**
  * Class Wallet
@@ -109,6 +111,7 @@ export default class Core {
       if (!core.hasOwnProperty(coin)) {
         core[coin] = {}
       }
+      
       switch (coin) {
         case 'BTC':
           core[coin][type] = await this._generateBTCcore(type)
@@ -121,6 +124,9 @@ export default class Core {
           break
         case 'BTCV':
           core[coin].p2wpkh = await this._generateBTCVcore()
+          break
+        case 'BNB':
+          core[coin].p2pkh = await this._generateBNBcore()
           break
       }
     }
@@ -232,6 +238,7 @@ export default class Core {
    * derivation path and the first addresses of the external and internal cores
    * @private
    */
+  
   async _generateBTCVcore () {
     const type = 'p2wpkh'
     const network = 'btcv'
@@ -250,6 +257,28 @@ export default class Core {
     }
     
     this.coins.BTCV[type] = item
+    return item
+  }
+  
+  // todo
+  async _generateBNBcore () {
+    const type = 'p2pkh'
+    
+    const bnb_path = `m/44'/714'/0'/0/0`
+    
+    let item = {}
+    item.node = core.derive(this.hdkey, bnb_path)
+    item.privateKey = item.node._privateKey
+    item.privateKeyHex = '0x' + item.privateKey.toString('hex')
+    item.publicKey = item.node._publicKey
+    item.externalAddress = address.getAddressFromPublicKey(item.publicKey.toString('hex'))
+    item.dp = bnb_path
+    console.log('bnb', item)
+
+    if (!this.coins.hasOwnProperty('BNB')) {
+      this.coins.BNB = {}
+    }
+    this.coins.BNB[type] = item
     return item
   }
   

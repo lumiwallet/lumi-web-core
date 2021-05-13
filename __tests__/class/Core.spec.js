@@ -10,6 +10,18 @@ describe('Core class', () => {
     expect(core_exemplar).toHaveProperty('xprv', test_core.xprv)
   })
   
+  test.only('BNB TEST', async () => {
+    const core_exemplar = new Core(test_data)
+    core_exemplar.generateWallet()
+    
+    const coins = [
+      {coin: 'BNB'}
+    ]
+    await core_exemplar.createCoinsCores(coins)
+    console.log(core_exemplar)
+    expect(core_exemplar).toBeDefined()
+  })
+  
   test('it should create a Core class by mnemonic with coins cores', async () => {
     const core_exemplar = new Core(test_data)
     core_exemplar.generateWallet()
