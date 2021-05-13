@@ -178,9 +178,20 @@ export default class DogecoinTx {
     let rawTxsData = []
     let hashes = []
 
-    for (let input of fee.inputs) {
-      hashes.push(input.transaction_hash)
+    if (change < 0) {
+      throw new CustomError('err_tx_doge_balance')
     }
+
+    for (let input of fee.inputs) {
+      if (!input.tx) {
+        if (input.transaction_hash) {
+          hashes.push(input.transaction_hash)
+        } else {
+          throw new CustomError('err_tx_btc_unspent')
+        }
+      }
+    }
+
     const unique_hashes = [...new Set(hashes)]
     rawTxsData = await this.getRawTxHex(unique_hashes)
 
@@ -195,7 +206,11 @@ export default class DogecoinTx {
         key: getBtcPrivateKeyByIndex(this.nodes[utxo.node_type], utxo.derive_index),
       }
       let data = rawTxsData.find(item => item.hash === utxo.transaction_hash)
-      item.tx = data ? data.rawData : null
+      if (!utxo.tx) {
+        item.tx = data ? data.rawData : null
+      } else {
+        item.tx = utxo.tx
+      }
 
       inputs.push(item)
     }
