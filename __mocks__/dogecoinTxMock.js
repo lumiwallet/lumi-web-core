@@ -23,7 +23,7 @@ export const raw_txs = [
 
 export const test_balance = test_unspent.reduce((a, b) => a + b.value, 0) // 12.50252941 sat
 export const test_balance_doge = test_balance / Math.pow(10, 8) // 0.0134 DOGE
-export const internal_address = 'D7G3yADoW5oqK7Sm9PddDCoWLsw1uoExt2'
+export const internal_address = 'DQ52GryK3nir72GkYjwStM8SZjpnKHH8UY'
 export const recipient_address = 'DGzBtLKz99rwrSfx9yRX1Z5vitEEw5kQio'
 export const test_mnemonic = 'sick cat cry material siren orient essence frog finish banana one move'
 export const test_tx_data = {
