@@ -74,7 +74,7 @@ describe('DogecoinTx class', () => {
     const Dogecoin = new DogecoinTx(data)
     const fees = await Dogecoin.calcFee()
 
-    expect(fees[0].DOGE).toBe(3.43909456) // for 919544 sat pre byte
+    expect(fees[0].DOGE).toBe( 2.26328152) // for 1001452 sat pre byte
     expect(fees[1].DOGE).toBe(0.0000226) // for 10 sat pre byte
   })
 
@@ -90,7 +90,7 @@ describe('DogecoinTx class', () => {
     const Dogecoin = new DogecoinTx(data)
     const fees = await Dogecoin.calcFee()
 
-    expect(fees[0].DOGE).toBe(3.43909456) // for 919544 sat pre byte
+    expect(fees[0].DOGE).toBe(2.26328152) // for 1001452 sat pre byte
     expect(fees[1].DOGE).toBe(0) // for custom fee
   })
 
@@ -116,7 +116,7 @@ describe('DogecoinTx class', () => {
     expect(+(fees[0][0].DOGE + available_amounts[0]).toFixed(8)).toBe(mock.test_balance_doge)
   })
 
-  test('it should make transaction in the amount of 0.001 DOGE on DFUXQkS1bYzzNSRJY8QQb6JC4VwKeDL2GQ address', async () => {
+  test('it should make transaction in the amount of 0.001 DOGE on DGzBtLKz99rwrSfx9yRX1Z5vitEEw5kQio address', async () => {
     const CORE = new Core({
       from: 'mnemonic',
       mnemonic: mock.test_mnemonic
@@ -134,6 +134,7 @@ describe('DogecoinTx class', () => {
 
     const Dogecoin = new DogecoinTx(data)
     const fee_list = await Dogecoin.calcFee()
+    console.log(fee_list)
     const tx_data = {
       addressTo: mock.recipient_address,
       fee: fee_list[0]
