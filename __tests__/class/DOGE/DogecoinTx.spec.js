@@ -116,7 +116,7 @@ describe('DogecoinTx class', () => {
     expect(+(fees[0][0].DOGE + available_amounts[0]).toFixed(8)).toBe(mock.test_balance_doge)
   })
 
-  test('it should make transaction in the amount of 0.001 DOGE on DGzBtLKz99rwrSfx9yRX1Z5vitEEw5kQio address', async () => {
+  test('it should make transaction in the amount of 1 DOGE on DGzBtLKz99rwrSfx9yRX1Z5vitEEw5kQio address', async () => {
     const CORE = new Core({
       from: 'mnemonic',
       mnemonic: mock.test_mnemonic
@@ -134,7 +134,6 @@ describe('DogecoinTx class', () => {
 
     const Dogecoin = new DogecoinTx(data)
     const fee_list = await Dogecoin.calcFee()
-    console.log(fee_list)
     const tx_data = {
       addressTo: mock.recipient_address,
       fee: fee_list[0]
@@ -145,14 +144,14 @@ describe('DogecoinTx class', () => {
 
   })
 
-  test('it should not make transaction in the amount of 0.5 DOGE and throw error \'err_tx_doge_balance: Insufficient balance\'', async () => {
+  test('it should not make transaction in the amount of 50 DOGE and throw error \'err_tx_doge_balance: Insufficient balance\'', async () => {
     const data = mock.getData({amount: 50})
 
     const Dogecoin = new DogecoinTx(data)
     const fee_list = await Dogecoin.calcFee()
     const tx_data = {
       addressTo: mock.recipient_address,
-      fee: fee_list[0] // 2 sat pre byte
+      fee: fee_list[0] // 1001452 sat pre byte
     }
 
     try {
@@ -204,8 +203,8 @@ describe('DogecoinTx class', () => {
     await CORE.generateWallet()
     await CORE.createCoinsCores([{coin: 'DOGE', type: ''}])
 
-    const data = mock.getData({
-      amount: 1,
+    const data = mock.getDataAllTx({
+      amount: 1.39671848,
       nodes: {
         external: CORE.COINS.DOGE.p2pkh.externalNode,
         internal: CORE.COINS.DOGE.p2pkh.internalNode
@@ -214,7 +213,7 @@ describe('DogecoinTx class', () => {
 
     const Dogecoin = new DogecoinTx(data)
     const tx_data = {
-      addressTo: mock.recipient_address,
+      addressTo: mock.recipient_address_2,
       fee: mock.test_fee
     }
 
