@@ -37,7 +37,8 @@ export default class Wallet {
       btcFee: '',
       eth: '',
       bch: '',
-      btcv: ''
+      btcv: '',
+      bnb: ''
     }
     this._apiReady = false
     
@@ -272,6 +273,17 @@ export default class Wallet {
     this.sync.BTCV = await this.wrapper.method('sync', {coin: 'BTCV'})
     
     return this.sync.BTCV
+  }
+  
+  // todo
+  async syncBNB () {
+    if (!this._apiReady) {
+      throw new CustomError('err_wallet_api')
+    }
+    
+    this.sync.BNB = await this.wrapper.method('sync', {coin: 'BNB'})
+    
+    return this.sync.BNB
   }
   
   /**

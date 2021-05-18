@@ -6,11 +6,11 @@ const CURVE = "secp256k1"
 const ec = new EC(CURVE)
 
 // toBech32(data: Buffer, version: number, prefix: string): string;
-export function toBech32 (data, version, prefix) {
-  const words = bech32.toWords(data);
-  words.unshift(version);
-  return bech32.encode(prefix, words);
-}
+// export function toBech32 (data, version, prefix) {
+//   const words = bech32.toWords(data);
+//   words.unshift(version);
+//   return bech32.encode(prefix, words);
+// }
 
 export function getAddressFromPublicKey (publicKeyHex, prefix = 'bnb') {
   const pubKey = ec.keyFromPublic(publicKeyHex, "hex")

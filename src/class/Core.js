@@ -2,8 +2,7 @@ import {validateMnemonic} from 'bip39'
 import {normalize, checkWords} from 'bip39-checker'
 import CustomError from '@/helpers/handleErrors'
 import * as core from '@/helpers/coreHelper'
-import * as crypto from '@/utils/crypto'
-import * as address from '@/utils/address'
+import {getBnbCore} from '@/class/BNB/core'
 
 /**
  * Class Wallet
@@ -263,23 +262,11 @@ export default class Core {
   // todo
   async _generateBNBcore () {
     const type = 'p2pkh'
-    
-    const bnb_path = `m/44'/714'/0'/0/0`
-    
-    let item = {}
-    item.node = core.derive(this.hdkey, bnb_path)
-    item.privateKey = item.node._privateKey
-    item.privateKeyHex = '0x' + item.privateKey.toString('hex')
-    item.publicKey = item.node._publicKey
-    item.externalAddress = address.getAddressFromPublicKey(item.publicKey.toString('hex'))
-    item.dp = bnb_path
-    console.log('bnb', item)
-
-    if (!this.coins.hasOwnProperty('BNB')) {
+  
+    if (!Object.prototype.hasOwnProperty.call(this.coins, 'BNB')) {
       this.coins.BNB = {}
     }
-    this.coins.BNB[type] = item
-    return item
+    this.coins.BNB[type] = getBnbCore(this.hdkey)
   }
   
   /**

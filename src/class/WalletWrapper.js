@@ -3,6 +3,8 @@ import BitcoinSync from '@/class/BTC/BitcoinSync'
 import EthereumSync from '@/class/ETH/EthereumSync'
 import BitcoinCashSync from '@/class/BCH/BitcoinCashSync'
 import BitcoinVaultSync from '@/class/BTCV/BitcoinVaultSync'
+import BinanceSync from '@/class/BNB/sync'
+
 import BitcoinTx from '@/class/BTC/BitcoinTx'
 import EthereumTx from '@/class/ETH/EthereumTx'
 import BitcoinCashTx from '@/class/BCH/BitcoinCashTx'
@@ -31,7 +33,8 @@ export default class WalletWrapper {
       BTC: {},
       ETH: {},
       BCH: null,
-      BTCV: null
+      BTCV: null,
+      BNB: null
     }
   }
   
@@ -79,7 +82,7 @@ export default class WalletWrapper {
   
   async Sync (data) {
     const {coin, type} = data
-
+    
     try {
       switch (coin) {
         case 'BTC':
@@ -90,6 +93,8 @@ export default class WalletWrapper {
           return await this.SyncBCH()
         case 'BTCV':
           return await this.SyncBTCV()
+        case 'BNB':
+          return await this.SyncBNB()
       }
     }
     catch (e) {
@@ -103,7 +108,7 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-
+  
   async SyncBTC (type = 'p2pkh') {
     if (!this.sync.BTC[type]) {
       this.sync.BTC[type] = new BitcoinSync(
@@ -130,7 +135,7 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-
+  
   async SyncETH (type = 0) {
     if (!this.sync.ETH[type]) {
       this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].externalAddress, this.api, this.headers)
@@ -150,7 +155,7 @@ export default class WalletWrapper {
    * @returns {Promise<Object>}
    * @constructor
    */
-
+  
   async SyncBCH () {
     const type = 'p2pkh'
     
@@ -180,10 +185,10 @@ export default class WalletWrapper {
   
   async SyncBTCV () {
     const type = 'p2wpkh'
-
+    
     if (!this.sync.BTCV) {
       let addresses = {
-        external:  this.core.COINS.BTCV[type].externalAddress,
+        external: this.core.COINS.BTCV[type].externalAddress,
         internal: this.core.COINS.BTCV[type].internalAddress
       }
       
@@ -205,6 +210,24 @@ export default class WalletWrapper {
     }
   }
   
+  // todo
+  
+  async SyncBNB () {
+    const type = 'p2pkh'
+
+    if (!this.sync.BNB) {
+      this.sync.BNB = new BinanceSync(this.core.COINS.BNB[type].externalAddress, this.api, this.headers)
+    }
+    
+    try {
+      await this.sync.BNB.Start()
+      return this.sync.BNB.DATA
+    }
+    catch (e) {
+      console.log('SyncETH error', e)
+    }
+  }
+  
   /**
    * Creating a transaction or getting information about fee
    * @param {Object} data
@@ -219,7 +242,7 @@ export default class WalletWrapper {
   
   async Transaction (data) {
     const {currency, method, tx, addressType, account} = data
-
+    
     switch (currency) {
       case 'BTC':
         return this.createBTCTx(method, tx, addressType)
@@ -289,7 +312,7 @@ export default class WalletWrapper {
       balance: this.sync.ETH[account].balance,
       privateKey: this.core.COINS.ETH[account].privateKey
     }
-
+    
     let tx = new EthereumTx(ETHdata)
     
     switch (method) {

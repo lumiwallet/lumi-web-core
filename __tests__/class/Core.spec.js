@@ -18,7 +18,6 @@ describe('Core class', () => {
       {coin: 'BNB'}
     ]
     await core_exemplar.createCoinsCores(coins)
-    console.log(core_exemplar)
     expect(core_exemplar).toBeDefined()
   })
   
