@@ -24,15 +24,39 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "lumi-web-core/src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html",
+    "<span>BitcoinVaultSync</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BTCV/BitcoinVaultSync.js</span>",
+    "class"
+  ],
+  [
     "lumi-web-core/src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx",
     "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html",
     "<span>BitcoinVaultTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BTCV/BitcoinVaultTx.js</span>",
     "class"
   ],
   [
+    "lumi-web-core/src/class/core.js~core",
+    "class/src/class/Core.js~Core.html",
+    "<span>Core</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/Core.js</span>",
+    "class"
+  ],
+  [
     "lumi-web-core/src/helpers/handleerrors.js~customerror",
     "class/src/helpers/handleErrors.js~CustomError.html",
     "<span>CustomError</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/handleErrors.js</span>",
+    "class"
+  ],
+  [
+    "lumi-web-core/src/class/doge/dogecoinsync.js~dogecoinsync",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html",
+    "<span>DogecoinSync</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/DOGE/DogecoinSync.js</span>",
+    "class"
+  ],
+  [
+    "lumi-web-core/src/class/doge/dogecointx.js~dogecointx",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html",
+    "<span>DogecoinTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/DOGE/DogecoinTx.js</span>",
     "class"
   ],
   [
@@ -45,6 +69,12 @@ window.esdocSearchIndex = [
     "lumi-web-core/src/class/eth/ethereumtx.js~ethereumtx",
     "class/src/class/ETH/EthereumTx.js~EthereumTx.html",
     "<span>EthereumTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/ETH/EthereumTx.js</span>",
+    "class"
+  ],
+  [
+    "lumi-web-core/src/helpers/request.js~request",
+    "class/src/helpers/Request.js~Request.html",
+    "<span>Request</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/Request.js</span>",
     "class"
   ],
   [
@@ -114,6 +144,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "lumi-web-core/src/helpers/corehelper.js~getdogeaddress",
+    "function/index.html#static-function-getDogeAddress",
+    "<span>getDogeAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~getethaddress",
     "function/index.html#static-function-getEthAddress",
     "<span>getEthAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
@@ -171,6 +207,12 @@ window.esdocSearchIndex = [
     "lumi-web-core/src/helpers/corehelper.js~makerawbtcvtx",
     "function/index.html#static-function-makeRawBtcvTx",
     "<span>makeRawBtcvTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/helpers/corehelper.js~makerawdogetx",
+    "function/index.html#static-function-makeRawDogeTx",
+    "<span>makeRawDogeTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
   ],
   [
@@ -1020,6 +1062,150 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/class/btcv/bitcoinvaultsync.js",
+    "file/src/class/BTCV/BitcoinVaultSync.js.html",
+    "src/class/BTCV/BitcoinVaultSync.js",
+    "file"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#data",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-get-DATA",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#DATA",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#start",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-Start",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#Start",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#_getderiveindexbyaddress",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-_getDeriveIndexByAddress",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#_getDeriveIndexByAddress",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#addresses",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-addresses",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#addresses",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#api",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-api",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#api",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#balance",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-balance",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#balance",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#constructor",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-constructor-constructor",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#constructor",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#defaultaddresses",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-defaultAddresses",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#defaultAddresses",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#externalnode",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-externalNode",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#externalNode",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#fee",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-fee",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#fee",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#getaddresses",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-getAddresses",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#getAddresses",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#getbalance",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-getBalance",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#getBalance",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#getfeesrequest",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-getFeesRequest",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#getFeesRequest",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#gethistory",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-getHistory",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#getHistory",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#gethistoryrequest",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-getHistoryRequest",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#getHistoryRequest",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#getunspent",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-getUnspent",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#getUnspent",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#getunspentoutputsrequest",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-getUnspentOutputsRequest",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#getUnspentOutputsRequest",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#internalnode",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-internalNode",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#internalNode",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#latestblock",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-latestBlock",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#latestBlock",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#processtransactions",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-method-processTransactions",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#processTransactions",
+    "method"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#request",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-request",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#request",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#transactions",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-transactions",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#transactions",
+    "member"
+  ],
+  [
+    "src/class/btcv/bitcoinvaultsync.js~bitcoinvaultsync#unspent",
+    "class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html#instance-member-unspent",
+    "src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync#unspent",
+    "member"
+  ],
+  [
     "src/class/btcv/bitcoinvaulttx.js",
     "file/src/class/BTCV/BitcoinVaultTx.js.html",
     "src/class/BTCV/BitcoinVaultTx.js",
@@ -1107,6 +1293,402 @@ window.esdocSearchIndex = [
     "src/class/btcv/bitcoinvaulttx.js~bitcoinvaulttx#unspent",
     "class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html#instance-member-unspent",
     "src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx#unspent",
+    "member"
+  ],
+  [
+    "src/class/core.js",
+    "file/src/class/Core.js.html",
+    "src/class/Core.js",
+    "file"
+  ],
+  [
+    "src/class/core.js~core#coins",
+    "class/src/class/Core.js~Core.html#instance-get-COINS",
+    "src/class/Core.js~Core#COINS",
+    "member"
+  ],
+  [
+    "src/class/core.js~core#data",
+    "class/src/class/Core.js~Core.html#instance-get-DATA",
+    "src/class/Core.js~Core#DATA",
+    "member"
+  ],
+  [
+    "src/class/core.js~core#_generatebchcore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateBCHcore",
+    "src/class/Core.js~Core#_generateBCHcore",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_generatebtcvcore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateBTCVcore",
+    "src/class/Core.js~Core#_generateBTCVcore",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_generatebtccore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateBTCcore",
+    "src/class/Core.js~Core#_generateBTCcore",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_generatedogecore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateDOGEcore",
+    "src/class/Core.js~Core#_generateDOGEcore",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_generateethcore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateETHcore",
+    "src/class/Core.js~Core#_generateETHcore",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_generatenewmnemonic",
+    "class/src/class/Core.js~Core.html#instance-method-_generateNewMnemonic",
+    "src/class/Core.js~Core#_generateNewMnemonic",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_getentropylength",
+    "class/src/class/Core.js~Core.html#instance-method-_getEntropyLength",
+    "src/class/Core.js~Core#_getEntropyLength",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_importbykey",
+    "class/src/class/Core.js~Core.html#instance-method-_importByKey",
+    "src/class/Core.js~Core#_importByKey",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_importbymnemonic",
+    "class/src/class/Core.js~Core.html#instance-method-_importByMnemonic",
+    "src/class/Core.js~Core#_importByMnemonic",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#checkmnemonic",
+    "class/src/class/Core.js~Core.html#instance-method-checkMnemonic",
+    "src/class/Core.js~Core#checkMnemonic",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#coins",
+    "class/src/class/Core.js~Core.html#instance-member-coins",
+    "src/class/Core.js~Core#coins",
+    "member"
+  ],
+  [
+    "src/class/core.js~core#constructor",
+    "class/src/class/Core.js~Core.html#instance-constructor-constructor",
+    "src/class/Core.js~Core#constructor",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#count",
+    "class/src/class/Core.js~Core.html#instance-member-count",
+    "src/class/Core.js~Core#count",
+    "member"
+  ],
+  [
+    "src/class/core.js~core#createcoinscores",
+    "class/src/class/Core.js~Core.html#instance-method-createCoinsCores",
+    "src/class/Core.js~Core#createCoinsCores",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#from",
+    "class/src/class/Core.js~Core.html#instance-member-from",
+    "src/class/Core.js~Core#from",
+    "member"
+  ],
+  [
+    "src/class/core.js~core#generatewallet",
+    "class/src/class/Core.js~Core.html#instance-method-generateWallet",
+    "src/class/Core.js~Core#generateWallet",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#getchildnodes",
+    "class/src/class/Core.js~Core.html#instance-method-getChildNodes",
+    "src/class/Core.js~Core#getChildNodes",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#hdkey",
+    "class/src/class/Core.js~Core.html#instance-member-hdkey",
+    "src/class/Core.js~Core#hdkey",
+    "member"
+  ],
+  [
+    "src/class/core.js~core#mnemonic",
+    "class/src/class/Core.js~Core.html#instance-member-mnemonic",
+    "src/class/Core.js~Core#mnemonic",
+    "member"
+  ],
+  [
+    "src/class/core.js~core#seed",
+    "class/src/class/Core.js~Core.html#instance-member-seed",
+    "src/class/Core.js~Core#seed",
+    "member"
+  ],
+  [
+    "src/class/core.js~core#xprv",
+    "class/src/class/Core.js~Core.html#instance-member-xprv",
+    "src/class/Core.js~Core#xprv",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js",
+    "file/src/class/DOGE/DogecoinSync.js.html",
+    "src/class/DOGE/DogecoinSync.js",
+    "file"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#data",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-get-DATA",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#DATA",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#start",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-Start",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#Start",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#_getarrayofaddresses",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-_getArrayOfAddresses",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#_getArrayOfAddresses",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#_getderiveindexbyaddress",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-_getDeriveIndexByAddress",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#_getDeriveIndexByAddress",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#addresses",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-addresses",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#addresses",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#api",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-api",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#api",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#balance",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-balance",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#balance",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#constructor",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-constructor-constructor",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#constructor",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#deriveaddress",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-deriveAddress",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#deriveAddress",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#externalnode",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-externalNode",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#externalNode",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#fee",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-fee",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#fee",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#getaddresses",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-getAddresses",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#getAddresses",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#getaddressesbynode",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-getAddressesByNode",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#getAddressesByNode",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#getbalance",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-getBalance",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#getBalance",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#getfeesrequest",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-getFeesRequest",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#getFeesRequest",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#getmultiaddressrequest",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-getMultiAddressRequest",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#getMultiAddressRequest",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#gettxinfoforunspent",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-getTxInfoForUnspent",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#getTxInfoForUnspent",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#internalnode",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-internalNode",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#internalNode",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#latestblock",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-latestBlock",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#latestBlock",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#processtransactions",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-method-processTransactions",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#processTransactions",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#request",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-request",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#request",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#transactions",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-transactions",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#transactions",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#type",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-type",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#type",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecoinsync.js~dogecoinsync#unspent",
+    "class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html#instance-member-unspent",
+    "src/class/DOGE/DogecoinSync.js~DogecoinSync#unspent",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js",
+    "file/src/class/DOGE/DogecoinTx.js.html",
+    "src/class/DOGE/DogecoinTx.js",
+    "file"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#amount",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-amount",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#amount",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#balance",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-balance",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#balance",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#calcemptyfee",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-method-calcEmptyFee",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#calcEmptyFee",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#calcfee",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-method-calcFee",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#calcFee",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#constructor",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-constructor-constructor",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#constructor",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#customfee",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-customFee",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#customFee",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#dust",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-dust",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#dust",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#fee",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-fee",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#fee",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#feelist",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-feeList",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#feeList",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#getinputs",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-method-getInputs",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#getInputs",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#getrawtxhex",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-method-getRawTxHex",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#getRawTxHex",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#internaladdress",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-internalAddress",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#internalAddress",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#make",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-method-make",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#make",
+    "method"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#nodes",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-nodes",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#nodes",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#request",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-request",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#request",
+    "member"
+  ],
+  [
+    "src/class/doge/dogecointx.js~dogecointx#unspent",
+    "class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html#instance-member-unspent",
+    "src/class/DOGE/DogecoinTx.js~DogecoinTx#unspent",
     "member"
   ],
   [
@@ -1296,6 +1878,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#syncdoge",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncDOGE",
+    "src/class/WalletWrapper.js~WalletWrapper#SyncDOGE",
+    "method"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#synceth",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncETH",
     "src/class/WalletWrapper.js~WalletWrapper#SyncETH",
@@ -1344,6 +1932,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#createdogetx",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createDOGETx",
+    "src/class/WalletWrapper.js~WalletWrapper#createDOGETx",
+    "method"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#createethtx",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createETHTx",
     "src/class/WalletWrapper.js~WalletWrapper#createETHTx",
@@ -1365,6 +1959,48 @@ window.esdocSearchIndex = [
     "src/class/walletwrapper.js~walletwrapper#sync",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-member-sync",
     "src/class/WalletWrapper.js~WalletWrapper#sync",
+    "member"
+  ],
+  [
+    "src/helpers/request.js",
+    "file/src/helpers/Request.js.html",
+    "src/helpers/Request.js",
+    "file"
+  ],
+  [
+    "src/helpers/request.js~request#basicdata",
+    "class/src/helpers/Request.js~Request.html#instance-member-basicData",
+    "src/helpers/Request.js~Request#basicData",
+    "member"
+  ],
+  [
+    "src/helpers/request.js~request#constructor",
+    "class/src/helpers/Request.js~Request.html#instance-constructor-constructor",
+    "src/helpers/Request.js~Request#constructor",
+    "method"
+  ],
+  [
+    "src/helpers/request.js~request#headers",
+    "class/src/helpers/Request.js~Request.html#instance-member-headers",
+    "src/helpers/Request.js~Request#headers",
+    "member"
+  ],
+  [
+    "src/helpers/request.js~request#send",
+    "class/src/helpers/Request.js~Request.html#instance-method-send",
+    "src/helpers/Request.js~Request#send",
+    "method"
+  ],
+  [
+    "src/helpers/request.js~request#serialize",
+    "class/src/helpers/Request.js~Request.html#instance-method-serialize",
+    "src/helpers/Request.js~Request#serialize",
+    "method"
+  ],
+  [
+    "src/helpers/request.js~request#url",
+    "class/src/helpers/Request.js~Request.html#instance-member-url",
+    "src/helpers/Request.js~Request#url",
     "member"
   ],
   [
@@ -1524,6 +2160,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/index.js~wallet#makerawdogetx",
+    "class/src/index.js~Wallet.html#instance-method-makeRawDogeTx",
+    "src/index.js~Wallet#makeRawDogeTx",
+    "method"
+  ],
+  [
     "src/index.js~wallet#makerawethtx",
     "class/src/index.js~Wallet.html#instance-method-makeRawEthTx",
     "src/index.js~Wallet#makeRawEthTx",
@@ -1569,6 +2211,12 @@ window.esdocSearchIndex = [
     "src/index.js~wallet#syncbtcv",
     "class/src/index.js~Wallet.html#instance-method-syncBTCV",
     "src/index.js~Wallet#syncBTCV",
+    "method"
+  ],
+  [
+    "src/index.js~wallet#syncdoge",
+    "class/src/index.js~Wallet.html#instance-method-syncDOGE",
+    "src/index.js~Wallet#syncDOGE",
     "method"
   ],
   [
