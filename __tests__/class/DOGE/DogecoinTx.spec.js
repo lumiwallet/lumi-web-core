@@ -74,8 +74,8 @@ describe('DogecoinTx class', () => {
     const Dogecoin = new DogecoinTx(data)
     const fees = await Dogecoin.calcFee()
 
-    expect(fees[0].DOGE).toBe( 2.26328152) // for 1001452 sat pre byte
-    expect(fees[1].DOGE).toBe(0.0000226) // for 10 sat pre byte
+    expect(fees[0].DOGE).toBe( 2.26328152)
+    expect(fees[1].DOGE).toBe(0.0000226)
   })
 
   test('it should calculate empty fees list for amount 0.1 DOGE', async () => {
@@ -90,16 +90,16 @@ describe('DogecoinTx class', () => {
     const Dogecoin = new DogecoinTx(data)
     const fees = await Dogecoin.calcFee()
 
-    expect(fees[0].DOGE).toBe(2.26328152) // for 1001452 sat pre byte
-    expect(fees[1].DOGE).toBe(0) // for custom fee
+    expect(fees[0].DOGE).toBe(2.26328152)
+    expect(fees[1].DOGE).toBe(0)
   })
 
   test('it should calculate fees list for all available amount (0.0134 DOGE)', async () => {
-    const tx_size = calcBtcTxSize(mock.test_unspent.length, 1) // 340
-    const available_amounts = mock.test_fees.map(item => { //  [  0.0133898 ]
+    const tx_size = calcBtcTxSize(mock.test_unspent.length, 1)
+    const available_amounts = mock.test_fees.map(item => {
       return (mock.test_balance - item.feePerByte * tx_size) / Math.pow(10, 8)
     })
-
+  
     const data = available_amounts.map(amount => {
       return mock.getData({amount})
     })
@@ -151,7 +151,7 @@ describe('DogecoinTx class', () => {
     const fee_list = await Dogecoin.calcFee()
     const tx_data = {
       addressTo: mock.recipient_address,
-      fee: fee_list[0] // 1001452 sat pre byte
+      fee: fee_list[0]
     }
 
     try {
@@ -168,7 +168,7 @@ describe('DogecoinTx class', () => {
     const fee_list = await Dogecoin.calcFee()
     const tx_data = {
       addressTo: mock.recipient_address,
-      fee: fee_list[0] // 2 sat pre byte
+      fee: fee_list[0]
     }
 
     try {

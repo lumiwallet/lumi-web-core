@@ -4,7 +4,7 @@
 ![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)
 
 # LumiCore
-The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash and Bitcoin Vault. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
+The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault and Dogecoin. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
 
 > Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).
 
@@ -66,7 +66,8 @@ const coins = [
     {coin: 'BTC', type: 'p2wpkh'},
     {coin: 'ETH', type: 0},
     {coin: 'BCH'},
-    {coin: 'BTCV'}
+    {coin: 'BTCV'},
+    {coin: 'DOGE'}
 ]
 const CORES = await WALLET.createCoins(coins)
 => {
@@ -113,8 +114,16 @@ const CORES = await WALLET.createCoins(coins)
             internalAddress: "1135Eji7Yoop...rKJmGFi2RyX",
             internalNode: Object
         }
+    },
+    DOGE: {
+        p2pkh: {
+            dp: {external: "m/44'/3'/0'/0", internal: "m/44'/3'/0'/1"},
+            externalAddress: "DLXryK9F7k...BMrcqFMci",
+            externalNode: Object,
+            internalAddress: "DKqyuCkSYJXt...PxnYcUxM'",
+            internalNode: Object
+        }
     }
-}
 ```
 For BTC and ETH coins, the type parameter is required.
 For BTC, it can take the values p2pkh or p2wpkh (p2pkh by default).
@@ -132,7 +141,8 @@ const data = {
         {coin: 'BTC', type: 'p2wpkh'},
         {coin: 'ETH', type: 0},
         {coin: 'BCH'},
-        {coin: 'BTCV'}
+        {coin: 'BTCV'},
+        {coin: 'DOGE'}
     ]
 }
 
@@ -151,7 +161,8 @@ const info = await WALLET.getChildNodes(data)
             btcvAddress: "royale1qzu70e44r...8eeet9xww5ltnnr6akytm",
             ethAddress: "0xdd6f3cc0ed5f9...b09481090536e446ebd3",
             p2pkhAddress: "137sbugaaqw3H...LZzNX3nTk1LDgCYd",
-            p2wpkhAddress: "bc1qzu70e44r...eet9xww5ltnnrm5mjxk"
+            p2wpkhAddress: "bc1qzu70e44r...eet9xww5ltnnrm5mjxk",
+            dogeAddress: 'DS58JVRHdU...zuBNNVLFo4UaTn'
         },
         ...
     ]
@@ -300,6 +311,43 @@ When the transaction is created successfully, an object with the transaction has
 btcv_tx => {
     hash: '98f5f94267101de83364...b4a9c74a26a05b90d4381f9479710',
     tx: '01000000000101483329c7e67d5431dc5...c6d8daeeb40e248438119513fb455d38100000000'
+}
+```
+
+### Creating a DOGE transaction
+To create a Dogecoin transaction you need to send a set of inputs and outputs to the `makeRawDogeTx` method:
+``` js
+const data = {
+    inputs: [
+        {
+            hash: '49a8205185d60d66273b...d9c9d63d8e359b0c3c93a21',
+            index: 0,
+            address: 'DA7wKChj5Zi...Z84VwfS1BqcPczk',
+            value: 100000000,
+            key: 'L2Zr1gYfWUWahL...28a2AQkxGD9KhNtrb',
+            tx: '0100000002789f2641b132b219f...3a65a75888226819f66c4d4b7debc9'
+        }
+    ],
+    outputs: [
+        {
+            address: 'DGzBtLKz99r...tEEw5kQio',
+            value: 35600000
+        },
+        {
+            address: 'DQ52GryK3ni...ZjpnKHH8UY',
+            value: 64400000
+        }
+    ]
+}
+
+const doge_tx = await WALLET.makeRawDogeTx(data)
+```
+When the transaction is created successfully, an object with the transaction hash and raw tx data is returned
+``` js
+doge_tx => {
+    hash: ' 0e2578db7490a13855696...e3b2e689b89c63a55634b1a58',
+    tx: '0100000002213ac9c3b059e3d863...88c983930f02d9f636f5e354088ac00000000
+'
 }
 ```
 
