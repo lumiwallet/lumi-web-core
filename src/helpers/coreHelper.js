@@ -1,5 +1,6 @@
 import * as bip39 from 'bip39'
 import * as bitcoin from 'bitcoinjs-lib'
+import * as coininfo from 'coininfo'
 import {Transaction} from 'ethereumjs-tx'
 import * as ethUtil from 'ethereumjs-util'
 import * as HDkey from 'hdkey'
@@ -579,6 +580,111 @@ export function convertToCashAddress (address = '') {
     throw new CustomError('err_get_bch_address')
   }
 }
+
+/**
+ * Creating a raw Dogecoin transaction
+ * @param {Object} data - Input data for a transaction
+ * @param {Array} data.inputs - List of inputs
+ * @param {Array} data.outputs - List of outputs
+ * @returns {Object} Returns raw Dogecoin transaction and transaction hash
+ */
+
+export function makeRawDogeTx (data = {}) {
+  try {
+    const {inputs, outputs} = data
+    
+    let curr = coininfo.dogecoin.main
+    let frmt = curr.toBitcoinJS()
+    const netGain = {
+      messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
+      bip32: {
+        public: frmt.bip32.public,
+        private: frmt.bip32.private
+      },
+      pubKeyHash: frmt.pubKeyHash,
+      scriptHash: frmt.scriptHash,
+      wif: frmt.wif
+    }
+    
+    const psbt = new bitcoin.Psbt({network: netGain, maximumFeeRate: 2000000})
+    let keyPairs = []
+    psbt.setVersion(1)
+    
+    inputs.forEach(input => {
+      const keyPair = bitcoin.ECPair.fromWIF(input.key)
+      keyPair.network = netGain
+      keyPairs.push(keyPair)
+      
+      let data = {
+        hash: input.hash,
+        index: input.index
+      }
+      
+      data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')
+      
+      psbt.addInput(data)
+    })
+    
+    outputs.forEach(output => {
+      psbt.addOutput({
+        address: output.address,
+        value: output.value
+      })
+    })
+    
+    keyPairs.forEach((key, i) => {
+      psbt.signInput(i, key)
+    })
+    
+    psbt.validateSignaturesOfAllInputs()
+    psbt.finalizeAllInputs()
+    
+    const transaction = psbt.extractTransaction()
+    const signedTransaction = transaction.toHex()
+    const hash = transaction.getId()
+
+    return {
+      hash,
+      tx: signedTransaction
+    }
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_tx_doge_build')
+  }
+}
+
+/**
+ * Getting Dogecoin address by node and derivation index
+ * @param {Object} node - Input data for a transaction
+ * @param {number} childIndex - Derivation index
+ * @param {boolean} withoutPrefix - Flag for prefix
+ * @returns {string} Returns address
+ */
+
+export function getDogeAddress (node, childIndex, withoutPrefix = true) {
+  try {
+    let curr = coininfo.dogecoin.main
+    let frmt = curr.toBitcoinJS()
+    const netGain = {
+      messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
+      bip32: {
+        public: frmt.bip32.public,
+        private: frmt.bip32.private
+      },
+      pubKeyHash: frmt.pubKeyHash,
+      scriptHash: frmt.scriptHash,
+      wif: frmt.wif
+    }
+    const address = bitcoin.payments.p2pkh({pubkey: node.deriveChild(childIndex).publicKey, network: netGain})
+    return address.address
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_core_doge_address')
+  }
+}
+
 
 /**
  * Getting Bitcoin private key for address by derivation index

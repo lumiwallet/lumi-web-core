@@ -19,7 +19,8 @@ describe('Core class', () => {
       {coin: 'BTC', type: 'p2wpkh'},
       {coin: 'ETH', type: 0},
       {coin: 'BCH'},
-      {coin: 'BTCV'}
+      {coin: 'BTCV'},
+      {coin: 'DOGE'}
     ]
     await core_exemplar.createCoinsCores(coins)
     
@@ -30,6 +31,7 @@ describe('Core class', () => {
     expect(core_exemplar).toHaveProperty('COINS.BCH.p2pkh.externalAddress', test_core.BCH.externalAddress)
     expect(core_exemplar).toHaveProperty('COINS.BTCV.p2wpkh.externalAddress', test_core.BTCV.externalAddress)
     expect(core_exemplar).toHaveProperty('COINS.ETH.0.externalAddress', test_core.ETH.externalAddress)
+    expect(core_exemplar).toHaveProperty('coins.DOGE.p2pkh.externalAddress', test_core.DOGE.p2pkh.externalAddress)
   })
   
   test('it should create a Core class by xprv', async () => {
@@ -157,7 +159,7 @@ describe('Core class', () => {
       path: test_derivation_path,
       coins: []
     })
-    
+
     expect(childNodes).toBeDefined()
     expect(childNodes.list.length).toBe(test_child_nodes.list.length)
   })
@@ -184,9 +186,13 @@ describe('Core class', () => {
         },
         {
           coin: 'BTCV'
+        },
+        {
+          coin: 'DOGE'
         }
       ]
     })
+    console.log('childNodes', childNodes)
     expect(childNodes).toHaveProperty('node.publicExtendedKey', test_child_nodes.node.publicExtendedKey)
     expect(childNodes.list[0]).toMatchObject(test_child_nodes.list[0])
     expect(childNodes.list[1]).toMatchObject(test_child_nodes.list[1])

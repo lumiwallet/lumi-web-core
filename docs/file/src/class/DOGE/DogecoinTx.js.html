@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">src/class/DOGE/DogecoinTx.js | lumi-web-core</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Lumi Wallet Core - Web Version"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="lumi-web-core"><meta property="twitter:description" content="Lumi Wallet Core - Web Version"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lumiwallet/lumi-web-core"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Wrapper.js~Wrapper.html">Wrapper</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Wallet.html">Wallet</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class">class</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/Core.js~Core.html">Core</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/WalletWrapper.js~WalletWrapper.html">WalletWrapper</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-bch">class/BCH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashSync.js~BitcoinCashSync.html">BitcoinCashSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BCH/BitcoinCashTx.js~BitcoinCashTx.html">BitcoinCashTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btc">class/BTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinSync.js~BitcoinSync.html">BitcoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTC/BitcoinTx.js~BitcoinTx.html">BitcoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-btcv">class/BTCV</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTCV/BitcoinVaultSync.js~BitcoinVaultSync.html">BitcoinVaultSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/BTCV/BitcoinVaultTx.js~BitcoinVaultTx.html">BitcoinVaultTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-doge">class/DOGE</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/DOGE/DogecoinSync.js~DogecoinSync.html">DogecoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html">DogecoinTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/Request.js~Request.html">Request</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-convertToCashAddress">convertToCashAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-derive">derive</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-generateMnemonic">generateMnemonic</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddress">getBtcAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcAddressByPublicKey">getBtcAddressByPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getBtcPrivateKeyByIndex">getBtcPrivateKeyByIndex</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getCashAddress">getCashAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getDogeAddress">getDogeAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddress">getEthAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBchTx">makeRawBchTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcTx">makeRawBtcTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcvTx">makeRawBtcvTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawDogeTx">makeRawDogeTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-requestHandleErrors">requestHandleErrors</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-toFormatDecimal">toFormatDecimal</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-networks">networks</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/class/DOGE/DogecoinTx.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import converter from &apos;@/helpers/converters&apos;
+import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawDogeTx} from &apos;@/helpers/coreHelper&apos;
+import CustomError from &apos;@/helpers/handleErrors&apos;
+import Request from &apos;@/helpers/Request&apos;
+
+/**
+ * List of available commission types for Dogecoin transactions
+ * @type {Array}
+ */
+
+const FEE_IDS = [&apos;regular&apos;, &apos;custom&apos;]
+
+/**
+ * Class DogecoinTx.
+ * This class is responsible for calculating the fee,
+ * calculating the available amount to send, and generating and signing a Dogecoin transaction
+ * @class
+ */
+
+export default class DogecoinTx {
+  /**
+   * Create a DogecoinTx
+   * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount
+   * @param {Array} data.unspent - Array of unspent addresses
+   * @param {number} data.amount - Transaction amount
+   * @param {number} data.balance - Dogecoin wallet balance
+   * @param {Array} data.feeList - Set of rawDogecoin fees
+   * @param {Object} data.customFee - Custom fee entered by the user
+   * @param {Object} data.nodes - External and internal Dogecoin nodes
+   * @param {string} data.internalAddress - Address for change
+   */
+  constructor (data) {
+    this.unspent = data.unspent
+    this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
+    this.balance = data.balance
+    this.customFee = +data.customFee ? +data.customFee : 0
+    this.nodes = data.nodes
+    this.internalAddress = data.internalAddress
+    this.fee = data.feeList
+    this.feeList = []
+    this.request = new Request(data.api, data.headers)
+    this.dust = 1000
+  }
+  
+  /**
+   * Calculating the fee amount
+   * @param {number} size - Transaction size
+   * @returns {Promise&lt;Array&gt;} Returns a set of fees for a specific transaction amount
+   */
+  
+  async calcFee (size = 0) {
+    const fees = [...this.fee.map(item =&gt; item.feePerByte), this.customFee]
+    
+    if (this.amount &lt;= 0 || this.balance &lt; this.amount) {
+      return this.calcEmptyFee(fees)
+    }
+    
+    const pArray = fees.map(async fee =&gt; {
+      return await this.getInputs(fee, size)
+    })
+    
+    const res = await Promise.all(pArray)
+    
+    this.feeList = res.map((item, i) =&gt; {
+      return {
+        id: FEE_IDS[i],
+        SAT: item.fee,
+        DOGE: converter.sat_to_btc(item.fee),
+        fee: fees[i],
+        feeInBTC: converter.sat_to_btc(fees[i]),
+        inputs: item.inputs,
+        inputsAmount: item.inputsAmount,
+        custom: FEE_IDS[i] === &apos;custom&apos;
+      }
+    })
+    
+    return this.feeList
+  }
+  
+  /**
+   * Sets an array of zero fees.
+   * Used when the user does not have enough funds for the transaction
+   * @param {Array} fees - set of commission types
+   * @returns {Array} Returns an array with zero fees
+   */
+  
+  calcEmptyFee (fees) {
+    this.feeList = fees.map((item, i) =&gt; {
+      return {
+        id: FEE_IDS[i],
+        SAT: 0,
+        DOGE: 0,
+        fee: item,
+        feeInBTC: converter.sat_to_btc(item),
+        inputs: [],
+        inputsAmount: 0,
+        custom: FEE_IDS[i] === &apos;custom&apos;
+      }
+    })
+    
+    return this.feeList
+  }
+  
+  /**
+   * Finds a list of inputs for a specific transaction
+   * @param {number} fee - Fee size
+   * @param {number} size - Transaction size
+   * @returns {Promise&lt;Object&gt;} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
+   */
+  
+  async getInputs (fee, size) {
+    let index = 0
+    let inputsAmount = 0
+    let inputs = []
+    let res = {}
+    
+    this.dust = size ? 0 : 1000
+    
+    let req = async () =&gt; {
+      let item = this.unspent[index]
+      let defaultSize = calcBtcTxSize(index + 1, 2)
+      let calcFee = size ? size * fee : defaultSize * fee
+      
+      inputsAmount += item.value
+      inputs.push(item)
+      
+      let total = this.amount + calcFee + this.dust
+      
+      if (total &gt; inputsAmount) {
+        index++
+        
+        if (index &gt;= this.unspent.length) {
+          res = {
+            fee: 0,
+            inputs: [],
+            inputsAmount: 0
+          }
+        } else {
+          await req()
+        }
+      } else {
+        res = {
+          fee: calcFee,
+          inputs: inputs,
+          inputsAmount: inputsAmount
+        }
+      }
+    }
+    await req()
+    
+    return res
+  }
+  
+  /**
+   * Creating a Dogecoin transaction
+   * @param {Object} data - Input data for a transaction
+   * @param {string} data.addressTo - Recipient address
+   * @param {Object} data.fee - The transaction fee and list of inputs
+   * @returns {Promise&lt;Object&gt;} Returns the raw transaction and transaction hash if sent successfully
+   */
+  
+  async make (data) {
+    const {addressTo, fee} = data
+    
+    if (!this.amount) {
+      throw new CustomError(&apos;err_tx_doge_amount&apos;)
+    }
+    
+    if (isNaN(fee.SAT)) {
+      throw new CustomError(&apos;err_tx_doge_fee&apos;)
+    }
+    
+    const inputsAmount = +fee.inputsAmount
+    const amount = +this.amount
+    const feeSat = +fee.SAT
+    const change = inputsAmount - amount - feeSat
+    let inputs = []
+    let hashes = []
+    
+    if (change &lt; 0) {
+      throw new CustomError(&apos;err_tx_doge_balance&apos;)
+    }
+    
+    for (let input of fee.inputs) {
+      if (!input.tx) {
+        if (input.transaction_hash) {
+          hashes.push(input.transaction_hash)
+        } else {
+          throw new CustomError(&apos;err_tx_btc_unspent&apos;)
+        }
+      }
+    }
+    
+    const unique_hashes = [...new Set(hashes)]
+    const rawTxsData = await this.getRawTxHex(unique_hashes)
+    
+    for (const utxo of fee.inputs) {
+      hashes.push(utxo.transaction_hash)
+      
+      let item = {
+        hash: utxo.transaction_hash,
+        index: utxo.index,
+        address: utxo.address,
+        value: utxo.value,
+        key: getBtcPrivateKeyByIndex(this.nodes[utxo.node_type], utxo.derive_index)
+      }
+      let data = rawTxsData.find(item =&gt; item.hash === utxo.transaction_hash)
+      if (!utxo.tx) {
+        item.tx = data ? data.rawData : null
+      } else {
+        item.tx = utxo.tx
+      }
+      
+      inputs.push(item)
+    }
+    
+    let params = {
+      inputs: inputs,
+      outputs: [
+        {
+          address: addressTo,
+          value: amount
+        }
+      ]
+    }
+    
+    if (change !== 0) {
+      params.outputs[1] = {
+        address: this.internalAddress,
+        value: change
+      }
+    }
+    
+    return makeRawDogeTx(params)
+  }
+  
+  
+  /**
+   * Raw transaction request
+   * @param {Array} hashes - List of hashes
+   * @returns {Promise&lt;Array&gt;} Array of raw Dogecoin transactions for each hash
+   */
+  
+  async getRawTxHex (hashes) {
+    if (!hashes || !hashes.length) return []
+    
+    const ARRAY_SIZE = 10
+    const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)
+    let txs = []
+    let arrays = []
+    let counter = 0
+    
+    for (let i = 0; i &lt; ARRAYS_COUNT; i++) {
+      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)
+    }
+    
+    const req = async () =&gt; {
+      try {
+        let res = await this.request.send({
+          method: &apos;rawtx&apos;,
+          txs: arrays[counter]
+        })
+        
+        if (res.status === &apos;success&apos; &amp;&amp; res.data.length) {
+          txs = [...txs, ...res.data]
+          counter++
+          
+          if (counter !== ARRAYS_COUNT) {
+            await req()
+          }
+        } else {
+          throw new CustomError(&apos;err_tx_doge_raw_tx&apos;)
+        }
+      }
+      catch (e) {
+        throw new CustomError(&apos;err_tx_doge_raw_tx&apos;)
+      }
+    }
+    
+    await req()
+    
+    return txs
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

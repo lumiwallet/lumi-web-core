@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 2744,
+  "end": 3081,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 44,
+      "line": 49,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 2744,
+    "end": 3081,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 44,
+        "line": 49,
         "column": 0
       }
     },
@@ -31,28 +31,28 @@
       {
         "type": "ExportDefaultDeclaration",
         "start": 0,
-        "end": 2743,
+        "end": 3080,
         "loc": {
           "start": {
             "line": 1,
             "column": 0
           },
           "end": {
-            "line": 43,
+            "line": 48,
             "column": 1
           }
         },
         "declaration": {
           "type": "ObjectExpression",
           "start": 15,
-          "end": 2743,
+          "end": 3080,
           "loc": {
             "start": {
               "line": 1,
               "column": 15
             },
             "end": {
-              "line": 43,
+              "line": 48,
               "column": 1
             }
           },
@@ -2310,6 +2310,281 @@
                   "raw": "'Problem with address conversion. Check the format of the source address'"
                 },
                 "value": "Problem with address conversion. Check the format of the source address"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 2745,
+              "end": 2806,
+              "loc": {
+                "start": {
+                  "line": 43,
+                  "column": 2
+                },
+                "end": {
+                  "line": 43,
+                  "column": 63
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 2745,
+                "end": 2763,
+                "loc": {
+                  "start": {
+                    "line": 43,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 43,
+                    "column": 20
+                  },
+                  "identifierName": "err_tx_doge_amount"
+                },
+                "name": "err_tx_doge_amount"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 2765,
+                "end": 2806,
+                "loc": {
+                  "start": {
+                    "line": 43,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 43,
+                    "column": 63
+                  }
+                },
+                "extra": {
+                  "rawValue": "Invalid amount. Amount must be a Number",
+                  "raw": "'Invalid amount. Amount must be a Number'"
+                },
+                "value": "Invalid amount. Amount must be a Number"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 2810,
+              "end": 2885,
+              "loc": {
+                "start": {
+                  "line": 44,
+                  "column": 2
+                },
+                "end": {
+                  "line": 44,
+                  "column": 77
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 2810,
+                "end": 2825,
+                "loc": {
+                  "start": {
+                    "line": 44,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 44,
+                    "column": 17
+                  },
+                  "identifierName": "err_tx_doge_fee"
+                },
+                "name": "err_tx_doge_fee"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 2827,
+                "end": 2885,
+                "loc": {
+                  "start": {
+                    "line": 44,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 44,
+                    "column": 77
+                  }
+                },
+                "extra": {
+                  "rawValue": "Invalid fee. Fee must be a Object with `SAT` parameter",
+                  "raw": "'Invalid fee. Fee must be a Object with \\`SAT\\` parameter'"
+                },
+                "value": "Invalid fee. Fee must be a Object with `SAT` parameter"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 2889,
+              "end": 2932,
+              "loc": {
+                "start": {
+                  "line": 45,
+                  "column": 2
+                },
+                "end": {
+                  "line": 45,
+                  "column": 45
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 2889,
+                "end": 2908,
+                "loc": {
+                  "start": {
+                    "line": 45,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 45,
+                    "column": 21
+                  },
+                  "identifierName": "err_tx_doge_balance"
+                },
+                "name": "err_tx_doge_balance"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 2910,
+                "end": 2932,
+                "loc": {
+                  "start": {
+                    "line": 45,
+                    "column": 23
+                  },
+                  "end": {
+                    "line": 45,
+                    "column": 45
+                  }
+                },
+                "extra": {
+                  "rawValue": "Insufficient balance",
+                  "raw": "'Insufficient balance'"
+                },
+                "value": "Insufficient balance"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 2936,
+              "end": 3002,
+              "loc": {
+                "start": {
+                  "line": 46,
+                  "column": 2
+                },
+                "end": {
+                  "line": 46,
+                  "column": 68
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 2936,
+                "end": 2953,
+                "loc": {
+                  "start": {
+                    "line": 46,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 46,
+                    "column": 19
+                  },
+                  "identifierName": "err_tx_doge_build"
+                },
+                "name": "err_tx_doge_build"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 2955,
+                "end": 3002,
+                "loc": {
+                  "start": {
+                    "line": 46,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 46,
+                    "column": 68
+                  }
+                },
+                "extra": {
+                  "rawValue": "DOGE transaction failed. Check all parameters",
+                  "raw": "'DOGE transaction failed. Check all parameters'"
+                },
+                "value": "DOGE transaction failed. Check all parameters"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 3006,
+              "end": 3078,
+              "loc": {
+                "start": {
+                  "line": 47,
+                  "column": 2
+                },
+                "end": {
+                  "line": 47,
+                  "column": 74
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 3006,
+                "end": 3024,
+                "loc": {
+                  "start": {
+                    "line": 47,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 47,
+                    "column": 20
+                  },
+                  "identifierName": "err_tx_doge_raw_tx"
+                },
+                "name": "err_tx_doge_raw_tx"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 3026,
+                "end": 3078,
+                "loc": {
+                  "start": {
+                    "line": 47,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 47,
+                    "column": 74
+                  }
+                },
+                "extra": {
+                  "rawValue": "Problem getting raw transaction. Try to send again",
+                  "raw": "'Problem getting raw transaction. Try to send again'"
+                },
+                "value": "Problem getting raw transaction. Try to send again"
               }
             }
           ],
@@ -6684,6 +6959,531 @@
     },
     {
       "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2741,
+      "end": 2742,
+      "loc": {
+        "start": {
+          "line": 42,
+          "column": 96
+        },
+        "end": {
+          "line": 42,
+          "column": 97
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_doge_amount",
+      "start": 2745,
+      "end": 2763,
+      "loc": {
+        "start": {
+          "line": 43,
+          "column": 2
+        },
+        "end": {
+          "line": 43,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2763,
+      "end": 2764,
+      "loc": {
+        "start": {
+          "line": 43,
+          "column": 20
+        },
+        "end": {
+          "line": 43,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Invalid amount. Amount must be a Number",
+      "start": 2765,
+      "end": 2806,
+      "loc": {
+        "start": {
+          "line": 43,
+          "column": 22
+        },
+        "end": {
+          "line": 43,
+          "column": 63
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2806,
+      "end": 2807,
+      "loc": {
+        "start": {
+          "line": 43,
+          "column": 63
+        },
+        "end": {
+          "line": 43,
+          "column": 64
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_doge_fee",
+      "start": 2810,
+      "end": 2825,
+      "loc": {
+        "start": {
+          "line": 44,
+          "column": 2
+        },
+        "end": {
+          "line": 44,
+          "column": 17
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2825,
+      "end": 2826,
+      "loc": {
+        "start": {
+          "line": 44,
+          "column": 17
+        },
+        "end": {
+          "line": 44,
+          "column": 18
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Invalid fee. Fee must be a Object with `SAT` parameter",
+      "start": 2827,
+      "end": 2885,
+      "loc": {
+        "start": {
+          "line": 44,
+          "column": 19
+        },
+        "end": {
+          "line": 44,
+          "column": 77
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2885,
+      "end": 2886,
+      "loc": {
+        "start": {
+          "line": 44,
+          "column": 77
+        },
+        "end": {
+          "line": 44,
+          "column": 78
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_doge_balance",
+      "start": 2889,
+      "end": 2908,
+      "loc": {
+        "start": {
+          "line": 45,
+          "column": 2
+        },
+        "end": {
+          "line": 45,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2908,
+      "end": 2909,
+      "loc": {
+        "start": {
+          "line": 45,
+          "column": 21
+        },
+        "end": {
+          "line": 45,
+          "column": 22
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Insufficient balance",
+      "start": 2910,
+      "end": 2932,
+      "loc": {
+        "start": {
+          "line": 45,
+          "column": 23
+        },
+        "end": {
+          "line": 45,
+          "column": 45
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2932,
+      "end": 2933,
+      "loc": {
+        "start": {
+          "line": 45,
+          "column": 45
+        },
+        "end": {
+          "line": 45,
+          "column": 46
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_doge_build",
+      "start": 2936,
+      "end": 2953,
+      "loc": {
+        "start": {
+          "line": 46,
+          "column": 2
+        },
+        "end": {
+          "line": 46,
+          "column": 19
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 2953,
+      "end": 2954,
+      "loc": {
+        "start": {
+          "line": 46,
+          "column": 19
+        },
+        "end": {
+          "line": 46,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "DOGE transaction failed. Check all parameters",
+      "start": 2955,
+      "end": 3002,
+      "loc": {
+        "start": {
+          "line": 46,
+          "column": 21
+        },
+        "end": {
+          "line": 46,
+          "column": 68
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3002,
+      "end": 3003,
+      "loc": {
+        "start": {
+          "line": 46,
+          "column": 68
+        },
+        "end": {
+          "line": 46,
+          "column": 69
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_doge_raw_tx",
+      "start": 3006,
+      "end": 3024,
+      "loc": {
+        "start": {
+          "line": 47,
+          "column": 2
+        },
+        "end": {
+          "line": 47,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3024,
+      "end": 3025,
+      "loc": {
+        "start": {
+          "line": 47,
+          "column": 20
+        },
+        "end": {
+          "line": 47,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Problem getting raw transaction. Try to send again",
+      "start": 3026,
+      "end": 3078,
+      "loc": {
+        "start": {
+          "line": 47,
+          "column": 22
+        },
+        "end": {
+          "line": 47,
+          "column": 74
+        }
+      }
+    },
+    {
+      "type": {
         "label": "}",
         "beforeExpr": false,
         "startsExpr": false,
@@ -6694,15 +7494,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 2742,
-      "end": 2743,
+      "start": 3079,
+      "end": 3080,
       "loc": {
         "start": {
-          "line": 43,
+          "line": 48,
           "column": 0
         },
         "end": {
-          "line": 43,
+          "line": 48,
           "column": 1
         }
       }
@@ -6720,15 +7520,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 2744,
-      "end": 2744,
+      "start": 3081,
+      "end": 3081,
       "loc": {
         "start": {
-          "line": 44,
+          "line": 49,
           "column": 0
         },
         "end": {
-          "line": 44,
+          "line": 49,
           "column": 0
         }
       }

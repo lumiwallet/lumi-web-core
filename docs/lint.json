@@ -4,51 +4,59 @@
     "filePath": "src/index.js",
     "lines": [
       {
-        "lineNumber": 388,
+        "lineNumber": 428,
         "line": "  /**"
       },
       {
-        "lineNumber": 389,
+        "lineNumber": 429,
         "line": "   * Sets the API Endpoint"
       },
       {
-        "lineNumber": 390,
+        "lineNumber": 430,
         "line": "   *"
       },
       {
-        "lineNumber": 391,
+        "lineNumber": 431,
         "line": "   * @type {Object} api"
       },
       {
-        "lineNumber": 392,
+        "lineNumber": 432,
         "line": "   * @param {string} api.btc - Url address of bitcoin endpoint"
       },
       {
-        "lineNumber": 393,
+        "lineNumber": 433,
         "line": "   * @param {string} api.btcFee - Url address of bitcoin fee endpoint"
       },
       {
-        "lineNumber": 394,
+        "lineNumber": 434,
         "line": "   * @param {string} api.eth - Url address of ethereum endpoint"
       },
       {
-        "lineNumber": 395,
+        "lineNumber": 435,
         "line": "   * @param {string} api.bch - Url address of bitcoin cash endpoint"
       },
       {
-        "lineNumber": 396,
+        "lineNumber": 436,
         "line": "   * @param {string} api.btcv - Url address of bitcoin vault endpoint"
       },
       {
-        "lineNumber": 397,
+        "lineNumber": 437,
+        "line": "   * @param {string} api.doge - Url address of dogecoin endpoint"
+      },
+      {
+        "lineNumber": 438,
+        "line": "   * @param {string} api.dogeFee - Url address of dogecoin endpoint"
+      },
+      {
+        "lineNumber": 439,
         "line": "   */"
       },
       {
-        "lineNumber": 398,
-        "line": "  "
+        "lineNumber": 440,
+        "line": ""
       },
       {
-        "lineNumber": 399,
+        "lineNumber": 441,
         "line": "  setApiEndpoint (api) {"
       }
     ],

@@ -39,5 +39,10 @@ export default {
   err_wallet_api: 'Api is not found! Please, use the setter apiEndpoint to install',
   err_wallet_api_type: 'Api must be an object!',
   err_btc_private_key_by_index: 'Key generation problem. Check the node and derivation index',
-  err_get_bch_address: 'Problem with address conversion. Check the format of the source address'
+  err_get_bch_address: 'Problem with address conversion. Check the format of the source address',
+  err_tx_doge_amount: 'Invalid amount. Amount must be a Number',
+  err_tx_doge_fee: 'Invalid fee. Fee must be a Object with \`SAT\` parameter',
+  err_tx_doge_balance: 'Insufficient balance',
+  err_tx_doge_build: 'DOGE transaction failed. Check all parameters',
+  err_tx_doge_raw_tx: 'Problem getting raw transaction. Try to send again'
 }

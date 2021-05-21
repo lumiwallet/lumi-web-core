@@ -1,7 +1,7 @@
 {
   "name": "lumi-web-core",
   "description": "Lumi Wallet Core - Web Version",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "author": {
     "name": "vikowl",
     "email": "vd@lumiwallet.com"
@@ -31,6 +31,7 @@
     "bip39-checker": "^1.1.7",
     "bitcoinjs-lib": "^5.2.0",
     "bitcore-lib-cash": "=8.22.1",
+    "coininfo": "^5.1.0",
     "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^6.2.1",
     "hdkey": "^1.1.2",
@@ -50,6 +51,7 @@
     "commitizen": "^4.2.1",
     "cz-conventional-changelog": "^3.2.0",
     "esdoc": "^1.0.4",
+    "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.22.0",
