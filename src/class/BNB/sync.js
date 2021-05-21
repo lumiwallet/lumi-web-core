@@ -1,23 +1,34 @@
 import Request from '@/helpers/Request'
 
+const DEFAULT_FEE = [
+  {
+    'name': 'Regular',
+    'fee': 7500
+  }
+]
+
 export default class BinanceSync {
   constructor (address, api, headers) {
     this.address = address
     this.api = api
     this.balance = 0
+    this.symbol = ''
+    this.sequence = 0
+    this.account_number = 0
     this.transactions = []
-    //this.gasPrice = 0
+    this.fee = []
     this.request = new Request(this.api.bnb, headers)
   }
   
   async Start () {
     await Promise.all([
-      await this.getBalance(),
-      await this.getTransactions()
+      await this.getInfo(),
+      await this.getTransactions(),
+      await this.getFee()
     ])
   }
   
-  async getBalance () {
+  async getInfo () {
     this.balance = 0
     
     const params = {
@@ -25,10 +36,11 @@ export default class BinanceSync {
     }
     
     let res = await this.request.send(params, 'balance')
-    if (res && res?.data?.balances) {
-      this.balance = +res.data.balances[0]?.free
-    } else {
-      this.balance = 0
+    if (res && res.status === 'status') {
+      this.balance = +res.data?.balances[0]?.free || 0
+      this.symbol = res.data?.balances[0]?.symbol || ''
+      this.account_number = res.data?.account_number || 0
+      this.sequence = res.data?.sequence || 0
     }
   }
   
@@ -46,7 +58,7 @@ export default class BinanceSync {
         offset: 0,
         limit: step
       }
-  
+      
       let res = await this.request.send(params, 'transactions')
       
       if (res && res?.data?.tx) {
@@ -61,11 +73,25 @@ export default class BinanceSync {
     await req()
   }
   
+  async getFee () {
+    let res = await this.request.send({}, 'fees', 'GET')
+    
+    if (res && res.data) {
+      this.fee = res.data
+    } else {
+      this.fee = DEFAULT_FEE
+    }
+  }
+  
   get DATA () {
     return {
       address: this.address,
       balance: this.balance,
-      transactions: this.transactions
+      symbol: this.symbol,
+      sequence: this.sequence,
+      account_number: this.account_number,
+      transactions: this.transactions,
+      fee: this.fee
     }
   }
 }

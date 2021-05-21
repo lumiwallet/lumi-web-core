@@ -262,11 +262,12 @@ export default class Core {
   // todo
   async _generateBNBcore () {
     const type = 'p2pkh'
-  
+
     if (!Object.prototype.hasOwnProperty.call(this.coins, 'BNB')) {
       this.coins.BNB = {}
     }
     this.coins.BNB[type] = getBnbCore(this.hdkey)
+    return this.coins.BNB[type]
   }
   
   /**
