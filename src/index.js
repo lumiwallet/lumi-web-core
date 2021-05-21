@@ -39,7 +39,7 @@ export default class Wallet {
       bch: '',
       btcv: '',
       doge: '',
-      dogeFee: ''
+      dogeFee: '',
       bnb: ''
     }
     this._apiReady = false

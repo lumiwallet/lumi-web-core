@@ -34,7 +34,7 @@ export default class WalletWrapper {
       ETH: {},
       BCH: null,
       BTCV: null,
-      DOGE: null
+      DOGE: null,
       BNB: null
     }
   }
