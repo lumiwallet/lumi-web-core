@@ -71,11 +71,9 @@ export default class Core {
 
   _importByMnemonic () {
     this.mnemonic = normalize(this.mnemonic)
-
     if (!this.checkMnemonic(this.mnemonic)) {
       throw new CustomError('err_core_mnemonic')
     }
-
     this.seed = core.mnemonicToSeed(this.mnemonic)
     this.hdkey = core.hdFromSeed(this.seed)
     this.xprv = core.getXprv(this.hdkey)
@@ -262,17 +260,6 @@ export default class Core {
     return item
   }
   
-  // todo
-  async _generateBNBcore () {
-    const type = 'p2pkh'
-
-    if (!Object.prototype.hasOwnProperty.call(this.coins, 'BNB')) {
-      this.coins.BNB = {}
-    }
-    this.coins.BNB[type] = getBnbCore(this.hdkey)
-    return this.coins.BNB[type]
-  }
-  
   /**
    * Creating a core for Dogecoin.
    * At the output, we get a external and internal node,
@@ -297,6 +284,17 @@ export default class Core {
 
     this.coins.DOGE[type] = item
     return item
+  }
+  
+  // todo
+  async _generateBNBcore () {
+    const type = 'p2pkh'
+    
+    if (!Object.prototype.hasOwnProperty.call(this.coins, 'BNB')) {
+      this.coins.BNB = {}
+    }
+    this.coins.BNB[type] = getBnbCore(this.hdkey)
+    return this.coins.BNB[type]
   }
 
   /**

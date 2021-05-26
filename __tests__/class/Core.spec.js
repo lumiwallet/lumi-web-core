@@ -203,7 +203,6 @@ describe('Core class', () => {
         }
       ]
     })
-    console.log('childNodes', childNodes)
     expect(childNodes).toHaveProperty('node.publicExtendedKey', test_child_nodes.node.publicExtendedKey)
     expect(childNodes.list[0]).toMatchObject(test_child_nodes.list[0])
     expect(childNodes.list[1]).toMatchObject(test_child_nodes.list[1])

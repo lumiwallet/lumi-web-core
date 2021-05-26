@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for helpers/handleErrors.js</title>
+    <title>Code coverage report for class/BNB/utils.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../prettify.css" />
-    <link rel="stylesheet" href="../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../sort-arrow-sprite.png);
+            background-image: url(../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">helpers</a> handleErrors.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">class/BNB</a> utils.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">23.08% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>3/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>0/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">27.27% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>3/11</span>
             </div>
         
             
@@ -80,52 +80,55 @@
 <a name='L21'></a><a href='#L21'>21</a>
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import errors from '@/helpers/errors'
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import bigDecimal from 'js-big-decimal'
+import ecc from 'tiny-secp256k1'
+import {sha256} from '@/utils/crypto'
 &nbsp;
-/**
- * Custom error object.
- * By the error code it substitutes the desired message from object 'errors'
- * @extends Error
- */
-&nbsp;
-class CustomError extends Error {
-<span class="fstat-no" title="function not covered" >  co</span>nstructor(code) {
-<span class="cstat-no" title="statement not covered" >    super(code)</span>
-<span class="cstat-no" title="statement not covered" >    this.name = 'CustomError'</span>
-<span class="cstat-no" title="statement not covered" >    this.message = errors.hasOwnProperty(code) ? `${code}: ${errors[code]}` : 'Uncaught error'</span>
-  
-<span class="cstat-no" title="statement not covered" >    if (Error.captureStackTrace) {</span>
-<span class="cstat-no" title="statement not covered" >      Error.captureStackTrace(this, this.constructor)</span>
-    } else {
-<span class="cstat-no" title="statement not covered" >      this.stack = (new Error()).stack</span>
-    }
-  }
+export const convertToJager = <span class="fstat-no" title="function not covered" >(a</span>mount) =&gt; {
+<span class="cstat-no" title="statement not covered" >  if (!amount || isNaN(+amount)) <span class="cstat-no" title="statement not covered" >return 0</span></span>
+  const jager = <span class="cstat-no" title="statement not covered" >bigDecimal.multiply(amount, Math.pow(10, 8))</span>
+<span class="cstat-no" title="statement not covered" >  return +bigDecimal.floor(jager)</span>
 }
 &nbsp;
-export default CustomError
+export const convertToBinance = <span class="fstat-no" title="function not covered" >(a</span>mount) =&gt; {
+<span class="cstat-no" title="statement not covered" >  if (!amount || isNaN(+amount)) <span class="cstat-no" title="statement not covered" >return 0</span></span>
+  
+<span class="cstat-no" title="statement not covered" >  return +bigDecimal.divide(amount, Math.pow(10, 8))</span>
+}
+&nbsp;
+export const generateSignature = <span class="fstat-no" title="function not covered" >(s</span>ignBytesHex, privateKey) =&gt; {
+  const msgHash = <span class="cstat-no" title="statement not covered" >sha256(signBytesHex)</span>
+  const msgHashHex = <span class="cstat-no" title="statement not covered" >Buffer.from(msgHash, 'hex')</span>
+<span class="cstat-no" title="statement not covered" >  return ecc.sign(</span>
+    msgHashHex,
+    Buffer.from(privateKey, 'hex')
+  )
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -136,14 +139,14 @@ export default CustomError
                 at Tue Jun 01 2021 13:08:23 GMT+0300 (Moscow Standard Time)
             </div>
         </div>
-        <script src="../prettify.js"></script>
+        <script src="../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../sorter.js"></script>
-        <script src="../block-navigation.js"></script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
     </body>
 </html>
     

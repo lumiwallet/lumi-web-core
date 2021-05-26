@@ -1,6 +1,9 @@
 import hexEncoding from 'crypto-js/enc-hex'
 import RIPEMD160 from 'crypto-js/ripemd160'
 import SHA256 from 'crypto-js/sha256'
+import SHA3 from 'crypto-js/sha3'
+// import bech32 from 'bech32'
+import {UVarInt} from '@/utils/varint'
 
 /**
  * Computes a single SHA256 digest.
@@ -12,6 +15,18 @@ export const sha256 = (hex) => {
   if (hex.length % 2 !== 0) throw new Error(`invalid hex string length: ${ hex }`)
   const hexEncoded = hexEncoding.parse(hex)
   return SHA256(hexEncoded).toString()
+}
+
+/**
+ * Computes a single SHA3 (Keccak) digest.
+ * @param {string} hex message to hash
+ * @returns {string} hash output
+ */
+export const sha3 = (hex) => {
+  if (typeof hex !== 'string') throw new Error('sha3 expects a hex string')
+  if (hex.length % 2 !== 0) throw new Error(`invalid hex string length: ${ hex }`)
+  const hexEncoded = hexEncoding.parse(hex)
+  return SHA3(hexEncoded).toString()
 }
 
 /**
@@ -45,27 +60,14 @@ export const ab2hexstring = (arr) => {
   return result
 }
 
-// import createHash from 'create-hash/browser'
-// // import RIPEMD160 from 'ripemd160'
-//
-//
-// export function sha256 (buffer) {
-//   return createHash('sha256')
-//     .update(buffer)
-//     .digest()
-// }
-//
-// export function ripemd160 (buffer) {
-//   try {
-//     return createHash('rmd160')
-//       .update(buffer)
-//       .digest()
-//   }
-//   catch (err) {
-//     return createHash('ripemd160')
-//       .update(buffer)
-//       .digest()
-//   }
-// }
-//
-//
+/**
+ * prefixed with bytes length
+ * @category amino
+ * @param {Buffer} bytes
+ * @return {Buffer} with bytes length prefixed
+ */
+export const encodeBinaryByteArray = (bytes) => {
+  const lenPrefix = bytes.length
+  
+  return Buffer.concat([UVarInt.encode(lenPrefix), bytes])
+}

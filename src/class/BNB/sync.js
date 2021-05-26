@@ -36,7 +36,8 @@ export default class BinanceSync {
     }
     
     let res = await this.request.send(params, 'balance')
-    if (res && res.status === 'status') {
+    
+    if (res && res.status === 'success') {
       this.balance = +res.data?.balances[0]?.free || 0
       this.symbol = res.data?.balances[0]?.symbol || ''
       this.account_number = res.data?.account_number || 0

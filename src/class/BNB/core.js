@@ -7,10 +7,11 @@ export function getBnbCore (hdkey) {
   let item = {}
   item.node = derive(hdkey, bnb_path)
   item.privateKey = item.node._privateKey
-  item.privateKeyHex = '0x' + item.privateKey.toString('hex')
+  item.privateKeyHex = item.privateKey.toString('hex')
   item.publicKey = item.node._publicKey
+  item.publicKeyHex = item.node._publicKey.toString('hex')
   item.externalAddress = getAddressFromPublicKey(item.publicKey.toString('hex'))
   item.dp = bnb_path
-  
+
   return item
 }

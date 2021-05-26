@@ -33,3 +33,13 @@ export function encodeAddress (value, prefix = 'bnb', type = 'hex') {
   
   return bech32.encode(prefix, words)
 }
+
+/**
+ * Decodes an address in bech32 format.
+ * @category crypto
+ * @param {string} value the bech32 address to decode
+ */
+export const decodeAddress = (value) => {
+  const decodeAddress = bech32.decode(value)
+  return Buffer.from(bech32.fromWords(decodeAddress.words))
+}
