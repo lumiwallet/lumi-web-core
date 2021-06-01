@@ -9,6 +9,7 @@ import {
 } from '@/class/BNB/amino'
 
 const DEFAULT_CHAIN_ID = 'Binance-Chain-Tigris'
+const DEFAULT_SOURCE = 1
 
 export default class BinanceTx {
   constructor (data) {
@@ -17,7 +18,7 @@ export default class BinanceTx {
     this.address = data.address
     this.account_number = data.account_number || 0
     this.sequence = data.sequence
-    this.source = data.source || 0
+    this.source = Number.isInteger(data.source) || DEFAULT_SOURCE
     this.fee = data.fee || []
     this.balance = convertToJager(data.balance)
     this.privateKey = data.privateKey
