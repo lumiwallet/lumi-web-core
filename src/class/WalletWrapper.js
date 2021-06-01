@@ -245,7 +245,6 @@ export default class WalletWrapper {
   
   async SyncBNB () {
     const type = 'p2pkh'
-
     if (!this.sync.BNB) {
       this.sync.BNB = new BinanceSync(this.core.COINS.BNB[type].externalAddress, this.api, this.headers)
     }
@@ -255,7 +254,7 @@ export default class WalletWrapper {
       return this.sync.BNB.DATA
     }
     catch (e) {
-      console.log('SyncETH error', e)
+      console.log('SyncBNB error', e)
     }
   }
   
