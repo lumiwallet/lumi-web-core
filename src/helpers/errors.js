@@ -44,5 +44,7 @@ export default {
   err_tx_doge_fee: 'Invalid fee. Fee must be a Object with \`SAT\` parameter',
   err_tx_doge_balance: 'Insufficient balance',
   err_tx_doge_build: 'DOGE transaction failed. Check all parameters',
-  err_tx_doge_raw_tx: 'Problem getting raw transaction. Try to send again'
+  err_tx_doge_raw_tx: 'Problem getting raw transaction. Try to send again',
+  err_sync_coin: 'Coin is required',
+  err_sync_coin_not_supported: 'Selected coin is not supported for sync',
 }
