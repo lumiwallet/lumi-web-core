@@ -3,6 +3,7 @@ import {normalize, checkWords} from 'bip39-checker'
 import CustomError from '@/helpers/handleErrors'
 import * as core from '@/helpers/coreHelper'
 import {getBnbCore} from '@/class/BNB/core'
+import {getBnbAddressByPublicKey} from '@/class/BNB/address'
 
 /**
  * Class Wallet
@@ -108,7 +109,7 @@ export default class Core {
       if (!core.hasOwnProperty(coin)) {
         core[coin] = {}
       }
-      
+
       switch (coin) {
         case 'BTC':
           core[coin][type] = await this._generateBTCcore(type)
@@ -188,7 +189,7 @@ export default class Core {
       throw new CustomError('err_core_eth_account')
     }
 
-    const ethereum_path = `m/44'/60'/${type}'/0/0`
+    const ethereum_path = `m/44'/60'/${ type }'/0/0`
     let item = {}
 
     item.node = core.derive(this.hdkey, ethereum_path)
@@ -238,7 +239,7 @@ export default class Core {
    * derivation path and the first addresses of the external and internal cores
    * @private
    */
-  
+
   async _generateBTCVcore () {
     const type = 'p2wpkh'
     const network = 'btcv'
@@ -259,7 +260,7 @@ export default class Core {
     this.coins.BTCV[type] = item
     return item
   }
-  
+
   /**
    * Creating a core for Dogecoin.
    * At the output, we get a external and internal node,
@@ -285,11 +286,16 @@ export default class Core {
     this.coins.DOGE[type] = item
     return item
   }
-  
-  // todo
+
+  /**
+   * Creating a core for Binance Coin.
+   * At the output, we get a external and internal node,
+   * derivation path and the external address
+   * @private
+   */
   async _generateBNBcore () {
     const type = 'p2pkh'
-    
+
     if (!Object.prototype.hasOwnProperty.call(this.coins, 'BNB')) {
       this.coins.BNB = {}
     }
@@ -336,7 +342,7 @@ export default class Core {
       for (let i = from; i <= to; i++) {
         const child = {}
         const deriveChild = node.deriveChild(i)
-        child.path = `${path}/${i}`
+        child.path = `${ path }/${ i }`
         child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)
         child.publicKey = deriveChild.publicKey.toString('hex')
         for (let item of coins) {
@@ -345,7 +351,7 @@ export default class Core {
           switch (coin) {
             case 'BTC':
               if (!types.includes(type)) continue
-              child[`${type}Address`] = core.getBtcAddress(node, i, type, 'btc')
+              child[`${ type }Address`] = core.getBtcAddress(node, i, type, 'btc')
               break
             case 'BCH':
               child.bchAddress = core.getCashAddress(node, i)
@@ -359,13 +365,17 @@ export default class Core {
             case 'DOGE':
               child.dogeAddress = core.getDogeAddress(node, i)
               break
+            case 'BNB':
+              child.bnbAddress = getBnbAddressByPublicKey(node._publicKey.toString('hex'))
+              break
           }
         }
         info.list.push(child)
       }
 
       return info
-    } catch (e) {
+    }
+    catch (e) {
       throw new CustomError('err_core_derivation')
     }
   }

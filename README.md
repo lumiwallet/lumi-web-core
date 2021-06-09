@@ -67,7 +67,8 @@ const coins = [
     {coin: 'ETH', type: 0},
     {coin: 'BCH'},
     {coin: 'BTCV'},
-    {coin: 'DOGE'}
+    {coin: 'DOGE'},
+    {coin: 'BNB'}
 ]
 const CORES = await WALLET.createCoins(coins)
 => {
@@ -92,9 +93,9 @@ const CORES = await WALLET.createCoins(coins)
             dp: "m/44'/60'/0'/0/0",
             externalAddress: "0xcf06fa556d8ad...cc285e2b7bdf58c58",
             node: Object,
-            privateKey: Uint8Array(32),
+            privateKey: Buffer,
             privateKeyHex: "0xb1f8f5df78d5a00d...6b222e54ee8abbfe6af",
-            publicKey: Uint8Array(64),
+            publicKey: Buffer,
         }
     },
     BTCV: {
@@ -123,6 +124,17 @@ const CORES = await WALLET.createCoins(coins)
             internalAddress: "DKqyuCkSYJXt...PxnYcUxM'",
             internalNode: Object
         }
+    },
+    BNB: {
+      p2pkh: {
+        node: Object,
+        privateKey: Buffer,
+        privateKeyHex: '036852f55d1b759...2de02c72a47fea1c592',
+        publicKey: Buffer,
+        publicKeyHex: '03ec67b0636efb9e543e..4d7b458e52d9dd301da99',
+        externalAddress: 'bnb1kd4kt7x505l...9qlxp7x365ld8fkt',
+        dp: 'm/44\'/714\'/0\'/0/0'
+      }
     }
 ```
 For BTC and ETH coins, the type parameter is required.
@@ -142,7 +154,8 @@ const data = {
         {coin: 'ETH', type: 0},
         {coin: 'BCH'},
         {coin: 'BTCV'},
-        {coin: 'DOGE'}
+        {coin: 'DOGE'},
+        {coin: 'BNB'}
     ]
 }
 
@@ -162,7 +175,8 @@ const info = await WALLET.getChildNodes(data)
             ethAddress: "0xdd6f3cc0ed5f9...b09481090536e446ebd3",
             p2pkhAddress: "137sbugaaqw3H...LZzNX3nTk1LDgCYd",
             p2wpkhAddress: "bc1qzu70e44r...eet9xww5ltnnrm5mjxk",
-            dogeAddress: 'DS58JVRHdU...zuBNNVLFo4UaTn'
+            dogeAddress: 'DS58JVRHdU...zuBNNVLFo4UaTn',
+            bnbAddress: 'bnb1hvw4qlty...7xm9g3fdsrcqzzkh'
         },
         ...
     ]

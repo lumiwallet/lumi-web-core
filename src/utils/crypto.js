@@ -2,7 +2,6 @@ import hexEncoding from 'crypto-js/enc-hex'
 import RIPEMD160 from 'crypto-js/ripemd160'
 import SHA256 from 'crypto-js/sha256'
 import SHA3 from 'crypto-js/sha3'
-// import bech32 from 'bech32'
 import {UVarInt} from '@/utils/varint'
 
 /**
@@ -68,6 +67,6 @@ export const ab2hexstring = (arr) => {
  */
 export const encodeBinaryByteArray = (bytes) => {
   const lenPrefix = bytes.length
-  
+
   return Buffer.concat([UVarInt.encode(lenPrefix), bytes])
 }
