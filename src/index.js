@@ -8,6 +8,7 @@ import {
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
 } from '@/helpers/coreHelper'
+import BinanceTx from '@/class/BNB/transaction'
 
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
@@ -16,12 +17,16 @@ export {
   makeRawEthTx,
   makeRawBchTx,
   makeRawDogeTx,
+  BinanceTx,
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
 }
 
-// TODO
+/**
+ * Currencies that are supported in the wallet
+ */
 const AVAILABLE_COINS = ['BTC', 'ETH', 'BCH', 'BTCV', 'DOGE', 'BNB']
+
 /**
  * Class Wallet
  * @class
@@ -184,7 +189,7 @@ export default class Wallet {
 
     return await this.wrapper.method('getNodes', data)
   }
-  
+
   /**
    * The method starts synchronization of selected coin wallet
    * @param {string} coin - Coin ticker (required)
@@ -199,16 +204,16 @@ export default class Wallet {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
-    
+
     if (!coin || typeof coin !== 'string') {
       throw new CustomError('err_sync_coin')
     }
     coin = coin.toUpperCase()
-    
+
     if (!AVAILABLE_COINS.includes(coin)) {
       throw new CustomError('err_sync_coin_not_supported')
     }
-    
+
     let sync = {}
 
     if (typeof type === 'number' || typeof type === 'string') {
@@ -216,16 +221,16 @@ export default class Wallet {
       if (!this.sync[coin]) {
         this.sync[coin] = {}
       }
-      
+
       this.sync[coin][type] = sync
     } else {
       sync = await this.wrapper.method('sync', {coin})
       this.sync[coin] = sync
     }
-    
+
     return sync
   }
-  
+
   /**
    * The method returns a raw BTC transaction
    *

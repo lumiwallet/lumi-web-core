@@ -10,7 +10,7 @@ describe('Core class', () => {
     expect(core_exemplar).toHaveProperty('xprv', test_core.xprv)
   })
 
-  test.only('it should create a Core class by mnemonic with coins cores', async () => {
+  test('it should create a Core class by mnemonic with coins cores', async () => {
     const core_exemplar = new Core(test_data)
     core_exemplar.generateWallet()
 

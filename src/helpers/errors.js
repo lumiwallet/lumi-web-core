@@ -30,6 +30,7 @@ export default {
   err_tx_eth_balance: 'Insufficient balance',
   err_tx_eth_address: 'Invalid ethereum address',
   err_tx_eth_build: 'ETH transaction failed. Check all parameters',
+  err_tx_bnb_build: 'BNB transaction failed. Check all parameters',
   err_tx_eth_invalid_params: 'Invalid params. Nonce, value, gas price and gas limit have to be a number',
   err_tx_eth_invalid_params_string: 'Invalid params. Parameters "to" must be string based',
   err_tx_btcv_balance: 'Insufficient balance',
