@@ -1,5 +1,17 @@
 window.esdocSearchIndex = [
   [
+    "lumi-web-core/src/class/bnb/amino.js~aminoprefix",
+    "variable/index.html#static-variable-AminoPrefix",
+    "<span>AminoPrefix</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "variable"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/transaction.js~binancetx",
+    "class/src/class/BNB/transaction.js~BinanceTx.html",
+    "<span>BinanceTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/transaction.js</span>",
+    "class"
+  ],
+  [
     "lumi-web-core/src/class/bch/bitcoincashsync.js~bitcoincashsync",
     "class/src/class/BCH/BitcoinCashSync.js~BitcoinCashSync.html",
     "<span>BitcoinCashSync</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BCH/BitcoinCashSync.js</span>",
@@ -78,6 +90,18 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "lumi-web-core/src/utils/varint.js~uvarint",
+    "variable/index.html#static-variable-UVarInt",
+    "<span>UVarInt</span> <span class=\"search-result-import-path\">lumi-web-core/src/utils/varint.js</span>",
+    "variable"
+  ],
+  [
+    "lumi-web-core/src/utils/varint.js~varint",
+    "variable/index.html#static-variable-VarInt",
+    "<span>VarInt</span> <span class=\"search-result-import-path\">lumi-web-core/src/utils/varint.js</span>",
+    "variable"
+  ],
+  [
     "lumi-web-core/src/index.js~wallet",
     "class/src/index.js~Wallet.html",
     "<span>Wallet</span> <span class=\"search-result-import-path\">lumi-web-core/src/index.js</span>",
@@ -96,9 +120,27 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "lumi-web-core/src/utils/crypto.js~ab2hexstring",
+    "function/index.html#static-function-ab2hexstring",
+    "<span>ab2hexstring</span> <span class=\"search-result-import-path\">lumi-web-core/src/utils/crypto.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~calcbtctxsize",
     "function/index.html#static-function-calcBtcTxSize",
     "<span>calcBtcTxSize</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/amino.js~convertobjecttosignbytes",
+    "function/index.html#static-function-convertObjectToSignBytes",
+    "<span>convertObjectToSignBytes</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/utils.js~converttobinance",
+    "function/index.html#static-function-convertToBinance",
+    "<span>convertToBinance</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/utils.js</span>",
     "function"
   ],
   [
@@ -108,15 +150,99 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "lumi-web-core/src/class/bnb/utils.js~converttojager",
+    "function/index.html#static-function-convertToJager",
+    "<span>convertToJager</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/utils.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/address.js~decodeaddress",
+    "function/index.html#static-function-decodeAddress",
+    "<span>decodeAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/address.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~derive",
     "function/index.html#static-function-derive",
     "<span>derive</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
   ],
   [
+    "lumi-web-core/src/class/bnb/address.js~encodeaddress",
+    "function/index.html#static-function-encodeAddress",
+    "<span>encodeAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/address.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/amino.js~encodearraybinary",
+    "function/index.html#static-function-encodeArrayBinary",
+    "<span>encodeArrayBinary</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/amino.js~encodebinary",
+    "function/index.html#static-function-encodeBinary",
+    "<span>encodeBinary</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/amino.js~encodebinarybytearray",
+    "function/index.html#static-function-encodeBinaryByteArray",
+    "<span>encodeBinaryByteArray</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/utils/crypto.js~encodebinarybytearray",
+    "function/index.html#static-function-encodeBinaryByteArray",
+    "<span>encodeBinaryByteArray</span> <span class=\"search-result-import-path\">lumi-web-core/src/utils/crypto.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/amino.js~encodebool",
+    "function/index.html#static-function-encodeBool",
+    "<span>encodeBool</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/amino.js~encodenumber",
+    "function/index.html#static-function-encodeNumber",
+    "<span>encodeNumber</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/amino.js~encodeobjectbinary",
+    "function/index.html#static-function-encodeObjectBinary",
+    "<span>encodeObjectBinary</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/amino.js~encodestring",
+    "function/index.html#static-function-encodeString",
+    "<span>encodeString</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~generatemnemonic",
     "function/index.html#static-function-generateMnemonic",
     "<span>generateMnemonic</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/utils.js~generatesignature",
+    "function/index.html#static-function-generateSignature",
+    "<span>generateSignature</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/utils.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/address.js~getbnbaddressbypublickey",
+    "function/index.html#static-function-getBnbAddressByPublicKey",
+    "<span>getBnbAddressByPublicKey</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/address.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/class/bnb/core.js~getbnbcore",
+    "function/index.html#static-function-getBnbCore",
+    "<span>getBnbCore</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/core.js</span>",
     "function"
   ],
   [
@@ -222,6 +348,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "lumi-web-core/src/class/bnb/amino.js~marshalbinary",
+    "function/index.html#static-function-marshalBinary",
+    "<span>marshalBinary</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~mnemonictoentropy",
     "function/index.html#static-function-mnemonicToEntropy",
     "<span>mnemonicToEntropy</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
@@ -249,6 +381,24 @@ window.esdocSearchIndex = [
     "lumi-web-core/src/helpers/requesthandleerrors.js~requesthandleerrors",
     "function/index.html#static-function-requestHandleErrors",
     "<span>requestHandleErrors</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/requestHandleErrors.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/utils/crypto.js~sha256",
+    "function/index.html#static-function-sha256",
+    "<span>sha256</span> <span class=\"search-result-import-path\">lumi-web-core/src/utils/crypto.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/utils/crypto.js~sha256ripemd160",
+    "function/index.html#static-function-sha256ripemd160",
+    "<span>sha256ripemd160</span> <span class=\"search-result-import-path\">lumi-web-core/src/utils/crypto.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/utils/crypto.js~sha3",
+    "function/index.html#static-function-sha3",
+    "<span>sha3</span> <span class=\"search-result-import-path\">lumi-web-core/src/utils/crypto.js</span>",
     "function"
   ],
   [
@@ -792,6 +942,180 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/class/bnb/address.js",
+    "file/src/class/BNB/address.js.html",
+    "src/class/BNB/address.js",
+    "file"
+  ],
+  [
+    "src/class/bnb/amino.js",
+    "file/src/class/BNB/amino.js.html",
+    "src/class/BNB/amino.js",
+    "file"
+  ],
+  [
+    "src/class/bnb/core.js",
+    "file/src/class/BNB/core.js.html",
+    "src/class/BNB/core.js",
+    "file"
+  ],
+  [
+    "src/class/bnb/transaction.js",
+    "file/src/class/BNB/transaction.js.html",
+    "src/class/BNB/transaction.js",
+    "file"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#_serializepubkey",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-_serializePubKey",
+    "src/class/BNB/transaction.js~BinanceTx#_serializePubKey",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#account_number",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-account_number",
+    "src/class/BNB/transaction.js~BinanceTx#account_number",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#addsignature",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-addSignature",
+    "src/class/BNB/transaction.js~BinanceTx#addSignature",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#address",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-address",
+    "src/class/BNB/transaction.js~BinanceTx#address",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#balance",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-balance",
+    "src/class/BNB/transaction.js~BinanceTx#balance",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#calcfee",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-calcFee",
+    "src/class/BNB/transaction.js~BinanceTx#calcFee",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#chain_id",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-chain_id",
+    "src/class/BNB/transaction.js~BinanceTx#chain_id",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#constructor",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-constructor-constructor",
+    "src/class/BNB/transaction.js~BinanceTx#constructor",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#fee",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-fee",
+    "src/class/BNB/transaction.js~BinanceTx#fee",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#feelist",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-feeList",
+    "src/class/BNB/transaction.js~BinanceTx#feeList",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#gethash",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-getHash",
+    "src/class/BNB/transaction.js~BinanceTx#getHash",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#getmsg",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-getMsg",
+    "src/class/BNB/transaction.js~BinanceTx#getMsg",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#getsignbytes",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-getSignBytes",
+    "src/class/BNB/transaction.js~BinanceTx#getSignBytes",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#getsignmsg",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-getSignMsg",
+    "src/class/BNB/transaction.js~BinanceTx#getSignMsg",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#make",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-make",
+    "src/class/BNB/transaction.js~BinanceTx#make",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#memo",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-memo",
+    "src/class/BNB/transaction.js~BinanceTx#memo",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#msg",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-msg",
+    "src/class/BNB/transaction.js~BinanceTx#msg",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#privatekey",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-privateKey",
+    "src/class/BNB/transaction.js~BinanceTx#privateKey",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#publickey",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-publicKey",
+    "src/class/BNB/transaction.js~BinanceTx#publicKey",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#rawtx",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-rawTx",
+    "src/class/BNB/transaction.js~BinanceTx#rawTx",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#sequence",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-sequence",
+    "src/class/BNB/transaction.js~BinanceTx#sequence",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#serialize",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-method-serialize",
+    "src/class/BNB/transaction.js~BinanceTx#serialize",
+    "method"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#signatures",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-signatures",
+    "src/class/BNB/transaction.js~BinanceTx#signatures",
+    "member"
+  ],
+  [
+    "src/class/bnb/transaction.js~binancetx#source",
+    "class/src/class/BNB/transaction.js~BinanceTx.html#instance-member-source",
+    "src/class/BNB/transaction.js~BinanceTx#source",
+    "member"
+  ],
+  [
+    "src/class/bnb/utils.js",
+    "file/src/class/BNB/utils.js.html",
+    "src/class/BNB/utils.js",
+    "file"
+  ],
+  [
     "src/class/btc/bitcoinsync.js",
     "file/src/class/BTC/BitcoinSync.js.html",
     "src/class/BTC/BitcoinSync.js",
@@ -1317,6 +1641,12 @@ window.esdocSearchIndex = [
     "src/class/core.js~core#_generatebchcore",
     "class/src/class/Core.js~Core.html#instance-method-_generateBCHcore",
     "src/class/Core.js~Core#_generateBCHcore",
+    "method"
+  ],
+  [
+    "src/class/core.js~core#_generatebnbcore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateBNBcore",
+    "src/class/Core.js~Core#_generateBNBcore",
     "method"
   ],
   [
@@ -1866,6 +2196,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#syncbnb",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncBNB",
+    "src/class/WalletWrapper.js~WalletWrapper#SyncBNB",
+    "method"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#syncbtc",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncBTC",
     "src/class/WalletWrapper.js~WalletWrapper#SyncBTC",
@@ -1917,6 +2253,12 @@ window.esdocSearchIndex = [
     "src/class/walletwrapper.js~walletwrapper#createbchtx",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createBCHTx",
     "src/class/WalletWrapper.js~WalletWrapper#createBCHTx",
+    "method"
+  ],
+  [
+    "src/class/walletwrapper.js~walletwrapper#createbnbtx",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createBNBTx",
+    "src/class/WalletWrapper.js~WalletWrapper#createBNBTx",
     "method"
   ],
   [
@@ -2190,46 +2532,34 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/index.js~wallet#startsync",
+    "class/src/index.js~Wallet.html#instance-method-startSync",
+    "src/index.js~Wallet#startSync",
+    "method"
+  ],
+  [
     "src/index.js~wallet#sync",
     "class/src/index.js~Wallet.html#instance-member-sync",
     "src/index.js~Wallet#sync",
     "member"
   ],
   [
-    "src/index.js~wallet#syncbch",
-    "class/src/index.js~Wallet.html#instance-method-syncBCH",
-    "src/index.js~Wallet#syncBCH",
-    "method"
-  ],
-  [
-    "src/index.js~wallet#syncbtc",
-    "class/src/index.js~Wallet.html#instance-method-syncBTC",
-    "src/index.js~Wallet#syncBTC",
-    "method"
-  ],
-  [
-    "src/index.js~wallet#syncbtcv",
-    "class/src/index.js~Wallet.html#instance-method-syncBTCV",
-    "src/index.js~Wallet#syncBTCV",
-    "method"
-  ],
-  [
-    "src/index.js~wallet#syncdoge",
-    "class/src/index.js~Wallet.html#instance-method-syncDOGE",
-    "src/index.js~Wallet#syncDOGE",
-    "method"
-  ],
-  [
-    "src/index.js~wallet#synceth",
-    "class/src/index.js~Wallet.html#instance-method-syncETH",
-    "src/index.js~Wallet#syncETH",
-    "method"
-  ],
-  [
     "src/index.js~wallet#wrapper",
     "class/src/index.js~Wallet.html#instance-member-wrapper",
     "src/index.js~Wallet#wrapper",
     "member"
+  ],
+  [
+    "src/utils/crypto.js",
+    "file/src/utils/crypto.js.html",
+    "src/utils/crypto.js",
+    "file"
+  ],
+  [
+    "src/utils/varint.js",
+    "file/src/utils/varint.js.html",
+    "src/utils/varint.js",
+    "file"
   ],
   [
     "src/workers/wallet.worker.js",

@@ -360,8 +360,7 @@ When the transaction is created successfully, an object with the transaction has
 ``` js
 doge_tx => {
     hash: ' 0e2578db7490a13855696...e3b2e689b89c63a55634b1a58',
-    tx: '0100000002213ac9c3b059e3d863...88c983930f02d9f636f5e354088ac00000000
-'
+    tx: '0100000002213ac9c3b059e3d863...88c983930f02d9f636f5e354088ac00000000'
 }
 ```
 
