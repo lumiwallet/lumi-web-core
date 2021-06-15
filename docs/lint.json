@@ -1,62 +1,208 @@
 [
   {
+    "name": "encodeBinary",
+    "filePath": "src/class/BNB/amino.js",
+    "lines": [
+      {
+        "lineNumber": 81,
+        "line": "/**"
+      },
+      {
+        "lineNumber": 82,
+        "line": " * This is the main entrypoint for encoding all types in binary form."
+      },
+      {
+        "lineNumber": 83,
+        "line": " * @category amino"
+      },
+      {
+        "lineNumber": 84,
+        "line": " * @param {*} js data type (not null, not undefined)"
+      },
+      {
+        "lineNumber": 85,
+        "line": " * @param {Number} field index of object"
+      },
+      {
+        "lineNumber": 86,
+        "line": " * @param {Boolean} isByteLenPrefix"
+      },
+      {
+        "lineNumber": 87,
+        "line": " * @return {Buffer} binary of object."
+      },
+      {
+        "lineNumber": 88,
+        "line": " */"
+      },
+      {
+        "lineNumber": 89,
+        "line": "export const encodeBinary = ("
+      }
+    ],
+    "codeParams": [
+      "val",
+      "fieldNum",
+      "isByteLenPrefix"
+    ],
+    "docParams": [
+      "js",
+      "field",
+      "isByteLenPrefix"
+    ]
+  },
+  {
+    "name": "encodeObjectBinary",
+    "filePath": "src/class/BNB/amino.js",
+    "lines": [
+      {
+        "lineNumber": 138,
+        "line": "/**"
+      },
+      {
+        "lineNumber": 139,
+        "line": " * @category amino"
+      },
+      {
+        "lineNumber": 140,
+        "line": " * @param {Object} obj"
+      },
+      {
+        "lineNumber": 141,
+        "line": " * @return {Buffer} with bytes length prefixed"
+      },
+      {
+        "lineNumber": 142,
+        "line": " */"
+      },
+      {
+        "lineNumber": 143,
+        "line": "export const encodeObjectBinary = (obj, isByteLenPrefix) => {"
+      }
+    ],
+    "codeParams": [
+      "obj",
+      "isByteLenPrefix"
+    ],
+    "docParams": [
+      "obj"
+    ]
+  },
+  {
+    "name": "Wallet#startSync",
+    "filePath": "src/index.js",
+    "lines": [
+      {
+        "lineNumber": 192,
+        "line": "  /**"
+      },
+      {
+        "lineNumber": 193,
+        "line": "   * The method starts synchronization of selected coin wallet"
+      },
+      {
+        "lineNumber": 194,
+        "line": "   * @param {string} coin - Coin ticker (required)"
+      },
+      {
+        "lineNumber": 195,
+        "line": "   * @param {number, string} type - Type of coin (optional)"
+      },
+      {
+        "lineNumber": 196,
+        "line": "   * @returns {Promise<Object>} Returns object with synchronization information"
+      },
+      {
+        "lineNumber": 197,
+        "line": "   * @returns {Object} sync"
+      },
+      {
+        "lineNumber": 198,
+        "line": "   * @returns {string} sync.address - Ethereum wallet address"
+      },
+      {
+        "lineNumber": 199,
+        "line": "   * @returns {number} sync.balance - Ethereum balance in wei"
+      },
+      {
+        "lineNumber": 200,
+        "line": "   * @returns {Array} sync.transactions - The list of Ethereum transactions"
+      },
+      {
+        "lineNumber": 201,
+        "line": "   */"
+      },
+      {
+        "lineNumber": 202,
+        "line": "  async startSync ({coin, type}) {"
+      }
+    ],
+    "codeParams": [
+      "*"
+    ],
+    "docParams": [
+      "coin",
+      "type"
+    ]
+  },
+  {
     "name": "Wallet#setApiEndpoint",
     "filePath": "src/index.js",
     "lines": [
       {
-        "lineNumber": 428,
+        "lineNumber": 361,
         "line": "  /**"
       },
       {
-        "lineNumber": 429,
+        "lineNumber": 362,
         "line": "   * Sets the API Endpoint"
       },
       {
-        "lineNumber": 430,
+        "lineNumber": 363,
         "line": "   *"
       },
       {
-        "lineNumber": 431,
+        "lineNumber": 364,
         "line": "   * @type {Object} api"
       },
       {
-        "lineNumber": 432,
+        "lineNumber": 365,
         "line": "   * @param {string} api.btc - Url address of bitcoin endpoint"
       },
       {
-        "lineNumber": 433,
+        "lineNumber": 366,
         "line": "   * @param {string} api.btcFee - Url address of bitcoin fee endpoint"
       },
       {
-        "lineNumber": 434,
+        "lineNumber": 367,
         "line": "   * @param {string} api.eth - Url address of ethereum endpoint"
       },
       {
-        "lineNumber": 435,
+        "lineNumber": 368,
         "line": "   * @param {string} api.bch - Url address of bitcoin cash endpoint"
       },
       {
-        "lineNumber": 436,
+        "lineNumber": 369,
         "line": "   * @param {string} api.btcv - Url address of bitcoin vault endpoint"
       },
       {
-        "lineNumber": 437,
+        "lineNumber": 370,
         "line": "   * @param {string} api.doge - Url address of dogecoin endpoint"
       },
       {
-        "lineNumber": 438,
+        "lineNumber": 371,
         "line": "   * @param {string} api.dogeFee - Url address of dogecoin endpoint"
       },
       {
-        "lineNumber": 439,
+        "lineNumber": 372,
         "line": "   */"
       },
       {
-        "lineNumber": 440,
+        "lineNumber": 373,
         "line": ""
       },
       {
-        "lineNumber": 441,
+        "lineNumber": 374,
         "line": "  setApiEndpoint (api) {"
       }
     ],

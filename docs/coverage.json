@@ -1,7 +1,7 @@
 {
-  "coverage": "55.37%",
-  "expectCount": 316,
-  "actualCount": 175,
+  "coverage": "53.86%",
+  "expectCount": 375,
+  "actualCount": 202,
   "files": {
     "src/Wrapper.js": {
       "expectCount": 9,
@@ -45,6 +45,64 @@
         38,
         39,
         40
+      ]
+    },
+    "src/class/BNB/address.js": {
+      "expectCount": 5,
+      "actualCount": 3,
+      "undocumentLines": [
+        5,
+        6
+      ]
+    },
+    "src/class/BNB/amino.js": {
+      "expectCount": 14,
+      "actualCount": 9,
+      "undocumentLines": [
+        9,
+        15,
+        212,
+        218,
+        229
+      ]
+    },
+    "src/class/BNB/core.js": {
+      "expectCount": 2,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6
+      ]
+    },
+    "src/class/BNB/transaction.js": {
+      "expectCount": 27,
+      "actualCount": 11,
+      "undocumentLines": [
+        11,
+        12,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        224
+      ]
+    },
+    "src/class/BNB/utils.js": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        11,
+        17
       ]
     },
     "src/class/BTC/BitcoinSync.js": {
@@ -118,18 +176,18 @@
       ]
     },
     "src/class/Core.js": {
-      "expectCount": 24,
-      "actualCount": 15,
+      "expectCount": 25,
+      "actualCount": 16,
       "undocumentLines": [
-        22,
-        23,
         24,
         25,
         26,
         27,
         28,
-        404,
-        415
+        29,
+        30,
+        429,
+        440
       ]
     },
     "src/class/DOGE/DogecoinSync.js": {
@@ -193,17 +251,18 @@
       ]
     },
     "src/class/WalletWrapper.js": {
-      "expectCount": 21,
-      "actualCount": 13,
+      "expectCount": 23,
+      "actualCount": 14,
       "undocumentLines": [
-        27,
-        28,
         29,
         30,
         31,
-        338,
-        369,
-        402
+        32,
+        33,
+        367,
+        399,
+        433,
+        464
       ]
     },
     "src/helpers/Request.js": {
@@ -248,16 +307,30 @@
       "undocumentLines": []
     },
     "src/index.js": {
-      "expectCount": 27,
-      "actualCount": 20,
+      "expectCount": 24,
+      "actualCount": 17,
       "undocumentLines": [
-        32,
-        33,
-        34,
-        35,
+        41,
+        42,
+        43,
         44,
-        467,
-        471
+        54,
+        400,
+        404
+      ]
+    },
+    "src/utils/crypto.js": {
+      "expectCount": 5,
+      "actualCount": 5,
+      "undocumentLines": []
+    },
+    "src/utils/varint.js": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        69,
+        70
       ]
     },
     "src/workers/wallet.worker.js": {

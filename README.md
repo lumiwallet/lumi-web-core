@@ -4,7 +4,7 @@
 ![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)
 
 # LumiCore
-The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault and Dogecoin. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
+The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault, Dogecoin and Binance. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
 
 > Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).
 
@@ -67,7 +67,8 @@ const coins = [
     {coin: 'ETH', type: 0},
     {coin: 'BCH'},
     {coin: 'BTCV'},
-    {coin: 'DOGE'}
+    {coin: 'DOGE'},
+    {coin: 'BNB'}
 ]
 const CORES = await WALLET.createCoins(coins)
 => {
@@ -92,9 +93,9 @@ const CORES = await WALLET.createCoins(coins)
             dp: "m/44'/60'/0'/0/0",
             externalAddress: "0xcf06fa556d8ad...cc285e2b7bdf58c58",
             node: Object,
-            privateKey: Uint8Array(32),
+            privateKey: Buffer,
             privateKeyHex: "0xb1f8f5df78d5a00d...6b222e54ee8abbfe6af",
-            publicKey: Uint8Array(64),
+            publicKey: Buffer,
         }
     },
     BTCV: {
@@ -123,6 +124,17 @@ const CORES = await WALLET.createCoins(coins)
             internalAddress: "DKqyuCkSYJXt...PxnYcUxM'",
             internalNode: Object
         }
+    },
+    BNB: {
+      p2pkh: {
+        node: Object,
+        privateKey: Buffer,
+        privateKeyHex: '036852f55d1b759...2de02c72a47fea1c592',
+        publicKey: Buffer,
+        publicKeyHex: '03ec67b0636efb9e543e..4d7b458e52d9dd301da99',
+        externalAddress: 'bnb1kd4kt7x505l...9qlxp7x365ld8fkt',
+        dp: 'm/44\'/714\'/0\'/0/0'
+      }
     }
 ```
 For BTC and ETH coins, the type parameter is required.
@@ -142,7 +154,8 @@ const data = {
         {coin: 'ETH', type: 0},
         {coin: 'BCH'},
         {coin: 'BTCV'},
-        {coin: 'DOGE'}
+        {coin: 'DOGE'},
+        {coin: 'BNB'}
     ]
 }
 
@@ -162,7 +175,8 @@ const info = await WALLET.getChildNodes(data)
             ethAddress: "0xdd6f3cc0ed5f9...b09481090536e446ebd3",
             p2pkhAddress: "137sbugaaqw3H...LZzNX3nTk1LDgCYd",
             p2wpkhAddress: "bc1qzu70e44r...eet9xww5ltnnrm5mjxk",
-            dogeAddress: 'DS58JVRHdU...zuBNNVLFo4UaTn'
+            dogeAddress: 'DS58JVRHdU...zuBNNVLFo4UaTn',
+            bnbAddress: 'bnb1hvw4qlty...7xm9g3fdsrcqzzkh'
         },
         ...
     ]
@@ -345,10 +359,35 @@ const doge_tx = await WALLET.makeRawDogeTx(data)
 When the transaction is created successfully, an object with the transaction hash and raw tx data is returned
 ``` js
 doge_tx => {
-    hash: ' 0e2578db7490a13855696...e3b2e689b89c63a55634b1a58',
-    tx: '0100000002213ac9c3b059e3d863...88c983930f02d9f636f5e354088ac00000000
-'
+    hash: '0e2578db7490a13855696...e3b2e689b89c63a55634b1a58',
+    tx: '0100000002213ac9c3b059e3d863...88c983930f02d9f636f5e354088ac00000000'
 }
+```
+
+### Creating a BNB transaction
+To create a Binance transaction you need to create a new class `BinanceTx` and call method `make`:
+``` js
+import BinanceTx from 'lumi-web-core'
+
+const params = {
+  account_number: 4065011,
+  address: 'bnb18lv5tn4q...8x6cxanehc0q',
+  balance: 0.0013,
+  privateKey: '0b7a981a9e78be5fe1d...df0c86bbc16808a7a3c',
+  publicKey: '032ccc39e75eb254e393fd5...a63ce29ca5c0a5c6193029e2241a',
+  sequence: 0
+}
+
+let tx = new BinanceTx(params)
+    
+let tx_params = {
+  addressTo: 'bnb18mtwnkyd9...vspmp2f2ak',
+  amount: 0.001225,
+  fee: 0.000075,
+  memo: 'hello'
+}
+const raw_tx = tx.make(tx_params).serialize() // rawTx => 'd201f0625dee0a4a2a2c87fa0a...0d73656e6420616c6c20746573742001'
+const hash = tx.getHash() // hash =>  '245CBADAE28CD4B9F401B4...277A3098395AD0319C0'
 ```
 
 ## Nist testing

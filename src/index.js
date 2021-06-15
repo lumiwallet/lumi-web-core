@@ -4,9 +4,11 @@ import {
   makeRawBtcTx,
   makeRawEthTx,
   makeRawBchTx,
+  makeRawDogeTx,
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
 } from '@/helpers/coreHelper'
+import BinanceTx from '@/class/BNB/transaction'
 
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
@@ -14,9 +16,16 @@ export {
   makeRawBtcTx,
   makeRawEthTx,
   makeRawBchTx,
+  makeRawDogeTx,
+  BinanceTx,
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
 }
+
+/**
+ * Currencies that are supported in the wallet
+ */
+const AVAILABLE_COINS = ['BTC', 'ETH', 'BCH', 'BTCV', 'DOGE', 'BNB']
 
 /**
  * Class Wallet
@@ -39,7 +48,8 @@ export default class Wallet {
       bch: '',
       btcv: '',
       doge: '',
-      dogeFee: ''
+      dogeFee: '',
+      bnb: ''
     }
     this._apiReady = false
 
@@ -181,121 +191,44 @@ export default class Wallet {
   }
 
   /**
-   * The method starts synchronization of Bitcoin wallet
-   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
-   * @returns {Promise<Object>} Returns object with Bitcoin synchronization information
-   * @returns {Object} sync
-   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin address
-   * @returns {Array} sync.transactions - The list of Bitcoin transactions
-   * @returns {Array} sync.unspent - The list of unspents addresses
-   * @returns {number} sync.balance - Bitcoin balance in Satoshi
-   * @returns {number} sync.latestBlock - The last block of the Bitcoin blockchain
-   * @returns {Array} sync.fee - The list of fee per byte
-   */
-
-  async syncBTC (type = 'p2pkh') {
-    if (!this._apiReady) {
-      throw new CustomError('err_wallet_api')
-    }
-
-    if (!this.sync.BTC) {
-      this.sync.BTC = {}
-    }
-
-    this.sync.BTC[type] = await this.wrapper.method('sync', {coin: 'BTC', type})
-
-    return this.sync.BTC[type]
-  }
-
-  /**
-   * The method starts synchronization of Ethereum wallet
-   * @param {number} type - Ethereum account number. By default 0
-   * @returns {Promise<Object>} Returns object with Ethereum synchronization information
+   * The method starts synchronization of selected coin wallet
+   * @param {string} coin - Coin ticker (required)
+   * @param {number, string} type - Type of coin (optional)
+   * @returns {Promise<Object>} Returns object with synchronization information
    * @returns {Object} sync
    * @returns {string} sync.address - Ethereum wallet address
    * @returns {number} sync.balance - Ethereum balance in wei
    * @returns {Array} sync.transactions - The list of Ethereum transactions
-   * @returns {number} sync.gasPrice - Gas price
    */
-
-  async syncETH (type = 0) {
+  async startSync ({coin, type}) {
     if (!this._apiReady) {
       throw new CustomError('err_wallet_api')
     }
 
-    if (!this.sync.ETH) {
-      this.sync.ETH = {}
+    if (!coin || typeof coin !== 'string') {
+      throw new CustomError('err_sync_coin')
+    }
+    coin = coin.toUpperCase()
+
+    if (!AVAILABLE_COINS.includes(coin)) {
+      throw new CustomError('err_sync_coin_not_supported')
     }
 
-    this.sync.ETH[type] = await this.wrapper.method('sync', {coin: 'ETH', type})
+    let sync = {}
 
-    return this.sync.ETH[type]
-  }
+    if (typeof type === 'number' || typeof type === 'string') {
+      sync = await this.wrapper.method('sync', {coin, type})
+      if (!this.sync[coin]) {
+        this.sync[coin] = {}
+      }
 
-  /**
-   * The method starts synchronization of Bitcoin Cash wallet
-   * @returns {Promise<Object>} Returns object with Bitcoin Cash synchronization information
-   * @returns {Object} sync
-   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Cash address
-   * @returns {Array} sync.transactions - The list of Bitcoin Cash transactions
-   * @returns {Array} sync.unspent - The list of unspents addresses
-   * @returns {number} sync.balance - Bitcoin Cash balance in Satoshi
-   * @returns {number} sync.latestBlock - The last block of the Bitcoin Cash blockchain
-   * @returns {Array} sync.fee - The list of fee per byte
-   */
-
-  async syncBCH () {
-    if (!this._apiReady) {
-      throw new CustomError('err_wallet_api')
+      this.sync[coin][type] = sync
+    } else {
+      sync = await this.wrapper.method('sync', {coin})
+      this.sync[coin] = sync
     }
 
-    this.sync.BCH = await this.wrapper.method('sync', {coin: 'BCH'})
-
-    return this.sync.BCH
-  }
-
-  /**
-   * The method starts synchronization of Bitcoin Cash wallet
-   * @returns {Promise<Object>} Returns object with Bitcoin Cash synchronization information
-   * @returns {Object} sync
-   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Cash address
-   * @returns {Array} sync.transactions - The list of Bitcoin Cash transactions
-   * @returns {Array} sync.unspent - The list of unspents addresses
-   * @returns {number} sync.balance - Bitcoin Cash balance in Satoshi
-   * @returns {number} sync.latestBlock - The last block of the Bitcoin Cash blockchain
-   * @returns {Array} sync.fee - The list of fee per byte
-   */
-
-  async syncDOGE () {
-    if (!this._apiReady) {
-      throw new CustomError('err_wallet_api')
-    }
-
-    this.sync.DOGE = await this.wrapper.method('sync', {coin: 'DOGE'})
-
-    return this.sync.DOGE
-  }
-
-  /**
-   * The method starts synchronization of Bitcoin Vault wallet
-   * @returns {Promise<Object>} Returns object with Bitcoin Vault synchronization information
-   * @returns {Object} sync
-   * @returns {Object} sync.addresses - Lists of internal, external and empty Bitcoin Vault address
-   * @returns {Array} sync.transactions - The list of Bitcoin Vault transactions
-   * @returns {Array} sync.unspent - The list of unspents addresses
-   * @returns {number} sync.balance - Bitcoin Vault balance in Satoshi
-   * @returns {number} sync.latestBlock - The last block of the Bitcoin Vault blockchain
-   * @returns {Array} sync.fee - The list of fee per byte
-   */
-
-  async syncBTCV () {
-    if (!this._apiReady) {
-      throw new CustomError('err_wallet_api')
-    }
-
-    this.sync.BTCV = await this.wrapper.method('sync', {coin: 'BTCV'})
-
-    return this.sync.BTCV
+    return sync
   }
 
   /**
@@ -330,7 +263,7 @@ export default class Wallet {
     return await makeRawBchTx(data)
   }
 
-    /**
+  /**
    * The method returns a raw BCH transaction
    *
    * @param {Object} data

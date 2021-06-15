@@ -4,11 +4,13 @@ import EthereumSync from '@/class/ETH/EthereumSync'
 import BitcoinCashSync from '@/class/BCH/BitcoinCashSync'
 import BitcoinVaultSync from '@/class/BTCV/BitcoinVaultSync'
 import DogecoinSync from '@/class/DOGE/DogecoinSync'
+import BinanceSync from '@/class/BNB/sync'
 import BitcoinTx from '@/class/BTC/BitcoinTx'
 import EthereumTx from '@/class/ETH/EthereumTx'
 import BitcoinCashTx from '@/class/BCH/BitcoinCashTx'
 import BitcoinVaultTx from '@/class/BTCV/BitcoinVaultTx'
 import DogecoinTx from '@/class/DOGE/DogecoinTx'
+import BinanceTx from '@/class/BNB/transaction'
 /**
  * Class WalletWrapper
  * @class
@@ -33,7 +35,8 @@ export default class WalletWrapper {
       ETH: {},
       BCH: null,
       BTCV: null,
-      DOGE: null
+      DOGE: null,
+      BNB: null
     }
   }
 
@@ -94,6 +97,8 @@ export default class WalletWrapper {
           return await this.SyncBTCV()
         case 'DOGE':
           return await this.SyncDOGE()
+        case 'BNB':
+          return await this.SyncBNB()
       }
     }
     catch (e) {
@@ -214,7 +219,7 @@ export default class WalletWrapper {
 
     if (!this.sync.BTCV) {
       let addresses = {
-        external:  this.core.COINS.BTCV[type].externalAddress,
+        external: this.core.COINS.BTCV[type].externalAddress,
         internal: this.core.COINS.BTCV[type].internalAddress
       }
 
@@ -233,6 +238,27 @@ export default class WalletWrapper {
     }
     catch (e) {
       console.log('SyncBTCV error', e)
+    }
+  }
+
+  /**
+   * Getting information about Binance wallet from blockchain
+   * @returns {Promise<Object>}
+   * @constructor
+   */
+
+  async SyncBNB () {
+    const type = 'p2pkh'
+    if (!this.sync.BNB) {
+      this.sync.BNB = new BinanceSync(this.core.COINS.BNB[type].externalAddress, this.api, this.headers)
+    }
+
+    try {
+      await this.sync.BNB.Start()
+      return this.sync.BNB.DATA
+    }
+    catch (e) {
+      console.log('SyncBNB error', e)
     }
   }
 
@@ -262,6 +288,8 @@ export default class WalletWrapper {
         return this.createBTCVTx(method, tx)
       case 'DOGE':
         return this.createDOGETx(method, tx)
+      case 'BNB':
+        return this.createBNBTx(method, tx)
       default:
         throw new Error('Unknown txs type (currency)')
     }
@@ -335,6 +363,7 @@ export default class WalletWrapper {
     }
   }
 
+  // todo
   async createBCHTx (method, txData) {
     const type = 'p2pkh'
 
@@ -366,6 +395,7 @@ export default class WalletWrapper {
     }
   }
 
+  // todo
   async createDOGETx (method, txData) {
     const type = 'p2pkh'
 
@@ -399,6 +429,7 @@ export default class WalletWrapper {
     }
   }
 
+  //todo
   async createBTCVTx (method, txData) {
     const type = 'p2wpkh'
 
@@ -427,6 +458,44 @@ export default class WalletWrapper {
         return tx.calcFee(txData.size)
       default:
         throw new Error('Unknown BTCV txs method')
+    }
+  }
+
+  async createBNBTx (method, txData) {
+    const type = 'p2pkh'
+
+    let data = {
+      address: this.core.COINS.BNB[type].externalAddress,
+      account_number: this.sync.BNB.account_number,
+      sequence: this.sync.BNB.sequence,
+      source: this.sync.BNB.source,
+      balance: this.sync.BNB.balance,
+      fee: this.sync.BNB.fee,
+      privateKey: this.core.COINS.BNB[type].privateKeyHex,
+      publicKey: this.core.COINS.BNB[type].publicKeyHex
+    }
+
+    let tx = new BinanceTx(data)
+
+    switch (method) {
+      case 'make':
+        let rawTx = tx.make({
+          addressTo: txData.addressTo,
+          amount: txData.amount,
+          fee: txData.fee,
+          memo: txData.memo
+        }).serialize()
+
+        const hash = tx.getHash()
+
+        return {
+          tx: rawTx,
+          hash
+        }
+      case 'calcFee':
+        return tx.calcFee()
+      default:
+        throw new Error('Unknown BNB txs method')
     }
   }
 }
