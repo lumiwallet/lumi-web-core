@@ -21,6 +21,7 @@ describe('Core class', () => {
       {coin: 'BCH'},
       {coin: 'BTCV'},
       {coin: 'DOGE'},
+      {coin: 'LTC'},
       {coin: 'BNB'}
     ]
     await core_exemplar.createCoinsCores(coins)
@@ -33,6 +34,7 @@ describe('Core class', () => {
     expect(core_exemplar).toHaveProperty('COINS.BTCV.p2wpkh.externalAddress', test_core.BTCV.externalAddress)
     expect(core_exemplar).toHaveProperty('COINS.ETH.0.externalAddress', test_core.ETH.externalAddress)
     expect(core_exemplar).toHaveProperty('COINS.DOGE.p2pkh.externalAddress', test_core.DOGE.p2pkh.externalAddress)
+    expect(core_exemplar).toHaveProperty('COINS.LTC.p2wpkh.externalAddress', test_core.LTC.p2wpkh.externalAddress)
     expect(core_exemplar).toHaveProperty('COINS.BNB.p2pkh.externalAddress', test_core.BNB.p2pkh.externalAddress)
   })
 
@@ -191,6 +193,9 @@ describe('Core class', () => {
         },
         {
           coin: 'DOGE'
+        },
+        {
+          coin: 'LTC'
         },
         {
           coin: 'BNB'

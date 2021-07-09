@@ -1,23 +1,22 @@
 import Request from '@/helpers/Request'
-import {getBtcAddress} from '@/helpers/coreHelper'
+import {getLtcAddress} from '@/helpers/coreHelper'
 
 /**
- * Class BitcoinSync.
- * This class allows you to get information about the balance on a Bitcoin wallet,
+ * Class LitecoinSync.
+ * This class allows you to get information about the balance on a Litecoin wallet,
  * the list of unspent, a set of addresses that participated in transactions, and a list of transactions
  * @class
  */
 
-export default class BitcoinSync {
+export default class LitecoinSync {
   /**
-   * Create a BitcoinSync
-   * @param {Object} externalNode - External Bitcoin node
-   * @param {Object} internalNode - Internal Bitcoin node
-   * @param {Object} api - A set of URLs for getting information about Bitcoin addresses
-   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
+   * Create a LitecoinSync
+   * @param {Object} externalNode - External Litecoin node
+   * @param {Object} internalNode - Internal Litecoin node
+   * @param {Object} api - A set of URLs for getting information about Litecoin addresses
    * @param {Object} headers - Request headers
    */
-  constructor (externalNode, internalNode, api, type, headers) {
+  constructor (externalNode, internalNode, api, headers) {
     this.externalNode = externalNode
     this.internalNode = internalNode
     this.api = api
@@ -38,14 +37,18 @@ export default class BitcoinSync {
       all: [],
       unique: []
     }
-    this.fee = []
-    this.headers = headers
-    this.request = new Request(this.api.btc, headers)
-    this.type = type || 'p2pkh'
+    this.fee = [
+      {
+        feePerByte: 3,
+        level: 'Regular'
+      }
+    ]
+    this.request = new Request(this.api.ltc, headers)
+    this.type = 'p2wpkh'
   }
 
   /**
-   * The method that starts the synchronization Bitcoin part of wallet
+   * The method that starts the synchronization Litecoin part of wallet
    * @returns {Promise<boolean>}
    * @constructor
    */
@@ -56,10 +59,7 @@ export default class BitcoinSync {
       unique: []
     }
     this.unspent = []
-    await Promise.all([
-      await this.getAddresses(),
-      await this.getFeesRequest()
-    ])
+    await this.getAddresses()
     this.getBalance()
   }
 
@@ -69,39 +69,21 @@ export default class BitcoinSync {
    */
 
   async getAddresses () {
-    const nodeData = [
-      {
-        node: this.externalNode,
-        type: 'external'
-      }, {
-        node: this.internalNode,
-        type: 'internal'
-      }
-    ]
-
-    const pArray = nodeData.map(async item => {
-      return await this.getAddressesByNode(
-        item.node,
-        item.type
-      )
-    })
-
-    const addresses = await Promise.all(pArray)
-    this.addresses.external = addresses[0]
-    this.addresses.internal = addresses[1]
+    this.addresses.external = await this.getAddressesByNode(this.externalNode, 'external')
+    this.addresses.internal = await this.getAddressesByNode(this.internalNode, 'internal')
     this.addresses.empty = {
       external: this.addresses.external[this.addresses.external.length - 1],
       internal: this.addresses.internal[this.addresses.internal.length - 1]
     }
-    this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) => item.address)
 
+    this.addresses.all = [...this.addresses.external, ...this.addresses.internal].map((item) => item.address)
     await this.processTransactions()
     await this.getTxInfoForUnspent()
   }
 
   /**
-   * Auxiliary method that gets the Bitcoin address by node and index
-   * @param {Object} node - Bitcoin node
+   * Auxiliary method that gets the Litecoin address by node and index
+   * @param {Object} node - Litecoin node
    * @param {string} type - Node type (external or internal)
    * @param {number} from - The index that the derivation starts from
    * @param {number} to - Index to which deprivation occurs
@@ -118,7 +100,7 @@ export default class BitcoinSync {
       if (this.deriveAddress[type].hasOwnProperty(i)) {
         address = this.deriveAddress[type][i]
       } else {
-        address = getBtcAddress(node, i, this.type)
+        address = getLtcAddress(node, i)
         this.deriveAddress[type][i] = address
       }
 
@@ -130,7 +112,7 @@ export default class BitcoinSync {
 
   /**
    * Returns the derivation index for an address
-   * @param {string} address - Legacy Bitcoin address
+   * @param {string} address
    */
 
   _getDeriveIndexByAddress (address) {
@@ -151,7 +133,7 @@ export default class BitcoinSync {
   /**
    * Getting information about addresses and forming an array of addresses.
    * Makes a request for a bundle of addresses and gets a list of transactions
-   * @param {Object} node - Bitcoin node
+   * @param {Object} node - Litecoin node
    * @param {string} type - Node type (external or internal)
    * @returns {Promise<Array>} A list of addresses with transactions
    */
@@ -231,9 +213,9 @@ export default class BitcoinSync {
             }
 
             if (type === 'external') {
-              item.address = getBtcAddress(this.externalNode, derive_index, this.type)
+              item.address = getLtcAddress(this.externalNode, derive_index)
             } else {
-              item.address = getBtcAddress(this.internalNode, derive_index, this.type)
+              item.address = getLtcAddress(this.internalNode, derive_index)
             }
             empty.status = true
             empty.data = item
@@ -241,9 +223,8 @@ export default class BitcoinSync {
 
           list.push(empty.data)
         }
-      }
-      catch (e) {
-        console.log('BTC SyncPromise', e)
+      } catch (e) {
+        console.log('LTC getAddressesByNode error', e)
       }
     }
 
@@ -278,7 +259,7 @@ export default class BitcoinSync {
   }
 
   /**
-   * Gets information necessary to create a Bitcoin transaction
+   * Gets information necessary to create a Litecoin transaction
    */
 
   async getTxInfoForUnspent () {
@@ -304,7 +285,7 @@ export default class BitcoinSync {
   }
 
   /**
-   * Getting a balance of Bitcoin wallet from a list of unspent
+   * Getting a balance of Litecoin wallet from a list of unspent
    */
 
   getBalance () {
@@ -344,7 +325,6 @@ export default class BitcoinSync {
 
       try {
         let res = await this.request.send(params)
-
         if (res.status === 'success') {
           data = res.data || {}
 
@@ -358,11 +338,11 @@ export default class BitcoinSync {
 
           data.transactions = txs
         } else {
-          console.log('BTC getMultiAddressRequest', res.error)
+          console.log('LTC getAddressTransactions', res.error)
         }
-      }
-      catch (err) {
-        console.log('BTC getMultiAddressRequest', err)
+      } catch (err) {
+        console.log('LTC getAddressTransactions', err)
+        return []
       }
     }
 
@@ -372,23 +352,25 @@ export default class BitcoinSync {
   }
 
   /**
-   * Request to receive a recommended set of bitcoin fees
-   * @returns {Promise<Array>} Set of bitcoin fees
+   * Request to receive a recommended set of litecoin fees
+   * @returns {Promise<Array>} Set of Litecoin fees
    */
 
   async getFeesRequest () {
     try {
-      const res = await fetch(this.api.btcFee, {headers: this.headers})
-      const resJson = await res.json()
-      this.fee = resJson.sort((a, b) => b.feePerByte - a.feePerByte)
+      const res = await this.request.send({}, 'fees', 'GET')
+
+      if (res.status === 'success') {
+        this.fee = res.data.sort((a, b) => b.feePerByte - a.feePerByte)
+      }
     }
     catch (err) {
-      console.log('BTC getFeesRequest', err)
+      console.log('LTC getFeesRequest', err)
     }
   }
 
   /**
-   * Full information about the bitcoin wallet
+   * Full information about the litecoin wallet
    * @returns {Object}
    * @constructor
    */
