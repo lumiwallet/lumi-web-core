@@ -1,32 +1,29 @@
+export const test_mnemonic = 'alpha win lawn boring invite provide useful clever amused swallow normal hurt'
 export const test_fees = [
   {level: 'Regular', feePerByte: 3}
 ]
 
+/*First Transaction*/
 export const test_unspent = [
   {
-    address: "ltc1qfyah6kgqukyl5u30zhawgyswhr4t229wpar07g",
-    deriveIndex: 0,
-    height: 0,
-    nodeType: "external",
-    tx: "01000000000101d6efb03b61db21e07bb4d7fdf970d7c8539c1999272902b7b340e09fd112937b0000000000ffffffff02a086010000000000160014493b7d5900e589fa722f15fae4120eb8eab528ae45243a010000000016001495cd0d9711f4070db5584b80dbda68352fdb9e0602473044022060683f1b545eafecb849f441d88035dc904a596fdbb570c9ae4b444bffc7f384022054a7340a6952629a64f2c6c97ff18e2dab71d00014635ef2ced77227def4f45301210210b66a88f70c904b297374b05ee7e7e358bb40afdd53a4b4dbdf69915799e63a00000000",
-    tx_hash: "8397743b17e2c539d700257e93a7b5ebdaf517661806331517df061dfc54e04e",
-    tx_pos: 0,
-    value: 100000
+    address: "ltc1q35te67uw7te6h2a0cgfus8jnvvwncjvtdk8nme",
+    block_id: -1,
+    derive_index: 0,
+    index: 0,
+    node_type: "external",
+    transaction_hash: "fbc1b10f8b817fc70f6ff1976a30f8ba0308638ea7ea261187aa88b64696b636",
+    value: 200000
   }
 ]
 
 export const test_balance = test_unspent.reduce((a, b) => a + b.value, 0)
-export const test_balance_ltc = test_balance / Math.pow(10, 8) // 0.00003 BCH
-export const internal_address = 'ltc1qfyah6kgqukyl5u30zhawgyswhr4t229wpar07g'
-export const recipient_address = 'ltc1qldzhtt2zs7ucgrj3xllflj8fz7zpyftdjwjhzr'
-export const test_mnemonic = 'alpha win lawn boring invite provide useful clever amused swallow normal hurt'
-export const test_tx_data = {
-  tx: '01000000000101483329c7e67d5431dc5b26ab8b0cadf12fbc9bb5598ab42bd07a8ff89bad876e0000000000ffffffff02e803000000000000160014269c3b32266249597d8ee0fd307fbe6fc9269f1223060000000000001600143fd898b14eaa3562c8dc948acff22123d56ff66e0247304402205e7bf9330bd3b83e106d797f31ccc6c250150ca2111b5c220f41e52accb74c9c02207a34ec63bde372c73cd8da547ed65da7c560334307782996b0d6440be4d2c272012103abe0ae0f6792f6fe3fa6855db1c07c5c6d8daeeb40e248438119513fb455d38100000000',
-  hash: '98f5f94267101de83364293a7ba4c9a588eb4a9c74a26a05b90d4381f9479710'
-}
-export const test_send_all_tx_data = {
-  tx: '01000000000101d6efb03b61db21e07bb4d7fdf970d7c8539c1999272902b7b340e09fd112937b0000000000ffffffff02a086010000000000160014493b7d5900e589fa722f15fae4120eb8eab528ae45243a010000000016001495cd0d9711f4070db5584b80dbda68352fdb9e0602473044022060683f1b545eafecb849f441d88035dc904a596fdbb570c9ae4b444bffc7f384022054a7340a6952629a64f2c6c97ff18e2dab71d00014635ef2ced77227def4f45301210210b66a88f70c904b297374b05ee7e7e358bb40afdd53a4b4dbdf69915799e63a00000000',
-  hash: '8397743b17e2c539d700257e93a7b5ebdaf517661806331517df061dfc54e04e'
+export const test_balance_ltc = test_balance / Math.pow(10, 8) // 0.00003 LTC
+export const internal_address = 'ltc1qcjs2wfuwgvnvmrplclmmr57hnj8uavujh06jac'
+export const recipient_address = 'ltc1q4947rqaw6tel66s6ramr8saruklcpmu4gfmu6p'
+
+export const test_send_tx_data = {
+  tx: '0100000000010136b69646b688aa871126eaa78e630803baf8306a97f16f0fc77f818b0fb1c1fb0000000000ffffffff02a086010000000000160014a96be183aed2f3fd6a1a1f7633c3a3e5bf80ef95f384010000000000160014c4a0a7278e4326cd8c3fc7f7b1d3d79c8fceb39202483045022100fffd6aa738ff78fdb4ee5e263b25ce6a0a82f774970ac9a13cff49e8750d531c022034667627d8cb072095d0e5cb61ad90f0bc379fdc76aa0f85159bc80095fb23540121023024b0785a51a98d310918818fd57061ea7cc70e13949f71bf6b8c7e0678303a00000000',
+  hash: '470d368f3ae66e468154ecabc7fb33984c4564034065975afe330b9f722c6027'
 }
 export const test_fee = {
   id: 'regular',
@@ -54,4 +51,55 @@ export function getData (data = {}) {
       }
     }, ...data
   }
+}
+
+/*Second Transaction*/
+
+export const test_unspent_2 = [
+  {
+    address: "ltc1qcjs2wfuwgvnvmrplclmmr57hnj8uavujh06jac",
+    block_id: 2085276,
+    derive_index: 0,
+    index: 1,
+    node_type: "internal",
+    transaction_hash: "470d368f3ae66e468154ecabc7fb33984c4564034065975afe330b9f722c6027",
+    value: 99571
+  }
+]
+
+export const test_balance_2 = test_unspent_2.reduce((a, b) => a + b.value, 0)
+export const test_balance_ltc_2 = test_balance_2 / Math.pow(10, 8) // 0.00003 LTC
+export const recipient_address_2 = 'ltc1qdy68cyjzjek8hmkjk35jjudyxppq9kg4mpgef4'
+
+export const test_send_all_tx_data = {
+  tx: '0100000000010127602c729f0b33fe5a9765400364454c9833fbc7abec5481466ee63a8f360d470100000000ffffffff01a68301000000000016001469347c1242966c7beed2b4692971a4304202d91502483045022100ff618753472b39073c3cacdbab179ceaf84c50a129158ea63859e438ce0553ba022015a8bec90ddda019b5daa4db315e655b61ff18990c3ab18fdacbcaa0c997a9c101210299f00f0249f221b96e1fc7b99df127589be9a263b430eb7394794e296c7252f000000000',
+  hash: 'a56add62d101d72a3b365ab8844ee548ea9feac0e6944b28df21fb99ec242ded'
+}
+
+export function getDataTx(data = {}) {
+  return {
+    ...{
+      unspent: test_unspent_2,
+      balance: test_balance_2,
+      feeList: test_fees,
+      amount: 0,
+      customFee: 0,
+      nodes: {
+        external: {},
+        internal: {}
+      }
+    }, ...data
+  }
+}
+
+export const test_fee_2 = {
+  id: 'regular',
+  SAT: 333,
+  LTC: 0.00000333,
+  value: 0.00000333,
+  fee: 3,
+  feeInBTC: 3e-8,
+  inputs: [...test_unspent_2],
+  inputsAmount: 99571,
+  custom: false
 }

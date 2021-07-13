@@ -175,27 +175,12 @@ export default class LitecoinTx {
     const feeSat = +fee.SAT
     const change = inputsAmount - amount - feeSat
     let inputs = []
-    let hashes = []
 
     if (change < 0) {
       throw new CustomError('err_tx_ltc_balance')
     }
 
-    for (let input of fee.inputs) {
-      if (!input.tx) {
-        if (input.transaction_hash) {
-          hashes.push(input.transaction_hash)
-        } else {
-          throw new CustomError('err_tx_ltc_unspent')
-        }
-      }
-    }
-
-    const unique_hashes = [...new Set(hashes)]
-    const rawTxsData = await this.getRawTxHex(unique_hashes)
-
     for (const utxo of fee.inputs) {
-      hashes.push(utxo.transaction_hash)
 
       let item = {
         hash: utxo.transaction_hash,
@@ -203,13 +188,6 @@ export default class LitecoinTx {
         address: utxo.address,
         value: utxo.value,
         key: getBtcPrivateKeyByIndex(this.nodes[utxo.node_type], utxo.derive_index)
-      }
-
-      let data = rawTxsData.find(item => item.hash === utxo.transaction_hash)
-      if (!utxo.tx) {
-        item.tx = data ? data.rawData : null
-      } else {
-        item.tx = utxo.tx
       }
 
       inputs.push(item)
@@ -233,53 +211,5 @@ export default class LitecoinTx {
     }
 
     return makeRawLtcTx(params)
-  }
-
-
-  /**
-   * Raw transaction request
-   * @param {Array} hashes - List of hashes
-   * @returns {Promise<Array>} Array of raw Litecoin transactions for each hash
-   */
-
-  async getRawTxHex (hashes) {
-    if (!hashes || !hashes.length) return []
-
-    const ARRAY_SIZE = 10
-    const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)
-    let txs = []
-    let arrays = []
-    let counter = 0
-
-    for (let i = 0; i < ARRAYS_COUNT; i++) {
-      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)
-    }
-
-    const req = async () => {
-      try {
-        let res = await this.request.send({
-          method: 'rawtx',
-          txs: arrays[counter]
-        })
-
-        if (res.status === 'success' && res.data.length) {
-          txs = [...txs, ...res.data]
-          counter++
-
-          if (counter !== ARRAYS_COUNT) {
-            await req()
-          }
-        } else {
-          throw new CustomError('err_tx_lite_raw_tx')
-        }
-      }
-      catch (e) {
-        throw new CustomError('err_tx_lite_raw_tx')
-      }
-    }
-
-    await req()
-
-    return txs
   }
 }

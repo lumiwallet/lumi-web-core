@@ -129,9 +129,9 @@ const CORES = await WALLET.createCoins(coins)
     LTC: {
         p2wpkh: {
             dp: {external: "m/84'/2'/0'/0", internal: "m/84'/2'/0'/1"},
-            externalAddress: "",
+            externalAddress: "ltc1q35...tdk8nme",
             externalNode: Object,
-            internalAddress: "",
+            internalAddress: "ltc1qcjs2w...jh06jac",
             internalNode: Object
         }
     },
@@ -373,6 +373,41 @@ When the transaction is created successfully, an object with the transaction has
 doge_tx => {
     hash: '0e2578db7490a13855696...e3b2e689b89c63a55634b1a58',
     tx: '0100000002213ac9c3b059e3d863...88c983930f02d9f636f5e354088ac00000000'
+}
+```
+
+### Creating a LTC transaction
+To create a Litecoin transaction you need to send a set of inputs and outputs to the `makeRawLtcTx` method:
+``` js
+const data = {
+    inputs: [
+        {
+            address: "ltc1q35t...tdk8nme",
+            hash: "fbc1b10f...8b64696b636",
+            index: 0,
+            key: "L2J3LL5KAGo6rZMW...AhZt4kUDdD74",
+            value: 200000 
+        }
+    ],
+    outputs: [
+        {
+            address: "ltc1q4947rq...pmu4gfmu6p",
+            value: 100000
+        },
+        {
+            address: "ltc1qcjs2wf...7hnj8uavujh06jac",
+            value: 99571
+        }
+    ]
+}
+
+const ltc_tx = await WALLET.makeRawLtcTx(data)
+```
+When the transaction is created successfully, an object with the transaction hash and raw tx data is returned
+``` js
+ltc_tx => {
+    tx: '0100000000010...7e0678303a00000000',
+    hash: '470d368f3...b9f722c6027'
 }
 ```
 

@@ -115,32 +115,32 @@ describe('Litecoin class', () => {
     expect(fees[0][0].LTC + available_amounts[0]).toBe(mock.test_balance_ltc)
   })
 
-  // test('it should make transaction in the amount of 0.001 LTC on ltc1qldzhtt2zs7ucgrj3xllflj8fz7zpyftdjwjhzr address', async () => {
-  //   const CORE = new Core({
-  //     from: 'mnemonic',
-  //     mnemonic: mock.test_mnemonic
-  //   })
-  //   await CORE.generateWallet()
-  //   await CORE.createCoinsCores([{coin: 'LTC'}])
-  //
-  //   const data = mock.getData({
-  //     amount: 0.001,
-  //     nodes: {
-  //       external: CORE.COINS.LTC.p2wpkh.externalNode,
-  //       internal: CORE.COINS.LTC.p2wpkh.internalNode
-  //     }
-  //   })
-  //
-  //   const Litecoin = new LitecoinTx(data)
-  //   const fee_list = await Litecoin.calcFee()
-  //   const tx_data = {
-  //     addressTo: mock.recipient_address,
-  //     fee: fee_list[0] // 3 sat pre byte
-  //   }
-  //
-  //   const tx = await Litecoin.make(tx_data)
-  //   expect(tx).toEqual(mock.test_tx_data)
-  // })
+  test('it should make transaction in the amount of 0.001 LTC on ltc1q6laksq5nc8j5az67plynkrkvskxk7e2jgwu6ga address', async () => {
+    const CORE = new Core({
+      from: 'mnemonic',
+      mnemonic: mock.test_mnemonic
+    })
+    await CORE.generateWallet()
+    await CORE.createCoinsCores([{coin: 'LTC'}])
+
+    const data = mock.getData({
+      amount: 0.001,
+      nodes: {
+        external: CORE.COINS.LTC.p2wpkh.externalNode,
+        internal: CORE.COINS.LTC.p2wpkh.internalNode
+      }
+    })
+
+    const Litecoin = new LitecoinTx(data)
+    const fee_list = await Litecoin.calcFee()
+    const tx_data = {
+      addressTo: mock.recipient_address,
+      fee: fee_list[0]
+    }
+
+    const tx = await Litecoin.make(tx_data)
+    expect(tx).toEqual(mock.test_send_tx_data)
+  })
 
   test('it should not make transaction in the amount of 0.5 LTC and throw error \'err_tx_ltc_balance: Insufficient balance\'', async () => {
     const data = mock.getData({amount: 0.5})
@@ -193,28 +193,28 @@ describe('Litecoin class', () => {
     }
   })
 
-  // test('it should make transaction without a change (send all tx)', async () => {
-  //   const CORE = new Core({
-  //     from: 'mnemonic',
-  //     mnemonic: mock.test_mnemonic
-  //   })
-  //   await CORE.generateWallet()
-  //   await CORE.createCoinsCores([{coin: 'LTC', type: ''}])
-  //
-  //   const data = mock.getData({
-  //     amount: 0.00099667,
-  //     nodes: {
-  //       external: CORE.COINS.LTC.p2wpkh.externalNode,
-  //       internal: CORE.COINS.LTC.p2wpkh.internalNode
-  //     }
-  //   })
-  //   const Litecoin = new LitecoinTx(data)
-  //   const tx_data = {
-  //     addressTo: mock.recipient_address,
-  //     fee: mock.test_fee
-  //   }
-  //   const tx = await Litecoin.make(tx_data)
-  //   expect(tx).toBeDefined()
-  //   expect(tx).toEqual(mock.test_send_all_tx_data)
-  // })
+  test('it should make transaction without a change (send all tx)', async () => {
+    const CORE = new Core({
+      from: 'mnemonic',
+      mnemonic: mock.test_mnemonic
+    })
+    await CORE.generateWallet()
+    await CORE.createCoinsCores([{coin: 'LTC'}])
+
+    const data = mock.getDataTx({
+      amount: 0.00099238,
+      nodes: {
+        external: CORE.COINS.LTC.p2wpkh.externalNode,
+        internal: CORE.COINS.LTC.p2wpkh.internalNode
+      }
+    })
+    const Litecoin = new LitecoinTx(data)
+    const tx_data = {
+      addressTo: mock.recipient_address_2,
+      fee: mock.test_fee_2
+    }
+    const tx = await Litecoin.make(tx_data)
+    expect(tx).toBeDefined()
+    expect(tx).toEqual(mock.test_send_all_tx_data)
+  })
 })
