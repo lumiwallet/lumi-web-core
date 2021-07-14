@@ -6,6 +6,7 @@ import {
   makeRawBchTx,
   makeRawDogeTx,
   makeRawLtcTx,
+  makeRawBtcvTx,
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
 } from '@/helpers/coreHelper'
@@ -18,6 +19,7 @@ export {
   makeRawEthTx,
   makeRawBchTx,
   makeRawDogeTx,
+  makeRawBtcvTx,
   makeRawLtcTx,
   BinanceTx,
   getBtcPrivateKeyByIndex,
