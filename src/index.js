@@ -253,6 +253,22 @@ export default class Wallet {
   }
 
   /**
+   * The method returns a raw BTCV transaction
+   *
+   * @param {Object} data
+   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
+   * transaction hash, output n, address, value, script and private key in WIF format
+   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value
+   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data
+   * @returns {string} hash - Transaction hash
+   * @returns {string} tx - Raw Bitcoin transaction
+   */
+
+  async makeRawBtcvTx (data) {
+    return await makeRawBtcvTx(data)
+  }
+
+  /**
    * The method returns a raw BCH transaction
    *
    * @param {Object} data
