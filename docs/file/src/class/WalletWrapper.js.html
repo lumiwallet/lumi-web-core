@@ -61,6 +61,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html">DogecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-ltc">class/LTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinSync.js~LitecoinSync.html">LitecoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinTx.js~LitecoinTx.html">LitecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/Request.js~Request.html">Request</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
@@ -76,6 +78,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getLtcAddress">getLtcAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
@@ -84,6 +87,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcvTx">makeRawBtcvTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawDogeTx">makeRawDogeTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawLtcTx">makeRawLtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
@@ -108,12 +112,14 @@ import EthereumSync from &apos;@/class/ETH/EthereumSync&apos;
 import BitcoinCashSync from &apos;@/class/BCH/BitcoinCashSync&apos;
 import BitcoinVaultSync from &apos;@/class/BTCV/BitcoinVaultSync&apos;
 import DogecoinSync from &apos;@/class/DOGE/DogecoinSync&apos;
+import LitecoinSync from &apos;@/class/LTC/LitecoinSync&apos;
 import BinanceSync from &apos;@/class/BNB/sync&apos;
 import BitcoinTx from &apos;@/class/BTC/BitcoinTx&apos;
 import EthereumTx from &apos;@/class/ETH/EthereumTx&apos;
 import BitcoinCashTx from &apos;@/class/BCH/BitcoinCashTx&apos;
 import BitcoinVaultTx from &apos;@/class/BTCV/BitcoinVaultTx&apos;
 import DogecoinTx from &apos;@/class/DOGE/DogecoinTx&apos;
+import LitecoinTx from &apos;@/class/LTC/LitecoinTx&apos;
 import BinanceTx from &apos;@/class/BNB/transaction&apos;
 /**
  * Class WalletWrapper
@@ -140,6 +146,7 @@ export default class WalletWrapper {
       BCH: null,
       BTCV: null,
       DOGE: null,
+      LTC: null,
       BNB: null
     }
   }
@@ -163,7 +170,7 @@ export default class WalletWrapper {
    * Creating a core for each supported currency type
    *
    * @param {Array&lt;{coin: String, type: String}&gt;} coins
-   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH, BTCV and DOGE
+   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH, BTCV, LTC and DOGE
    * @param {string|number} coins[].type - Coin type (additional).
    * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
    * */
@@ -201,6 +208,8 @@ export default class WalletWrapper {
           return await this.SyncBTCV()
         case &apos;DOGE&apos;:
           return await this.SyncDOGE()
+        case &apos;LTC&apos;:
+          return await this.SyncLTC()
         case &apos;BNB&apos;:
           return await this.SyncBNB()
       }
@@ -313,6 +322,33 @@ export default class WalletWrapper {
   }
 
   /**
+   * Getting information about Litecoin wallet from blockchain
+   * @returns {Promise&lt;Object&gt;}
+   * @constructor
+   */
+
+  async SyncLTC () {
+    const type = &apos;p2wpkh&apos;
+
+    if (!this.sync.LTC) {
+      this.sync.LTC = new LitecoinSync(
+        this.core.COINS.LTC[type].externalNode,
+        this.core.COINS.LTC[type].internalNode,
+        this.api,
+        this.headers
+      )
+    }
+
+    try {
+      await this.sync.LTC.Start()
+      return this.sync.LTC.DATA
+    }
+    catch (e) {
+      console.log(&apos;SyncLTC error&apos;, e)
+    }
+  }
+
+  /**
    * Getting information about Bitcoin Vault wallet from blockchain
    * @returns {Promise&lt;Object&gt;}
    * @constructor
@@ -392,6 +428,8 @@ export default class WalletWrapper {
         return this.createBTCVTx(method, tx)
       case &apos;DOGE&apos;:
         return this.createDOGETx(method, tx)
+      case &apos;LTC&apos;:
+        return this.createLTCTx(method, tx)
       case &apos;BNB&apos;:
         return this.createBNBTx(method, tx)
       default:
@@ -530,6 +568,39 @@ export default class WalletWrapper {
         return tx.calcFee(txData.size)
       default:
         throw new Error(&apos;Unknown DOGE txs method&apos;)
+    }
+  }
+
+  async createLTCTx (method, txData) {
+    const type = &apos;p2wpkh&apos;
+
+    let LTCdata = {
+      unspent: this.sync.LTC.unspent,
+      balance: this.sync.LTC.balance,
+      feeList: this.sync.LTC.fee,
+      amount: txData.amount,
+      customFee: txData.customFee,
+      api: this.api.ltc,
+      headers: this.headers
+    }
+
+    if (method === &apos;make&apos;) {
+      LTCdata.internalAddress = this.sync.LTC.addresses.empty.internal.address
+      LTCdata.nodes = {
+        external: this.core.COINS.LTC[type].externalNode,
+        internal: this.core.COINS.LTC[type].internalNode
+      }
+    }
+
+    let tx = new LitecoinTx(LTCdata)
+
+    switch (method) {
+      case &apos;make&apos;:
+        return tx.make(txData)
+      case &apos;calcFee&apos;:
+        return tx.calcFee(txData.size)
+      default:
+        throw new Error(&apos;Unknown LTC txs method&apos;)
     }
   }
 

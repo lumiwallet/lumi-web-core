@@ -1,7 +1,7 @@
 {
-  "coverage": "53.86%",
-  "expectCount": 375,
-  "actualCount": 202,
+  "coverage": "53.62%",
+  "expectCount": 427,
+  "actualCount": 229,
   "files": {
     "src/Wrapper.js": {
       "expectCount": 9,
@@ -176,8 +176,8 @@
       ]
     },
     "src/class/Core.js": {
-      "expectCount": 25,
-      "actualCount": 16,
+      "expectCount": 26,
+      "actualCount": 17,
       "undocumentLines": [
         24,
         25,
@@ -186,8 +186,8 @@
         28,
         29,
         30,
-        429,
-        440
+        461,
+        472
       ]
     },
     "src/class/DOGE/DogecoinSync.js": {
@@ -241,28 +241,63 @@
       "expectCount": 11,
       "actualCount": 4,
       "undocumentLines": [
-        22,
         23,
         24,
         25,
         26,
         27,
-        92
+        28,
+        90
+      ]
+    },
+    "src/class/LTC/LitecoinSync.js": {
+      "expectCount": 25,
+      "actualCount": 13,
+      "undocumentLines": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        32,
+        36,
+        40,
+        46,
+        47
+      ]
+    },
+    "src/class/LTC/LitecoinTx.js": {
+      "expectCount": 17,
+      "actualCount": 7,
+      "undocumentLines": [
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
       ]
     },
     "src/class/WalletWrapper.js": {
-      "expectCount": 23,
-      "actualCount": 14,
+      "expectCount": 25,
+      "actualCount": 15,
       "undocumentLines": [
-        29,
-        30,
         31,
         32,
         33,
-        367,
-        399,
+        34,
+        35,
+        401,
         433,
-        464
+        466,
+        500,
+        531
       ]
     },
     "src/helpers/Request.js": {
@@ -274,9 +309,17 @@
         19
       ]
     },
+    "src/helpers/converters.js": {
+      "expectCount": 3,
+      "actualCount": 1,
+      "undocumentLines": [
+        7,
+        8
+      ]
+    },
     "src/helpers/coreHelper.js": {
-      "expectCount": 24,
-      "actualCount": 24,
+      "expectCount": 26,
+      "actualCount": 26,
       "undocumentLines": []
     },
     "src/helpers/handleErrors.js": {
@@ -307,16 +350,16 @@
       "undocumentLines": []
     },
     "src/index.js": {
-      "expectCount": 24,
-      "actualCount": 17,
+      "expectCount": 26,
+      "actualCount": 19,
       "undocumentLines": [
-        41,
-        42,
-        43,
-        44,
-        54,
-        400,
-        404
+        45,
+        46,
+        47,
+        48,
+        59,
+        438,
+        442
       ]
     },
     "src/utils/crypto.js": {
