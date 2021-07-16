@@ -1,6 +1,5 @@
 import converter from '@/helpers/converters'
 import bigDecimal from 'js-big-decimal'
-import toFormatDecimal from '@/helpers/toFormatDecimal'
 import {makeRawEthTx} from '@/helpers/coreHelper'
 import CustomError from '@/helpers/handleErrors'
 
