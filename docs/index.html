@@ -61,6 +61,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html">DogecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-ltc">class/LTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinSync.js~LitecoinSync.html">LitecoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinTx.js~LitecoinTx.html">LitecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/Request.js~Request.html">Request</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
@@ -76,6 +78,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getLtcAddress">getLtcAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
@@ -84,6 +87,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcvTx">makeRawBtcvTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawDogeTx">makeRawDogeTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawLtcTx">makeRawLtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
@@ -104,7 +108,7 @@
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://mit-license.org"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat" alt="License"></a>
 <a href="https://www.npmjs.org/package/lumi-web-core"><img src="https://img.shields.io/npm/v/lumi-web-core.svg" alt="NPM"></a></p>
 <p><img src="https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png" alt="lumicore"></p>
-<h1 id="lumicore">LumiCore</h1><p>The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault, Dogecoin and Binance. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.</p>
+<h1 id="lumicore">LumiCore</h1><p>The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault, Dogecoin, Litecoin and Binance. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.</p>
 <blockquote>
 <p>Work of this module has been tested in applications at the Vue.js. You can find it <a href="https://github.com/lumiwallet/lumi-web-core-app">here</a>.</p>
 </blockquote>
@@ -155,6 +159,7 @@ const CORE = await WALLET.createByKey(&apos;xprv9s21ZrQH143K49Xa838YbhNq...VtL5s
     {coin: &apos;BCH&apos;},
     {coin: &apos;BTCV&apos;},
     {coin: &apos;DOGE&apos;},
+    {coin: &apos;LTC&apos;},
     {coin: &apos;BNB&apos;}
 ]
 const CORES = await WALLET.createCoins(coins)
@@ -212,6 +217,15 @@ const CORES = await WALLET.createCoins(coins)
             internalNode: Object
         }
     },
+    LTC: {
+        p2wpkh: {
+            dp: {external: &quot;m/84&apos;/2&apos;/0&apos;/0&quot;, internal: &quot;m/84&apos;/2&apos;/0&apos;/1&quot;},
+            externalAddress: &quot;ltc1q35...tdk8nme&quot;,
+            externalNode: Object,
+            internalAddress: &quot;ltc1qcjs2w...jh06jac&quot;,
+            internalNode: Object
+        }
+    },
     BNB: {
       p2pkh: {
         node: Object,
@@ -239,6 +253,7 @@ For ETH, the type parameter is set to the account number (0 by default).</p>
         {coin: &apos;BCH&apos;},
         {coin: &apos;BTCV&apos;},
         {coin: &apos;DOGE&apos;},
+        {coin: &apos;LTC&apos;}
         {coin: &apos;BNB&apos;}
     ]
 }
@@ -260,6 +275,7 @@ const info = await WALLET.getChildNodes(data)
             p2pkhAddress: &quot;137sbugaaqw3H...LZzNX3nTk1LDgCYd&quot;,
             p2wpkhAddress: &quot;bc1qzu70e44r...eet9xww5ltnnrm5mjxk&quot;,
             dogeAddress: &apos;DS58JVRHdU...zuBNNVLFo4UaTn&apos;,
+            ltcAddress: &apos;ltc1...07g&apos;,
             bnbAddress: &apos;bnb1hvw4qlty...7xm9g3fdsrcqzzkh&apos;
         },
         ...
@@ -423,6 +439,37 @@ const doge_tx = await WALLET.makeRawDogeTx(data)</code>
 <pre><code class="lang-js"><code class="source-code prettyprint">doge_tx =&gt; {
     hash: &apos;0e2578db7490a13855696...e3b2e689b89c63a55634b1a58&apos;,
     tx: &apos;0100000002213ac9c3b059e3d863...88c983930f02d9f636f5e354088ac00000000&apos;
+}</code>
+</code></pre>
+<h3 id="creating-a-ltc-transaction">Creating a LTC transaction</h3><p>To create a Litecoin transaction you need to send a set of inputs and outputs to the <code>makeRawLtcTx</code> method:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const data = {
+    inputs: [
+        {
+            address: &quot;ltc1q35t...tdk8nme&quot;,
+            hash: &quot;fbc1b10f...8b64696b636&quot;,
+            index: 0,
+            key: &quot;L2J3LL5KAGo6rZMW...AhZt4kUDdD74&quot;,
+            value: 200000&#x2028;
+        }
+    ],
+    outputs: [
+        {
+            address: &quot;ltc1q4947rq...pmu4gfmu6p&quot;,
+            value: 100000
+        },
+        {
+            address: &quot;ltc1qcjs2wf...7hnj8uavujh06jac&quot;,
+            value: 99571
+        }
+    ]
+}
+
+const ltc_tx = await WALLET.makeRawLtcTx(data)</code>
+</code></pre>
+<p>When the transaction is created successfully, an object with the transaction hash and raw tx data is returned</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">ltc_tx =&gt; {
+    tx: &apos;0100000000010...7e0678303a00000000&apos;,
+    hash: &apos;470d368f3...b9f722c6027&apos;
 }</code>
 </code></pre>
 <h3 id="creating-a-bnb-transaction">Creating a BNB transaction</h3><p>To create a Binance transaction you need to create a new class <code>BinanceTx</code> and call method <code>make</code>:</p>

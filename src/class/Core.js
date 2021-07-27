@@ -96,7 +96,7 @@ export default class Core {
    * Creating a core for each supported currency type
    *
    * @param {Array<{coin: String, type: String}>} coins
-   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH, BTCV and DOGE
+   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH, BTCV, DOGE and LTC
    * @param {string|number} coins[].type - Coin type (additional).
    * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
    * */
@@ -125,6 +125,9 @@ export default class Core {
           break
         case 'DOGE':
           core[coin].p2pkh = await this._generateDOGEcore()
+          break
+        case 'LTC':
+          core[coin].p2wpkh = await this._generateLTCcore()
           break
         case 'BNB':
           core[coin].p2pkh = await this._generateBNBcore()
@@ -288,6 +291,32 @@ export default class Core {
   }
 
   /**
+   * Creating a core for Litecoin.
+   * At the output, we get a external and internal node,
+   * derivation path and the first addresses of the external and internal cores
+   * @private
+   */
+  async _generateLTCcore () {
+    const type = 'p2wpkh'
+    const litecoin_external_path = `m/84'/2'/0'/0`
+    const litecoin_internal_path = `m/84'/2'/0'/1`
+
+    let item = {}
+    item.externalNode = core.derive(this.hdkey, litecoin_external_path)
+    item.internalNode = core.derive(this.hdkey, litecoin_internal_path)
+    item.externalAddress = core.getLtcAddress(item.externalNode, 0)
+    item.internalAddress = core.getLtcAddress(item.internalNode, 0)
+    item.dp = {external: litecoin_external_path, internal: litecoin_internal_path}
+
+    if (!this.coins.hasOwnProperty('LTC')) {
+      this.coins.LTC = {}
+    }
+
+    this.coins.LTC[type] = item
+    return item
+  }
+
+  /**
    * Creating a core for Binance Coin.
    * At the output, we get a external and internal node,
    * derivation path and the external address
@@ -364,6 +393,9 @@ export default class Core {
               break
             case 'DOGE':
               child.dogeAddress = core.getDogeAddress(node, i)
+              break
+            case 'LTC':
+              child.ltcAddress = core.getLtcAddress(node, i)
               break
             case 'BNB':
               child.bnbAddress = getBnbAddressByPublicKey(node._publicKey.toString('hex'))

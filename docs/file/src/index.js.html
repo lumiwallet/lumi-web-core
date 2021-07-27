@@ -61,6 +61,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html">DogecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-ltc">class/LTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinSync.js~LitecoinSync.html">LitecoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinTx.js~LitecoinTx.html">LitecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/Request.js~Request.html">Request</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
@@ -76,6 +78,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getLtcAddress">getLtcAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
@@ -84,6 +87,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcvTx">makeRawBtcvTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawDogeTx">makeRawDogeTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawLtcTx">makeRawLtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
@@ -109,6 +113,8 @@ import {
   makeRawEthTx,
   makeRawBchTx,
   makeRawDogeTx,
+  makeRawLtcTx,
+  makeRawBtcvTx,
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
 } from &apos;@/helpers/coreHelper&apos;
@@ -121,6 +127,8 @@ export {
   makeRawEthTx,
   makeRawBchTx,
   makeRawDogeTx,
+  makeRawBtcvTx,
+  makeRawLtcTx,
   BinanceTx,
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
@@ -129,7 +137,7 @@ export {
 /**
  * Currencies that are supported in the wallet
  */
-const AVAILABLE_COINS = [&apos;BTC&apos;, &apos;ETH&apos;, &apos;BCH&apos;, &apos;BTCV&apos;, &apos;DOGE&apos;, &apos;BNB&apos;]
+const AVAILABLE_COINS = [&apos;BTC&apos;, &apos;ETH&apos;, &apos;BCH&apos;, &apos;BTCV&apos;, &apos;DOGE&apos;, &apos;LTC&apos;, &apos;BNB&apos;]
 
 /**
  * Class Wallet
@@ -151,6 +159,7 @@ export default class Wallet {
       eth: &apos;&apos;,
       bch: &apos;&apos;,
       btcv: &apos;&apos;,
+      ltc: &apos;&apos;,
       doge: &apos;&apos;,
       dogeFee: &apos;&apos;,
       bnb: &apos;&apos;
@@ -352,6 +361,22 @@ export default class Wallet {
   }
 
   /**
+   * The method returns a raw BTCV transaction
+   *
+   * @param {Object} data
+   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
+   * transaction hash, output n, address, value, script and private key in WIF format
+   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value
+   * @returns {Promise&lt;Object&gt;} Returns object with transaction hash and raw transaction data
+   * @returns {string} hash - Transaction hash
+   * @returns {string} tx - Raw Bitcoin transaction
+   */
+
+  async makeRawBtcvTx (data) {
+    return await makeRawBtcvTx(data)
+  }
+
+  /**
    * The method returns a raw BCH transaction
    *
    * @param {Object} data
@@ -368,7 +393,7 @@ export default class Wallet {
   }
 
   /**
-   * The method returns a raw BCH transaction
+   * The method returns a raw DOGE transaction
    *
    * @param {Object} data
    * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
@@ -381,6 +406,22 @@ export default class Wallet {
 
   async makeRawDogeTx (data) {
     return await makeRawDogeTx(data)
+  }
+
+  /**
+   * The method returns a raw LTC transaction
+   *
+   * @param {Object} data
+   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
+   * transaction hash, output n, address, value in satoshis, script and private key in WIF format
+   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value in satoshis
+   * @returns {Promise&lt;Object&gt;} Returns object with transaction hash and raw transaction data
+   * @returns {string} hash - Transaction hash
+   * @returns {string} tx - Raw Bitcoin Cash transaction
+   */
+
+  async makeRawLtcTx (data) {
+    return await makeRawLtcTx(data)
   }
 
   /**
@@ -472,6 +513,7 @@ export default class Wallet {
    * @param {string} api.eth - Url address of ethereum endpoint
    * @param {string} api.bch - Url address of bitcoin cash endpoint
    * @param {string} api.btcv - Url address of bitcoin vault endpoint
+   * @param {string} api.ltc - Url address of litecoin endpoint
    * @param {string} api.doge - Url address of dogecoin endpoint
    * @param {string} api.dogeFee - Url address of dogecoin endpoint
    */

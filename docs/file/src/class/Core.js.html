@@ -61,6 +61,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html">DogecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-ltc">class/LTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinSync.js~LitecoinSync.html">LitecoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinTx.js~LitecoinTx.html">LitecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/Request.js~Request.html">Request</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
@@ -76,6 +78,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getLtcAddress">getLtcAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
@@ -84,6 +87,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcvTx">makeRawBtcvTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawDogeTx">makeRawDogeTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawLtcTx">makeRawLtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
@@ -200,7 +204,7 @@ export default class Core {
    * Creating a core for each supported currency type
    *
    * @param {Array&lt;{coin: String, type: String}&gt;} coins
-   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH, BTCV and DOGE
+   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH, BTCV, DOGE and LTC
    * @param {string|number} coins[].type - Coin type (additional).
    * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
    * */
@@ -229,6 +233,9 @@ export default class Core {
           break
         case &apos;DOGE&apos;:
           core[coin].p2pkh = await this._generateDOGEcore()
+          break
+        case &apos;LTC&apos;:
+          core[coin].p2wpkh = await this._generateLTCcore()
           break
         case &apos;BNB&apos;:
           core[coin].p2pkh = await this._generateBNBcore()
@@ -392,6 +399,32 @@ export default class Core {
   }
 
   /**
+   * Creating a core for Litecoin.
+   * At the output, we get a external and internal node,
+   * derivation path and the first addresses of the external and internal cores
+   * @private
+   */
+  async _generateLTCcore () {
+    const type = &apos;p2wpkh&apos;
+    const litecoin_external_path = `m/84&apos;/2&apos;/0&apos;/0`
+    const litecoin_internal_path = `m/84&apos;/2&apos;/0&apos;/1`
+
+    let item = {}
+    item.externalNode = core.derive(this.hdkey, litecoin_external_path)
+    item.internalNode = core.derive(this.hdkey, litecoin_internal_path)
+    item.externalAddress = core.getLtcAddress(item.externalNode, 0)
+    item.internalAddress = core.getLtcAddress(item.internalNode, 0)
+    item.dp = {external: litecoin_external_path, internal: litecoin_internal_path}
+
+    if (!this.coins.hasOwnProperty(&apos;LTC&apos;)) {
+      this.coins.LTC = {}
+    }
+
+    this.coins.LTC[type] = item
+    return item
+  }
+
+  /**
    * Creating a core for Binance Coin.
    * At the output, we get a external and internal node,
    * derivation path and the external address
@@ -468,6 +501,9 @@ export default class Core {
               break
             case &apos;DOGE&apos;:
               child.dogeAddress = core.getDogeAddress(node, i)
+              break
+            case &apos;LTC&apos;:
+              child.ltcAddress = core.getLtcAddress(node, i)
               break
             case &apos;BNB&apos;:
               child.bnbAddress = getBnbAddressByPublicKey(node._publicKey.toString(&apos;hex&apos;))

@@ -4,12 +4,14 @@ import EthereumSync from '@/class/ETH/EthereumSync'
 import BitcoinCashSync from '@/class/BCH/BitcoinCashSync'
 import BitcoinVaultSync from '@/class/BTCV/BitcoinVaultSync'
 import DogecoinSync from '@/class/DOGE/DogecoinSync'
+import LitecoinSync from '@/class/LTC/LitecoinSync'
 import BinanceSync from '@/class/BNB/sync'
 import BitcoinTx from '@/class/BTC/BitcoinTx'
 import EthereumTx from '@/class/ETH/EthereumTx'
 import BitcoinCashTx from '@/class/BCH/BitcoinCashTx'
 import BitcoinVaultTx from '@/class/BTCV/BitcoinVaultTx'
 import DogecoinTx from '@/class/DOGE/DogecoinTx'
+import LitecoinTx from '@/class/LTC/LitecoinTx'
 import BinanceTx from '@/class/BNB/transaction'
 /**
  * Class WalletWrapper
@@ -36,6 +38,7 @@ export default class WalletWrapper {
       BCH: null,
       BTCV: null,
       DOGE: null,
+      LTC: null,
       BNB: null
     }
   }
@@ -59,7 +62,7 @@ export default class WalletWrapper {
    * Creating a core for each supported currency type
    *
    * @param {Array<{coin: String, type: String}>} coins
-   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH, BTCV and DOGE
+   * @param {string} coins[].coin - Short name of coin. Supported coins are BTC, ETH, BCH, BTCV, LTC and DOGE
    * @param {string|number} coins[].type - Coin type (additional).
    * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
    * */
@@ -97,6 +100,8 @@ export default class WalletWrapper {
           return await this.SyncBTCV()
         case 'DOGE':
           return await this.SyncDOGE()
+        case 'LTC':
+          return await this.SyncLTC()
         case 'BNB':
           return await this.SyncBNB()
       }
@@ -209,6 +214,33 @@ export default class WalletWrapper {
   }
 
   /**
+   * Getting information about Litecoin wallet from blockchain
+   * @returns {Promise<Object>}
+   * @constructor
+   */
+
+  async SyncLTC () {
+    const type = 'p2wpkh'
+
+    if (!this.sync.LTC) {
+      this.sync.LTC = new LitecoinSync(
+        this.core.COINS.LTC[type].externalNode,
+        this.core.COINS.LTC[type].internalNode,
+        this.api,
+        this.headers
+      )
+    }
+
+    try {
+      await this.sync.LTC.Start()
+      return this.sync.LTC.DATA
+    }
+    catch (e) {
+      console.log('SyncLTC error', e)
+    }
+  }
+
+  /**
    * Getting information about Bitcoin Vault wallet from blockchain
    * @returns {Promise<Object>}
    * @constructor
@@ -288,6 +320,8 @@ export default class WalletWrapper {
         return this.createBTCVTx(method, tx)
       case 'DOGE':
         return this.createDOGETx(method, tx)
+      case 'LTC':
+        return this.createLTCTx(method, tx)
       case 'BNB':
         return this.createBNBTx(method, tx)
       default:
@@ -426,6 +460,39 @@ export default class WalletWrapper {
         return tx.calcFee(txData.size)
       default:
         throw new Error('Unknown DOGE txs method')
+    }
+  }
+
+  async createLTCTx (method, txData) {
+    const type = 'p2wpkh'
+
+    let LTCdata = {
+      unspent: this.sync.LTC.unspent,
+      balance: this.sync.LTC.balance,
+      feeList: this.sync.LTC.fee,
+      amount: txData.amount,
+      customFee: txData.customFee,
+      api: this.api.ltc,
+      headers: this.headers
+    }
+
+    if (method === 'make') {
+      LTCdata.internalAddress = this.sync.LTC.addresses.empty.internal.address
+      LTCdata.nodes = {
+        external: this.core.COINS.LTC[type].externalNode,
+        internal: this.core.COINS.LTC[type].internalNode
+      }
+    }
+
+    let tx = new LitecoinTx(LTCdata)
+
+    switch (method) {
+      case 'make':
+        return tx.make(txData)
+      case 'calcFee':
+        return tx.calcFee(txData.size)
+      default:
+        throw new Error('Unknown LTC txs method')
     }
   }
 

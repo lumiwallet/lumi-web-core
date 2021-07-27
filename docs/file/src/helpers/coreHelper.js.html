@@ -61,6 +61,8 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/DOGE/DogecoinTx.js~DogecoinTx.html">DogecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-eth">class/ETH</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumSync.js~EthereumSync.html">EthereumSync</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/ETH/EthereumTx.js~EthereumTx.html">EthereumTx</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#class-ltc">class/LTC</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinSync.js~LitecoinSync.html">LitecoinSync</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/class/LTC/LitecoinTx.js~LitecoinTx.html">LitecoinTx</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#helpers">helpers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/Request.js~Request.html">Request</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/helpers/handleErrors.js~CustomError.html">CustomError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-calcBtcTxSize">calcBtcTxSize</a></span></span></li>
@@ -76,6 +78,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthAddressByNode">getEthAddressByNode</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPrivateKey">getEthPrivateKey</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEthPublicKey">getEthPublicKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getLtcAddress">getLtcAddress</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getXprv">getXprv</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromSeed">hdFromSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hdFromXprv">hdFromXprv</a></span></span></li>
@@ -84,6 +87,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawBtcvTx">makeRawBtcvTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawDogeTx">makeRawDogeTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawEthTx">makeRawEthTx</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-makeRawLtcTx">makeRawLtcTx</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToEntropy">mnemonicToEntropy</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-mnemonicToSeed">mnemonicToSeed</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-privateKeyToWIF">privateKeyToWIF</a></span></span></li>
@@ -218,16 +222,16 @@ export function derive (hd, path) {
   if (!hd) {
     throw new CustomError(&apos;err_core_derivation_hdkey&apos;)
   }
-  
+
   if (!path) {
     throw new CustomError(&apos;err_core_derivation_path&apos;)
   }
   let regex = new RegExp(/(^m\/\d+\&apos;)([\/{1}\d+\&apos;{1}]+)/mg)
-  
+
   if (!regex.test(path)) {
     throw new CustomError(&apos;err_core_derivation_path&apos;)
   }
-  
+
   try {
     return hd.derive(path)
   }
@@ -248,14 +252,14 @@ export function derive (hd, path) {
 
 export function getBtcAddress (node, childIndex = 0, type = &apos;p2pkh&apos;, network = &apos;btc&apos;) {
   const types = [&apos;p2pkh&apos;, &apos;p2wpkh&apos;]
-  
+
   if (!types.includes(type)) {
     throw new CustomError(&apos;err_core_btc_type&apos;)
   }
-  
+
   try {
     let pubKey = node.deriveChild(childIndex).publicKey
-    
+
     return bitcoin.payments[type]({
       pubkey: pubKey,
       network: networks[network] || network.btc
@@ -277,7 +281,7 @@ export function getBtcAddress (node, childIndex = 0, type = &apos;p2pkh&apos;, n
 
 export function getBtcAddressByPublicKey (key, type = &apos;p2pkh&apos;, network = &apos;btc&apos;) {
   if (!key) return &apos;&apos;
-  
+
   try {
     return bitcoin.payments[type]({
       pubkey: new Buffer(key, &apos;hex&apos;),
@@ -288,7 +292,7 @@ export function getBtcAddressByPublicKey (key, type = &apos;p2pkh&apos;, network
     console.log(e)
     throw new CustomError(&apos;err_core_btc_address&apos;)
   }
-  
+
 }
 
 /**
@@ -384,16 +388,16 @@ export function privateKeyToWIF (privateKey) {
 
 export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
   let result = 0
-  
+
   if (isWitness) {
     let base_size = (41 * i) + (32 * o) + 10
     let total_size = (149 * i) + (32 * o) + 12
-    
+
     result = ((3 * base_size) + total_size) / 4
   } else {
     result = i * 148 + o * 34 + 10
   }
-  
+
   return Math.ceil(result)
 }
 
@@ -410,24 +414,24 @@ export function makeRawBtcTx (data = {}) {
     const {inputs, outputs} = data
     const psbt = new bitcoin.Psbt()
     let keyPairs = []
-    
+
     psbt.setVersion(1)
-    
+
     inputs.forEach(input =&gt; {
       const isSegwit = input.address.substring(0, 3) === &apos;bc1&apos;
       const keyPair = bitcoin.ECPair.fromWIF(input.key)
-      
+
       keyPairs.push(keyPair)
-      
+
       let data = {
         hash: input.hash,
         index: input.index
       }
-      
+
       if (isSegwit) {
         const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey})
         const script = p2wpkh.output.toString(&apos;hex&apos;)
-        
+
         data.witnessUtxo = {
           script: Buffer.from(script, &apos;hex&apos;),
           value: input.value
@@ -437,25 +441,25 @@ export function makeRawBtcTx (data = {}) {
       }
       psbt.addInput(data)
     })
-    
+
     outputs.forEach(output =&gt; {
       psbt.addOutput({
         address: output.address,
         value: output.value
       })
     })
-    
+
     keyPairs.forEach((key, i) =&gt; {
       psbt.signInput(i, key)
     })
-    
+
     psbt.validateSignaturesOfAllInputs()
     psbt.finalizeAllInputs()
-    
+
     const transaction = psbt.extractTransaction()
     const signedTransaction = transaction.toHex()
     const hash = transaction.getId()
-    
+
     return {
       hash,
       tx: signedTransaction
@@ -481,47 +485,47 @@ export function makeRawBtcvTx (data = {}) {
     const psbt = new bitcoin.Psbt({network: networks.btcv})
     let keyPairs = []
     psbt.setVersion(1)
-    
+
     inputs.forEach(input =&gt; {
       const keyPair = bitcoin.ECPair.fromWIF(input.key, networks.btcv)
-      
+
       keyPairs.push(keyPair)
-      
+
       let data = {
         hash: input.hash,
         index: input.index
       }
-      
-      
+
+
       const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: networks.btcv})
       const script = p2wpkh.output.toString(&apos;hex&apos;)
-      
+
       data.witnessUtxo = {
         script: Buffer.from(script, &apos;hex&apos;),
         value: input.value
       }
-      
+
       psbt.addInput(data)
     })
-    
+
     outputs.forEach(output =&gt; {
       psbt.addOutput({
         address: output.address,
         value: output.value
       })
     })
-    
+
     keyPairs.forEach((key, i) =&gt; {
       psbt.signInput(i, key)
     })
-    
+
     psbt.validateSignaturesOfAllInputs()
     psbt.finalizeAllInputs()
-    
+
     const transaction = psbt.extractTransaction()
     const signedTransaction = transaction.toHex()
     const hash = transaction.getId()
-    
+
     return {
       hash,
       tx: signedTransaction
@@ -549,16 +553,16 @@ export function makeRawBtcvTx (data = {}) {
 
 export function makeRawEthTx (data = {}) {
   const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data
-  
+
   if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||
     isNaN(gasLimit)) {
     throw new CustomError(&apos;err_tx_eth_invalid_params&apos;)
   }
-  
+
   if (typeof to !== &apos;string&apos;) {
     throw new CustomError(&apos;err_tx_eth_invalid_params_string&apos;)
   }
-  
+
   try {
     let params = {
       to: to,
@@ -568,23 +572,23 @@ export function makeRawEthTx (data = {}) {
       gasLimit: utils.toHex(parseInt(gasLimit)),
       chainId: utils.toHex(1)
     }
-    
+
     if (data.hasOwnProperty(&apos;from&apos;) &amp;&amp; data.from) {
       params.from = data.from
     }
-    
+
     if (data.hasOwnProperty(&apos;data&apos;) &amp;&amp; data.data) {
       params.data = data.data
     }
-    
+
     const tx = new Transaction(params)
     const privateKeyBuffer = ethUtil.toBuffer(privateKey)
-    
+
     tx.sign(privateKeyBuffer)
-    
+
     const serializedTx = tx.serialize()
     const hash = tx.hash().toString(&apos;hex&apos;)
-    
+
     return {
       hash: `0x${ hash }`,
       tx: `0x${ serializedTx.toString(&apos;hex&apos;) }`
@@ -609,7 +613,7 @@ export function makeRawBchTx (data = {}) {
     const {inputs, outputs} = data
     let privateKeys = []
     let utxos = []
-    
+
     for (let input of inputs) {
       let item = {
         outputIndex: +input.index,
@@ -621,21 +625,21 @@ export function makeRawBchTx (data = {}) {
       privateKeys.push(input.key)
       utxos.push(item)
     }
-    
+
     const outputsInCashFormat = outputs.map(output =&gt; {
       return {
         address: convertToCashAddress(output.address),
         satoshis: +output.value
       }
     })
-    
+
     const tx = new bitcore.Transaction()
       .from(utxos)
       .to(outputsInCashFormat)
       .sign(privateKeys)
-    
+
     const txData = tx.serialize()
-    
+
     return {
       tx: txData.toString(&apos;hex&apos;),
       hash: tx.hash
@@ -676,7 +680,7 @@ export function getCashAddress (node, childIndex, withoutPrefix = true) {
 export function convertToCashAddress (address = &apos;&apos;) {
   try {
     const toCashAddress = bchaddr.toCashAddress
-    
+
     return toCashAddress(address)
   }
   catch (e) {
@@ -684,6 +688,120 @@ export function convertToCashAddress (address = &apos;&apos;) {
     throw new CustomError(&apos;err_get_bch_address&apos;)
   }
 }
+
+/**
+ * Creating a raw Litecoin transaction
+ * @param {Object} data - Input data for a transaction
+ * @param {Array} data.inputs - List of inputs
+ * @param {Array} data.outputs - List of outputs
+ * @returns {Object} Returns raw Litecoin transaction and transaction hash
+ */
+
+export function makeRawLtcTx (data = {}) {
+  try {
+    const {inputs, outputs} = data
+
+    let curr = coininfo.litecoin.main
+    let frmt = curr.toBitcoinJS()
+    const netGain = {
+      messagePrefix: &apos;\x19&apos; + frmt.name + &apos; Signed Message:\n&apos;,
+      bech32: &apos;ltc&apos;,
+      bip32: {
+        public: frmt.bip32.public,
+        private: frmt.bip32.private
+      },
+      pubKeyHash: frmt.pubKeyHash,
+      scriptHash: frmt.scriptHash,
+      wif: frmt.wif
+    }
+
+    const psbt = new bitcoin.Psbt({network: netGain, maximumFeeRate: 2000000})
+    let keyPairs = []
+    psbt.setVersion(1)
+
+    inputs.forEach(input =&gt; {
+      const keyPair = bitcoin.ECPair.fromWIF(input.key)
+      keyPair.network = netGain
+      keyPairs.push(keyPair)
+
+      let data = {
+        hash: input.hash,
+        index: input.index
+      }
+
+      const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: networks.ltc})
+      const script = p2wpkh.output.toString(&apos;hex&apos;)
+
+      data.witnessUtxo = {
+        script: Buffer.from(script, &apos;hex&apos;),
+        value: input.value
+      }
+
+      psbt.addInput(data)
+    })
+
+    outputs.forEach(output =&gt; {
+      psbt.addOutput({
+        address: output.address,
+        value: output.value
+      })
+    })
+
+    keyPairs.forEach((key, i) =&gt; {
+      psbt.signInput(i, key)
+    })
+
+    psbt.validateSignaturesOfAllInputs()
+    psbt.finalizeAllInputs()
+
+    const transaction = psbt.extractTransaction()
+    const signedTransaction = transaction.toHex()
+    const hash = transaction.getId()
+
+    return {
+      hash,
+      tx: signedTransaction
+    }
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError(&apos;err_tx_ltc_build&apos;)
+  }
+}
+
+/**
+ * Getting Litecoin address by node and derivation index
+ * @param {Object} node - Input data for a transaction
+ * @param {number} childIndex - Derivation index
+ * @param {boolean} withoutPrefix - Flag for prefix
+ * @returns {string} Returns address
+ */
+
+export function getLtcAddress (node, childIndex) {
+  try {
+    let curr = coininfo.litecoin.main
+    let frmt = curr.toBitcoinJS()
+    const ltc_testnet = {
+      messagePrefix: &apos;\x19&apos; + frmt.name + &apos; Signed Message:\n&apos;,
+      bech32: &apos;ltc&apos;,
+      bip32: {
+        public: frmt.bip32.public,
+        private: frmt.bip32.private
+      },
+      pubKeyHash: frmt.pubKeyHash,
+      scriptHash: frmt.scriptHash,
+      wif: frmt.wif
+    }
+
+    const address = bitcoin.payments.p2wpkh({pubkey: node.deriveChild(childIndex).publicKey, network: ltc_testnet})
+    return address.address
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError(&apos;err_core_ltc_address&apos;)
+  }
+}
+
 
 /**
  * Creating a raw Dogecoin transaction
@@ -696,7 +814,7 @@ export function convertToCashAddress (address = &apos;&apos;) {
 export function makeRawDogeTx (data = {}) {
   try {
     const {inputs, outputs} = data
-    
+
     let curr = coininfo.dogecoin.main
     let frmt = curr.toBitcoinJS()
     const netGain = {
@@ -709,40 +827,40 @@ export function makeRawDogeTx (data = {}) {
       scriptHash: frmt.scriptHash,
       wif: frmt.wif
     }
-    
+
     const psbt = new bitcoin.Psbt({network: netGain, maximumFeeRate: 2000000})
     let keyPairs = []
     psbt.setVersion(1)
-    
+
     inputs.forEach(input =&gt; {
       const keyPair = bitcoin.ECPair.fromWIF(input.key)
       keyPair.network = netGain
       keyPairs.push(keyPair)
-      
+
       let data = {
         hash: input.hash,
         index: input.index
       }
-      
+
       data.nonWitnessUtxo = Buffer.from(input.tx, &apos;hex&apos;)
-      
+
       psbt.addInput(data)
     })
-    
+
     outputs.forEach(output =&gt; {
       psbt.addOutput({
         address: output.address,
         value: output.value
       })
     })
-    
+
     keyPairs.forEach((key, i) =&gt; {
       psbt.signInput(i, key)
     })
-    
+
     psbt.validateSignaturesOfAllInputs()
     psbt.finalizeAllInputs()
-    
+
     const transaction = psbt.extractTransaction()
     const signedTransaction = transaction.toHex()
     const hash = transaction.getId()
@@ -800,7 +918,7 @@ export function getDogeAddress (node, childIndex, withoutPrefix = true) {
 export function getBtcPrivateKeyByIndex (node, index) {
   try {
     const key = node.deriveChild(index).privateKey
-    
+
     return privateKeyToWIF(key)
   }
   catch (e) {

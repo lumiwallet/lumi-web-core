@@ -5,6 +5,8 @@ import {
   makeRawEthTx,
   makeRawBchTx,
   makeRawDogeTx,
+  makeRawLtcTx,
+  makeRawBtcvTx,
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
 } from '@/helpers/coreHelper'
@@ -17,6 +19,8 @@ export {
   makeRawEthTx,
   makeRawBchTx,
   makeRawDogeTx,
+  makeRawBtcvTx,
+  makeRawLtcTx,
   BinanceTx,
   getBtcPrivateKeyByIndex,
   calcBtcTxSize
@@ -25,7 +29,7 @@ export {
 /**
  * Currencies that are supported in the wallet
  */
-const AVAILABLE_COINS = ['BTC', 'ETH', 'BCH', 'BTCV', 'DOGE', 'BNB']
+const AVAILABLE_COINS = ['BTC', 'ETH', 'BCH', 'BTCV', 'DOGE', 'LTC', 'BNB']
 
 /**
  * Class Wallet
@@ -47,6 +51,7 @@ export default class Wallet {
       eth: '',
       bch: '',
       btcv: '',
+      ltc: '',
       doge: '',
       dogeFee: '',
       bnb: ''
@@ -248,6 +253,22 @@ export default class Wallet {
   }
 
   /**
+   * The method returns a raw BTCV transaction
+   *
+   * @param {Object} data
+   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
+   * transaction hash, output n, address, value, script and private key in WIF format
+   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value
+   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data
+   * @returns {string} hash - Transaction hash
+   * @returns {string} tx - Raw Bitcoin transaction
+   */
+
+  async makeRawBtcvTx (data) {
+    return await makeRawBtcvTx(data)
+  }
+
+  /**
    * The method returns a raw BCH transaction
    *
    * @param {Object} data
@@ -264,7 +285,7 @@ export default class Wallet {
   }
 
   /**
-   * The method returns a raw BCH transaction
+   * The method returns a raw DOGE transaction
    *
    * @param {Object} data
    * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
@@ -277,6 +298,22 @@ export default class Wallet {
 
   async makeRawDogeTx (data) {
     return await makeRawDogeTx(data)
+  }
+
+  /**
+   * The method returns a raw LTC transaction
+   *
+   * @param {Object} data
+   * @param {string} data.inputs - List of transaction inputs. Input contains the following parameters:
+   * transaction hash, output n, address, value in satoshis, script and private key in WIF format
+   * @param {string} data.outputs - List of transaction outpus. Output contains the following parameters: address and value in satoshis
+   * @returns {Promise<Object>} Returns object with transaction hash and raw transaction data
+   * @returns {string} hash - Transaction hash
+   * @returns {string} tx - Raw Bitcoin Cash transaction
+   */
+
+  async makeRawLtcTx (data) {
+    return await makeRawLtcTx(data)
   }
 
   /**
@@ -368,6 +405,7 @@ export default class Wallet {
    * @param {string} api.eth - Url address of ethereum endpoint
    * @param {string} api.bch - Url address of bitcoin cash endpoint
    * @param {string} api.btcv - Url address of bitcoin vault endpoint
+   * @param {string} api.ltc - Url address of litecoin endpoint
    * @param {string} api.doge - Url address of dogecoin endpoint
    * @param {string} api.dogeFee - Url address of dogecoin endpoint
    */

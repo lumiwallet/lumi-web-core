@@ -84,6 +84,18 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "lumi-web-core/src/class/ltc/litecoinsync.js~litecoinsync",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html",
+    "<span>LitecoinSync</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/LTC/LitecoinSync.js</span>",
+    "class"
+  ],
+  [
+    "lumi-web-core/src/class/ltc/litecointx.js~litecointx",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html",
+    "<span>LitecoinTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/LTC/LitecoinTx.js</span>",
+    "class"
+  ],
+  [
     "lumi-web-core/src/helpers/request.js~request",
     "class/src/helpers/Request.js~Request.html",
     "<span>Request</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/Request.js</span>",
@@ -300,6 +312,12 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "lumi-web-core/src/helpers/corehelper.js~getltcaddress",
+    "function/index.html#static-function-getLtcAddress",
+    "<span>getLtcAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
     "lumi-web-core/src/helpers/corehelper.js~getxprv",
     "function/index.html#static-function-getXprv",
     "<span>getXprv</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
@@ -345,6 +363,12 @@ window.esdocSearchIndex = [
     "lumi-web-core/src/helpers/corehelper.js~makerawethtx",
     "function/index.html#static-function-makeRawEthTx",
     "<span>makeRawEthTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
+    "function"
+  ],
+  [
+    "lumi-web-core/src/helpers/corehelper.js~makerawltctx",
+    "function/index.html#static-function-makeRawLtcTx",
+    "<span>makeRawLtcTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
   ],
   [
@@ -1674,6 +1698,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/core.js~core#_generateltccore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateLTCcore",
+    "src/class/Core.js~Core#_generateLTCcore",
+    "method"
+  ],
+  [
     "src/class/core.js~core#_generatenewmnemonic",
     "class/src/class/Core.js~Core.html#instance-method-_generateNewMnemonic",
     "src/class/Core.js~Core#_generateNewMnemonic",
@@ -2166,6 +2196,252 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/class/ltc/litecoinsync.js",
+    "file/src/class/LTC/LitecoinSync.js.html",
+    "src/class/LTC/LitecoinSync.js",
+    "file"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#data",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-get-DATA",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#DATA",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#start",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-Start",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#Start",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#_getarrayofaddresses",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-_getArrayOfAddresses",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#_getArrayOfAddresses",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#_getderiveindexbyaddress",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-_getDeriveIndexByAddress",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#_getDeriveIndexByAddress",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#addresses",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-addresses",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#addresses",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#api",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-api",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#api",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#balance",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-balance",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#balance",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#constructor",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-constructor-constructor",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#constructor",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#deriveaddress",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-deriveAddress",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#deriveAddress",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#externalnode",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-externalNode",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#externalNode",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#fee",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-fee",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#fee",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#getaddresses",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-getAddresses",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#getAddresses",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#getaddressesbynode",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-getAddressesByNode",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#getAddressesByNode",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#getbalance",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-getBalance",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#getBalance",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#getfeesrequest",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-getFeesRequest",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#getFeesRequest",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#getmultiaddressrequest",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-getMultiAddressRequest",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#getMultiAddressRequest",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#gettxinfoforunspent",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-getTxInfoForUnspent",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#getTxInfoForUnspent",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#internalnode",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-internalNode",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#internalNode",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#latestblock",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-latestBlock",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#latestBlock",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#processtransactions",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-method-processTransactions",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#processTransactions",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#request",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-request",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#request",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#transactions",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-transactions",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#transactions",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#type",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-type",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#type",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecoinsync.js~litecoinsync#unspent",
+    "class/src/class/LTC/LitecoinSync.js~LitecoinSync.html#instance-member-unspent",
+    "src/class/LTC/LitecoinSync.js~LitecoinSync#unspent",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js",
+    "file/src/class/LTC/LitecoinTx.js.html",
+    "src/class/LTC/LitecoinTx.js",
+    "file"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#amount",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-amount",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#amount",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#balance",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-balance",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#balance",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#calcemptyfee",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-method-calcEmptyFee",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#calcEmptyFee",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#calcfee",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-method-calcFee",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#calcFee",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#constructor",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-constructor-constructor",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#constructor",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#customfee",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-customFee",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#customFee",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#dust",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-dust",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#dust",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#fee",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-fee",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#fee",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#feelist",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-feeList",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#feeList",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#getinputs",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-method-getInputs",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#getInputs",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#internaladdress",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-internalAddress",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#internalAddress",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#make",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-method-make",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#make",
+    "method"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#nodes",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-nodes",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#nodes",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#request",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-request",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#request",
+    "member"
+  ],
+  [
+    "src/class/ltc/litecointx.js~litecointx#unspent",
+    "class/src/class/LTC/LitecoinTx.js~LitecoinTx.html#instance-member-unspent",
+    "src/class/LTC/LitecoinTx.js~LitecoinTx#unspent",
+    "member"
+  ],
+  [
     "src/class/walletwrapper.js",
     "file/src/class/WalletWrapper.js.html",
     "src/class/WalletWrapper.js",
@@ -2226,6 +2502,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#syncltc",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncLTC",
+    "src/class/WalletWrapper.js~WalletWrapper#SyncLTC",
+    "method"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#transaction",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-Transaction",
     "src/class/WalletWrapper.js~WalletWrapper#Transaction",
@@ -2283,6 +2565,12 @@ window.esdocSearchIndex = [
     "src/class/walletwrapper.js~walletwrapper#createethtx",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createETHTx",
     "src/class/WalletWrapper.js~WalletWrapper#createETHTx",
+    "method"
+  ],
+  [
+    "src/class/walletwrapper.js~walletwrapper#createltctx",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createLTCTx",
+    "src/class/WalletWrapper.js~WalletWrapper#createLTCTx",
     "method"
   ],
   [
@@ -2502,6 +2790,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/index.js~wallet#makerawbtcvtx",
+    "class/src/index.js~Wallet.html#instance-method-makeRawBtcvTx",
+    "src/index.js~Wallet#makeRawBtcvTx",
+    "method"
+  ],
+  [
     "src/index.js~wallet#makerawdogetx",
     "class/src/index.js~Wallet.html#instance-method-makeRawDogeTx",
     "src/index.js~Wallet#makeRawDogeTx",
@@ -2511,6 +2805,12 @@ window.esdocSearchIndex = [
     "src/index.js~wallet#makerawethtx",
     "class/src/index.js~Wallet.html#instance-method-makeRawEthTx",
     "src/index.js~Wallet#makeRawEthTx",
+    "method"
+  ],
+  [
+    "src/index.js~wallet#makerawltctx",
+    "class/src/index.js~Wallet.html#instance-method-makeRawLtcTx",
+    "src/index.js~Wallet#makeRawLtcTx",
     "method"
   ],
   [

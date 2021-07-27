@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 3261,
+  "end": 3592,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 52,
+      "line": 57,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 3261,
+    "end": 3592,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 52,
+        "line": 57,
         "column": 0
       }
     },
@@ -31,28 +31,28 @@
       {
         "type": "ExportDefaultDeclaration",
         "start": 0,
-        "end": 3260,
+        "end": 3591,
         "loc": {
           "start": {
             "line": 1,
             "column": 0
           },
           "end": {
-            "line": 51,
+            "line": 56,
             "column": 1
           }
         },
         "declaration": {
           "type": "ObjectExpression",
           "start": 15,
-          "end": 3260,
+          "end": 3591,
           "loc": {
             "start": {
               "line": 1,
               "column": 15
             },
             "end": {
-              "line": 51,
+              "line": 56,
               "column": 1
             }
           },
@@ -2645,7 +2645,7 @@
             {
               "type": "ObjectProperty",
               "start": 3150,
-              "end": 3183,
+              "end": 3210,
               "loc": {
                 "start": {
                   "line": 49,
@@ -2653,7 +2653,7 @@
                 },
                 "end": {
                   "line": 49,
-                  "column": 35
+                  "column": 62
                 }
               },
               "method": false,
@@ -2662,7 +2662,7 @@
               "key": {
                 "type": "Identifier",
                 "start": 3150,
-                "end": 3163,
+                "end": 3167,
                 "loc": {
                   "start": {
                     "line": 49,
@@ -2670,6 +2670,281 @@
                   },
                   "end": {
                     "line": 49,
+                    "column": 19
+                  },
+                  "identifierName": "err_tx_ltc_amount"
+                },
+                "name": "err_tx_ltc_amount"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 3169,
+                "end": 3210,
+                "loc": {
+                  "start": {
+                    "line": 49,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 49,
+                    "column": 62
+                  }
+                },
+                "extra": {
+                  "rawValue": "Invalid amount. Amount must be a Number",
+                  "raw": "'Invalid amount. Amount must be a Number'"
+                },
+                "value": "Invalid amount. Amount must be a Number"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 3214,
+              "end": 3288,
+              "loc": {
+                "start": {
+                  "line": 50,
+                  "column": 2
+                },
+                "end": {
+                  "line": 50,
+                  "column": 76
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 3214,
+                "end": 3228,
+                "loc": {
+                  "start": {
+                    "line": 50,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 50,
+                    "column": 16
+                  },
+                  "identifierName": "err_tx_ltc_fee"
+                },
+                "name": "err_tx_ltc_fee"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 3230,
+                "end": 3288,
+                "loc": {
+                  "start": {
+                    "line": 50,
+                    "column": 18
+                  },
+                  "end": {
+                    "line": 50,
+                    "column": 76
+                  }
+                },
+                "extra": {
+                  "rawValue": "Invalid fee. Fee must be a Object with `SAT` parameter",
+                  "raw": "'Invalid fee. Fee must be a Object with \\`SAT\\` parameter'"
+                },
+                "value": "Invalid fee. Fee must be a Object with `SAT` parameter"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 3292,
+              "end": 3334,
+              "loc": {
+                "start": {
+                  "line": 51,
+                  "column": 2
+                },
+                "end": {
+                  "line": 51,
+                  "column": 44
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 3292,
+                "end": 3310,
+                "loc": {
+                  "start": {
+                    "line": 51,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 51,
+                    "column": 20
+                  },
+                  "identifierName": "err_tx_ltc_balance"
+                },
+                "name": "err_tx_ltc_balance"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 3312,
+                "end": 3334,
+                "loc": {
+                  "start": {
+                    "line": 51,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 51,
+                    "column": 44
+                  }
+                },
+                "extra": {
+                  "rawValue": "Insufficient balance",
+                  "raw": "'Insufficient balance'"
+                },
+                "value": "Insufficient balance"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 3338,
+              "end": 3402,
+              "loc": {
+                "start": {
+                  "line": 52,
+                  "column": 2
+                },
+                "end": {
+                  "line": 52,
+                  "column": 66
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 3338,
+                "end": 3354,
+                "loc": {
+                  "start": {
+                    "line": 52,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 52,
+                    "column": 18
+                  },
+                  "identifierName": "err_tx_ltc_build"
+                },
+                "name": "err_tx_ltc_build"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 3356,
+                "end": 3402,
+                "loc": {
+                  "start": {
+                    "line": 52,
+                    "column": 20
+                  },
+                  "end": {
+                    "line": 52,
+                    "column": 66
+                  }
+                },
+                "extra": {
+                  "rawValue": "LTC transaction failed. Check all parameters",
+                  "raw": "'LTC transaction failed. Check all parameters'"
+                },
+                "value": "LTC transaction failed. Check all parameters"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 3406,
+              "end": 3477,
+              "loc": {
+                "start": {
+                  "line": 53,
+                  "column": 2
+                },
+                "end": {
+                  "line": 53,
+                  "column": 73
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 3406,
+                "end": 3423,
+                "loc": {
+                  "start": {
+                    "line": 53,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 53,
+                    "column": 19
+                  },
+                  "identifierName": "err_tx_ltc_raw_tx"
+                },
+                "name": "err_tx_ltc_raw_tx"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 3425,
+                "end": 3477,
+                "loc": {
+                  "start": {
+                    "line": 53,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 53,
+                    "column": 73
+                  }
+                },
+                "extra": {
+                  "rawValue": "Problem getting raw transaction. Try to send again",
+                  "raw": "'Problem getting raw transaction. Try to send again'"
+                },
+                "value": "Problem getting raw transaction. Try to send again"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 3481,
+              "end": 3514,
+              "loc": {
+                "start": {
+                  "line": 54,
+                  "column": 2
+                },
+                "end": {
+                  "line": 54,
+                  "column": 35
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 3481,
+                "end": 3494,
+                "loc": {
+                  "start": {
+                    "line": 54,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 54,
                     "column": 15
                   },
                   "identifierName": "err_sync_coin"
@@ -2678,15 +2953,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 3165,
-                "end": 3183,
+                "start": 3496,
+                "end": 3514,
                 "loc": {
                   "start": {
-                    "line": 49,
+                    "line": 54,
                     "column": 17
                   },
                   "end": {
-                    "line": 49,
+                    "line": 54,
                     "column": 35
                   }
                 },
@@ -2699,15 +2974,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 3187,
-              "end": 3257,
+              "start": 3518,
+              "end": 3588,
               "loc": {
                 "start": {
-                  "line": 50,
+                  "line": 55,
                   "column": 2
                 },
                 "end": {
-                  "line": 50,
+                  "line": 55,
                   "column": 72
                 }
               },
@@ -2716,15 +2991,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 3187,
-                "end": 3214,
+                "start": 3518,
+                "end": 3545,
                 "loc": {
                   "start": {
-                    "line": 50,
+                    "line": 55,
                     "column": 2
                   },
                   "end": {
-                    "line": 50,
+                    "line": 55,
                     "column": 29
                   },
                   "identifierName": "err_sync_coin_not_supported"
@@ -2733,15 +3008,15 @@
               },
               "value": {
                 "type": "StringLiteral",
-                "start": 3216,
-                "end": 3257,
+                "start": 3547,
+                "end": 3588,
                 "loc": {
                   "start": {
-                    "line": 50,
+                    "line": 55,
                     "column": 31
                   },
                   "end": {
-                    "line": 50,
+                    "line": 55,
                     "column": 72
                   }
                 },
@@ -7790,9 +8065,9 @@
         "postfix": false,
         "binop": null
       },
-      "value": "err_sync_coin",
+      "value": "err_tx_ltc_amount",
       "start": 3150,
-      "end": 3163,
+      "end": 3167,
       "loc": {
         "start": {
           "line": 49,
@@ -7800,6 +8075,531 @@
         },
         "end": {
           "line": 49,
+          "column": 19
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3167,
+      "end": 3168,
+      "loc": {
+        "start": {
+          "line": 49,
+          "column": 19
+        },
+        "end": {
+          "line": 49,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Invalid amount. Amount must be a Number",
+      "start": 3169,
+      "end": 3210,
+      "loc": {
+        "start": {
+          "line": 49,
+          "column": 21
+        },
+        "end": {
+          "line": 49,
+          "column": 62
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3210,
+      "end": 3211,
+      "loc": {
+        "start": {
+          "line": 49,
+          "column": 62
+        },
+        "end": {
+          "line": 49,
+          "column": 63
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_ltc_fee",
+      "start": 3214,
+      "end": 3228,
+      "loc": {
+        "start": {
+          "line": 50,
+          "column": 2
+        },
+        "end": {
+          "line": 50,
+          "column": 16
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3228,
+      "end": 3229,
+      "loc": {
+        "start": {
+          "line": 50,
+          "column": 16
+        },
+        "end": {
+          "line": 50,
+          "column": 17
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Invalid fee. Fee must be a Object with `SAT` parameter",
+      "start": 3230,
+      "end": 3288,
+      "loc": {
+        "start": {
+          "line": 50,
+          "column": 18
+        },
+        "end": {
+          "line": 50,
+          "column": 76
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3288,
+      "end": 3289,
+      "loc": {
+        "start": {
+          "line": 50,
+          "column": 76
+        },
+        "end": {
+          "line": 50,
+          "column": 77
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_ltc_balance",
+      "start": 3292,
+      "end": 3310,
+      "loc": {
+        "start": {
+          "line": 51,
+          "column": 2
+        },
+        "end": {
+          "line": 51,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3310,
+      "end": 3311,
+      "loc": {
+        "start": {
+          "line": 51,
+          "column": 20
+        },
+        "end": {
+          "line": 51,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Insufficient balance",
+      "start": 3312,
+      "end": 3334,
+      "loc": {
+        "start": {
+          "line": 51,
+          "column": 22
+        },
+        "end": {
+          "line": 51,
+          "column": 44
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3334,
+      "end": 3335,
+      "loc": {
+        "start": {
+          "line": 51,
+          "column": 44
+        },
+        "end": {
+          "line": 51,
+          "column": 45
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_ltc_build",
+      "start": 3338,
+      "end": 3354,
+      "loc": {
+        "start": {
+          "line": 52,
+          "column": 2
+        },
+        "end": {
+          "line": 52,
+          "column": 18
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3354,
+      "end": 3355,
+      "loc": {
+        "start": {
+          "line": 52,
+          "column": 18
+        },
+        "end": {
+          "line": 52,
+          "column": 19
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "LTC transaction failed. Check all parameters",
+      "start": 3356,
+      "end": 3402,
+      "loc": {
+        "start": {
+          "line": 52,
+          "column": 20
+        },
+        "end": {
+          "line": 52,
+          "column": 66
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3402,
+      "end": 3403,
+      "loc": {
+        "start": {
+          "line": 52,
+          "column": 66
+        },
+        "end": {
+          "line": 52,
+          "column": 67
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_ltc_raw_tx",
+      "start": 3406,
+      "end": 3423,
+      "loc": {
+        "start": {
+          "line": 53,
+          "column": 2
+        },
+        "end": {
+          "line": 53,
+          "column": 19
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3423,
+      "end": 3424,
+      "loc": {
+        "start": {
+          "line": 53,
+          "column": 19
+        },
+        "end": {
+          "line": 53,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Problem getting raw transaction. Try to send again",
+      "start": 3425,
+      "end": 3477,
+      "loc": {
+        "start": {
+          "line": 53,
+          "column": 21
+        },
+        "end": {
+          "line": 53,
+          "column": 73
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3477,
+      "end": 3478,
+      "loc": {
+        "start": {
+          "line": 53,
+          "column": 73
+        },
+        "end": {
+          "line": 53,
+          "column": 74
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_sync_coin",
+      "start": 3481,
+      "end": 3494,
+      "loc": {
+        "start": {
+          "line": 54,
+          "column": 2
+        },
+        "end": {
+          "line": 54,
           "column": 15
         }
       }
@@ -7817,15 +8617,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3163,
-      "end": 3164,
+      "start": 3494,
+      "end": 3495,
       "loc": {
         "start": {
-          "line": 49,
+          "line": 54,
           "column": 15
         },
         "end": {
-          "line": 49,
+          "line": 54,
           "column": 16
         }
       }
@@ -7844,15 +8644,15 @@
         "updateContext": null
       },
       "value": "Coin is required",
-      "start": 3165,
-      "end": 3183,
+      "start": 3496,
+      "end": 3514,
       "loc": {
         "start": {
-          "line": 49,
+          "line": 54,
           "column": 17
         },
         "end": {
-          "line": 49,
+          "line": 54,
           "column": 35
         }
       }
@@ -7870,15 +8670,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3183,
-      "end": 3184,
+      "start": 3514,
+      "end": 3515,
       "loc": {
         "start": {
-          "line": 49,
+          "line": 54,
           "column": 35
         },
         "end": {
-          "line": 49,
+          "line": 54,
           "column": 36
         }
       }
@@ -7896,15 +8696,15 @@
         "binop": null
       },
       "value": "err_sync_coin_not_supported",
-      "start": 3187,
-      "end": 3214,
+      "start": 3518,
+      "end": 3545,
       "loc": {
         "start": {
-          "line": 50,
+          "line": 55,
           "column": 2
         },
         "end": {
-          "line": 50,
+          "line": 55,
           "column": 29
         }
       }
@@ -7922,15 +8722,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3214,
-      "end": 3215,
+      "start": 3545,
+      "end": 3546,
       "loc": {
         "start": {
-          "line": 50,
+          "line": 55,
           "column": 29
         },
         "end": {
-          "line": 50,
+          "line": 55,
           "column": 30
         }
       }
@@ -7949,15 +8749,15 @@
         "updateContext": null
       },
       "value": "Selected coin is not supported for sync",
-      "start": 3216,
-      "end": 3257,
+      "start": 3547,
+      "end": 3588,
       "loc": {
         "start": {
-          "line": 50,
+          "line": 55,
           "column": 31
         },
         "end": {
-          "line": 50,
+          "line": 55,
           "column": 72
         }
       }
@@ -7975,15 +8775,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3257,
-      "end": 3258,
+      "start": 3588,
+      "end": 3589,
       "loc": {
         "start": {
-          "line": 50,
+          "line": 55,
           "column": 72
         },
         "end": {
-          "line": 50,
+          "line": 55,
           "column": 73
         }
       }
@@ -8000,15 +8800,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3259,
-      "end": 3260,
+      "start": 3590,
+      "end": 3591,
       "loc": {
         "start": {
-          "line": 51,
+          "line": 56,
           "column": 0
         },
         "end": {
-          "line": 51,
+          "line": 56,
           "column": 1
         }
       }
@@ -8026,15 +8826,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3261,
-      "end": 3261,
+      "start": 3592,
+      "end": 3592,
       "loc": {
         "start": {
-          "line": 52,
+          "line": 57,
           "column": 0
         },
         "end": {
-          "line": 52,
+          "line": 57,
           "column": 0
         }
       }

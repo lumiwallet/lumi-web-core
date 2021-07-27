@@ -1,5 +1,5 @@
 import converter from '@/helpers/converters'
-import toFormatDecimal from '@/helpers/toFormatDecimal'
+import bigDecimal from 'js-big-decimal'
 import {makeRawEthTx} from '@/helpers/coreHelper'
 import CustomError from '@/helpers/handleErrors'
 
@@ -26,38 +26,34 @@ export default class EthereumTx {
     this.defaultGasLimit = 21000
     this.feeList = []
   }
-  
+
   /**
    * Calculating the fee amount
    * @param {number} customGasPrice - Amount of custom gas price
    * @param {number} customGasLimit - Amount of custom gas limit
    * @returns {Array} A list with the optimal and custom fee
    */
-  
+
   calcFee (customGasPrice = 0, customGasLimit = 0) {
     this.feeList = [
       {
         id: 'optimal',
         gasPrice: this.gasPrice,
         gasLimit: this.defaultGasLimit,
-        fee: toFormatDecimal(
-          converter.wei_to_eth(this.gasPrice * this.defaultGasLimit)
-        )
+        fee: converter.wei_to_eth(+bigDecimal.multiply(this.gasPrice, this.defaultGasLimit))
       },
       {
         custom: true,
         id: 'custom',
         gasPrice: customGasPrice,
         gasLimit: customGasLimit,
-        fee: toFormatDecimal(
-          converter.wei_to_eth(customGasPrice * customGasLimit)
-        )
+        fee: converter.wei_to_eth(+bigDecimal.multiply(customGasPrice, customGasLimit))
       }
     ]
-    
+
     return this.feeList
   }
-  
+
   /**
    * Creating a transaction
    * @param {Object} data - Input data for a transaction
@@ -67,16 +63,17 @@ export default class EthereumTx {
    * @param {number} data.nonce - Nonce, transaction count of an account
    * @returns {Promise<Object>} Return a raw transaction in hex to send and transaction hash
    */
-  
+
   async make (data) {
     const {addressTo, value, fee, nonce} = data
     const amountInWei = converter.eth_to_wei(value)
-    const surrender = this.balance - (amountInWei + fee.gasPrice * fee.gasLimit)
-    
+    const finalAmount = +bigDecimal.add(amountInWei, bigDecimal.multiply(fee.gasPrice * fee.gasLimit))
+    const surrender = bigDecimal.subtract(this.balance, finalAmount)
+
     if (surrender < 0) {
       throw new CustomError('err_tx_eth_balance')
     }
-    
+
     let params = {
       to: addressTo,
       value: amountInWei,
@@ -85,10 +82,10 @@ export default class EthereumTx {
       gasLimit: fee.gasLimit,
       privateKey: this.privateKey
     }
-    
+
     return makeRawEthTx(params)
   }
-  
+
   get DATA () {
     return {
       fee: this.feeList

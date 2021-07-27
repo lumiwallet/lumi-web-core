@@ -33,6 +33,11 @@ export const test_core = {
       'externalAddress': 'bnb1kd4kt7x505luglrr93lw4j9qlxp7x365ld8fkt'
     }
   },
+  'LTC': {
+    'p2wpkh': {
+      'externalAddress': 'ltc1qtrcxp29pmlgpx4qz3ullgxvk909s0ugapcfz24'
+    }
+  },
   'count': undefined,
   'from': 'mnemonic',
   'mnemonic': 'magic disorder cable gym napkin gather relief vapor daring main capable armor',
@@ -56,6 +61,7 @@ export const test_child_nodes = {
         bchAddress: 'qrh6ejupsvfn7rzpyg9edsd8sxx2t5w0fv69a7yw0z',
         btcvAddress: 'royale1qa7kvhqvrzvlscsfzpwtvrfup3jjarn6th8dx20',
         dogeAddress: 'DSzP37HUsP21oC9xSHt3HU3k6mnzyXvMu4',
+        ltcAddress: 'ltc1qa7kvhqvrzvlscsfzpwtvrfup3jjarn6tjj65lj',
         bnbAddress: 'bnb1hvw4qlty5y33v8njqzx9ny7xm9g3fdsrcqzzkh'
       },
       {
@@ -67,6 +73,7 @@ export const test_child_nodes = {
         bchAddress: 'qr7ffjdwzrkunnzz0weums60sq4h8ph97sp4hek49n',
         btcvAddress: 'royale1qlj2vntssahyucsnmk0xuxnuq9decde05scd8w3',
         dogeAddress: 'DUAd4ZKqPhwPPjQ4ZUbWn59P1pmJnsJ8oV',
+        ltcAddress: 'ltc1qlj2vntssahyucsnmk0xuxnuq9decde054d64mv',
         bnbAddress: 'bnb1hvw4qlty5y33v8njqzx9ny7xm9g3fdsrcqzzkh'
       },
       {
@@ -78,6 +85,7 @@ export const test_child_nodes = {
         bchAddress: 'qrje5uhsfzewuhj8kftdy436frnhj9x76u29k4uzuk',
         btcvAddress: 'royale1qukd89uzgkth9u3aj2mf9vwjguau3fhkhn5lwh2',
         dogeAddress: 'DS58JVRHdU55bcMmmsdNzuBNNVLFo4UaTn',
+        ltcAddress: 'ltc1qukd89uzgkth9u3aj2mf9vwjguau3fhkhkpguzh',
         bnbAddress: 'bnb1hvw4qlty5y33v8njqzx9ny7xm9g3fdsrcqzzkh'
       },
       {
@@ -89,6 +97,7 @@ export const test_child_nodes = {
         bchAddress: 'qz4clj080y32zgffptf0nr8f86lslt6zgcyqh38l6h',
         btcvAddress: 'royale1q4w8unemey2sjz2g26tuce6f7hu867sjxws7tla',
         dogeAddress: 'DLnELg5mbZfu3djtQN4ksmRAZRJwDGGLTf',
+        ltcAddress: 'ltc1q4w8unemey2sjz2g26tuce6f7hu867sjxt9fe2q',
         bnbAddress: 'bnb1hvw4qlty5y33v8njqzx9ny7xm9g3fdsrcqzzkh'
       },
       {
@@ -100,6 +109,7 @@ export const test_child_nodes = {
         bchAddress: 'qr495ntygkc5r6702teu2jg375p8kqekkgjcp6fc06',
         btcvAddress: 'royale1qafdy6ez9k9q7hn6j70z5jy04qfasxd4jlw4sxv',
         dogeAddress: 'DSWEqTiCxxZoGgCuBERwvgc9DDVFqFZnqQ',
+        ltcAddress: 'ltc1qafdy6ez9k9q7hn6j70z5jy04qfasxd4j6mzzn3',
         bnbAddress: 'bnb1hvw4qlty5y33v8njqzx9ny7xm9g3fdsrcqzzkh'
       }
     ]

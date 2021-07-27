@@ -1,6 +1,11 @@
+import bigDecimal from 'js-big-decimal'
+
 /**
  * Bitcoin and Ethereum converter
  */
+const BTC_FACTOR = Math.pow(10, 8)
+const ETH_FACTOR = Math.pow(10, 18)
+const PRECISION = 8
 
 export default {
   /**
@@ -10,7 +15,7 @@ export default {
    */
   sat_to_btc (sat) {
     if (!+sat) return 0
-    return parseFloat((+sat / Math.pow(10, 8)).toFixed(8))
+    return +bigDecimal.divide(sat, BTC_FACTOR, PRECISION)
   },
   /**
    * Convert Bitcoin to Satoshi
@@ -19,7 +24,8 @@ export default {
    */
   btc_to_sat (btc) {
     if (!+btc) return 0
-    return Math.round(+btc * Math.pow(10, 8))
+    let value = bigDecimal.multiply(btc, BTC_FACTOR)
+    return +bigDecimal.floor(value)
   },
   /**
    * Convert WEI to Ethereum
@@ -28,7 +34,7 @@ export default {
    */
   wei_to_eth (wei) {
     if (!+wei) return 0
-    return parseFloat(+wei / Math.pow(10, 18).toFixed(8))
+    return +bigDecimal.divide(wei, ETH_FACTOR, PRECISION)
   },
   /**
    * Convert Ethereum to WEI
@@ -37,6 +43,7 @@ export default {
    */
   eth_to_wei (eth) {
     if (!+eth) return 0
-    return Math.round(+eth * Math.pow(10, 18))
+    let value = bigDecimal.multiply(eth, ETH_FACTOR)
+    return +bigDecimal.floor(value)
   }
 }

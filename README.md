@@ -4,7 +4,7 @@
 ![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)
 
 # LumiCore
-The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault, Dogecoin and Binance. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
+The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault, Dogecoin, Litecoin and Binance. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
 
 > Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).
 
@@ -68,6 +68,7 @@ const coins = [
     {coin: 'BCH'},
     {coin: 'BTCV'},
     {coin: 'DOGE'},
+    {coin: 'LTC'},
     {coin: 'BNB'}
 ]
 const CORES = await WALLET.createCoins(coins)
@@ -125,6 +126,15 @@ const CORES = await WALLET.createCoins(coins)
             internalNode: Object
         }
     },
+    LTC: {
+        p2wpkh: {
+            dp: {external: "m/84'/2'/0'/0", internal: "m/84'/2'/0'/1"},
+            externalAddress: "ltc1q35...tdk8nme",
+            externalNode: Object,
+            internalAddress: "ltc1qcjs2w...jh06jac",
+            internalNode: Object
+        }
+    },
     BNB: {
       p2pkh: {
         node: Object,
@@ -155,6 +165,7 @@ const data = {
         {coin: 'BCH'},
         {coin: 'BTCV'},
         {coin: 'DOGE'},
+        {coin: 'LTC'}
         {coin: 'BNB'}
     ]
 }
@@ -176,6 +187,7 @@ const info = await WALLET.getChildNodes(data)
             p2pkhAddress: "137sbugaaqw3H...LZzNX3nTk1LDgCYd",
             p2wpkhAddress: "bc1qzu70e44r...eet9xww5ltnnrm5mjxk",
             dogeAddress: 'DS58JVRHdU...zuBNNVLFo4UaTn',
+            ltcAddress: 'ltc1...07g',
             bnbAddress: 'bnb1hvw4qlty...7xm9g3fdsrcqzzkh'
         },
         ...
@@ -361,6 +373,41 @@ When the transaction is created successfully, an object with the transaction has
 doge_tx => {
     hash: '0e2578db7490a13855696...e3b2e689b89c63a55634b1a58',
     tx: '0100000002213ac9c3b059e3d863...88c983930f02d9f636f5e354088ac00000000'
+}
+```
+
+### Creating a LTC transaction
+To create a Litecoin transaction you need to send a set of inputs and outputs to the `makeRawLtcTx` method:
+``` js
+const data = {
+    inputs: [
+        {
+            address: "ltc1q35t...tdk8nme",
+            hash: "fbc1b10f...8b64696b636",
+            index: 0,
+            key: "L2J3LL5KAGo6rZMW...AhZt4kUDdD74",
+            value: 200000 
+        }
+    ],
+    outputs: [
+        {
+            address: "ltc1q4947rq...pmu4gfmu6p",
+            value: 100000
+        },
+        {
+            address: "ltc1qcjs2wf...7hnj8uavujh06jac",
+            value: 99571
+        }
+    ]
+}
+
+const ltc_tx = await WALLET.makeRawLtcTx(data)
+```
+When the transaction is created successfully, an object with the transaction hash and raw tx data is returned
+``` js
+ltc_tx => {
+    tx: '0100000000010...7e0678303a00000000',
+    hash: '470d368f3...b9f722c6027'
 }
 ```
 
