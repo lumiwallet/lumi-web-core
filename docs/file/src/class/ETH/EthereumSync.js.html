@@ -196,7 +196,7 @@ export default class EthereumSync {
 
     let res = await this.request.send(params)
 
-    return res &amp;&amp; res.hasOwnProperty(&apos;result&apos;) ? parseInt(res.result, 16) : 0
+    return res &amp;&amp; res.hasOwnProperty(&apos;result&apos;) ? parseInt(res.result, 16) : 40
   }
 
   get DATA () {

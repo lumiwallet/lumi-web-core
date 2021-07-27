@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
@@ -151,10 +151,7 @@
 <a name='L92'></a><a href='#L92'>92</a>
 <a name='L93'></a><a href='#L93'>93</a>
 <a name='L94'></a><a href='#L94'>94</a>
-<a name='L95'></a><a href='#L95'>95</a>
-<a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a>
-<a name='L98'></a><a href='#L98'>98</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L95'></a><a href='#L95'>95</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -207,10 +204,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -228,6 +221,7 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -252,7 +246,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import converter from '@/helpers/converters'
-import toFormatDecimal from '@/helpers/toFormatDecimal'
+import bigDecimal from 'js-big-decimal'
 import {makeRawEthTx} from '@/helpers/coreHelper'
 import CustomError from '@/helpers/handleErrors'
 &nbsp;
@@ -279,38 +273,34 @@ export default class EthereumTx {
     this.defaultGasLimit = 21000
     this.feeList = []
   }
-  
+&nbsp;
   /**
    * Calculating the fee amount
    * @param {number} customGasPrice - Amount of custom gas price
    * @param {number} customGasLimit - Amount of custom gas limit
    * @returns {Array} A list with the optimal and custom fee
    */
-  
+&nbsp;
   calcFee (customGasPrice = 0, customGasLimit = 0) {
     this.feeList = [
       {
         id: 'optimal',
         gasPrice: this.gasPrice,
         gasLimit: this.defaultGasLimit,
-        fee: toFormatDecimal(
-          converter.wei_to_eth(this.gasPrice * this.defaultGasLimit)
-        )
+        fee: converter.wei_to_eth(+bigDecimal.multiply(this.gasPrice, this.defaultGasLimit))
       },
       {
         custom: true,
         id: 'custom',
         gasPrice: customGasPrice,
         gasLimit: customGasLimit,
-        fee: toFormatDecimal(
-          converter.wei_to_eth(customGasPrice * customGasLimit)
-        )
+        fee: converter.wei_to_eth(+bigDecimal.multiply(customGasPrice, customGasLimit))
       }
     ]
-    
+&nbsp;
     return this.feeList
   }
-  
+&nbsp;
   /**
    * Creating a transaction
    * @param {Object} data - Input data for a transaction
@@ -320,16 +310,17 @@ export default class EthereumTx {
    * @param {number} data.nonce - Nonce, transaction count of an account
    * @returns {Promise&lt;Object&gt;} Return a raw transaction in hex to send and transaction hash
    */
-  
+&nbsp;
   async make (data) {
     const {addressTo, value, fee, nonce} = data
     const amountInWei = converter.eth_to_wei(value)
-    const surrender = this.balance - (amountInWei + fee.gasPrice * fee.gasLimit)
-    
+    const finalAmount = +bigDecimal.add(amountInWei, bigDecimal.multiply(fee.gasPrice * fee.gasLimit))
+    const surrender = bigDecimal.subtract(this.balance, finalAmount)
+&nbsp;
     if (surrender &lt; 0) {
       throw new CustomError('err_tx_eth_balance')
     }
-    
+&nbsp;
     let params = {
       to: addressTo,
       value: amountInWei,
@@ -338,10 +329,10 @@ export default class EthereumTx {
       gasLimit: fee.gasLimit,
       privateKey: this.privateKey
     }
-    
+&nbsp;
     return makeRawEthTx(params)
   }
-  
+&nbsp;
   get DATA () {
     return {
       fee: this.feeList
@@ -355,7 +346,7 @@ export default class EthereumTx {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Fri Jul 16 2021 13:08:33 GMT+0300 (Moscow Standard Time)
+                at Tue Jul 27 2021 11:25:25 GMT+0300 (Moscow Standard Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

@@ -241,13 +241,13 @@
       "expectCount": 11,
       "actualCount": 4,
       "undocumentLines": [
+        22,
         23,
         24,
         25,
         26,
         27,
-        28,
-        90
+        89
       ]
     },
     "src/class/LTC/LitecoinSync.js": {
