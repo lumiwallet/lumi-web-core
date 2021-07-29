@@ -132,6 +132,9 @@ export default class Core {
         case 'BNB':
           core[coin].p2pkh = await this._generateBNBcore()
           break
+        case 'XDC':
+          core[coin].p2pkh = await this._generateXDCcore()
+          break
       }
     }
 
@@ -313,6 +316,32 @@ export default class Core {
     }
 
     this.coins.LTC[type] = item
+    return item
+  }
+
+  /**
+   * Creating a core for XinFin Network.
+   * At the output, we get a XinFin node, derivation path,
+   * a private and public key, and the Ethereum address
+   */
+
+  _generateXDCcore () {
+    const type = 'p2pkh'
+    const xinfin_path = `m/44'/550'/0'/0/0`
+    let item = {}
+
+    item.node = core.derive(this.hdkey, xinfin_path)
+    item.privateKey = core.getEthPrivateKey(item.node)
+    item.privateKeyHex = '0x' + item.privateKey.toString('hex')
+    item.publicKey = core.getEthPublicKey(item.privateKey)
+    item.externalAddress = core.getEthAddress(item.publicKey).replace('0x', 'xdc')
+    item.dp = xinfin_path
+
+    if (!this.coins.hasOwnProperty('XDC')) {
+      this.coins.XDC = {}
+    }
+
+    this.coins.XDC[type] = item
     return item
   }
 
