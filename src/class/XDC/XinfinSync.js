@@ -54,21 +54,6 @@ export default class XinfinSync {
     return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0
   }
 
-  async getTransactionsCount() {
-    this.transactions = []
-
-    let params = {
-      jsonrpc: '2.0',
-      method: 'eth_getTransactionCount',
-      params: [this.address, 'latest'],
-      id: 1
-    }
-
-    let res = await this.request.send(params)
-
-    return res && res.hasOwnProperty('result') && Array.isArray(res.result) ? res.result : []
-  }
-
   /**
    * Request to receive Ethereum transaction list
    * @returns {Promise<Array>}
@@ -81,7 +66,7 @@ export default class XinfinSync {
       module: 'account',
       action: 'txlist',
       address: this.address,
-      page: 1,
+      page: 0,
       pageSize: 100
     }
 
@@ -123,7 +108,6 @@ export default class XinfinSync {
       address: this.address,
       balance: this.balance,
       transactions: this.transactions
-      // gasPrice: this.gasPrice
     }
   }
 }

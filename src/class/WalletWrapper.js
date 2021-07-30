@@ -14,6 +14,7 @@ import BitcoinVaultTx from '@/class/BTCV/BitcoinVaultTx'
 import DogecoinTx from '@/class/DOGE/DogecoinTx'
 import LitecoinTx from '@/class/LTC/LitecoinTx'
 import BinanceTx from '@/class/BNB/transaction'
+import XinfinTx from '@/class/XDC/XinfinTx'
 
 /**
  * Class WalletWrapper
@@ -41,7 +42,8 @@ export default class WalletWrapper {
       BTCV: null,
       DOGE: null,
       LTC: null,
-      BNB: null
+      BNB: null,
+      XDC: null
     }
   }
 
@@ -286,8 +288,7 @@ export default class WalletWrapper {
 
   async SyncXDC() {
     const type = 'p2pkh'
-    console.log('core start syync')
-    console.log('this.core.COINS', this.core.COINS)
+
     if (!this.sync.XDC) {
       this.sync.XDC = new XinfinSync(this.core.COINS.XDC[type].externalAddress, this.api, this.headers)
     }
@@ -352,6 +353,8 @@ export default class WalletWrapper {
         return this.createLTCTx(method, tx)
       case 'BNB':
         return this.createBNBTx(method, tx)
+      case 'XDC':
+        return this.createXDCTx(method, tx)
       default:
         throw new Error('Unknown txs type (currency)')
     }
@@ -592,6 +595,25 @@ export default class WalletWrapper {
         return tx.calcFee()
       default:
         throw new Error('Unknown BNB txs method')
+    }
+  }
+
+  async createXDCTx(method, txData) {
+    let data = {
+      address: this.sync.XDC.address,
+      balance: this.sync.XDC.balance,
+      privateKey: this.core.COINS.XDC.p2pkh.privateKey
+    }
+
+    let tx = new XinfinTx(data, this.api.xdc, this.headers)
+
+    switch (method) {
+      case 'make':
+        return tx.make(txData)
+      case 'calcFee':
+        return tx.calcFee()
+      default:
+        throw new Error('Unknown xdc txs method')
     }
   }
 }

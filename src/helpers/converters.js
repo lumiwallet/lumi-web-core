@@ -5,7 +5,7 @@ import bigDecimal from 'js-big-decimal'
  */
 const BTC_FACTOR = Math.pow(10, 8)
 const ETH_FACTOR = Math.pow(10, 18)
-const PRECISION = 8
+const PRECISION = 10
 
 export default {
   /**

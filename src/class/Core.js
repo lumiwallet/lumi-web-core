@@ -200,7 +200,7 @@ export default class Core {
 
     item.node = core.derive(this.hdkey, ethereum_path)
     item.privateKey = core.getEthPrivateKey(item.node)
-    item.privateKeyHex = '0x' + item.privateKey.toString('hex')
+    // item.privateKeyHex = '0x' + item.privateKey.toString('hex')
     item.publicKey = core.getEthPublicKey(item.privateKey)
     item.externalAddress = core.getEthAddress(item.publicKey)
     item.dp = ethereum_path
@@ -327,12 +327,11 @@ export default class Core {
 
   _generateXDCcore () {
     const type = 'p2pkh'
-    const xinfin_path = `m/44'/550'/0'/0/0`
+    const xinfin_path = `m/44'/60'/0'/0/0`
     let item = {}
 
     item.node = core.derive(this.hdkey, xinfin_path)
     item.privateKey = core.getEthPrivateKey(item.node)
-    item.privateKeyHex = '0x' + item.privateKey.toString('hex')
     item.publicKey = core.getEthPublicKey(item.privateKey)
     item.externalAddress = core.getEthAddress(item.publicKey).replace('0x', 'xdc')
     item.dp = xinfin_path
