@@ -605,7 +605,7 @@ export default class WalletWrapper {
       privateKey: this.core.COINS.XDC.p2pkh.privateKey
     }
 
-    let tx = new XinfinTx(data, this.api.xdc, this.headers)
+    let tx = new XinfinTx(data)
 
     switch (method) {
       case 'make':

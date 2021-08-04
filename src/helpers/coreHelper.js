@@ -5,7 +5,6 @@ import Common, {Chain} from '@ethereumjs/common'
 import {Transaction} from '@ethereumjs/tx'
 import * as ethUtil from 'ethereumjs-util'
 import * as HDkey from 'hdkey'
-import * as utils from 'web3-utils'
 import wif from 'wif'
 import * as bchaddr from 'bchaddrjs'
 import * as bitcore from 'bitcore-lib-cash'
@@ -228,10 +227,8 @@ export function getEthPublicKey(privateKey) {
 
 export function getEthAddress(publicKey) {
   try {
-    let addrBuffer = ethUtil
-      .publicToAddress(publicKey)
-      .toString('hex')
-    return ethUtil.toChecksumAddress(addrBuffer).toLowerCase()
+    const addr = ethUtil.Address.fromPublicKey(publicKey)
+    return addr.toString()
   }
   catch (e) {
     console.log(e)
@@ -431,7 +428,7 @@ export function makeRawBtcvTx(data = {}) {
 }
 
 /**
- * Creating a raw Ethereum transaction
+ * Creating a raw Ethereum or Xinfin transaction
  * @param {Object} data - Input data for a transaction
  * @param {string} data.to - Recipient address or contract address
  * @param {number} data.value - Transaction amount
@@ -462,19 +459,17 @@ export function makeRawEthTx(data = {}) {
     if (to.startsWith('xdc')) {
       to = to.replace('xdc', '0x')
     }
-
     let params = {
       to: to,
-      nonce: utils.toHex(parseInt(nonce)),
-      value: utils.toHex(parseInt(value)),
-      gasPrice: utils.toHex(parseInt(gasPrice)),
-      gasLimit: utils.toHex(parseInt(gasLimit))
+      nonce: ethUtil.intToHex(parseInt(nonce)),
+      value: ethUtil.intToHex(parseInt(value)),
+      gasPrice: ethUtil.intToHex(parseInt(gasPrice)),
+      gasLimit: ethUtil.intToHex(parseInt(gasLimit))
     }
 
     if (data.hasOwnProperty('from') && data.from) {
       params.from = data.from
     }
-
     if (data.hasOwnProperty('data') && data.data) {
       params.data = data.data
     }
@@ -487,7 +482,15 @@ export function makeRawEthTx(data = {}) {
     }
 
     const tx = Transaction.fromTxData(params, { common })
-    const privateKeyBuffer = ethUtil.toBuffer(privateKey)
+
+    let buffer
+    if (typeof privateKey === 'string') {
+      buffer = Buffer.from(privateKey?.replace('0x', ''), 'hex')
+    } else {
+      buffer = privateKey
+    }
+
+    const privateKeyBuffer = ethUtil.toBuffer(buffer)
     const signedTx = tx.sign(privateKeyBuffer)
     const serializedTx = signedTx.serialize()
     const hash = signedTx.hash().toString('hex')

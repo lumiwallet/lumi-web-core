@@ -2,7 +2,7 @@ import Request from '@/helpers/Request'
 
 /**
  * Class XinfinSync
- * This class allows you to get information about the balance on a ethereum wallet,
+ * This class allows you to get information about the balance on a XinFin wallet,
  * the list of transactions and optimal gas price
  * @class
  */
@@ -19,13 +19,12 @@ export default class XinfinSync {
     this.api = api
     this.balance = 0
     this.transactions = []
-    this.gasPrice = 0
     this.request = new Request(this.api.xdc, headers)
     this.txListRequest = new Request(`${ this.api.xdc }scan`, headers)
   }
 
   /**
-   * The method that starts the synchronization Ethereum part of the wallet
+   * The method that starts the synchronization XinFin part of the wallet
    * @returns {Promise<number>}
    * @constructor
    */
@@ -36,7 +35,7 @@ export default class XinfinSync {
   }
 
   /**
-   * Request to receive a balance of Ethereum wallet
+   * Request to receive a balance of XinFin wallet
    * @returns {Promise<number>}
    */
 
@@ -55,7 +54,7 @@ export default class XinfinSync {
   }
 
   /**
-   * Request to receive Ethereum transaction list
+   * Request to receive XinFin transaction list
    * @returns {Promise<Array>}
    */
 
@@ -84,24 +83,6 @@ export default class XinfinSync {
 
     await req()
   }
-
-  /**
-   * Request to receive a amount of gas price
-   * @returns {Promise<number>}
-   */
-
-  // async getGasPrice() {
-  //   let params = {
-  //     jsonrpc: '2.0',
-  //     method: 'eth_gasPrice',
-  //     params: [],
-  //     id: 1
-  //   }
-  //
-  //   let res = await this.request.send(params)
-  //
-  //   return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 0
-  // }
 
   get DATA() {
     return {

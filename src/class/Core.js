@@ -200,7 +200,6 @@ export default class Core {
 
     item.node = core.derive(this.hdkey, ethereum_path)
     item.privateKey = core.getEthPrivateKey(item.node)
-    // item.privateKeyHex = '0x' + item.privateKey.toString('hex')
     item.publicKey = core.getEthPublicKey(item.privateKey)
     item.externalAddress = core.getEthAddress(item.publicKey)
     item.dp = ethereum_path

@@ -56,7 +56,7 @@ describe('EthereumTx class', () => {
     }
   })
 
-  test.only('it should make a transaction with value 0.0052347 ETH', async () => {
+  test('it should make a transaction with value 0.0052347 ETH', async () => {
     const Ethereum = new EthereumTx(mock.test_data)
     const tx = await Ethereum.make(mock.test_tx_data)
 

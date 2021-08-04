@@ -2,11 +2,12 @@ import converter from '@/helpers/converters'
 import bigDecimal from 'js-big-decimal'
 import {makeRawEthTx} from '@/helpers/coreHelper'
 import CustomError from '@/helpers/handleErrors'
-import Request from '@/helpers/Request'
+
+const CHAIN_ID = 50
 
 /**
  * Class XinfinTx.
- * This class is responsible for calculating the fee and generating and signing a Ethereum transaction
+ * This class is responsible for calculating the fee and generating and signing a XinFin transaction
  * @class
  */
 
@@ -14,32 +15,28 @@ export default class XinfinTx {
   /**
    * Create a XinfinTx
    * @param {Object} data - Input data for generating a transaction or calculating a fee
-   * @param {string} data.address - Ethereum wallet address
-   * @param {Array} data.privateKey - Ethereum private key in Uint8Array format
-   * @param {number} data.balance - Ethereum wallet balance
+   * @param {string} data.address - XinFin wallet address
+   * @param {Array} data.privateKey - XinFin private key in Uint8Array format
+   * @param {number} data.balance - XinFin wallet balance
    * @param {number} data.gasPrice - Gas price for transaction
    */
-  constructor(data, api, headers) {
+  constructor(data) {
     this.address = data.address
     this.privateKey = data.privateKey
     this.balance = data.balance
     this.gasPrice = 2500
     this.gasLimit = 21000
     this.feeInGwei = +bigDecimal.multiply(this.gasPrice, this.gasLimit)
-    this.finalFee = bigDecimal.divide(this.feeInGwei, Math.pow(10, 18), 12)
-    this.api = api
-    this.request = new Request(this.api, headers)
+    this.finalFee = converter.wei_to_eth(this.feeInGwei, 14)
     this.feeList = []
   }
 
   /**
    * Calculating the fee amount
-   * @param {number} customGasPrice - Amount of custom gas price
-   * @param {number} customGasLimit - Amount of custom gas limit
-   * @returns {Array} A list with the optimal and custom fee
+   * @returns {Array} A list with the optimal fee
    */
 
-  calcFee(customGasPrice = 0, customGasLimit = 0) {
+  calcFee() {
     this.feeList = [
       {
         id: 'optimal',
@@ -52,38 +49,22 @@ export default class XinfinTx {
     return this.feeList
   }
 
-  async getTransactionsCount() {
-    this.transactions = []
-
-    let params = {
-      jsonrpc: '2.0',
-      method: 'eth_getTransactionCount',
-      params: [this.address, 'latest'],
-      id: 1
-    }
-
-    let res = await this.request.send(params)
-
-    return res && res.result ? +res.result : 0
-  }
-
   /**
    * Creating a transaction
    * @param {Object} data - Input data for a transaction
    * @param {string} data.addressTo - Recipient address
-   * @param {number} data.amount - Transaction amount in ETH
-   * @param {number} data.nonce - Nonce, transaction count of an account
+   * @param {number} data.value - Transaction amount in XDC
    * @returns {Promise<Object>} Return a raw transaction in hex to send and transaction hash
    */
 
   async make(data) {
-    const {addressTo, value} = data
+    const {addressTo, value, nonce} = data
     const amountInWei = converter.eth_to_wei(value)
-    const finalAmount = +bigDecimal.add(amountInWei, bigDecimal.multiply(this.gasPrice, this.gasLimit))
+    const finalAmount = +bigDecimal.add(amountInWei, this.feeInGwei)
     const surrender = bigDecimal.subtract(this.balance, finalAmount)
-    const nonce = await this.getTransactionsCount()
+
     if (surrender < 0) {
-      throw new CustomError('err_tx_eth_balance')
+      throw new CustomError('err_tx_xdc_balance')
     }
 
     let params = {
@@ -93,7 +74,7 @@ export default class XinfinTx {
       gasPrice: this.gasPrice,
       gasLimit: this.gasLimit,
       privateKey: this.privateKey,
-      chainId: 50
+      chainId: CHAIN_ID
     }
     return makeRawEthTx(params)
   }

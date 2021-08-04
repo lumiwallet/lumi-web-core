@@ -11,11 +11,13 @@ export default {
   /**
    * Convert Satoshi to Bitcoin
    * @param {number} sat
+   * @param {number} customPrecision
    * @returns {number} btc
    */
-  sat_to_btc (sat) {
+  sat_to_btc (sat, customPrecision) {
     if (!+sat) return 0
-    return +bigDecimal.divide(sat, BTC_FACTOR, PRECISION)
+    let value = bigDecimal.divide(sat, BTC_FACTOR, customPrecision || PRECISION)
+    return removeLastZero(value)
   },
   /**
    * Convert Bitcoin to Satoshi
@@ -30,11 +32,13 @@ export default {
   /**
    * Convert WEI to Ethereum
    * @param {number} wei
+   * @param {number} customPrecision
    * @returns {number} eth
    */
-  wei_to_eth (wei) {
+  wei_to_eth (wei, customPrecision) {
     if (!+wei) return 0
-    return +bigDecimal.divide(wei, ETH_FACTOR, PRECISION)
+    let value = bigDecimal.divide(wei, ETH_FACTOR, customPrecision || PRECISION)
+    return removeLastZero(value)
   },
   /**
    * Convert Ethereum to WEI
@@ -46,4 +50,20 @@ export default {
     let value = bigDecimal.multiply(eth, ETH_FACTOR)
     return +bigDecimal.floor(value)
   }
+}
+
+function removeLastZero(value) {
+  if (!value) return ''
+
+  let num = value.toString()
+
+  while (num[num.length - 1] === '0') {
+    num = num.slice(0, -1)
+  }
+
+  if (num[num.length - 1] === '.') {
+    num = num.slice(0, -1)
+  }
+
+  return num
 }
