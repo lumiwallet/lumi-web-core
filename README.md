@@ -4,7 +4,7 @@
 ![lumicore](https://user-images.githubusercontent.com/63342220/80406279-7c663380-88cc-11ea-8b06-07825767b288.png)
 
 # LumiCore
-The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault, Dogecoin, Litecoin and Binance. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
+The LumiCore library is an implementation of tools for working with Bitcoin, Ethereum, Bitcoin Cash, Bitcoin Vault, Dogecoin, Litecoin, Binance and Xinfin Network. It allows to create and work with mnemonic following the BIP39 standard, to run the private/public keys derivation tree following the BIP44 standard and sign transactions.
 
 > Work of this module has been tested in applications at the Vue.js. You can find it [here](https://github.com/lumiwallet/lumi-web-core-app).
 
@@ -437,6 +437,9 @@ const raw_tx = tx.make(tx_params).serialize() // rawTx => 'd201f0625dee0a4a2a2c8
 const hash = tx.getHash() // hash =>  '245CBADAE28CD4B9F401B4...277A3098395AD0319C0'
 ```
 
+* [XDC transaction](./src/class/XDC/README.md)
+
+
 ## Nist testing
 Testing [documentation](./nist/README.md).
 
@@ -444,10 +447,9 @@ Testing [documentation](./nist/README.md).
 * [bip39](https://github.com/bitcoinjs/bip39)
 * [bip39-checker](https://github.com/jcalfee/bip39-checker)
 * [bitcoinjs-lib](https://github.com/bitcoinjs/bitcoinjs-lib)
-* [ethereumjs-tx](https://github.com/ethereumjs/ethereumjs-vm/tree/master/packages/tx)
+* [@ethereumjs/tx](https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/tx)
 * [ethereumjs-util](https://github.com/ethereumjs/ethereumjs-util)
 * [hdkey](https://github.com/cryptocoinjs/hdkey)
-* [web3-utils](https://github.com/ethereum/web3.js)
 * [wif](https://github.com/bitcoinjs/wif)
 * [worker-loader](https://github.com/webpack-contrib/worker-loader)
 * [bitcore-lib-cash](https://github.com/bitpay/bitcore/tree/master/packages/bitcore-lib-cash)
