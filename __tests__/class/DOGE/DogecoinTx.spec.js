@@ -2,6 +2,8 @@ import Core from '@/class/Core'
 import DogecoinTx from '@/class/DOGE/DogecoinTx'
 import {calcBtcTxSize} from '@/helpers/coreHelper'
 import * as mock from '@/../__mocks__/dogecoinTxMock.js'
+import fetch from 'node-fetch'
+global.Headers = fetch.Headers
 
 describe('DogecoinTx class', () => {
   test('it should create a DogecoinTx class', () => {
@@ -99,7 +101,7 @@ describe('DogecoinTx class', () => {
     const available_amounts = mock.test_fees.map(item => {
       return (mock.test_balance - item.feePerByte * tx_size) / Math.pow(10, 8)
     })
-  
+
     const data = available_amounts.map(amount => {
       return mock.getData({amount})
     })

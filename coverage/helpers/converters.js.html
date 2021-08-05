@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">86.36% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/16</span>
+                <span class='fraction'>19/22</span>
             </div>
         
             
@@ -126,7 +126,9 @@
 <a name='L67'></a><a href='#L67'>67</a>
 <a name='L68'></a><a href='#L68'>68</a>
 <a name='L69'></a><a href='#L69'>69</a>
-<a name='L70'></a><a href='#L70'>70</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -143,9 +145,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">40x</span>
-<span class="cline-any cline-yes">24x</span>
-<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">146x</span>
+<span class="cline-any cline-yes">93x</span>
+<span class="cline-any cline-yes">93x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -153,9 +156,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">51x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">46x</span>
+<span class="cline-any cline-yes">53x</span>
+<span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-yes">48x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -181,19 +185,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">33x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">33x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">33x</span>
-<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">33x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">33x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import bigDecimal from 'js-big-decimal'
 &nbsp;
@@ -209,12 +213,13 @@ export default {
    * Convert Satoshi to Bitcoin
    * @param {number} sat
    * @param {number} customPrecision
+   * @param {boolean} returnNumber
    * @returns {number} btc
    */
-  sat_to_btc (sat, customPrecision) {
+  sat_to_btc (sat, customPrecision, returnNumber = true) {
     if (!+sat) return 0
     let value = bigDecimal.divide(sat, BTC_FACTOR, customPrecision || PRECISION)
-    return removeLastZero(value)
+    return returnNumber ? +value : <span class="branch-1 cbranch-no" title="branch not covered" >removeLastZero(value)</span>
   },
   /**
    * Convert Bitcoin to Satoshi
@@ -230,12 +235,13 @@ export default {
    * Convert WEI to Ethereum
    * @param {number} wei
    * @param {number} customPrecision
+   * @param {boolean} returnNumber
    * @returns {number} eth
    */
-  wei_to_eth (wei, customPrecision) {
+  wei_to_eth (wei, customPrecision, returnNumber = true) {
     if (!+wei) return 0
     let value = bigDecimal.divide(wei, ETH_FACTOR, customPrecision || PRECISION)
-    return removeLastZero(value)
+    return returnNumber ? +value : removeLastZero(value)
   },
   /**
    * Convert Ethereum to WEI
@@ -271,7 +277,7 @@ function removeLastZero(value) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu Aug 05 2021 15:34:13 GMT+0300 (Eastern European Summer Time)
+                at Thu Aug 05 2021 15:55:20 GMT+0300 (Moscow Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>
