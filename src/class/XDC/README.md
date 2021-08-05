@@ -7,7 +7,8 @@ const data = {
     to: '0x1e8d99d2278...d89983e2920df33b485',
     gasPrice: 2500,
     gasLimit: 21000,
-    privateKey: '0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313'
+    privateKey: '0xd27c8544f946bd2a5456...d174e64e4a03030917bb8313',
+    chainId: 50
 }
 
 const xdc_tx = await WALLET.makeRawEthTx(data)
