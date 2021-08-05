@@ -12,12 +12,13 @@ export default {
    * Convert Satoshi to Bitcoin
    * @param {number} sat
    * @param {number} customPrecision
+   * @param {boolean} returnNumber
    * @returns {number} btc
    */
-  sat_to_btc (sat, customPrecision) {
+  sat_to_btc (sat, customPrecision, returnNumber = true) {
     if (!+sat) return 0
     let value = bigDecimal.divide(sat, BTC_FACTOR, customPrecision || PRECISION)
-    return removeLastZero(value)
+    return returnNumber ? +value : removeLastZero(value)
   },
   /**
    * Convert Bitcoin to Satoshi
@@ -33,12 +34,13 @@ export default {
    * Convert WEI to Ethereum
    * @param {number} wei
    * @param {number} customPrecision
+   * @param {boolean} returnNumber
    * @returns {number} eth
    */
-  wei_to_eth (wei, customPrecision) {
+  wei_to_eth (wei, customPrecision, returnNumber = true) {
     if (!+wei) return 0
     let value = bigDecimal.divide(wei, ETH_FACTOR, customPrecision || PRECISION)
-    return removeLastZero(value)
+    return returnNumber ? +value : removeLastZero(value)
   },
   /**
    * Convert Ethereum to WEI

@@ -27,7 +27,7 @@ export default class XinfinTx {
     this.gasPrice = 2500
     this.gasLimit = 21000
     this.feeInGwei = +bigDecimal.multiply(this.gasPrice, this.gasLimit)
-    this.finalFee = converter.wei_to_eth(this.feeInGwei, 14)
+    this.finalFee = converter.wei_to_eth(this.feeInGwei, 14, false)
     this.feeList = []
   }
 
