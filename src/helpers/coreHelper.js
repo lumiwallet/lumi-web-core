@@ -459,14 +459,14 @@ export function makeRawEthTx(data = {}) {
     if (to.startsWith('xdc')) {
       to = to.replace('xdc', '0x')
     }
+    let bigIntValue = BigInt(value)
     let params = {
       to: to,
       nonce: ethUtil.intToHex(parseInt(nonce)),
-      value: ethUtil.intToHex(parseInt(value)),
+      value: ethUtil.intToHex(parseInt(bigIntValue)),
       gasPrice: ethUtil.intToHex(parseInt(gasPrice)),
       gasLimit: ethUtil.intToHex(parseInt(gasLimit))
     }
-
     if (data.hasOwnProperty('from') && data.from) {
       params.from = data.from
     }

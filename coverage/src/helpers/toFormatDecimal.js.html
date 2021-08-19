@@ -88,7 +88,11 @@
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -96,30 +100,36 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import bigDecimal from 'js-big-decimal'
+&nbsp;
+/**
  * Formatting numbers with the number of digits after the decimal point
  * @param {number|string} value - Value for formatting
  * @param {number} x - Number of digits after the decimal point
@@ -128,26 +138,28 @@
  */
 export default <span class="fstat-no" title="function not covered" >fu</span>nction (value, x = <span class="branch-0 cbranch-no" title="branch not covered" >8,</span> floor = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span> {
 <span class="cstat-no" title="statement not covered" >  value = parseFloat(value)</span>
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  if (!value) <span class="cstat-no" title="statement not covered" >return '0'</span></span>
-  
-  let num = <span class="cstat-no" title="statement not covered" >0</span>
-  
+&nbsp;
+  let bigNum = <span class="cstat-no" title="statement not covered" >new bigDecimal(value)</span>
+  let num
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  if (floor) {</span>
-    let pow = <span class="cstat-no" title="statement not covered" >Math.pow(10, 8)</span>
-<span class="cstat-no" title="statement not covered" >    num = Math.floor(value * pow) / pow</span>
+<span class="cstat-no" title="statement not covered" >    num = bigNum.round(x, bigDecimal.RoundingModes.DOWN)</span>
   } else {
-<span class="cstat-no" title="statement not covered" >    num = value.toFixed(x)</span>
+<span class="cstat-no" title="statement not covered" >    num = bigNum.round(x, bigDecimal.RoundingModes.CEILING)</span>
   }
-  
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  num = num.value</span>
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  while (num[num.length - 1] === '0') {</span>
 <span class="cstat-no" title="statement not covered" >    num = num.slice(0, -1)</span>
   }
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  if (num[num.length - 1] === '.') {</span>
 <span class="cstat-no" title="statement not covered" >    num = num.slice(0, -1)</span>
   }
-  
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  return num</span>
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -157,7 +169,7 @@ export default <span class="fstat-no" title="function not covered" >fu</span>nct
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Wed Oct 14 2020 18:01:23 GMT+0300 (Moscow Standard Time)
+                at Thu Aug 19 2021 13:30:38 GMT+0300 (Moscow Standard Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

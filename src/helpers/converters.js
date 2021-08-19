@@ -5,7 +5,6 @@ import bigDecimal from 'js-big-decimal'
  */
 const BTC_FACTOR = Math.pow(10, 8)
 const ETH_FACTOR = Math.pow(10, 18)
-const BTC_PRECISION = 8
 const ETH_PRECISION = 18
 const PRECISION = 10
 
@@ -20,8 +19,8 @@ export default {
   sat_to_btc (sat, customPrecision, returnNumber = true) {
     if (!+sat) return 0
     sat = +sat
-    let n1 = new bigDecimal(sat.toExponential(BTC_PRECISION))
-    let n2 = new bigDecimal(BTC_FACTOR.toExponential(BTC_PRECISION))
+    let n1 = new bigDecimal(sat)
+    let n2 = new bigDecimal(BTC_FACTOR)
     let num = n1.divide(n2, customPrecision || PRECISION)
     return returnNumber ? +num.value : removeLastZero(num.value)
   },
@@ -32,9 +31,8 @@ export default {
    */
   btc_to_sat (btc) {
     if (!+btc) return 0
-    btc = +btc
-    let n1 = new bigDecimal(btc.toExponential(BTC_PRECISION))
-    let n2 = new bigDecimal(BTC_FACTOR.toExponential(BTC_PRECISION))
+    let n1 = new bigDecimal(btc)
+    let n2 = new bigDecimal(BTC_FACTOR)
     let num = n1.multiply(n2)
     return +bigDecimal.floor(num.value)
   },
@@ -48,9 +46,11 @@ export default {
   wei_to_eth (wei, customPrecision, returnNumber = true) {
     if (!+wei) return 0
     wei = +wei
-    let n1 = new bigDecimal(wei.toExponential(ETH_PRECISION))
+    let isNegative = wei < 0
+    let n1 = new bigDecimal(Math.abs(wei).toExponential(ETH_PRECISION))
     let n2 = new bigDecimal(ETH_FACTOR.toExponential(ETH_PRECISION))
     let num = n1.divide(n2, customPrecision || PRECISION)
+    if (isNegative) num.multiply(new bigDecimal(-1))
     return returnNumber ? +num.value : removeLastZero(num.value)
   },
   /**
@@ -61,9 +61,11 @@ export default {
   eth_to_wei (eth) {
     if (!+eth) return 0
     eth = +eth
-    let n1 = new bigDecimal(eth.toExponential(ETH_PRECISION))
+    let isNegative = eth < 0
+    let n1 = new bigDecimal(Math.abs(eth).toExponential(ETH_PRECISION))
     let n2 = new bigDecimal(ETH_FACTOR.toExponential(ETH_PRECISION))
     let num = n1.multiply(n2)
+    if (isNegative) num.multiply(new bigDecimal(-1))
     return +bigDecimal.floor(num.value)
   }
 }
