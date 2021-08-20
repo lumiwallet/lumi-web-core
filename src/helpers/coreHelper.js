@@ -463,7 +463,7 @@ export function makeRawEthTx(data = {}) {
     let params = {
       to: to,
       nonce: ethUtil.intToHex(parseInt(nonce)),
-      value: ethUtil.intToHex(parseInt(bigIntValue)),
+      value: ethUtil.bnToHex(bigIntValue),
       gasPrice: ethUtil.intToHex(parseInt(gasPrice)),
       gasLimit: ethUtil.intToHex(parseInt(gasLimit))
     }
@@ -473,7 +473,6 @@ export function makeRawEthTx(data = {}) {
     if (data.hasOwnProperty('data') && data.data) {
       params.data = data.data
     }
-
     let common
     if (chainId) {
       common = Common.custom({chainId})

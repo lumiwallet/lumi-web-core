@@ -60,10 +60,13 @@ export default class XinfinTx {
   async make(data) {
     const {addressTo, value, nonce} = data
     const amountInWei = converter.eth_to_wei(value)
-    const finalAmount = +bigDecimal.add(amountInWei, this.feeInGwei)
-    const surrender = bigDecimal.subtract(this.balance, finalAmount)
+    const amountInWeiBD = new bigDecimal(amountInWei)
+    const feeBD = new bigDecimal('' + this.feeInGwei)
+    const finalAmount = amountInWeiBD.add(feeBD)
+    const balanceBD = new bigDecimal('' + this.balance)
+    const surrender = balanceBD.subtract(finalAmount)
 
-    if (surrender < 0) {
+    if (surrender.value < 0) {
       throw new CustomError('err_tx_xdc_balance')
     }
 
