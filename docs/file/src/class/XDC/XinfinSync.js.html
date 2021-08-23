@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">src/helpers/requestHandleErrors.js | lumi-web-core</title>
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">src/class/XDC/XinfinSync.js | lumi-web-core</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -81,22 +81,99 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/helpers/requestHandleErrors.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
- * Handling requests
- * @param response
- * @returns {any | Promise&lt;any&gt;} Response decoded in json or error if the request failed
+<div class="content" data-ice="content"><h1 data-ice="title">src/class/XDC/XinfinSync.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Request from &apos;@/helpers/Request&apos;
+
+/**
+ * Class XinfinSync
+ * This class allows you to get information about the balance on a XinFin wallet,
+ * the list of transactions and optimal gas price
+ * @class
  */
-export default function (response) {
-  if (response.ok) {
-    const contentType = response.headers.get(&apos;content-type&apos;)
-    if (contentType &amp;&amp; contentType.indexOf(&apos;application/json&apos;) !== -1) {
-      return response.json()
-    } else {
-      return response.text()
+
+export default class XinfinSync {
+  /**
+   * Create a XinfinSync
+   * @param {string} address - XinFin wallet address
+   * @param {Object} api - A set of URLs for getting information about xdc address
+   * @param {Object} headers - Request headers
+   */
+  constructor(address, api, headers) {
+    this.address = address
+    this.api = api
+    this.balance = 0
+    this.transactions = []
+    this.request = new Request(this.api.xdc, headers)
+    this.txListRequest = new Request(`${ this.api.xdc }scan`, headers)
+  }
+
+  /**
+   * The method that starts the synchronization XinFin part of the wallet
+   * @returns {Promise&lt;number&gt;}
+   * @constructor
+   */
+
+  async Start() {
+    this.balance = await this.getBalance()
+    await this.getTransactions()
+  }
+
+  /**
+   * Request to receive a balance of XinFin wallet
+   * @returns {Promise&lt;number&gt;}
+   */
+
+  async getBalance() {
+    this.balance = 0
+
+    let params = {
+      jsonrpc: &apos;2.0&apos;,
+      method: &apos;eth_getBalance&apos;,
+      params: [this.address, &apos;latest&apos;],
+      id: 1
     }
-  } else {
-    throw new Error(response.statusText)
+
+    let res = await this.request.send(params)
+    return res &amp;&amp; res.hasOwnProperty(&apos;result&apos;) &amp;&amp; !isNaN(res.result) ? +res.result : 0
+  }
+
+  /**
+   * Request to receive XinFin transaction list
+   * @returns {Promise&lt;Array&gt;}
+   */
+
+  async getTransactions() {
+    this.transactions = []
+
+    let params = {
+      module: &apos;account&apos;,
+      action: &apos;txlist&apos;,
+      address: this.address,
+      page: 0,
+      pageSize: 100
+    }
+
+    let req = async () =&gt; {
+      let res = await this.txListRequest.send(params)
+
+      if (res &amp;&amp; res.hasOwnProperty(&apos;result&apos;) &amp;&amp; Array.isArray(res.result)) {
+        this.transactions = [...res.result, ...this.transactions]
+        if (res.result.length === params.pageSize) {
+          params.page++
+          await req()
+        }
+      }
+    }
+
+    await req()
+  }
+
+  get DATA() {
+    return {
+      address: this.address,
+      balance: this.balance,
+      transactions: this.transactions
+    }
   }
 }
 </code></pre>
