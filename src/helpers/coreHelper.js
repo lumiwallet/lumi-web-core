@@ -1,10 +1,10 @@
 import * as bip39 from 'bip39'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as coininfo from 'coininfo'
-import {Transaction} from 'ethereumjs-tx'
+import Common, {Chain} from '@ethereumjs/common'
+import {Transaction} from '@ethereumjs/tx'
 import * as ethUtil from 'ethereumjs-util'
 import * as HDkey from 'hdkey'
-import * as utils from 'web3-utils'
 import wif from 'wif'
 import * as bchaddr from 'bchaddrjs'
 import * as bitcore from 'bitcore-lib-cash'
@@ -17,7 +17,7 @@ import {networks} from '@/helpers/networks'
  * @param {number} entropyLength - The number of bits in the entropy. It can be equal to 128, 160, 192, 224 or 256 bits
  * @returns {string} - A mnemonic whose words are separated by spaces
  */
-export function generateMnemonic (entropyLength = 128) {
+export function generateMnemonic(entropyLength = 128) {
   try {
     return bip39.generateMnemonic(entropyLength)
   }
@@ -32,7 +32,7 @@ export function generateMnemonic (entropyLength = 128) {
  * @param {string} mnemonic - Mnemonic phrase
  * @returns {Buffer} - Seed in Uint8Array format
  */
-export function mnemonicToSeed (mnemonic) {
+export function mnemonicToSeed(mnemonic) {
   try {
     return bip39.mnemonicToSeedSync(mnemonic)
   }
@@ -47,7 +47,7 @@ export function mnemonicToSeed (mnemonic) {
  * @param {string} mnemonic - Mnemonic phrase
  * @returns {string} HEX strings entropy
  */
-export function mnemonicToEntropy (mnemonic) {
+export function mnemonicToEntropy(mnemonic) {
   try {
     return bip39.mnemonicToEntropy(mnemonic)
   }
@@ -62,7 +62,7 @@ export function mnemonicToEntropy (mnemonic) {
  * @param {Buffer} seed - Mnemonic seed in Buffer
  * @returns {Object} hdkey object with private and public key
  */
-export function hdFromSeed (seed) {
+export function hdFromSeed(seed) {
   try {
     return HDkey.fromMasterSeed(seed)
   }
@@ -78,7 +78,7 @@ export function hdFromSeed (seed) {
  * @param {string} xprv - Extended private key
  * @returns {Object} hdkey object with private and public key
  */
-export function hdFromXprv (xprv) {
+export function hdFromXprv(xprv) {
   try {
     return HDkey.fromExtendedKey(xprv)
   }
@@ -93,7 +93,7 @@ export function hdFromXprv (xprv) {
  * @param {Object} hd - HDkey node
  * @returns {string} Extended private key
  */
-export function getXprv (hd) {
+export function getXprv(hd) {
   try {
     return hd.privateExtendedKey
   }
@@ -110,7 +110,7 @@ export function getXprv (hd) {
  * @returns {Object} - Child node
  */
 
-export function derive (hd, path) {
+export function derive(hd, path) {
   if (!hd) {
     throw new CustomError('err_core_derivation_hdkey')
   }
@@ -142,7 +142,7 @@ export function derive (hd, path) {
  * @returns {string} Bitcoin address
  */
 
-export function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = 'btc') {
+export function getBtcAddress(node, childIndex = 0, type = 'p2pkh', network = 'btc') {
   const types = ['p2pkh', 'p2wpkh']
 
   if (!types.includes(type)) {
@@ -171,7 +171,7 @@ export function getBtcAddress (node, childIndex = 0, type = 'p2pkh', network = '
  * @returns {string} Bitcoin address
  */
 
-export function getBtcAddressByPublicKey (key, type = 'p2pkh', network = 'btc') {
+export function getBtcAddressByPublicKey(key, type = 'p2pkh', network = 'btc') {
   if (!key) return ''
 
   try {
@@ -193,7 +193,7 @@ export function getBtcAddressByPublicKey (key, type = 'p2pkh', network = 'btc') 
  * @returns {Buffer} Ethereum private key in Uint8Array format
  */
 
-export function getEthPrivateKey (node) {
+export function getEthPrivateKey(node) {
   try {
     return node._privateKey
   }
@@ -209,7 +209,7 @@ export function getEthPrivateKey (node) {
  * @returns {Buffer} Ethereum public key in Uint8Array format
  */
 
-export function getEthPublicKey (privateKey) {
+export function getEthPublicKey(privateKey) {
   try {
     return ethUtil.privateToPublic(privateKey)
   }
@@ -225,12 +225,10 @@ export function getEthPublicKey (privateKey) {
  * @returns {string} Ethereum wallet address
  */
 
-export function getEthAddress (publicKey) {
+export function getEthAddress(publicKey) {
   try {
-    let addrBuffer = ethUtil
-      .publicToAddress(publicKey)
-      .toString('hex')
-    return ethUtil.toChecksumAddress(addrBuffer).toLowerCase()
+    const addr = ethUtil.Address.fromPublicKey(publicKey)
+    return addr.toString()
   }
   catch (e) {
     console.log(e)
@@ -244,7 +242,7 @@ export function getEthAddress (publicKey) {
  * @returns {string} Ethereum wallet address
  */
 
-export function getEthAddressByNode (node) {
+export function getEthAddressByNode(node) {
   try {
     let privateKey = getEthPrivateKey(node)
     let publicKey = getEthPublicKey(privateKey)
@@ -261,7 +259,7 @@ export function getEthAddressByNode (node) {
  * @param {Buffer} privateKey - Private key in Uint8Array format
  * @returns {string} Private key in WIF
  */
-export function privateKeyToWIF (privateKey) {
+export function privateKeyToWIF(privateKey) {
   try {
     return wif.encode(128, privateKey, true)
   }
@@ -278,7 +276,7 @@ export function privateKeyToWIF (privateKey) {
  * @returns {number} Transaction size
  */
 
-export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
+export function calcBtcTxSize(i = 1, o = 2, isWitness = false) {
   let result = 0
 
   if (isWitness) {
@@ -301,7 +299,7 @@ export function calcBtcTxSize (i = 1, o = 2, isWitness = false) {
  * @returns {Object} Returns raw Bitcoin transaction and transaction hash
  */
 
-export function makeRawBtcTx (data = {}) {
+export function makeRawBtcTx(data = {}) {
   try {
     const {inputs, outputs} = data
     const psbt = new bitcoin.Psbt()
@@ -371,7 +369,7 @@ export function makeRawBtcTx (data = {}) {
  * @returns {Object} Returns raw Bitcoin Vault transaction and transaction hash
  */
 
-export function makeRawBtcvTx (data = {}) {
+export function makeRawBtcvTx(data = {}) {
   try {
     const {inputs, outputs} = data
     const psbt = new bitcoin.Psbt({network: networks.btcv})
@@ -430,7 +428,7 @@ export function makeRawBtcvTx (data = {}) {
 }
 
 /**
- * Creating a raw Ethereum transaction
+ * Creating a raw Ethereum or Xinfin transaction
  * @param {Object} data - Input data for a transaction
  * @param {string} data.to - Recipient address or contract address
  * @param {number} data.value - Transaction amount
@@ -438,13 +436,15 @@ export function makeRawBtcvTx (data = {}) {
  * @param {number} data.gasPrice - Transaction gas price
  * @param {number} data.gasLimit - Transaction gas limit
  * @param {string} data.from - Ethereum sender address (required for ERC20 transactions)
+ * @param {string} data.chainId - Ethereum chain number
  * @param {string} data.data - Data in hex representation (required for ERC20 transactions)
  * @param {string|Buffer} data.privateKey - Ethereum private key in hex or Buffer format
  * @returns {Object} Returns raw Ethereum transaction and transaction hash
  */
 
-export function makeRawEthTx (data = {}) {
-  const {to, value, nonce, gasPrice, gasLimit, privateKey, chainId} = data
+export function makeRawEthTx(data = {}) {
+  let {to} = data
+  const {value, nonce, gasPrice, gasLimit, privateKey, chainId} = data
 
   if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||
     isNaN(gasLimit)) {
@@ -456,30 +456,43 @@ export function makeRawEthTx (data = {}) {
   }
 
   try {
+    if (to.startsWith('xdc')) {
+      to = to.replace('xdc', '0x')
+    }
+    let bigIntValue = BigInt(value)
     let params = {
       to: to,
-      nonce: utils.toHex(parseInt(nonce)),
-      value: utils.toHex(parseInt(value)),
-      gasPrice: utils.toHex(parseInt(gasPrice)),
-      gasLimit: utils.toHex(parseInt(gasLimit)),
-      chainId: utils.toHex(1)
+      nonce: ethUtil.intToHex(parseInt(nonce)),
+      value: ethUtil.bnToHex(bigIntValue),
+      gasPrice: ethUtil.intToHex(parseInt(gasPrice)),
+      gasLimit: ethUtil.intToHex(parseInt(gasLimit))
     }
-
     if (data.hasOwnProperty('from') && data.from) {
       params.from = data.from
     }
-
     if (data.hasOwnProperty('data') && data.data) {
       params.data = data.data
     }
+    let common
+    if (chainId) {
+      common = Common.custom({chainId})
+    } else {
+      common = new Common(({chain: Chain.Mainnet}))
+    }
 
-    const tx = new Transaction(params)
-    const privateKeyBuffer = ethUtil.toBuffer(privateKey)
+    const tx = Transaction.fromTxData(params, { common })
 
-    tx.sign(privateKeyBuffer)
+    let buffer
+    if (typeof privateKey === 'string') {
+      buffer = Buffer.from(privateKey?.replace('0x', ''), 'hex')
+    } else {
+      buffer = privateKey
+    }
 
-    const serializedTx = tx.serialize()
-    const hash = tx.hash().toString('hex')
+    const privateKeyBuffer = ethUtil.toBuffer(buffer)
+    const signedTx = tx.sign(privateKeyBuffer)
+    const serializedTx = signedTx.serialize()
+    const hash = signedTx.hash().toString('hex')
 
     return {
       hash: `0x${ hash }`,
@@ -500,7 +513,7 @@ export function makeRawEthTx (data = {}) {
  * @returns {Object} Returns raw Bitcoin Cash transaction and transaction hash
  */
 
-export function makeRawBchTx (data = {}) {
+export function makeRawBchTx(data = {}) {
   try {
     const {inputs, outputs} = data
     let privateKeys = []
@@ -551,7 +564,7 @@ export function makeRawBchTx (data = {}) {
  * @returns {string} Returns address
  */
 
-export function getCashAddress (node, childIndex, withoutPrefix = true) {
+export function getCashAddress(node, childIndex, withoutPrefix = true) {
   try {
     let pubKey = node.deriveChild(childIndex).pubKeyHash
     let address = new bitcore.Address.fromPublicKeyHash(pubKey)
@@ -569,7 +582,7 @@ export function getCashAddress (node, childIndex, withoutPrefix = true) {
  * @returns {string} Returns Bitcoin Cash address in CashAddr format
  */
 
-export function convertToCashAddress (address = '') {
+export function convertToCashAddress(address = '') {
   try {
     const toCashAddress = bchaddr.toCashAddress
 
@@ -589,7 +602,7 @@ export function convertToCashAddress (address = '') {
  * @returns {Object} Returns raw Litecoin transaction and transaction hash
  */
 
-export function makeRawLtcTx (data = {}) {
+export function makeRawLtcTx(data = {}) {
   try {
     const {inputs, outputs} = data
 
@@ -669,7 +682,7 @@ export function makeRawLtcTx (data = {}) {
  * @returns {string} Returns address
  */
 
-export function getLtcAddress (node, childIndex) {
+export function getLtcAddress(node, childIndex) {
   try {
     let curr = coininfo.litecoin.main
     let frmt = curr.toBitcoinJS()
@@ -703,7 +716,7 @@ export function getLtcAddress (node, childIndex) {
  * @returns {Object} Returns raw Dogecoin transaction and transaction hash
  */
 
-export function makeRawDogeTx (data = {}) {
+export function makeRawDogeTx(data = {}) {
   try {
     const {inputs, outputs} = data
 
@@ -776,7 +789,7 @@ export function makeRawDogeTx (data = {}) {
  * @returns {string} Returns address
  */
 
-export function getDogeAddress (node, childIndex, withoutPrefix = true) {
+export function getDogeAddress(node, childIndex, withoutPrefix = true) {
   try {
     let curr = coininfo.dogecoin.main
     let frmt = curr.toBitcoinJS()
@@ -807,7 +820,7 @@ export function getDogeAddress (node, childIndex, withoutPrefix = true) {
  * @returns {string} Returns Private key in WIF format
  */
 
-export function getBtcPrivateKeyByIndex (node, index) {
+export function getBtcPrivateKeyByIndex(node, index) {
   try {
     const key = node.deriveChild(index).privateKey
 

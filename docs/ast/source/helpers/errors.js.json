@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 3592,
+  "end": 3637,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 57,
+      "line": 58,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 3592,
+    "end": 3637,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 57,
+        "line": 58,
         "column": 0
       }
     },
@@ -31,28 +31,28 @@
       {
         "type": "ExportDefaultDeclaration",
         "start": 0,
-        "end": 3591,
+        "end": 3636,
         "loc": {
           "start": {
             "line": 1,
             "column": 0
           },
           "end": {
-            "line": 56,
+            "line": 57,
             "column": 1
           }
         },
         "declaration": {
           "type": "ObjectExpression",
           "start": 15,
-          "end": 3591,
+          "end": 3636,
           "loc": {
             "start": {
               "line": 1,
               "column": 15
             },
             "end": {
-              "line": 56,
+              "line": 57,
               "column": 1
             }
           },
@@ -3025,6 +3025,61 @@
                   "raw": "'Selected coin is not supported for sync'"
                 },
                 "value": "Selected coin is not supported for sync"
+              }
+            },
+            {
+              "type": "ObjectProperty",
+              "start": 3592,
+              "end": 3634,
+              "loc": {
+                "start": {
+                  "line": 56,
+                  "column": 2
+                },
+                "end": {
+                  "line": 56,
+                  "column": 44
+                }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 3592,
+                "end": 3610,
+                "loc": {
+                  "start": {
+                    "line": 56,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 56,
+                    "column": 20
+                  },
+                  "identifierName": "err_tx_xdc_balance"
+                },
+                "name": "err_tx_xdc_balance"
+              },
+              "value": {
+                "type": "StringLiteral",
+                "start": 3612,
+                "end": 3634,
+                "loc": {
+                  "start": {
+                    "line": 56,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 56,
+                    "column": 44
+                  }
+                },
+                "extra": {
+                  "rawValue": "Insufficient balance",
+                  "raw": "'Insufficient balance'"
+                },
+                "value": "Insufficient balance"
               }
             }
           ],
@@ -8790,6 +8845,85 @@
     },
     {
       "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "err_tx_xdc_balance",
+      "start": 3592,
+      "end": 3610,
+      "loc": {
+        "start": {
+          "line": 56,
+          "column": 2
+        },
+        "end": {
+          "line": 56,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 3610,
+      "end": 3611,
+      "loc": {
+        "start": {
+          "line": 56,
+          "column": 20
+        },
+        "end": {
+          "line": 56,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "Insufficient balance",
+      "start": 3612,
+      "end": 3634,
+      "loc": {
+        "start": {
+          "line": 56,
+          "column": 22
+        },
+        "end": {
+          "line": 56,
+          "column": 44
+        }
+      }
+    },
+    {
+      "type": {
         "label": "}",
         "beforeExpr": false,
         "startsExpr": false,
@@ -8800,15 +8934,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 3590,
-      "end": 3591,
+      "start": 3635,
+      "end": 3636,
       "loc": {
         "start": {
-          "line": 56,
+          "line": 57,
           "column": 0
         },
         "end": {
-          "line": 56,
+          "line": 57,
           "column": 1
         }
       }
@@ -8826,15 +8960,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 3592,
-      "end": 3592,
+      "start": 3637,
+      "end": 3637,
       "loc": {
         "start": {
-          "line": 57,
+          "line": 58,
           "column": 0
         },
         "end": {
-          "line": 57,
+          "line": 58,
           "column": 0
         }
       }

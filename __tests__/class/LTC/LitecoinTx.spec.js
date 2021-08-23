@@ -2,6 +2,8 @@ import Core from '@/class/Core'
 import LitecoinTx from '@/class/LTC/LitecoinTx'
 import {calcBtcTxSize} from '@/helpers/coreHelper'
 import * as mock from '@/../__mocks__/litecoinTxMock.js'
+import fetch from 'node-fetch'
+global.Headers = fetch.Headers
 
 describe('Litecoin class', () => {
   test('it should create a LitecoinTx class', () => {

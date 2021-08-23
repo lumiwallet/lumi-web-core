@@ -29,7 +29,7 @@ export {
 /**
  * Currencies that are supported in the wallet
  */
-const AVAILABLE_COINS = ['BTC', 'ETH', 'BCH', 'BTCV', 'DOGE', 'LTC', 'BNB']
+const AVAILABLE_COINS = ['BTC', 'ETH', 'BCH', 'BTCV', 'DOGE', 'LTC', 'BNB', 'XDC']
 
 /**
  * Class Wallet
@@ -54,7 +54,8 @@ export default class Wallet {
       ltc: '',
       doge: '',
       dogeFee: '',
-      bnb: ''
+      bnb: '',
+      xdc: ''
     }
     this._apiReady = false
 

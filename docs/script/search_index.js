@@ -132,15 +132,21 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "lumi-web-core/src/class/xdc/xinfinsync.js~xinfinsync",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html",
+    "<span>XinfinSync</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/XDC/XinfinSync.js</span>",
+    "class"
+  ],
+  [
+    "lumi-web-core/src/class/xdc/xinfintx.js~xinfintx",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html",
+    "<span>XinfinTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/XDC/XinfinTx.js</span>",
+    "class"
+  ],
+  [
     "lumi-web-core/src/utils/crypto.js~ab2hexstring",
     "function/index.html#static-function-ab2hexstring",
     "<span>ab2hexstring</span> <span class=\"search-result-import-path\">lumi-web-core/src/utils/crypto.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~calcbtctxsize",
-    "function/index.html#static-function-calcBtcTxSize",
-    "<span>calcBtcTxSize</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
   ],
   [
@@ -156,12 +162,6 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "lumi-web-core/src/helpers/corehelper.js~converttocashaddress",
-    "function/index.html#static-function-convertToCashAddress",
-    "<span>convertToCashAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
     "lumi-web-core/src/class/bnb/utils.js~converttojager",
     "function/index.html#static-function-convertToJager",
     "<span>convertToJager</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/utils.js</span>",
@@ -171,12 +171,6 @@ window.esdocSearchIndex = [
     "lumi-web-core/src/class/bnb/address.js~decodeaddress",
     "function/index.html#static-function-decodeAddress",
     "<span>decodeAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/address.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~derive",
-    "function/index.html#static-function-derive",
-    "<span>derive</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
   ],
   [
@@ -234,12 +228,6 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "lumi-web-core/src/helpers/corehelper.js~generatemnemonic",
-    "function/index.html#static-function-generateMnemonic",
-    "<span>generateMnemonic</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
     "lumi-web-core/src/class/bnb/utils.js~generatesignature",
     "function/index.html#static-function-generateSignature",
     "<span>generateSignature</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/utils.js</span>",
@@ -258,135 +246,9 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
-    "lumi-web-core/src/helpers/corehelper.js~getbtcaddress",
-    "function/index.html#static-function-getBtcAddress",
-    "<span>getBtcAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getbtcaddressbypublickey",
-    "function/index.html#static-function-getBtcAddressByPublicKey",
-    "<span>getBtcAddressByPublicKey</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getbtcprivatekeybyindex",
-    "function/index.html#static-function-getBtcPrivateKeyByIndex",
-    "<span>getBtcPrivateKeyByIndex</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getcashaddress",
-    "function/index.html#static-function-getCashAddress",
-    "<span>getCashAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getdogeaddress",
-    "function/index.html#static-function-getDogeAddress",
-    "<span>getDogeAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getethaddress",
-    "function/index.html#static-function-getEthAddress",
-    "<span>getEthAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getethaddressbynode",
-    "function/index.html#static-function-getEthAddressByNode",
-    "<span>getEthAddressByNode</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getethprivatekey",
-    "function/index.html#static-function-getEthPrivateKey",
-    "<span>getEthPrivateKey</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getethpublickey",
-    "function/index.html#static-function-getEthPublicKey",
-    "<span>getEthPublicKey</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getltcaddress",
-    "function/index.html#static-function-getLtcAddress",
-    "<span>getLtcAddress</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~getxprv",
-    "function/index.html#static-function-getXprv",
-    "<span>getXprv</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~hdfromseed",
-    "function/index.html#static-function-hdFromSeed",
-    "<span>hdFromSeed</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~hdfromxprv",
-    "function/index.html#static-function-hdFromXprv",
-    "<span>hdFromXprv</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~makerawbchtx",
-    "function/index.html#static-function-makeRawBchTx",
-    "<span>makeRawBchTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~makerawbtctx",
-    "function/index.html#static-function-makeRawBtcTx",
-    "<span>makeRawBtcTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~makerawbtcvtx",
-    "function/index.html#static-function-makeRawBtcvTx",
-    "<span>makeRawBtcvTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~makerawdogetx",
-    "function/index.html#static-function-makeRawDogeTx",
-    "<span>makeRawDogeTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~makerawethtx",
-    "function/index.html#static-function-makeRawEthTx",
-    "<span>makeRawEthTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~makerawltctx",
-    "function/index.html#static-function-makeRawLtcTx",
-    "<span>makeRawLtcTx</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
     "lumi-web-core/src/class/bnb/amino.js~marshalbinary",
     "function/index.html#static-function-marshalBinary",
     "<span>marshalBinary</span> <span class=\"search-result-import-path\">lumi-web-core/src/class/BNB/amino.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~mnemonictoentropy",
-    "function/index.html#static-function-mnemonicToEntropy",
-    "<span>mnemonicToEntropy</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~mnemonictoseed",
-    "function/index.html#static-function-mnemonicToSeed",
-    "<span>mnemonicToSeed</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
     "function"
   ],
   [
@@ -394,12 +256,6 @@ window.esdocSearchIndex = [
     "variable/index.html#static-variable-networks",
     "<span>networks</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/networks.js</span>",
     "variable"
-  ],
-  [
-    "lumi-web-core/src/helpers/corehelper.js~privatekeytowif",
-    "function/index.html#static-function-privateKeyToWIF",
-    "<span>privateKeyToWIF</span> <span class=\"search-result-import-path\">lumi-web-core/src/helpers/coreHelper.js</span>",
-    "function"
   ],
   [
     "lumi-web-core/src/helpers/requesthandleerrors.js~requesthandleerrors",
@@ -1710,6 +1566,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/core.js~core#_generatexdccore",
+    "class/src/class/Core.js~Core.html#instance-method-_generateXDCcore",
+    "src/class/Core.js~Core#_generateXDCcore",
+    "method"
+  ],
+  [
     "src/class/core.js~core#_getentropylength",
     "class/src/class/Core.js~Core.html#instance-method-_getEntropyLength",
     "src/class/Core.js~Core#_getEntropyLength",
@@ -2508,6 +2370,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#syncxdc",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-SyncXDC",
+    "src/class/WalletWrapper.js~WalletWrapper#SyncXDC",
+    "method"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#transaction",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-Transaction",
     "src/class/WalletWrapper.js~WalletWrapper#Transaction",
@@ -2574,6 +2442,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/class/walletwrapper.js~walletwrapper#createxdctx",
+    "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-method-createXDCTx",
+    "src/class/WalletWrapper.js~WalletWrapper#createXDCTx",
+    "method"
+  ],
+  [
     "src/class/walletwrapper.js~walletwrapper#data",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-member-data",
     "src/class/WalletWrapper.js~WalletWrapper#data",
@@ -2589,6 +2463,156 @@ window.esdocSearchIndex = [
     "src/class/walletwrapper.js~walletwrapper#sync",
     "class/src/class/WalletWrapper.js~WalletWrapper.html#instance-member-sync",
     "src/class/WalletWrapper.js~WalletWrapper#sync",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js",
+    "file/src/class/XDC/XinfinSync.js.html",
+    "src/class/XDC/XinfinSync.js",
+    "file"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#data",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-get-DATA",
+    "src/class/XDC/XinfinSync.js~XinfinSync#DATA",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#start",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-method-Start",
+    "src/class/XDC/XinfinSync.js~XinfinSync#Start",
+    "method"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#address",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-member-address",
+    "src/class/XDC/XinfinSync.js~XinfinSync#address",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#api",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-member-api",
+    "src/class/XDC/XinfinSync.js~XinfinSync#api",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#balance",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-member-balance",
+    "src/class/XDC/XinfinSync.js~XinfinSync#balance",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#constructor",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-constructor-constructor",
+    "src/class/XDC/XinfinSync.js~XinfinSync#constructor",
+    "method"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#getbalance",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-method-getBalance",
+    "src/class/XDC/XinfinSync.js~XinfinSync#getBalance",
+    "method"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#gettransactions",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-method-getTransactions",
+    "src/class/XDC/XinfinSync.js~XinfinSync#getTransactions",
+    "method"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#request",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-member-request",
+    "src/class/XDC/XinfinSync.js~XinfinSync#request",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#transactions",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-member-transactions",
+    "src/class/XDC/XinfinSync.js~XinfinSync#transactions",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfinsync.js~xinfinsync#txlistrequest",
+    "class/src/class/XDC/XinfinSync.js~XinfinSync.html#instance-member-txListRequest",
+    "src/class/XDC/XinfinSync.js~XinfinSync#txListRequest",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js",
+    "file/src/class/XDC/XinfinTx.js.html",
+    "src/class/XDC/XinfinTx.js",
+    "file"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#data",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-get-DATA",
+    "src/class/XDC/XinfinTx.js~XinfinTx#DATA",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#address",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-member-address",
+    "src/class/XDC/XinfinTx.js~XinfinTx#address",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#balance",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-member-balance",
+    "src/class/XDC/XinfinTx.js~XinfinTx#balance",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#calcfee",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-method-calcFee",
+    "src/class/XDC/XinfinTx.js~XinfinTx#calcFee",
+    "method"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#constructor",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-constructor-constructor",
+    "src/class/XDC/XinfinTx.js~XinfinTx#constructor",
+    "method"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#feeingwei",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-member-feeInGwei",
+    "src/class/XDC/XinfinTx.js~XinfinTx#feeInGwei",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#feelist",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-member-feeList",
+    "src/class/XDC/XinfinTx.js~XinfinTx#feeList",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#finalfee",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-member-finalFee",
+    "src/class/XDC/XinfinTx.js~XinfinTx#finalFee",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#gaslimit",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-member-gasLimit",
+    "src/class/XDC/XinfinTx.js~XinfinTx#gasLimit",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#gasprice",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-member-gasPrice",
+    "src/class/XDC/XinfinTx.js~XinfinTx#gasPrice",
+    "member"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#make",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-method-make",
+    "src/class/XDC/XinfinTx.js~XinfinTx#make",
+    "method"
+  ],
+  [
+    "src/class/xdc/xinfintx.js~xinfintx#privatekey",
+    "class/src/class/XDC/XinfinTx.js~XinfinTx.html#instance-member-privateKey",
+    "src/class/XDC/XinfinTx.js~XinfinTx#privateKey",
     "member"
   ],
   [
@@ -2637,12 +2661,6 @@ window.esdocSearchIndex = [
     "src/helpers/converters.js",
     "file/src/helpers/converters.js.html",
     "src/helpers/converters.js",
-    "file"
-  ],
-  [
-    "src/helpers/corehelper.js",
-    "file/src/helpers/coreHelper.js.html",
-    "src/helpers/coreHelper.js",
     "file"
   ],
   [

@@ -6,6 +6,7 @@ import BitcoinVaultSync from '@/class/BTCV/BitcoinVaultSync'
 import DogecoinSync from '@/class/DOGE/DogecoinSync'
 import LitecoinSync from '@/class/LTC/LitecoinSync'
 import BinanceSync from '@/class/BNB/sync'
+import XinfinSync from '@/class/XDC/XinfinSync'
 import BitcoinTx from '@/class/BTC/BitcoinTx'
 import EthereumTx from '@/class/ETH/EthereumTx'
 import BitcoinCashTx from '@/class/BCH/BitcoinCashTx'
@@ -13,6 +14,8 @@ import BitcoinVaultTx from '@/class/BTCV/BitcoinVaultTx'
 import DogecoinTx from '@/class/DOGE/DogecoinTx'
 import LitecoinTx from '@/class/LTC/LitecoinTx'
 import BinanceTx from '@/class/BNB/transaction'
+import XinfinTx from '@/class/XDC/XinfinTx'
+
 /**
  * Class WalletWrapper
  * @class
@@ -27,7 +30,7 @@ export default class WalletWrapper {
    * @param {Object} params.api - A set of URLs for getting information about addresses
    */
 
-  constructor (params) {
+  constructor(params) {
     this.data = params.data
     this.api = params.api
     this.core = null
@@ -39,7 +42,8 @@ export default class WalletWrapper {
       BTCV: null,
       DOGE: null,
       LTC: null,
-      BNB: null
+      BNB: null,
+      XDC: null
     }
   }
 
@@ -48,7 +52,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async Create () {
+  async Create() {
     try {
       this.core = new Core(this.data)
       await this.core.generateWallet()
@@ -67,7 +71,7 @@ export default class WalletWrapper {
    * For BTC supported types are p2pkh and p2wpkh. For ETH type is a account number (by default 0).
    * */
 
-  async CreateCoins (coins) {
+  async CreateCoins(coins) {
     try {
       return await this.core.createCoinsCores(coins)
     }
@@ -85,7 +89,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async Sync (data) {
+  async Sync(data) {
     const {coin, type} = data
 
     try {
@@ -104,6 +108,8 @@ export default class WalletWrapper {
           return await this.SyncLTC()
         case 'BNB':
           return await this.SyncBNB()
+        case 'XDC':
+          return await this.SyncXDC()
       }
     }
     catch (e) {
@@ -118,7 +124,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async SyncBTC (type = 'p2pkh') {
+  async SyncBTC(type = 'p2pkh') {
     if (!this.sync.BTC[type]) {
       this.sync.BTC[type] = new BitcoinSync(
         this.core.COINS.BTC[type].externalNode,
@@ -145,7 +151,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async SyncETH (type = 0) {
+  async SyncETH(type = 0) {
     if (!this.sync.ETH[type]) {
       this.sync.ETH[type] = new EthereumSync(this.core.COINS.ETH[type].externalAddress, this.api, this.headers)
     }
@@ -165,7 +171,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async SyncBCH () {
+  async SyncBCH() {
     const type = 'p2pkh'
 
     if (!this.sync.BCH) {
@@ -192,7 +198,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async SyncDOGE () {
+  async SyncDOGE() {
     const type = 'p2pkh'
 
     if (!this.sync.DOGE) {
@@ -219,7 +225,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async SyncLTC () {
+  async SyncLTC() {
     const type = 'p2wpkh'
 
     if (!this.sync.LTC) {
@@ -246,7 +252,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async SyncBTCV () {
+  async SyncBTCV() {
     const type = 'p2wpkh'
 
     if (!this.sync.BTCV) {
@@ -274,12 +280,35 @@ export default class WalletWrapper {
   }
 
   /**
+   * Getting information about XinFin wallet from blockchain
+   * @param {number} type - Ethereum account number. By default 0
+   * @returns {Promise<Object>}
+   * @constructor
+   */
+
+  async SyncXDC() {
+    const type = 'p2pkh'
+
+    if (!this.sync.XDC) {
+      this.sync.XDC = new XinfinSync(this.core.COINS.XDC[type].externalAddress, this.api, this.headers)
+    }
+
+    try {
+      await this.sync.XDC.Start()
+      return this.sync.XDC.DATA
+    }
+    catch (e) {
+      console.log('SyncETH error', e)
+    }
+  }
+
+  /**
    * Getting information about Binance wallet from blockchain
    * @returns {Promise<Object>}
    * @constructor
    */
 
-  async SyncBNB () {
+  async SyncBNB() {
     const type = 'p2pkh'
     if (!this.sync.BNB) {
       this.sync.BNB = new BinanceSync(this.core.COINS.BNB[type].externalAddress, this.api, this.headers)
@@ -306,7 +335,7 @@ export default class WalletWrapper {
    * @constructor
    */
 
-  async Transaction (data) {
+  async Transaction(data) {
     const {currency, method, tx, addressType, account} = data
 
     switch (currency) {
@@ -324,6 +353,8 @@ export default class WalletWrapper {
         return this.createLTCTx(method, tx)
       case 'BNB':
         return this.createBNBTx(method, tx)
+      case 'XDC':
+        return this.createXDCTx(method, tx)
       default:
         throw new Error('Unknown txs type (currency)')
     }
@@ -337,7 +368,7 @@ export default class WalletWrapper {
    * @returns {Promise<Object>} Information about the transaction or fee
    */
 
-  async createBTCTx (method, txData, addressType = 'p2pkh') {
+  async createBTCTx(method, txData, addressType = 'p2pkh') {
     let BTCdata = {
       unspent: this.sync.BTC[addressType].unspent,
       balance: this.sync.BTC[addressType].balance,
@@ -377,7 +408,7 @@ export default class WalletWrapper {
    * @returns {Promise<Object>} Information about the transaction or fee
    */
 
-  async createETHTx (method, txData, account = 0) {
+  async createETHTx(method, txData, account = 0) {
     let ETHdata = {
       address: this.sync.ETH[account].address,
       gasPrice: this.sync.ETH[account].gasPrice,
@@ -398,7 +429,7 @@ export default class WalletWrapper {
   }
 
   // todo
-  async createBCHTx (method, txData) {
+  async createBCHTx(method, txData) {
     const type = 'p2pkh'
 
     let BCHdata = {
@@ -430,7 +461,7 @@ export default class WalletWrapper {
   }
 
   // todo
-  async createDOGETx (method, txData) {
+  async createDOGETx(method, txData) {
     const type = 'p2pkh'
 
     let DOGEdata = {
@@ -463,7 +494,7 @@ export default class WalletWrapper {
     }
   }
 
-  async createLTCTx (method, txData) {
+  async createLTCTx(method, txData) {
     const type = 'p2wpkh'
 
     let LTCdata = {
@@ -497,7 +528,7 @@ export default class WalletWrapper {
   }
 
   //todo
-  async createBTCVTx (method, txData) {
+  async createBTCVTx(method, txData) {
     const type = 'p2wpkh'
 
     let BTCVdata = {
@@ -528,7 +559,8 @@ export default class WalletWrapper {
     }
   }
 
-  async createBNBTx (method, txData) {
+  //todo
+  async createBNBTx(method, txData) {
     const type = 'p2pkh'
 
     let data = {
@@ -563,6 +595,25 @@ export default class WalletWrapper {
         return tx.calcFee()
       default:
         throw new Error('Unknown BNB txs method')
+    }
+  }
+
+  async createXDCTx(method, txData) {
+    let data = {
+      address: this.sync.XDC.address,
+      balance: this.sync.XDC.balance,
+      privateKey: this.core.COINS.XDC.p2pkh.privateKey
+    }
+
+    let tx = new XinfinTx(data)
+
+    switch (method) {
+      case 'make':
+        return tx.make(txData)
+      case 'calcFee':
+        return tx.calcFee()
+      default:
+        throw new Error('Unknown xdc txs method')
     }
   }
 }

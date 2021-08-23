@@ -53,4 +53,5 @@ export default {
   err_tx_ltc_raw_tx: 'Problem getting raw transaction. Try to send again',
   err_sync_coin: 'Coin is required',
   err_sync_coin_not_supported: 'Selected coin is not supported for sync',
+  err_tx_xdc_balance: 'Insufficient balance'
 }
