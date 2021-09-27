@@ -12,6 +12,7 @@ import {
 } from '@/helpers/coreHelper'
 import BinanceTx from '@/class/BNB/transaction'
 
+export {default as mnemonicChecker} from 'bip39-checker'
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
 export {
