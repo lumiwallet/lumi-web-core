@@ -527,7 +527,8 @@ export function makeRawBchTx(data = {}) {
         txId: input.hash
       }
       item.script = new bitcore.Script.buildPublicKeyHashOut(item.address)
-      privateKeys.push(input.key)
+      let pk = new bitcore.PrivateKey(input.key)
+      privateKeys.push(pk)
       utxos.push(item)
     }
 
