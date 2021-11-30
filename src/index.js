@@ -1,29 +1,14 @@
 import Wrapper from '@/Wrapper'
 import CustomError from '@/helpers/handleErrors'
-import {
-  makeRawBtcTx,
-  makeRawEthTx,
-  makeRawBchTx,
-  makeRawDogeTx,
-  makeRawLtcTx,
-  makeRawBtcvTx,
-  getBtcPrivateKeyByIndex,
-  calcBtcTxSize
-} from '@/helpers/coreHelper'
+import * as helpers from '@/helpers/coreHelper'
 import BinanceTx from '@/class/BNB/transaction'
 
+export {default as mnemonicChecker} from 'bip39-checker'
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
 export {
-  makeRawBtcTx,
-  makeRawEthTx,
-  makeRawBchTx,
-  makeRawDogeTx,
-  makeRawBtcvTx,
-  makeRawLtcTx,
-  BinanceTx,
-  getBtcPrivateKeyByIndex,
-  calcBtcTxSize
+  helpers,
+  BinanceTx
 }
 
 /**
