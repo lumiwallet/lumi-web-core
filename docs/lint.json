@@ -135,47 +135,47 @@
     "filePath": "src/index.js",
     "lines": [
       {
-        "lineNumber": 198,
+        "lineNumber": 183,
         "line": "  /**"
       },
       {
-        "lineNumber": 199,
+        "lineNumber": 184,
         "line": "   * The method starts synchronization of selected coin wallet"
       },
       {
-        "lineNumber": 200,
+        "lineNumber": 185,
         "line": "   * @param {string} coin - Coin ticker (required)"
       },
       {
-        "lineNumber": 201,
+        "lineNumber": 186,
         "line": "   * @param {number, string} type - Type of coin (optional)"
       },
       {
-        "lineNumber": 202,
+        "lineNumber": 187,
         "line": "   * @returns {Promise<Object>} Returns object with synchronization information"
       },
       {
-        "lineNumber": 203,
+        "lineNumber": 188,
         "line": "   * @returns {Object} sync"
       },
       {
-        "lineNumber": 204,
+        "lineNumber": 189,
         "line": "   * @returns {string} sync.address - Ethereum wallet address"
       },
       {
-        "lineNumber": 205,
+        "lineNumber": 190,
         "line": "   * @returns {number} sync.balance - Ethereum balance in wei"
       },
       {
-        "lineNumber": 206,
+        "lineNumber": 191,
         "line": "   * @returns {Array} sync.transactions - The list of Ethereum transactions"
       },
       {
-        "lineNumber": 207,
+        "lineNumber": 192,
         "line": "   */"
       },
       {
-        "lineNumber": 208,
+        "lineNumber": 193,
         "line": "  async startSync ({coin, type}) {"
       }
     ],
@@ -192,63 +192,63 @@
     "filePath": "src/index.js",
     "lines": [
       {
-        "lineNumber": 399,
+        "lineNumber": 384,
         "line": "  /**"
       },
       {
-        "lineNumber": 400,
+        "lineNumber": 385,
         "line": "   * Sets the API Endpoint"
       },
       {
-        "lineNumber": 401,
+        "lineNumber": 386,
         "line": "   *"
       },
       {
-        "lineNumber": 402,
+        "lineNumber": 387,
         "line": "   * @type {Object} api"
       },
       {
-        "lineNumber": 403,
+        "lineNumber": 388,
         "line": "   * @param {string} api.btc - Url address of bitcoin endpoint"
       },
       {
-        "lineNumber": 404,
+        "lineNumber": 389,
         "line": "   * @param {string} api.btcFee - Url address of bitcoin fee endpoint"
       },
       {
-        "lineNumber": 405,
+        "lineNumber": 390,
         "line": "   * @param {string} api.eth - Url address of ethereum endpoint"
       },
       {
-        "lineNumber": 406,
+        "lineNumber": 391,
         "line": "   * @param {string} api.bch - Url address of bitcoin cash endpoint"
       },
       {
-        "lineNumber": 407,
+        "lineNumber": 392,
         "line": "   * @param {string} api.btcv - Url address of bitcoin vault endpoint"
       },
       {
-        "lineNumber": 408,
+        "lineNumber": 393,
         "line": "   * @param {string} api.ltc - Url address of litecoin endpoint"
       },
       {
-        "lineNumber": 409,
+        "lineNumber": 394,
         "line": "   * @param {string} api.doge - Url address of dogecoin endpoint"
       },
       {
-        "lineNumber": 410,
+        "lineNumber": 395,
         "line": "   * @param {string} api.dogeFee - Url address of dogecoin endpoint"
       },
       {
-        "lineNumber": 411,
+        "lineNumber": 396,
         "line": "   */"
       },
       {
-        "lineNumber": 412,
+        "lineNumber": 397,
         "line": ""
       },
       {
-        "lineNumber": 413,
+        "lineNumber": 398,
         "line": "  setApiEndpoint (api) {"
       }
     ],
