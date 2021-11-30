@@ -84,30 +84,15 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Wrapper from &apos;@/Wrapper&apos;
 import CustomError from &apos;@/helpers/handleErrors&apos;
-import {
-  makeRawBtcTx,
-  makeRawEthTx,
-  makeRawBchTx,
-  makeRawDogeTx,
-  makeRawLtcTx,
-  makeRawBtcvTx,
-  getBtcPrivateKeyByIndex,
-  calcBtcTxSize
-} from &apos;@/helpers/coreHelper&apos;
+import * as helpers from &apos;@/helpers/coreHelper&apos;
 import BinanceTx from &apos;@/class/BNB/transaction&apos;
 
+export {default as mnemonicChecker} from &apos;bip39-checker&apos;
 export {default as converter} from &apos;@/helpers/converters&apos;
 export {default as toDecimal} from &apos;@/helpers/toFormatDecimal&apos;
 export {
-  makeRawBtcTx,
-  makeRawEthTx,
-  makeRawBchTx,
-  makeRawDogeTx,
-  makeRawBtcvTx,
-  makeRawLtcTx,
-  BinanceTx,
-  getBtcPrivateKeyByIndex,
-  calcBtcTxSize
+  helpers,
+  BinanceTx
 }
 
 /**
