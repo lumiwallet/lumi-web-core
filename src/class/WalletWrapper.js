@@ -602,7 +602,8 @@ export default class WalletWrapper {
     let data = {
       address: this.sync.XDC.address,
       balance: this.sync.XDC.balance,
-      privateKey: this.core.COINS.XDC.p2pkh.privateKey
+      privateKey: this.core.COINS.XDC.p2pkh.privateKey,
+      gasPrice: this.sync.XDC.gasPrice
     }
 
     let tx = new XinfinTx(data)

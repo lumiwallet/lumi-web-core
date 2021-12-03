@@ -21,6 +21,7 @@ export default class XinfinSync {
     this.transactions = []
     this.request = new Request(this.api.xdc, headers)
     this.txListRequest = new Request(`${ this.api.xdc }scan`, headers)
+    this.gasPrice = 0
   }
 
   /**
@@ -31,6 +32,10 @@ export default class XinfinSync {
 
   async Start() {
     this.balance = await this.getBalance()
+
+    if (!this.gasPrice) {
+      this.gasPrice = await this.getGasPrice()
+    }
     await this.getTransactions()
   }
 
@@ -84,11 +89,30 @@ export default class XinfinSync {
     await req()
   }
 
+
+  /**
+   * Request to getting gasPrice
+   * @returns {Promise<number>}
+   */
+
+  async getGasPrice() {
+    let params = {
+      jsonrpc: '2.0',
+      method: 'eth_gasPrice',
+      params: [],
+      id: 1
+    }
+
+    let res = await this.request.send(params)
+    return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0
+  }
+
   get DATA() {
     return {
       address: this.address,
       balance: this.balance,
-      transactions: this.transactions
+      transactions: this.transactions,
+      gasPrice: this.gasPrice
     }
   }
 }

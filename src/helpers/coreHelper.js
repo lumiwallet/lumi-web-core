@@ -467,6 +467,7 @@ export function makeRawEthTx(data = {}) {
       gasPrice: ethUtil.intToHex(parseInt(gasPrice)),
       gasLimit: ethUtil.intToHex(parseInt(gasLimit))
     }
+
     if (data.hasOwnProperty('from') && data.from) {
       params.from = data.from
     }
