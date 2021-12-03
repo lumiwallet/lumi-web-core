@@ -24,7 +24,7 @@ export default class XinfinTx {
     this.address = data.address
     this.privateKey = data.privateKey
     this.balance = data.balance
-    this.gasPrice = 2500
+    this.gasPrice = data.gasPrice || 250000000
     this.gasLimit = 21000
     this.feeInGwei = +bigDecimal.multiply(this.gasPrice, this.gasLimit)
     this.finalFee = converter.wei_to_eth(this.feeInGwei, 14, false)
