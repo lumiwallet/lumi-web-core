@@ -20,15 +20,20 @@ module.exports = {
       },
       {
         test: /\.worker\.js$/,
-        use: { loader: "worker-loader" },
+        use: {
+          loader: 'worker-loader',
+          options: {
+            inline: 'fallback'
+          }
+        }
       }
     ]
   },
   resolve: {
     extensions: ['.js'],
     alias: {
-      '@': path.resolve(__dirname, 'src'),
-    },
+      '@': path.resolve(__dirname, 'src')
+    }
     // symlinks: false
   }
 }

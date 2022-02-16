@@ -85,7 +85,7 @@ async function transaction (payload, id) {
 /* eslint-disable no-undef */
 onmessage = async (e) => {
   const {id, payload} = e.data
-  
+
   if (
     !payload ||
     !payload.hasOwnProperty('method') ||
@@ -97,7 +97,7 @@ onmessage = async (e) => {
     })
     return
   }
-  
+
   switch (payload.method) {
     case 'create':
       return await create(payload.value, id)
