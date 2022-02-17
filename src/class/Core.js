@@ -4,6 +4,7 @@ import CustomError from '@/helpers/handleErrors'
 import * as core from '@/helpers/coreHelper'
 import {getBnbCore} from '@/class/BNB/core'
 import {getBnbAddressByPublicKey} from '@/class/BNB/address'
+// import Loader    from '@/class/ADA/loader'
 
 /**
  * Class Wallet
@@ -57,12 +58,16 @@ export default class Core {
    * @private
    */
 
-  _generateNewMnemonic () {
+  async _generateNewMnemonic () {
+    console.log('_generateNewMnemonic 11')
     const entropy = this._getEntropyLength(this.count)
+    this.entropy = entropy
     this.mnemonic = core.generateMnemonic(entropy)
     this.seed = core.mnemonicToSeed(this.mnemonic)
     this.hdkey = core.hdFromSeed(this.seed)
     this.xprv = core.getXprv(this.hdkey)
+
+
   }
 
   /**
