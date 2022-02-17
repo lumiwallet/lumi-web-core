@@ -4,14 +4,16 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
+  mode: 'production',
   entry: {
     main: path.resolve(__dirname, './src/index.js')
   },
   output: {
+    webassemblyModuleFilename: "[hash].wasm",
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
     library: 'lumi',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
@@ -28,10 +30,15 @@ module.exports = {
             inline: 'fallback'
           }
         }
-      }
+      },
+      {
+        test: /\.wasm$/,
+        type: 'webassembly/async',
+      },
     ]
   },
   resolve: {
+    modules: ['node_modules'],
     extensions: ['.js'],
     alias: {
       '@': path.resolve(__dirname, 'src')
@@ -47,13 +54,8 @@ module.exports = {
   },
   experiments: {
     asyncWebAssembly: true,
-    // WebAssembly as async module (Proposal)
-    // syncWebAssembly: true,
-    // WebAssembly as sync module (deprecated)
-    // outputModule: true,
-    // Allow to output ESM
+    syncWebAssembly: true,
     topLevelAwait: true,
-    // Allow to use await on module evaluation (Proposal)
   },
   plugins: [
     new CleanWebpackPlugin(),
@@ -65,10 +67,21 @@ module.exports = {
     new webpack.ProvidePlugin({
       process: 'process/browser',
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {from: './node_modules/@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib_bg.wasm' }
-      ]
-    })
+    new webpack.ContextReplacementPlugin(/@emurgo\/cardano-serialization-lib-browser/),
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    }),
+    new webpack.SourceMapDevToolPlugin({
+      filename: '[file].map',
+    }),
+    // new CopyWebpackPlugin({
+    //   patterns: [
+    //     {from: './node_modules/@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib_bg.wasm' },
+    //   ]
+    // })
   ],
+  optimization: {
+    chunkIds: "deterministic",
+    minimize: false,
+  },
 }

@@ -50,7 +50,6 @@
     "stream-browserify": "^3.0.0",
     "tiny-secp256k1": "^1.1.6",
     "url": "^0.11.0",
-    "webpack-cli": "^4.9.2",
     "wif": "^2.0.6",
     "worker-loader": "^3.0.8"
   },
@@ -73,7 +72,8 @@
     "jest-fetch-mock": "^3.0.3",
     "node-fetch": "^3.2.0",
     "randombytes": "^2.1.0",
-    "webpack": "^5.69.0"
+    "webpack": "^5.69.0",
+    "webpack-cli": "^4.9.2"
   },
   "engines": {
     "node": ">= 14.17.1"

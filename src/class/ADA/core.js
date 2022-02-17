@@ -1,5 +1,5 @@
-import Loader    from './loader'
-import {helpers} from 'lumi-web-core'
+import Loader from './loader'
+import {mnemonicToEntropy} from '@/helpers/coreHelper'
 
 export class AdaCore {
   constructor() {
@@ -15,20 +15,21 @@ export class AdaCore {
 
   async createCore(seedPhrase) {
     await Loader.load()
-    let entropy = helpers.mnemonicToEntropy(seedPhrase)
+    let entropy = mnemonicToEntropy(seedPhrase)
+    console.log('Loader', Loader)
     let rootKey = Loader.Cardano.Bip32PrivateKey.from_bip39_entropy(
       Buffer.from(entropy, 'hex'),
       Buffer.from('')
     )
-    
+
     entropy = null
     seedPhrase = null
-    
+
     this.accountKey = rootKey
       .derive(harden(1852)) // purpose
       .derive(harden(1815)) // coin type
       .derive(harden(0)) // account
-    
+
     this.paymentAddr = await this.getAddress()
   }
 
@@ -42,7 +43,7 @@ export class AdaCore {
       .derive(2) // chimeric
       .derive(0)
       .to_public()
-  
+
     const paymentAddr = Loader.Cardano.BaseAddress.new(
       this.network === 'mainnet'
         ? Loader.Cardano.NetworkInfo.mainnet().network_id()
@@ -54,13 +55,13 @@ export class AdaCore {
       .to_bech32()
     return paymentAddr
   }
-  
+
   async getUtxoKey(path = 0, index = 0) {
     return this.accountKey
       .derive(path)
       .derive(index)
   }
-  
+
   async getKeysByUtxos(jsonUtxos) {
     let keys = []
     for (let item of jsonUtxos) {

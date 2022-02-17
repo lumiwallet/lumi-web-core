@@ -1,16 +1,17 @@
-import Wrapper from '@/Wrapper'
-import CustomError from '@/helpers/handleErrors'
-import * as helpers from '@/helpers/coreHelper'
-import BinanceTx from '@/class/BNB/transaction'
-// import Core from '@/class/Core'
-export {default as mnemonicChecker} from '@/helpers/bip39-checker'
-export {default as converter} from '@/helpers/converters'
-export {default as toDecimal} from '@/helpers/toFormatDecimal'
-export {
-  helpers,
-  BinanceTx
-}
-// import Loader from '@/class/ADA/loader'
+// import Wrapper from '@/Wrapper'
+// import CustomError from '@/helpers/handleErrors'
+// import * as helpers from '@/helpers/coreHelper'
+// import BinanceTx from '@/class/BNB/transaction'
+// // import Core from '@/class/Core'
+// export {default as mnemonicChecker} from '@/helpers/bip39-checker'
+// export {default as converter} from '@/helpers/converters'
+// export {default as toDecimal} from '@/helpers/toFormatDecimal'
+import {AdaCore} from './class/ADA/core'
+
+// export {
+//   helpers,
+//   BinanceTx
+// }
 
 /**
  * Currencies that are supported in the wallet
@@ -66,29 +67,9 @@ export default class Wallet {
 
   async createNew(count = 12) {
     console.log('start createNew')
-    // let data = {
-    //   data: {
-    //     from: 'new',
-    //     count: count
-    //   },
-    //   api: this.api
-    // }
-    //
-    // this.core = await this.wrapper.method('create', data)
-    // await Loader.load()
-    //
-    // let rootKey = Loader.Cardano.Bip32PrivateKey.from_bip39_entropy(
-    //   Buffer.from(this.core.entropy, 'hex'),
-    //   Buffer.from('')
-    // )
-    // console.log('rootKey', rootKey)
 
-    const response = await fetch('./cardano_serialization_lib_bg.wasm');
-    const buffer = await response.arrayBuffer();
-    const module = await WebAssembly.compile(buffer);
-    const instance = await WebAssembly.instantiate(module);
-    console.log(instance)
-
+    const core = new AdaCore()
+    await core.createCore('crystal lab theme option aunt ordinary abstract damage gadget traffic expose mango')
     return this.core
   }
 

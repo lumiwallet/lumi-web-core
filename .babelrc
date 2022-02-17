@@ -12,5 +12,6 @@
       "@babel/transform-runtime"
     ]
   ],
-  "comments": false
+  "comments": false,
+  "sourceType": "unambiguous"
 }
