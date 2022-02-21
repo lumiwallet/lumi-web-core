@@ -11,7 +11,6 @@ describe('XinfinTx class', () => {
   test('it should create fees list', async () => {
     const tx = new XinfinTx(mock.test_data)
     const fees = await tx.calcFee()
-
     expect(fees[0].gasPrice).toEqual(mock.test_fee.gasPrice)
     expect(fees[0].gasLimit).toEqual(mock.test_fee.gasLimit)
     expect(fees[0].fee).toEqual(mock.test_fee.fee)

@@ -721,7 +721,6 @@ export function getLtcAddress(node, childIndex) {
 export function makeRawDogeTx(data = {}) {
   try {
     const {inputs, outputs} = data
-
     let curr = coininfo.dogecoin.main
     let frmt = curr.toBitcoinJS()
     const netGain = {
@@ -739,7 +738,7 @@ export function makeRawDogeTx(data = {}) {
     let keyPairs = []
     psbt.setVersion(1)
 
-    inputs.forEach(input => {
+    for (let [i, input] of inputs.entries()) {
       const keyPair = bitcoin.ECPair.fromWIF(input.key)
       keyPair.network = netGain
       keyPairs.push(keyPair)
@@ -751,8 +750,29 @@ export function makeRawDogeTx(data = {}) {
 
       data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')
 
-      psbt.addInput(data)
-    })
+      try {
+        psbt.addInput(data)
+      } catch (e) {
+        if (e.message === 'RangeError: value out of range') {
+          delete psbt.data.inputs[i].nonWitnessUtxo
+
+          const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: netGain})
+          const script = p2wpkh.output.toString('hex')
+
+          psbt.updateInput(i, {
+            witnessUtxo: {
+              script: Buffer.from(script, 'hex'),
+              value: input.value
+            }
+          })
+          psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = true
+        } else {
+          console.log('addInput error', e)
+          throw new CustomError(e.message)
+          return
+        }
+      }
+    }
 
     outputs.forEach(output => {
       psbt.addOutput({
