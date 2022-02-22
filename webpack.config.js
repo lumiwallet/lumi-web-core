@@ -2,6 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   mode: 'production',
@@ -11,9 +12,29 @@ module.exports = {
   output: {
     webassemblyModuleFilename: "[hash].wasm",
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].bundle.js',
+    filename: 'bundle.js',
     library: 'lumi',
     libraryTarget: 'umd',
+  },
+  resolve: {
+    modules: ['node_modules'],
+    extensions: ['.js'],
+    alias: {
+      '@': path.resolve(__dirname, 'src')
+    },
+    fallback: {
+      "buffer": require.resolve("buffer"),
+      "stream": require.resolve("stream-browserify"),
+      "crypto": require.resolve("crypto-browserify"),
+      "assert": require.resolve("assert"),
+      "url": require.resolve("url"),
+      "process": require.resolve("process"),
+    }
+  },
+  experiments: {
+    asyncWebAssembly: true,
+    syncWebAssembly: true,
+    topLevelAwait: true,
   },
   module: {
     rules: [
@@ -37,26 +58,6 @@ module.exports = {
       },
     ]
   },
-  resolve: {
-    modules: ['node_modules'],
-    extensions: ['.js'],
-    alias: {
-      '@': path.resolve(__dirname, 'src')
-    },
-    fallback: {
-      "buffer": require.resolve("buffer"),
-      "stream": require.resolve("stream-browserify"),
-      "crypto": require.resolve("crypto-browserify"),
-      "assert": require.resolve("assert"),
-      "url": require.resolve("url"),
-      "process": require.resolve("process"),
-    }
-  },
-  experiments: {
-    asyncWebAssembly: true,
-    syncWebAssembly: true,
-    topLevelAwait: true,
-  },
   plugins: [
     new CleanWebpackPlugin(),
     // Work around for Buffer is undefined:
@@ -74,6 +75,11 @@ module.exports = {
     new webpack.SourceMapDevToolPlugin({
       filename: '[file].map',
     }),
+    new HtmlWebpackPlugin({
+      title: 'cardano-web3.js',
+      template: './src/index.html',
+      minify: false,
+    }),
     // new CopyWebpackPlugin({
     //   patterns: [
     //     {from: './node_modules/@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib_bg.wasm' },
@@ -83,5 +89,12 @@ module.exports = {
   optimization: {
     chunkIds: "deterministic",
     minimize: false,
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'public'),
+    },
+    compress: true,
+    port: 9000,
   },
 }

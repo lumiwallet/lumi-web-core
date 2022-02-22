@@ -21,7 +21,7 @@ export class AdaCore {
       Buffer.from(entropy, 'hex'),
       Buffer.from('')
     )
-
+    console.log('rootKey', rootKey)
     entropy = null
     seedPhrase = null
 

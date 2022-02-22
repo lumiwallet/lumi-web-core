@@ -6,7 +6,7 @@
     "name": "vikowl",
     "email": "vd@lumiwallet.com"
   },
-  "main": "dist/main.bundle.js",
+  "main": "dist/bundle.js",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -68,12 +68,14 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-sonarjs": "^0.5.0",
     "eslint-plugin-standard": "^4.0.1",
+    "html-webpack-plugin": "^5.5.0",
     "jest": "^27.5.1",
     "jest-fetch-mock": "^3.0.3",
     "node-fetch": "^3.2.0",
     "randombytes": "^2.1.0",
     "webpack": "^5.69.0",
-    "webpack-cli": "^4.9.2"
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.4"
   },
   "engines": {
     "node": ">= 14.17.1"
@@ -94,7 +96,8 @@
     "version": "npm run clean && npm run build",
     "postversion": "git add . && git push && git push --tags",
     "doc": "esdoc -c ./.esdoc",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "serve": "webpack serve --mode development"
   },
   "config": {
     "commitizen": {
