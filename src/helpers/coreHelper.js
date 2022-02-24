@@ -1,15 +1,16 @@
-import * as bip39 from 'bip39'
-import * as bitcoin from 'bitcoinjs-lib'
-import * as coininfo from 'coininfo'
+import * as bip39      from 'bip39'
+import * as bitcoin    from 'bitcoinjs-lib'
+import * as coininfo   from 'coininfo'
 import Common, {Chain} from '@ethereumjs/common'
-import {Transaction} from '@ethereumjs/tx'
-import * as ethUtil from 'ethereumjs-util'
-import * as HDkey from 'hdkey'
-import wif from 'wif'
-import * as bchaddr from 'bchaddrjs'
-import * as bitcore from 'bitcore-lib-cash'
-import CustomError from '@/helpers/handleErrors'
-import {networks} from '@/helpers/networks'
+import {Transaction}   from '@ethereumjs/tx'
+import * as ethUtil    from 'ethereumjs-util'
+import * as HDkey      from 'hdkey'
+import wif             from 'wif'
+import * as bchaddr    from 'bchaddrjs'
+import * as bitcore    from 'bitcore-lib-cash'
+import * as dogecore   from 'bitcore-lib-doge'
+import CustomError     from '@/helpers/handleErrors'
+import {networks}      from '@/helpers/networks'
 
 /**
  * Generation of mnemonics.
@@ -481,7 +482,7 @@ export function makeRawEthTx(data = {}) {
       common = new Common(({chain: Chain.Mainnet}))
     }
 
-    const tx = Transaction.fromTxData(params, { common })
+    const tx = Transaction.fromTxData(params, {common})
 
     let buffer
     if (typeof privateKey === 'string') {
@@ -721,80 +722,38 @@ export function getLtcAddress(node, childIndex) {
 export function makeRawDogeTx(data = {}) {
   try {
     const {inputs, outputs} = data
-    let curr = coininfo.dogecoin.main
-    let frmt = curr.toBitcoinJS()
-    const netGain = {
-      messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
-      bip32: {
-        public: frmt.bip32.public,
-        private: frmt.bip32.private
-      },
-      pubKeyHash: frmt.pubKeyHash,
-      scriptHash: frmt.scriptHash,
-      wif: frmt.wif
-    }
-
-    const psbt = new bitcoin.Psbt({network: netGain, maximumFeeRate: 2000000})
-    let keyPairs = []
-    psbt.setVersion(1)
+    let privateKeys = []
+    let utxos = []
 
     for (let [i, input] of inputs.entries()) {
-      const keyPair = bitcoin.ECPair.fromWIF(input.key)
-      keyPair.network = netGain
-      keyPairs.push(keyPair)
-
-      let data = {
-        hash: input.hash,
-        index: input.index
+      let item = {
+        outputIndex: +input.index,
+        satoshis: +input.value,
+        address: input.address,
+        txId: input.hash
       }
-
-      data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')
-
-      try {
-        psbt.addInput(data)
-      } catch (e) {
-        if (e.message === 'RangeError: value out of range') {
-          delete psbt.data.inputs[i].nonWitnessUtxo
-
-          const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: netGain})
-          const script = p2wpkh.output.toString('hex')
-
-          psbt.updateInput(i, {
-            witnessUtxo: {
-              script: Buffer.from(script, 'hex'),
-              value: input.value
-            }
-          })
-          psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = true
-        } else {
-          console.log('addInput error', e)
-          throw new CustomError(e.message)
-          return
-        }
-      }
+      item.script = new dogecore.Script.buildPublicKeyHashOut(item.address).toString()
+      let network = dogecore.Networks.defaultNetwork
+      let pk = new bitcore.PrivateKey(input.key, network)
+      privateKeys.push(pk)
+      utxos.push(item)
     }
 
-    outputs.forEach(output => {
-      psbt.addOutput({
+    const convertedOutputs = outputs.map(output => {
+      return {
         address: output.address,
-        value: output.value
-      })
+        satoshis: +output.value
+      }
     })
-
-    keyPairs.forEach((key, i) => {
-      psbt.signInput(i, key)
-    })
-
-    psbt.validateSignaturesOfAllInputs()
-    psbt.finalizeAllInputs()
-
-    const transaction = psbt.extractTransaction()
-    const signedTransaction = transaction.toHex()
-    const hash = transaction.getId()
+    const tx = new dogecore.Transaction()
+      .from(utxos)
+      .to(convertedOutputs)
+      .sign(privateKeys)
+    const txData = tx.serialize({disableDustOutputs: true})
 
     return {
-      hash,
-      tx: signedTransaction
+      tx: txData.toString('hex'),
+      hash: tx.hash
     }
   }
   catch (e) {
@@ -850,5 +809,27 @@ export function getBtcPrivateKeyByIndex(node, index) {
   }
   catch (e) {
     throw new CustomError('err_btc_private_key_by_index')
+  }
+}
+
+export function getCoinCoreByMnemonic(mnemonic, path) {
+  console.log(mnemonic, path)
+  if (!mnemonic || !path) {
+    throw new Error('getCoinCoreByMnemonic error')
+  }
+
+  try {
+    let seed = mnemonicToSeed(mnemonic)
+    let hdkey = hdFromSeed(seed)
+
+    const node = derive(hdkey, path)
+
+    seed = null
+    hdkey = null
+
+    return node
+  }
+  catch (e) {
+    throw new Error(e)
   }
 }

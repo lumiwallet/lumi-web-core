@@ -6,11 +6,15 @@ import BinanceTx from '@/class/BNB/transaction'
 export {default as mnemonicChecker} from 'bip39-checker'
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
+import DogecoinTx from '@/class/DOGE/DogecoinTx'
+
 export {
   helpers,
-  BinanceTx
+  BinanceTx,
+  DogecoinTx
 }
 
+console.log('core 1')
 /**
  * Currencies that are supported in the wallet
  */

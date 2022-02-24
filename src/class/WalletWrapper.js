@@ -470,8 +470,8 @@ export default class WalletWrapper {
       feeList: this.sync.DOGE.fee,
       amount: txData.amount,
       customFee: txData.customFee,
-      api: this.api.doge,
-      headers: this.headers
+      // api: this.api.doge,
+      // headers: this.headers
     }
 
     if (method === 'make') {

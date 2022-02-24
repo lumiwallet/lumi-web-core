@@ -118,7 +118,7 @@ describe('DogecoinTx class', () => {
     expect(+(fees[0][0].DOGE + available_amounts[0]).toFixed(8)).toBe(mock.test_balance_doge)
   })
 
-  test('it should make transaction in the amount of 1 DOGE on DGzBtLKz99rwrSfx9yRX1Z5vitEEw5kQio address', async () => {
+  test.only('it should make transaction in the amount of 1 DOGE on DGzBtLKz99rwrSfx9yRX1Z5vitEEw5kQio address', async () => {
     const CORE = new Core({
       from: 'mnemonic',
       mnemonic: mock.test_mnemonic
@@ -140,10 +140,9 @@ describe('DogecoinTx class', () => {
       addressTo: mock.recipient_address,
       fee: fee_list[0]
     }
-
+    console.log('tx_data', tx_data)
     const tx = await Dogecoin.make(tx_data)
     expect(tx).toEqual(mock.test_tx_data)
-
   })
 
   test('it should not make transaction in the amount of 50 DOGE and throw error \'err_tx_doge_balance: Insufficient balance\'', async () => {
