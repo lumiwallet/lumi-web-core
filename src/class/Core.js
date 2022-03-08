@@ -1,5 +1,5 @@
 import {validateMnemonic} from 'bip39'
-import {normalize, checkWords} from 'bip39-checker'
+import {normalize, checkWords} from '@/libs/bip39-checker'
 import CustomError from '@/helpers/handleErrors'
 import * as core from '@/helpers/coreHelper'
 import {getBnbCore} from '@/class/BNB/core'

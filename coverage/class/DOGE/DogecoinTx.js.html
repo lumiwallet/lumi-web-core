@@ -668,26 +668,26 @@ export default class DogecoinTx {
     this.request = new Request(data.api, data.headers)
     this.dust = 1000
   }
-  
+&nbsp;
   /**
    * Calculating the fee amount
    * @param {number} size - Transaction size
    * @returns {Promise&lt;Array&gt;} Returns a set of fees for a specific transaction amount
    */
-  
+&nbsp;
   async calcFee (size = 0) {
     const fees = [...this.fee.map(item =&gt; item.feePerByte), this.customFee]
-    
+&nbsp;
     if (this.amount &lt;= 0 || this.balance &lt; this.amount) {
       return this.calcEmptyFee(fees)
     }
-    
+&nbsp;
     const pArray = fees.map(async fee =&gt; {
       return await this.getInputs(fee, size)
     })
-    
+&nbsp;
     const res = await Promise.all(pArray)
-    
+&nbsp;
     this.feeList = res.map((item, i) =&gt; {
       return {
         id: FEE_IDS[i],
@@ -700,17 +700,17 @@ export default class DogecoinTx {
         custom: FEE_IDS[i] === 'custom'
       }
     })
-    
+&nbsp;
     return this.feeList
   }
-  
+&nbsp;
   /**
    * Sets an array of zero fees.
    * Used when the user does not have enough funds for the transaction
    * @param {Array} fees - set of commission types
    * @returns {Array} Returns an array with zero fees
    */
-  
+&nbsp;
   calcEmptyFee (fees) {
     this.feeList = fees.map((item, i) =&gt; {
       return {
@@ -724,38 +724,38 @@ export default class DogecoinTx {
         custom: FEE_IDS[i] === 'custom'
       }
     })
-    
+&nbsp;
     return this.feeList
   }
-  
+&nbsp;
   /**
    * Finds a list of inputs for a specific transaction
    * @param {number} fee - Fee size
    * @param {number} size - Transaction size
    * @returns {Promise&lt;Object&gt;} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
    */
-  
+&nbsp;
   async getInputs (fee, size) {
     let index = 0
     let inputsAmount = 0
     let inputs = []
     let res = {}
-    
+&nbsp;
     this.dust = size ? 0 : 1000
-    
+&nbsp;
     let req = async () =&gt; {
       let item = this.unspent[index]
       let defaultSize = calcBtcTxSize(index + 1, 2)
       let calcFee = size ? size * fee : defaultSize * fee
-      
+&nbsp;
       inputsAmount += item.value
       inputs.push(item)
-      
+&nbsp;
       let total = this.amount + calcFee + this.dust
-      
+&nbsp;
       <span class="missing-if-branch" title="if path not taken" >I</span>if (total &gt; inputsAmount) {
 <span class="cstat-no" title="statement not covered" >        index++</span>
-        
+&nbsp;
 <span class="cstat-no" title="statement not covered" >        if (index &gt;= this.unspent.length) {</span>
 <span class="cstat-no" title="statement not covered" >          res = {</span>
             fee: 0,
@@ -774,10 +774,10 @@ export default class DogecoinTx {
       }
     }
     await req()
-    
+&nbsp;
     return res
   }
-  
+&nbsp;
   /**
    * Creating a Dogecoin transaction
    * @param {Object} data - Input data for a transaction
@@ -785,29 +785,29 @@ export default class DogecoinTx {
    * @param {Object} data.fee - The transaction fee and list of inputs
    * @returns {Promise&lt;Object&gt;} Returns the raw transaction and transaction hash if sent successfully
    */
-  
+&nbsp;
   async make (data) {
     const {addressTo, fee} = data
-    
+&nbsp;
     if (!this.amount) {
       throw new CustomError('err_tx_doge_amount')
     }
-    
+&nbsp;
     if (isNaN(fee.SAT)) {
       throw new CustomError('err_tx_doge_fee')
     }
-    
+&nbsp;
     const inputsAmount = +fee.inputsAmount
     const amount = +this.amount
     const feeSat = +fee.SAT
     const change = inputsAmount - amount - feeSat
     let inputs = []
     let hashes = []
-    
+&nbsp;
     if (change &lt; 0) {
       throw new CustomError('err_tx_doge_balance')
     }
-    
+&nbsp;
     for (let input of fee.inputs) {
       <span class="missing-if-branch" title="if path not taken" >I</span>if (!input.tx) {
 <span class="cstat-no" title="statement not covered" >        if (input.transaction_hash) {</span>
@@ -817,13 +817,13 @@ export default class DogecoinTx {
         }
       }
     }
-    
+&nbsp;
     const unique_hashes = [...new Set(hashes)]
     const rawTxsData = await this.getRawTxHex(unique_hashes)
-    
+&nbsp;
     for (const utxo of fee.inputs) {
       hashes.push(utxo.transaction_hash)
-      
+&nbsp;
       let item = {
         hash: utxo.transaction_hash,
         index: utxo.index,
@@ -837,10 +837,10 @@ export default class DogecoinTx {
       } else {
         item.tx = utxo.tx
       }
-      
+&nbsp;
       inputs.push(item)
     }
-    
+&nbsp;
     let params = {
       inputs: inputs,
       outputs: [
@@ -850,48 +850,48 @@ export default class DogecoinTx {
         }
       ]
     }
-    
+&nbsp;
     if (change !== 0) {
       params.outputs[1] = {
         address: this.internalAddress,
         value: change
       }
     }
-    
+&nbsp;
     return makeRawDogeTx(params)
   }
-  
-  
+&nbsp;
+&nbsp;
   /**
    * Raw transaction request
    * @param {Array} hashes - List of hashes
    * @returns {Promise&lt;Array&gt;} Array of raw Dogecoin transactions for each hash
    */
-  
+&nbsp;
   async getRawTxHex (hashes) {
     <span class="missing-if-branch" title="else path not taken" >E</span>if (!hashes || !hashes.length) return []
-    
+&nbsp;
     const ARRAY_SIZE = <span class="cstat-no" title="statement not covered" >10</span>
     const ARRAYS_COUNT = <span class="cstat-no" title="statement not covered" >Math.ceil(hashes.length / ARRAY_SIZE)</span>
     let txs = <span class="cstat-no" title="statement not covered" >[]</span>
     let arrays = <span class="cstat-no" title="statement not covered" >[]</span>
     let counter = <span class="cstat-no" title="statement not covered" >0</span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; ARRAYS_COUNT; i++) {</span>
 <span class="cstat-no" title="statement not covered" >      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)</span>
     }
-    
+&nbsp;
     const req = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >      try {</span>
         let res = <span class="cstat-no" title="statement not covered" >await this.request.send({</span>
           method: 'rawtx',
           txs: arrays[counter]
         })
-        
+&nbsp;
 <span class="cstat-no" title="statement not covered" >        if (res.status === 'success' &amp;&amp; res.data.length) {</span>
 <span class="cstat-no" title="statement not covered" >          txs = [...txs, ...res.data]</span>
 <span class="cstat-no" title="statement not covered" >          counter++</span>
-          
+&nbsp;
 <span class="cstat-no" title="statement not covered" >          if (counter !== ARRAYS_COUNT) {</span>
 <span class="cstat-no" title="statement not covered" >            await req()</span>
           }
@@ -903,9 +903,9 @@ export default class DogecoinTx {
 <span class="cstat-no" title="statement not covered" >        throw new CustomError('err_tx_doge_raw_tx')</span>
       }
     }
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    await req()</span>
-    
+&nbsp;
 <span class="cstat-no" title="statement not covered" >    return txs</span>
   }
 }
@@ -916,7 +916,7 @@ export default class DogecoinTx {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Mon Feb 21 2022 17:06:41 GMT+0200 (Eastern European Standard Time)
+                at Tue Mar 08 2022 12:40:32 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>
