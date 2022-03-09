@@ -67,5 +67,10 @@ module.exports = {
   optimization: {
     chunkIds: 'deterministic',
     minimize: false
+  },
+  experiments: {
+    asyncWebAssembly: true,
+    syncWebAssembly: true,
+    topLevelAwait: true,
   }
 }

@@ -1,4 +1,4 @@
-import bech32 from 'bech32'
+import {bech32} from 'bech32'
 import * as crypto from '@/utils/crypto'
 import { ec as EC } from "elliptic"
 
