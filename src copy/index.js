@@ -1,5 +1,3 @@
-import * as core from '@/class/Core'
-
 import Wrapper from '@/Wrapper'
 import CustomError from '@/helpers/handleErrors'
 import * as helpers from '@/helpers/coreHelper'
@@ -10,8 +8,7 @@ export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
 export {
   helpers,
-  BinanceTx,
-  core
+  BinanceTx
 }
 
 console.log('link core')
