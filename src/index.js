@@ -3,6 +3,7 @@ import * as core from '@/class/Core'
 import Wrapper from '@/Wrapper'
 import CustomError from '@/helpers/handleErrors'
 import * as helpers from '@/helpers/coreHelper'
+import * as coinsCores from '@/coins/cores'
 import BinanceTx from '@/class/BNB/transaction'
 
 export {default as mnemonicChecker} from '@/libs/bip39-checker'
@@ -11,10 +12,11 @@ export {default as toDecimal} from '@/helpers/toFormatDecimal'
 export {
   helpers,
   BinanceTx,
-  core
+  core,
+  coinsCores
 }
 
-console.log('link core')
+console.log('link core3')
 /**
  * Currencies that are supported in the wallet
  */

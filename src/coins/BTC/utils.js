@@ -1,4 +1,5 @@
 import * as bitcoin from 'bitcoinjs-lib'
+import {networks} from '@/helpers/networks'
 
 /**
  * Getting a bitcoin address by node and child index
