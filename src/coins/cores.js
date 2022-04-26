@@ -1,7 +1,6 @@
 import * as BtcCore from './BTC/core'
 
 function createCoinsCores (hdkey, coins = []) {
-  console.log('start createCoinsCores', hdkey, coins)
   let core = {}
 
   for (let item of coins) {

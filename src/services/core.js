@@ -2,19 +2,19 @@ import {validateMnemonic} from 'bip39'
 import CryptoJS, {SHA256} from 'crypto-js'
 import {normalize, checkWords} from '@/libs/bip39-checker'
 import CustomError from '@/helpers/handleErrors'
-import * as core from '@/helpers/core'
+import * as coreUtils from '@/helpers/core'
+import * as ethUtils from '@/coins/ETH/utils'
 import {ETH_PATH} from '@/helpers/config'
-import * as ETH_UTILS from '@/coins/ETH/utils'
-export {core as coreUtils}
+export {coreUtils}
 
 export const createCoreByMnemonic = (mnemonic) => {
   let normalize_mnemonic = normalize(mnemonic)
   if (!checkMnemonic(normalize_mnemonic)) {
     throw new CustomError('err_core_mnemonic')
   }
-  let seed = core.mnemonicToSeed(normalize_mnemonic)
-  let hdkey = core.hdFromSeed(seed)
-  let xprv = core.getXprv(hdkey)
+  let seed = coreUtils.mnemonicToSeed(normalize_mnemonic)
+  let hdkey = coreUtils.hdFromSeed(seed)
+  let xprv = coreUtils.getXprv(hdkey)
   let id = getWalletId(hdkey)
   seed = null
   hdkey = null
@@ -28,7 +28,7 @@ export const createCoreByMnemonic = (mnemonic) => {
 
 export const createMnemonic = (wordsCount = 12) => {
   const entropy = getEntropyLength(wordsCount)
-  let mnemonic = core.generateMnemonic(entropy)
+  let mnemonic = coreUtils.generateMnemonic(entropy)
 
   return mnemonic
 }
@@ -50,9 +50,9 @@ export const checkMnemonic = (mnemonic) => {
 }
 
 export const getWalletId = (hdkey) => {
-  let ethNode = core.derive(hdkey, ETH_PATH)
-  let privateKey = ETH_UTILS.getEthPrivateKey(ethNode)
-  let publicKey = ETH_UTILS.getEthPublicKey(privateKey)
+  let ethNode = coreUtils.derive(hdkey, ETH_PATH)
+  let privateKey = ethUtils.getEthPrivateKey(ethNode)
+  let publicKey = ethUtils.getEthPublicKey(privateKey)
   let id = SHA256(CryptoJS.lib.WordArray.create(publicKey))
   ethNode = privateKey = publicKey = null
   return id.toString()
