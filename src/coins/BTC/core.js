@@ -24,10 +24,10 @@ export function generateBtcCore (hdkey, type = 'p2pkh') {
   item.internalNode = derive(hdkey, bitcoin_internal_path)
   item.externalAddress = getBtcAddress(item.externalNode, 0, type)
   item.internalAddress = getBtcAddress(item.internalNode, 0, type)
-  item.dp = {
-    external: bitcoin_external_path,
-    internal: bitcoin_internal_path
-  }
+  // item.dp = {
+  //   external: bitcoin_external_path,
+  //   internal: bitcoin_internal_path
+  // }
 
   return item
 }

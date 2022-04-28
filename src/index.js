@@ -2,6 +2,7 @@ import * as core from '@/services/core' // TODO: wallet core?
 import * as sync from '@/services/sync'
 import * as helpers from '@/helpers/coreHelper'
 import * as coinsCores from '@/coins/cores'
+import * as configUtils from '@/helpers/config-utils'
 
 // import Wrapper from '@/Wrapper'
 // import CustomError from '@/helpers/handleErrors'
@@ -15,10 +16,11 @@ export {
   // BinanceTx,
   core,
   coinsCores,
-  sync
+  sync,
+  configUtils
 }
 
-console.log('link core3', sync)
+console.log('link core4', sync)
 // /**
 //  * Currencies that are supported in the wallet
 //  */

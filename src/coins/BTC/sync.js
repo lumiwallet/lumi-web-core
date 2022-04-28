@@ -40,7 +40,7 @@ export default class BitcoinSync {
     }
     this.fee = []
     this.headers = headers
-    this.request = new Request(this.api.btc, headers)
+    this.request = new Request(this.api, headers)
     this.type = type || 'p2pkh'
   }
 
@@ -48,11 +48,10 @@ export default class BitcoinSync {
     const noRestoredParams = ['externalNode', 'internalNode', 'headers', 'request']
     if (!data || typeof data !== 'object') return
     for (let key in data) {
-      if (!noRestoredParams.includes(key) && this[key]) {
+      if (!noRestoredParams.includes(key) && key in this) {
         this[key] = data[key]
       }
     }
-    console.log('restore finished', this)
   }
   /**
    * The method that starts the synchronization Bitcoin part of wallet
@@ -325,7 +324,7 @@ export default class BitcoinSync {
         balance += +item.value
       }
     })
-
+    console.log('getBalance', balance)
     this.balance = balance
   }
 
