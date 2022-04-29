@@ -1,7 +1,9 @@
 import {decodeConfig} from './decoder'
-import {encodeConfig} from './encoder'
+import {encodeConfig, getId, getTokenId} from './encoder'
 
 export {
   decodeConfig,
-  encodeConfig
+  encodeConfig,
+  getId,
+  getTokenId
 }

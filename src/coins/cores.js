@@ -1,5 +1,6 @@
 import * as BtcCore from './BTC/core'
 import * as EthCore from './ETH/core'
+import * as BchCore from './BCH/core'
 
 function createCoinsCores (hdkey, coins = []) {
   console.log('inside createCoinsCores', coins)
@@ -18,9 +19,9 @@ function createCoinsCores (hdkey, coins = []) {
       case 'ETH':
         core[coin][type] = EthCore.generateEthCore(hdkey, type)
         break
-      // case 'BCH':
-      //   core[coin] = await this._generateBCHcore()
-      //   break
+      case 'BCH':
+        core[coin] = BchCore.generateBchCore(hdkey)
+        break
       // case 'BTCV':
       //   core[coin] = await this._generateBTCVcore()
       //   break
@@ -46,5 +47,6 @@ function createCoinsCores (hdkey, coins = []) {
 export {
   BtcCore,
   EthCore,
+  BchCore,
   createCoinsCores
 }

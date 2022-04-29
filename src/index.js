@@ -20,7 +20,7 @@ export {
   configUtils
 }
 
-console.log('link core4', sync)
+console.log('link core')
 // /**
 //  * Currencies that are supported in the wallet
 //  */

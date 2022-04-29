@@ -22,7 +22,7 @@ export function decodeConfig(config) {
     }
     catch (e) {
       console.log('Decode config error:', e.message)
-      if (e.message.includes('Not supported currency')) {
+      if (e.message.includes('Not supported')) {
         list_not_supported_coins.push(item)
       }
       continue
@@ -63,10 +63,6 @@ export function getCurrency(id) {
 
   if (NOT_SUPPORTED_COINS.includes(CURRENCY)) {
     throw new Error('Not supported currency ' + CURRENCY)
-  }
-
-  if (CURRENCY === 'BTC' && ADDRESS_TYPE === '01') {
-    throw new Error('Not supported BTC Legacy')
   }
 
   const item = {
