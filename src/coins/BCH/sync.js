@@ -15,7 +15,7 @@ export default class BitcoinCashSync {
    * Create a BitcoinCashSync
    * @param {string} externalNodeKey - External Bitcoin Cash node
    * @param {string} internalNodeKey - Internal Bitcoin Cash node
-   * @param {Object} api - A set of URLs for getting information about Bitcoin Cash addresses
+   * @param {string} api - A URL address of Bitcoin Cash explorer
    * @param {Object} headers - Request headers
    */
   constructor (externalNodeKey, internalNodeKey, api, headers) {

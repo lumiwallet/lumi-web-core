@@ -6,6 +6,7 @@ import * as utils from './utils'
  * At the output, we get a Ethereum node, derivation path,
  * a private and public key, and the Ethereum address
  *
+ * @param {string} hdkey - A hierarchical deterministic key
  * @param {number} type - Ethereum account number. By default 0
  * @private
  */

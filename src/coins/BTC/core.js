@@ -1,4 +1,4 @@
-import {BTC_PATH} from '@/helpers/config'
+import {BTC_PATH} from '@/helpers/configs/hd-paths'
 import {derive} from '@/helpers/core'
 import {getBtcAddress} from './utils'
 
@@ -7,8 +7,8 @@ import {getBtcAddress} from './utils'
  * At the output, we get a external and internal node,
  * derivation path and the first addresses of the external and internal cores
  *
+ * @param {string} hdkey - A hierarchical deterministic key
  * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
- * @private
  */
 
 export function generateBtcCore (hdkey, type = 'p2pkh') {

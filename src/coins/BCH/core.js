@@ -1,5 +1,5 @@
 import {derive} from '@/helpers/core'
-import {BCH_PATH} from '@/helpers/config'
+import {BCH_PATH} from '@/helpers/configs/hd-paths'
 import {getBtcAddress} from '@/coins/BTC/utils'
 
 /**

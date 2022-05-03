@@ -1,5 +1,6 @@
 import Request from '@/helpers/Request'
 import {restoreClass} from '@/helpers/sync-utils'
+
 /**
  * Class EthereumSync
  * This class allows you to get information about the balance on a ethereum wallet,
@@ -11,7 +12,7 @@ export default class EthereumSync {
   /**
    * Create a EthereumSync
    * @param {string} address - Ethereum wallet address
-   * @param {Object} api - A set of URLs for getting information about ethereum address
+   * @param {string} api - A URL address of Ethereum explorer
    * @param {Object} headers - Request headers
    */
   constructor (address, api, headers) {

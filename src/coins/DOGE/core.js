@@ -1,4 +1,4 @@
-import {DOGE_PATH} from '@/helpers/config'
+import {DOGE_PATH} from '@/helpers/configs/hd-paths'
 import {derive} from '@/helpers/core'
 import {getDogeAddress} from './utils'
 
@@ -6,7 +6,7 @@ import {getDogeAddress} from './utils'
  * Creating a core for Dogecoin.
  * At the output, we get a external and internal node,
  * derivation path and the first addresses of the external and internal cores
- * @param {string} hdkey - A hierarchical deterministic keys
+ * @param {string} hdkey - A hierarchical deterministic key
  * @private
  */
 

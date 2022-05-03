@@ -4,7 +4,7 @@ import {normalize, checkWords} from '@/libs/bip39-checker'
 import CustomError from '@/helpers/handleErrors'
 import * as coreUtils from '@/helpers/core'
 import * as ethUtils from '@/coins/ETH/utils'
-import {ETH_PATH} from '@/helpers/config'
+import {ETH_PATH} from '@/helpers/configs/hd-paths'
 export {coreUtils}
 
 export const createCoreByMnemonic = (mnemonic) => {

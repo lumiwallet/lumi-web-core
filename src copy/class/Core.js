@@ -141,157 +141,157 @@ export default class Core {
     return core
   }
 
-  /**
-   * Creating a core for Bitcoin.
-   * At the output, we get a external and internal node,
-   * derivation path and the first addresses of the external and internal cores
-   *
-   * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
-   * @private
-   */
+  // /**
+  //  * Creating a core for Bitcoin.
+  //  * At the output, we get a external and internal node,
+  //  * derivation path and the first addresses of the external and internal cores
+  //  *
+  //  * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
+  //  * @private
+  //  */
+  //
+  // _generateBTCcore (type = 'p2pkh') {
+  //   const bitcoin_paths = {
+  //     p2pkh: `m/44'/0'/0'`,
+  //     p2wpkh: `m/84'/0'/0'`
+  //   }
+  //
+  //   if (!(type in bitcoin_paths)) {
+  //     throw new CustomError('err_core_btc_type')
+  //   }
+  //
+  //   const bitcoin_external_path = bitcoin_paths[type] + '/0'
+  //   const bitcoin_internal_path = bitcoin_paths[type] + '/1'
+  //
+  //   let item = {}
+  //   item.externalNode = core.derive(this.hdkey, bitcoin_external_path)
+  //   item.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
+  //   item.externalAddress = core.getBtcAddress(item.externalNode, 0, type)
+  //   item.internalAddress = core.getBtcAddress(item.internalNode, 0, type)
+  //   item.dp = {
+  //     external: bitcoin_external_path,
+  //     internal: bitcoin_internal_path
+  //   }
+  //
+  //   if (!this.coins.hasOwnProperty('BTC')) {
+  //     this.coins.BTC = {}
+  //   }
+  //
+  //   this.coins.BTC[type] = item
+  //   return item
+  // }
 
-  _generateBTCcore (type = 'p2pkh') {
-    const bitcoin_paths = {
-      p2pkh: `m/44'/0'/0'`,
-      p2wpkh: `m/84'/0'/0'`
-    }
+  // /**
+  //  * Creating a core for Ethereum.
+  //  * At the output, we get a Ethereum node, derivation path,
+  //  * a private and public key, and the Ethereum address
+  //  *
+  //  * @param {number} type - Ethereum account number. By default 0
+  //  * @private
+  //  */
+  //
+  // _generateETHcore (type = 0) {
+  //   if (!Number.isInteger(type)) {
+  //     throw new CustomError('err_core_eth_account')
+  //   }
+  //
+  //   const ethereum_path = `m/44'/60'/${ type }'/0/0`
+  //   let item = {}
+  //
+  //   item.node = core.derive(this.hdkey, ethereum_path)
+  //   item.privateKey = core.getEthPrivateKey(item.node)
+  //   item.privateKeyHex = '0x' + item.privateKey.toString('hex')
+  //   item.publicKey = core.getEthPublicKey(item.privateKey)
+  //   item.externalAddress = core.getEthAddress(item.publicKey)
+  //   item.dp = ethereum_path
+  //
+  //   if (!this.coins.hasOwnProperty('ETH')) {
+  //     this.coins.ETH = {}
+  //   }
+  //
+  //   this.coins.ETH[type] = item
+  //   return item
+  // }
 
-    if (!(type in bitcoin_paths)) {
-      throw new CustomError('err_core_btc_type')
-    }
+  // /**
+  //  * Creating a core for Bitcoin Cash.
+  //  * At the output, we get a external and internal node,
+  //  * derivation path and the first addresses of the external and internal cores
+  //  * @private
+  //  */
+  //
+  // _generateBCHcore () {
+  //   const type = 'p2pkh'
+  //   const bitcoincash_external_path = `m/44'/145'/0'/0`
+  //   const bitcoincash_internal_path = `m/44'/145'/0'/1`
+  //   let item = {}
+  //   item.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
+  //   item.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
+  //   item.externalAddress = core.getBtcAddress(item.externalNode, 0)
+  //   item.internalAddress = core.getBtcAddress(item.internalNode, 0)
+  //   item.dp = {external: bitcoincash_external_path, internal: bitcoincash_internal_path}
+  //
+  //   if (!this.coins.hasOwnProperty('BCH')) {
+  //     this.coins.BCH = {}
+  //   }
+  //
+  //   this.coins.BCH[type] = item
+  //   return item
+  // }
 
-    const bitcoin_external_path = bitcoin_paths[type] + '/0'
-    const bitcoin_internal_path = bitcoin_paths[type] + '/1'
+  // /**
+  //  * Creating a core for Bitcoin Vault.
+  //  * At the output, we get a external and internal node,
+  //  * derivation path and the first addresses of the external and internal cores
+  //  * @private
+  //  */
+  //
+  // async _generateBTCVcore () {
+  //   const type = 'p2wpkh'
+  //   const network = 'btcv'
+  //   const bitcoinvault_external_path = `m/84'/440'/0'/0`
+  //   const bitcoinvault_internal_path = `m/84'/440'/0'/1`
+  //
+  //   let item = {}
+  //   item.externalNode = core.derive(this.hdkey, bitcoinvault_external_path)
+  //   item.internalNode = core.derive(this.hdkey, bitcoinvault_internal_path)
+  //   item.externalAddress = core.getBtcAddress(item.externalNode, 0, 'p2wpkh', network)
+  //   item.internalAddress = core.getBtcAddress(item.internalNode, 0, 'p2wpkh', network)
+  //   item.dp = {external: bitcoinvault_external_path, internal: bitcoinvault_internal_path}
+  //
+  //   if (!this.coins.hasOwnProperty('BTCV')) {
+  //     this.coins.BTCV = {}
+  //   }
+  //
+  //   this.coins.BTCV[type] = item
+  //   return item
+  // }
 
-    let item = {}
-    item.externalNode = core.derive(this.hdkey, bitcoin_external_path)
-    item.internalNode = core.derive(this.hdkey, bitcoin_internal_path)
-    item.externalAddress = core.getBtcAddress(item.externalNode, 0, type)
-    item.internalAddress = core.getBtcAddress(item.internalNode, 0, type)
-    item.dp = {
-      external: bitcoin_external_path,
-      internal: bitcoin_internal_path
-    }
-
-    if (!this.coins.hasOwnProperty('BTC')) {
-      this.coins.BTC = {}
-    }
-
-    this.coins.BTC[type] = item
-    return item
-  }
-
-  /**
-   * Creating a core for Ethereum.
-   * At the output, we get a Ethereum node, derivation path,
-   * a private and public key, and the Ethereum address
-   *
-   * @param {number} type - Ethereum account number. By default 0
-   * @private
-   */
-
-  _generateETHcore (type = 0) {
-    if (!Number.isInteger(type)) {
-      throw new CustomError('err_core_eth_account')
-    }
-
-    const ethereum_path = `m/44'/60'/${ type }'/0/0`
-    let item = {}
-
-    item.node = core.derive(this.hdkey, ethereum_path)
-    item.privateKey = core.getEthPrivateKey(item.node)
-    item.privateKeyHex = '0x' + item.privateKey.toString('hex')
-    item.publicKey = core.getEthPublicKey(item.privateKey)
-    item.externalAddress = core.getEthAddress(item.publicKey)
-    item.dp = ethereum_path
-
-    if (!this.coins.hasOwnProperty('ETH')) {
-      this.coins.ETH = {}
-    }
-
-    this.coins.ETH[type] = item
-    return item
-  }
-
-  /**
-   * Creating a core for Bitcoin Cash.
-   * At the output, we get a external and internal node,
-   * derivation path and the first addresses of the external and internal cores
-   * @private
-   */
-
-  _generateBCHcore () {
-    const type = 'p2pkh'
-    const bitcoincash_external_path = `m/44'/145'/0'/0`
-    const bitcoincash_internal_path = `m/44'/145'/0'/1`
-    let item = {}
-    item.externalNode = core.derive(this.hdkey, bitcoincash_external_path)
-    item.internalNode = core.derive(this.hdkey, bitcoincash_internal_path)
-    item.externalAddress = core.getBtcAddress(item.externalNode, 0)
-    item.internalAddress = core.getBtcAddress(item.internalNode, 0)
-    item.dp = {external: bitcoincash_external_path, internal: bitcoincash_internal_path}
-
-    if (!this.coins.hasOwnProperty('BCH')) {
-      this.coins.BCH = {}
-    }
-
-    this.coins.BCH[type] = item
-    return item
-  }
-
-  /**
-   * Creating a core for Bitcoin Vault.
-   * At the output, we get a external and internal node,
-   * derivation path and the first addresses of the external and internal cores
-   * @private
-   */
-
-  async _generateBTCVcore () {
-    const type = 'p2wpkh'
-    const network = 'btcv'
-    const bitcoinvault_external_path = `m/84'/440'/0'/0`
-    const bitcoinvault_internal_path = `m/84'/440'/0'/1`
-
-    let item = {}
-    item.externalNode = core.derive(this.hdkey, bitcoinvault_external_path)
-    item.internalNode = core.derive(this.hdkey, bitcoinvault_internal_path)
-    item.externalAddress = core.getBtcAddress(item.externalNode, 0, 'p2wpkh', network)
-    item.internalAddress = core.getBtcAddress(item.internalNode, 0, 'p2wpkh', network)
-    item.dp = {external: bitcoinvault_external_path, internal: bitcoinvault_internal_path}
-
-    if (!this.coins.hasOwnProperty('BTCV')) {
-      this.coins.BTCV = {}
-    }
-
-    this.coins.BTCV[type] = item
-    return item
-  }
-
-  /**
-   * Creating a core for Dogecoin.
-   * At the output, we get a external and internal node,
-   * derivation path and the first addresses of the external and internal cores
-   * @private
-   */
-  async _generateDOGEcore () {
-    const type = 'p2pkh'
-    const dogecoin_external_path = `m/44'/3'/0'/0`
-    const dogecoin_internal_path = `m/44'/3'/0'/1`
-
-    let item = {}
-    item.externalNode = core.derive(this.hdkey, dogecoin_external_path)
-    item.internalNode = core.derive(this.hdkey, dogecoin_internal_path)
-    item.externalAddress = core.getDogeAddress(item.externalNode, 0)
-    item.internalAddress = core.getDogeAddress(item.internalNode, 0)
-    item.dp = {external: dogecoin_external_path, internal: dogecoin_internal_path}
-
-    if (!this.coins.hasOwnProperty('DOGE')) {
-      this.coins.DOGE = {}
-    }
-
-    this.coins.DOGE[type] = item
-    return item
-  }
+  // /**
+  //  * Creating a core for Dogecoin.
+  //  * At the output, we get a external and internal node,
+  //  * derivation path and the first addresses of the external and internal cores
+  //  * @private
+  //  */
+  // async _generateDOGEcore () {
+  //   const type = 'p2pkh'
+  //   const dogecoin_external_path = `m/44'/3'/0'/0`
+  //   const dogecoin_internal_path = `m/44'/3'/0'/1`
+  //
+  //   let item = {}
+  //   item.externalNode = core.derive(this.hdkey, dogecoin_external_path)
+  //   item.internalNode = core.derive(this.hdkey, dogecoin_internal_path)
+  //   item.externalAddress = core.getDogeAddress(item.externalNode, 0)
+  //   item.internalAddress = core.getDogeAddress(item.internalNode, 0)
+  //   item.dp = {external: dogecoin_external_path, internal: dogecoin_internal_path}
+  //
+  //   if (!this.coins.hasOwnProperty('DOGE')) {
+  //     this.coins.DOGE = {}
+  //   }
+  //
+  //   this.coins.DOGE[type] = item
+  //   return item
+  // }
 
   /**
    * Creating a core for Litecoin.

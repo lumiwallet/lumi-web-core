@@ -2,6 +2,7 @@ import {generateBtcCore} from './BTC/core'
 import {generateEthCore} from './ETH/core'
 import {generateBchCore} from './BCH/core'
 import {generateDogeCore} from './DOGE/core'
+import {generateXdcCore} from './XDC/core'
 
 function createCoinsCores(hdkey, coins = []) {
   console.log('inside createCoinsCores', coins)
@@ -35,9 +36,9 @@ function createCoinsCores(hdkey, coins = []) {
       // case 'BNB':
       //   core[coin] = await this._generateBNBcore()
       //   break
-      // case 'XDC':
-      //   core[coin] = await this._generateXDCcore()
-      //   break
+      case 'XDC':
+        core[coin] = generateXdcCore(hdkey)
+        break
     }
   }
 

@@ -5,3 +5,4 @@ export const BTC_PATH = {
 export const ETH_PATH = `m/44'/60'/0'/0/0`
 export const BCH_PATH = `m/44'/145'/0'`
 export const DOGE_PATH = `m/44'/3'/0'`
+export const XDC_PATH = `m/44'/60'/0'/0/0`

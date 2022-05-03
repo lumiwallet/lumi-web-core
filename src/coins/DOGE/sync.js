@@ -40,7 +40,7 @@ export default class DogecoinSync {
       unique: []
     }
     this.fee = []
-    this.request = new Request(this.api, headers)
+    this.request = new Request(this.api.doge, headers)
   }
 
   restore(data = {}) {
