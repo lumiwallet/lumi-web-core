@@ -1,6 +1,7 @@
 import Request from '@/helpers/Request'
 import {getCashAddress} from './utils'
 import {hdFromXprv} from '@/helpers/core'
+import {restoreClass} from '@/helpers/sync-utils'
 
 /**
  * Class BitcoinCashSync.
@@ -49,13 +50,7 @@ export default class BitcoinCashSync {
   }
 
   restore(data = {}) {
-    const noRestoredParams = ['externalNode', 'internalNode', 'headers', 'request']
-    if (!data || typeof data !== 'object') return
-    for (let key in data) {
-      if (!noRestoredParams.includes(key) && key in this) {
-        this[key] = data[key]
-      }
-    }
+    restoreClass(this, data)
   }
 
   /**

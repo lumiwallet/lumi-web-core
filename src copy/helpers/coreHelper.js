@@ -16,248 +16,96 @@ import * as tinysecp   from 'tiny-secp256k1'
 const ECPair = ECPairFactory(tinysecp)
 const validator = (pubkey, msghash, signature) => ECPair.fromPublicKey(pubkey).verify(msghash, signature)
 
-/**
- * Generation of mnemonics.
- * The number of words in a mnemonic depends on the length of the entropy
- * @param {number} entropyLength - The number of bits in the entropy. It can be equal to 128, 160, 192, 224 or 256 bits
- * @returns {string} - A mnemonic whose words are separated by spaces
- */
-export function generateMnemonic(entropyLength = 128) {
-  try {
-    return bip39.generateMnemonic(entropyLength)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_entropy')
-  }
-}
-
-/**
- * Converting a mnemonic to seed
- * @param {string} mnemonic - Mnemonic phrase
- * @returns {Buffer} - Seed in Uint8Array format
- */
-export function mnemonicToSeed(mnemonic) {
-  try {
-    return bip39.mnemonicToSeedSync(mnemonic)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_mnemonic')
-  }
-}
-
-/**
- * Converting a mnemonic to entropy
- * @param {string} mnemonic - Mnemonic phrase
- * @returns {string} HEX strings entropy
- */
-export function mnemonicToEntropy(mnemonic) {
-  try {
-    return bip39.mnemonicToEntropy(mnemonic)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_mnemonic')
-  }
-}
-
-/**
- * Converting a seed to hdkey (Hierarchical Deterministic Key)
- * @param {Buffer} seed - Mnemonic seed in Buffer
- * @returns {Object} hdkey object with private and public key
- */
-export function hdFromSeed(seed) {
-  try {
-    return HDkey.fromMasterSeed(seed)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_seed')
-  }
-}
-
-
-/**
- * Converting a xprv to hdkey (Hierarchical Deterministic Key)
- * @param {string} xprv - Extended private key
- * @returns {Object} hdkey object with private and public key
- */
-export function hdFromXprv(xprv) {
-  try {
-    return HDkey.fromExtendedKey(xprv)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_xprv')
-  }
-}
-
-/**
- * Getting xprv by hdkey
- * @param {Object} hd - HDkey node
- * @returns {string} Extended private key
- */
-export function getXprv(hd) {
-  try {
-    return hd.privateExtendedKey
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_hdkey')
-  }
-}
-
 // /**
-//  * Derivation of node. Getting child node by path
-//  * @param {Object} hd - HDkey node
-//  * @param {string} path - Derivation path
-//  * @returns {Object} - Child node
-//  */
-//
-// export function derive(hd, path) {
-//   if (!hd) {
-//     throw new CustomError('err_core_derivation_hdkey')
-//   }
-//
-//   if (!path) {
-//     throw new CustomError('err_core_derivation_path')
-//   }
-//   let regex = new RegExp(/(^m\/\d+\')([\/{1}\d+\'{1}]+)/mg)
-//
-//   if (!regex.test(path)) {
-//     throw new CustomError('err_core_derivation_path')
-//   }
-//
-//   try {
-//     return hd.derive(path)
-//   }
-//   catch (e) {
-//     console.log(e)
-//     throw new CustomError('err_core_derivation')
-//   }
-// }
-
-// /**
-//  * Getting a bitcoin address by node and child index
-//  * @param {Object} node - HDkey node
-//  * @param {number} childIndex - Index of the child node
+//  * Getting an address by public key
+//  * @param {string} key - Coin public key
 //  * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
 //  * @param {string} network - Custom network for different coins
 //  * @returns {string} Bitcoin address
 //  */
 //
-// export function getBtcAddress(node, childIndex = 0, type = 'p2pkh', network = 'btc') {
-//   const types = ['p2pkh', 'p2wpkh']
-//
-//   if (!types.includes(type)) {
-//     throw new CustomError('err_core_btc_type')
-//   }
+// export function getBtcAddressByPublicKey(key, type = 'p2pkh', network = 'btc') {
+//   if (!key) return ''
 //
 //   try {
-//     let pubKey = node.deriveChild(childIndex).publicKey
-//
 //     return bitcoin.payments[type]({
-//       pubkey: pubKey,
-//       network: networks[network] || network.btc
+//       pubkey: new Buffer(key, 'hex'),
+//       network: networks[network]
 //     }).address
 //   }
 //   catch (e) {
 //     console.log(e)
 //     throw new CustomError('err_core_btc_address')
 //   }
+//
+// }
+//
+// /**
+//  * Getting a Ethereum private key by node
+//  * @param {Object} node - Ethereum node
+//  * @returns {Buffer} Ethereum private key in Uint8Array format
+//  */
+//
+// export function getEthPrivateKey(node) {
+//   try {
+//     return node._privateKey
+//   }
+//   catch (e) {
+//     console.log(e)
+//     throw new CustomError('err_core_eth_node')
+//   }
 // }
 
-/**
- * Getting an address by public key
- * @param {string} key - Coin public key
- * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
- * @param {string} network - Custom network for different coins
- * @returns {string} Bitcoin address
- */
+// /**
+//  * Getting a Ethereum public key by private key
+//  * @param {Buffer} privateKey - Ethereum private key
+//  * @returns {Buffer} Ethereum public key in Uint8Array format
+//  */
+//
+// export function getEthPublicKey(privateKey) {
+//   try {
+//     return ethUtil.privateToPublic(privateKey)
+//   }
+//   catch (e) {
+//     console.log(e)
+//     throw new CustomError('err_core_eth_private_key')
+//   }
+// }
+//
+// /**
+//  * Getting a Ethereum wallet address by public key
+//  * @param {Buffer} publicKey - Ethereum public key
+//  * @returns {string} Ethereum wallet address
+//  */
+//
+// export function getEthAddress(publicKey) {
+//   try {
+//     const addr = ethUtil.Address.fromPublicKey(publicKey)
+//     return addr.toString()
+//   }
+//   catch (e) {
+//     console.log(e)
+//     throw new CustomError('err_core_eth_public_key')
+//   }
+// }
 
-export function getBtcAddressByPublicKey(key, type = 'p2pkh', network = 'btc') {
-  if (!key) return ''
-
-  try {
-    return bitcoin.payments[type]({
-      pubkey: new Buffer(key, 'hex'),
-      network: networks[network]
-    }).address
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_btc_address')
-  }
-
-}
-
-/**
- * Getting a Ethereum private key by node
- * @param {Object} node - Ethereum node
- * @returns {Buffer} Ethereum private key in Uint8Array format
- */
-
-export function getEthPrivateKey(node) {
-  try {
-    return node._privateKey
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_eth_node')
-  }
-}
-
-/**
- * Getting a Ethereum public key by private key
- * @param {Buffer} privateKey - Ethereum private key
- * @returns {Buffer} Ethereum public key in Uint8Array format
- */
-
-export function getEthPublicKey(privateKey) {
-  try {
-    return ethUtil.privateToPublic(privateKey)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_eth_private_key')
-  }
-}
-
-/**
- * Getting a Ethereum wallet address by public key
- * @param {Buffer} publicKey - Ethereum public key
- * @returns {string} Ethereum wallet address
- */
-
-export function getEthAddress(publicKey) {
-  try {
-    const addr = ethUtil.Address.fromPublicKey(publicKey)
-    return addr.toString()
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_eth_public_key')
-  }
-}
-
-/**
- * Getting Ethereum wallet address by node
- * @param {Object} node - Ethereum node
- * @returns {string} Ethereum wallet address
- */
-
-export function getEthAddressByNode(node) {
-  try {
-    let privateKey = getEthPrivateKey(node)
-    let publicKey = getEthPublicKey(privateKey)
-    return getEthAddress(publicKey)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_eth_public_key')
-  }
-}
+// /**
+//  * Getting Ethereum wallet address by node
+//  * @param {Object} node - Ethereum node
+//  * @returns {string} Ethereum wallet address
+//  */
+//
+// export function getEthAddressByNode(node) {
+//   try {
+//     let privateKey = getEthPrivateKey(node)
+//     let publicKey = getEthPublicKey(privateKey)
+//     return getEthAddress(publicKey)
+//   }
+//   catch (e) {
+//     console.log(e)
+//     throw new CustomError('err_core_eth_public_key')
+//   }
+// }
 
 /**
  * Convert a Bitcoin private key to the WIF (Wallet Import Format)
@@ -807,36 +655,7 @@ export function makeRawDogeTx(data = {}) {
   }
 }
 
-/**
- * Getting Dogecoin address by node and derivation index
- * @param {Object} node - Input data for a transaction
- * @param {number} childIndex - Derivation index
- * @param {boolean} withoutPrefix - Flag for prefix
- * @returns {string} Returns address
- */
 
-export function getDogeAddress(node, childIndex, withoutPrefix = true) {
-  try {
-    let curr = coininfo.dogecoin.main
-    let frmt = curr.toBitcoinJS()
-    const netGain = {
-      messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
-      bip32: {
-        public: frmt.bip32.public,
-        private: frmt.bip32.private
-      },
-      pubKeyHash: frmt.pubKeyHash,
-      scriptHash: frmt.scriptHash,
-      wif: frmt.wif
-    }
-    const address = bitcoin.payments.p2pkh({pubkey: node.deriveChild(childIndex).publicKey, network: netGain})
-    return address.address
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_doge_address')
-  }
-}
 
 
 /**

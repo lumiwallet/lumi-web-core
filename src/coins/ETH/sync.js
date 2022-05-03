@@ -1,5 +1,5 @@
 import Request from '@/helpers/Request'
-
+import {restoreClass} from '@/helpers/sync-utils'
 /**
  * Class EthereumSync
  * This class allows you to get information about the balance on a ethereum wallet,
@@ -24,13 +24,7 @@ export default class EthereumSync {
   }
 
   restore(data = {}) {
-    const noRestoredParams = ['request']
-    if (!data || typeof data !== 'object') return
-    for (let key in data) {
-      if (!noRestoredParams.includes(key) && key in this) {
-        this[key] = data[key]
-      }
-    }
+    restoreClass(this, data, ['request'])
   }
 
   /**

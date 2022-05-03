@@ -1,8 +1,9 @@
-import * as BtcCore from './BTC/core'
-import * as EthCore from './ETH/core'
-import * as BchCore from './BCH/core'
+import {generateBtcCore} from './BTC/core'
+import {generateEthCore} from './ETH/core'
+import {generateBchCore} from './BCH/core'
+import {generateDogeCore} from './DOGE/core'
 
-function createCoinsCores (hdkey, coins = []) {
+function createCoinsCores(hdkey, coins = []) {
   console.log('inside createCoinsCores', coins)
   let core = {}
 
@@ -14,19 +15,19 @@ function createCoinsCores (hdkey, coins = []) {
 
     switch (coin) {
       case 'BTC':
-        core[coin][type] = BtcCore.generateBtcCore(hdkey, type)
+        core[coin][type] = generateBtcCore(hdkey, type)
         break
       case 'ETH':
-        core[coin][type] = EthCore.generateEthCore(hdkey, type)
+        core[coin][type] = generateEthCore(hdkey, type)
         break
       case 'BCH':
-        core[coin] = BchCore.generateBchCore(hdkey)
+        core[coin] = generateBchCore(hdkey)
+        break
+      case 'DOGE':
+        core[coin] = generateDogeCore(hdkey)
         break
       // case 'BTCV':
       //   core[coin] = await this._generateBTCVcore()
-      //   break
-      // case 'DOGE':
-      //   core[coin] = await this._generateDOGEcore()
       //   break
       // case 'LTC':
       //   core[coin] = await this._generateLTCcore()
@@ -45,8 +46,9 @@ function createCoinsCores (hdkey, coins = []) {
 
 
 export {
-  BtcCore,
-  EthCore,
-  BchCore,
+  generateBtcCore,
+  generateEthCore,
+  generateBchCore,
+  generateDogeCore,
   createCoinsCores
 }

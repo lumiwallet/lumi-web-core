@@ -1,6 +1,15 @@
 import {derive} from '@/helpers/core'
 import * as utils from './utils'
 
+/**
+ * Creating a core for Ethereum.
+ * At the output, we get a Ethereum node, derivation path,
+ * a private and public key, and the Ethereum address
+ *
+ * @param {number} type - Ethereum account number. By default 0
+ * @private
+ */
+
 export function generateEthCore (hdkey, type = 0) {
   if (!Number.isInteger(type)) {
     type = 0
