@@ -36,15 +36,15 @@ module.exports = {
         exclude: /node_modules/,
         use: ['babel-loader']
       },
-      {
-        test: /\.worker\.js$/,
-        use: {
-          loader: 'worker-loader',
-          options: {
-            inline: 'fallback'
-          }
-        }
-      }
+      // {
+      //   test: /\.worker\.js$/,
+      //   use: {
+      //     loader: 'worker-loader',
+      //     options: {
+      //       inline: 'fallback'
+      //     }
+      //   }
+      // }
     ]
   },
   plugins: [

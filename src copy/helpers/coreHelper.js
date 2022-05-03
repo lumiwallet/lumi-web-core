@@ -108,65 +108,65 @@ export function getXprv(hd) {
   }
 }
 
-/**
- * Derivation of node. Getting child node by path
- * @param {Object} hd - HDkey node
- * @param {string} path - Derivation path
- * @returns {Object} - Child node
- */
+// /**
+//  * Derivation of node. Getting child node by path
+//  * @param {Object} hd - HDkey node
+//  * @param {string} path - Derivation path
+//  * @returns {Object} - Child node
+//  */
+//
+// export function derive(hd, path) {
+//   if (!hd) {
+//     throw new CustomError('err_core_derivation_hdkey')
+//   }
+//
+//   if (!path) {
+//     throw new CustomError('err_core_derivation_path')
+//   }
+//   let regex = new RegExp(/(^m\/\d+\')([\/{1}\d+\'{1}]+)/mg)
+//
+//   if (!regex.test(path)) {
+//     throw new CustomError('err_core_derivation_path')
+//   }
+//
+//   try {
+//     return hd.derive(path)
+//   }
+//   catch (e) {
+//     console.log(e)
+//     throw new CustomError('err_core_derivation')
+//   }
+// }
 
-export function derive(hd, path) {
-  if (!hd) {
-    throw new CustomError('err_core_derivation_hdkey')
-  }
-
-  if (!path) {
-    throw new CustomError('err_core_derivation_path')
-  }
-  let regex = new RegExp(/(^m\/\d+\')([\/{1}\d+\'{1}]+)/mg)
-
-  if (!regex.test(path)) {
-    throw new CustomError('err_core_derivation_path')
-  }
-
-  try {
-    return hd.derive(path)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_derivation')
-  }
-}
-
-/**
- * Getting a bitcoin address by node and child index
- * @param {Object} node - HDkey node
- * @param {number} childIndex - Index of the child node
- * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
- * @param {string} network - Custom network for different coins
- * @returns {string} Bitcoin address
- */
-
-export function getBtcAddress(node, childIndex = 0, type = 'p2pkh', network = 'btc') {
-  const types = ['p2pkh', 'p2wpkh']
-
-  if (!types.includes(type)) {
-    throw new CustomError('err_core_btc_type')
-  }
-
-  try {
-    let pubKey = node.deriveChild(childIndex).publicKey
-
-    return bitcoin.payments[type]({
-      pubkey: pubKey,
-      network: networks[network] || network.btc
-    }).address
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_btc_address')
-  }
-}
+// /**
+//  * Getting a bitcoin address by node and child index
+//  * @param {Object} node - HDkey node
+//  * @param {number} childIndex - Index of the child node
+//  * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
+//  * @param {string} network - Custom network for different coins
+//  * @returns {string} Bitcoin address
+//  */
+//
+// export function getBtcAddress(node, childIndex = 0, type = 'p2pkh', network = 'btc') {
+//   const types = ['p2pkh', 'p2wpkh']
+//
+//   if (!types.includes(type)) {
+//     throw new CustomError('err_core_btc_type')
+//   }
+//
+//   try {
+//     let pubKey = node.deriveChild(childIndex).publicKey
+//
+//     return bitcoin.payments[type]({
+//       pubkey: pubKey,
+//       network: networks[network] || network.btc
+//     }).address
+//   }
+//   catch (e) {
+//     console.log(e)
+//     throw new CustomError('err_core_btc_address')
+//   }
+// }
 
 /**
  * Getting an address by public key
@@ -562,43 +562,43 @@ export function makeRawBchTx(data = {}) {
   }
 }
 
-/**
- * Getting Bitcoin Cash address by node and derivation index
- * @param {Object} node - Input data for a transaction
- * @param {number} childIndex - Derivation index
- * @param {boolean} withoutPrefix - Flag for prefix
- * @returns {string} Returns address
- */
-
-export function getCashAddress(node, childIndex, withoutPrefix = true) {
-  try {
-    let pubKey = node.deriveChild(childIndex).pubKeyHash
-    let address = new bitcore.Address.fromPublicKeyHash(pubKey)
-    return address.toCashAddress(withoutPrefix)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_core_bch_address')
-  }
-}
-
-/**
- * Convert a Bitcoin Cash address from Legacy format to CashAddr format
- * @param {string} address - Bitcoin Cash address in Legacy format
- * @returns {string} Returns Bitcoin Cash address in CashAddr format
- */
-
-export function convertToCashAddress(address = '') {
-  try {
-    const toCashAddress = bchaddr.toCashAddress
-
-    return toCashAddress(address)
-  }
-  catch (e) {
-    console.log(e)
-    throw new CustomError('err_get_bch_address')
-  }
-}
+// /**
+//  * Getting Bitcoin Cash address by node and derivation index
+//  * @param {Object} node - Input data for a transaction
+//  * @param {number} childIndex - Derivation index
+//  * @param {boolean} withoutPrefix - Flag for prefix
+//  * @returns {string} Returns address
+//  */
+//
+// export function getCashAddress(node, childIndex, withoutPrefix = true) {
+//   try {
+//     let pubKey = node.deriveChild(childIndex).pubKeyHash
+//     let address = new bitcore.Address.fromPublicKeyHash(pubKey)
+//     return address.toCashAddress(withoutPrefix)
+//   }
+//   catch (e) {
+//     console.log(e)
+//     throw new CustomError('err_core_bch_address')
+//   }
+// }
+//
+// /**
+//  * Convert a Bitcoin Cash address from Legacy format to CashAddr format
+//  * @param {string} address - Bitcoin Cash address in Legacy format
+//  * @returns {string} Returns Bitcoin Cash address in CashAddr format
+//  */
+//
+// export function convertToCashAddress(address = '') {
+//   try {
+//     const toCashAddress = bchaddr.toCashAddress
+//
+//     return toCashAddress(address)
+//   }
+//   catch (e) {
+//     console.log(e)
+//     throw new CustomError('err_get_bch_address')
+//   }
+// }
 
 /**
  * Creating a raw Litecoin transaction
