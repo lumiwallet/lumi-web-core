@@ -7,3 +7,4 @@ export const BCH_PATH = `m/44'/145'/0'`
 export const DOGE_PATH = `m/44'/3'/0'`
 export const XDC_PATH = `m/44'/60'/0'/0/0`
 export const BTCV_PATH = `m/84'/440'/0'`
+export const LTC_PATH = `m/84'/2'/0'`

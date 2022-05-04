@@ -24,6 +24,7 @@ export function generateBtcvCore (hdkey) {
   item.internalNode = internalNode.privateExtendedKey
   item.externalAddress = getBtcAddress(externalNode, 0, type, network)
   item.internalAddress = getBtcAddress(internalNode, 0, type, network)
+  externalNode = internalNode = null
 
   return item
 }

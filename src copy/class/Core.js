@@ -293,31 +293,31 @@ export default class Core {
   //   return item
   // }
 
-  /**
-   * Creating a core for Litecoin.
-   * At the output, we get a external and internal node,
-   * derivation path and the first addresses of the external and internal cores
-   * @private
-   */
-  async _generateLTCcore () {
-    const type = 'p2wpkh'
-    const litecoin_external_path = `m/84'/2'/0'/0`
-    const litecoin_internal_path = `m/84'/2'/0'/1`
-
-    let item = {}
-    item.externalNode = core.derive(this.hdkey, litecoin_external_path)
-    item.internalNode = core.derive(this.hdkey, litecoin_internal_path)
-    item.externalAddress = core.getLtcAddress(item.externalNode, 0)
-    item.internalAddress = core.getLtcAddress(item.internalNode, 0)
-    item.dp = {external: litecoin_external_path, internal: litecoin_internal_path}
-
-    if (!this.coins.hasOwnProperty('LTC')) {
-      this.coins.LTC = {}
-    }
-
-    this.coins.LTC[type] = item
-    return item
-  }
+  // /**
+  //  * Creating a core for Litecoin.
+  //  * At the output, we get a external and internal node,
+  //  * derivation path and the first addresses of the external and internal cores
+  //  * @private
+  //  */
+  // async _generateLTCcore () {
+  //   const type = 'p2wpkh'
+  //   const litecoin_external_path = `m/84'/2'/0'/0`
+  //   const litecoin_internal_path = `m/84'/2'/0'/1`
+  //
+  //   let item = {}
+  //   item.externalNode = core.derive(this.hdkey, litecoin_external_path)
+  //   item.internalNode = core.derive(this.hdkey, litecoin_internal_path)
+  //   item.externalAddress = core.getLtcAddress(item.externalNode, 0)
+  //   item.internalAddress = core.getLtcAddress(item.internalNode, 0)
+  //   item.dp = {external: litecoin_external_path, internal: litecoin_internal_path}
+  //
+  //   if (!this.coins.hasOwnProperty('LTC')) {
+  //     this.coins.LTC = {}
+  //   }
+  //
+  //   this.coins.LTC[type] = item
+  //   return item
+  // }
 
   // /**
   //  * Creating a core for XinFin Network.

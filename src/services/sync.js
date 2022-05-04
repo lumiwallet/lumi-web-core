@@ -4,6 +4,7 @@ import BitcoinCashSync from '@/coins/BCH/sync'
 import DogecoinSync from '@/coins/DOGE/sync'
 import XinfinSync from '@/coins/XDC/sync'
 import BitcoinVaultSync from '@/coins/BTCV/sync'
+import LitecoinSync from '@/coins/LTC/sync'
 
 export {
   BitcoinSync,
@@ -11,5 +12,6 @@ export {
   BitcoinCashSync,
   DogecoinSync,
   XinfinSync,
-  BitcoinVaultSync
+  BitcoinVaultSync,
+  LitecoinSync
 }
