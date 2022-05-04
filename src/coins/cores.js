@@ -3,9 +3,9 @@ import {generateEthCore} from './ETH/core'
 import {generateBchCore} from './BCH/core'
 import {generateDogeCore} from './DOGE/core'
 import {generateXdcCore} from './XDC/core'
+import {generateBtcvCore} from './BTCV/core'
 
 function createCoinsCores(hdkey, coins = []) {
-  console.log('inside createCoinsCores', coins)
   let core = {}
 
   for (let item of coins) {
@@ -27,21 +27,22 @@ function createCoinsCores(hdkey, coins = []) {
       case 'DOGE':
         core[coin] = generateDogeCore(hdkey)
         break
-      // case 'BTCV':
-      //   core[coin] = await this._generateBTCVcore()
-      //   break
+      case 'BTCV':
+        core[coin] = generateBtcvCore(hdkey)
+        break
+      case 'XDC':
+        core[coin] = generateXdcCore(hdkey)
+        break
       // case 'LTC':
       //   core[coin] = await this._generateLTCcore()
       //   break
       // case 'BNB':
       //   core[coin] = await this._generateBNBcore()
       //   break
-      case 'XDC':
-        core[coin] = generateXdcCore(hdkey)
-        break
+
     }
   }
-
+  console.log('CORES', core)
   return core
 }
 
@@ -51,5 +52,6 @@ export {
   generateEthCore,
   generateBchCore,
   generateDogeCore,
+  generateBtcvCore,
   createCoinsCores
 }

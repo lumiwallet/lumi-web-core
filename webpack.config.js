@@ -29,6 +29,7 @@ module.exports = {
       'process': require.resolve('process')
     }
   },
+  devtool: 'source-map',
   module: {
     rules: [
       {
