@@ -344,21 +344,21 @@ export default class Core {
   //   return item
   // }
 
-  /**
-   * Creating a core for Binance Coin.
-   * At the output, we get a external and internal node,
-   * derivation path and the external address
-   * @private
-   */
-  async _generateBNBcore () {
-    const type = 'p2pkh'
-
-    if (!Object.prototype.hasOwnProperty.call(this.coins, 'BNB')) {
-      this.coins.BNB = {}
-    }
-    this.coins.BNB[type] = getBnbCore(this.hdkey)
-    return this.coins.BNB[type]
-  }
+  // /**
+  //  * Creating a core for Binance Coin.
+  //  * At the output, we get a external and internal node,
+  //  * derivation path and the external address
+  //  * @private
+  //  */
+  // async _generateBNBcore () {
+  //   const type = 'p2pkh'
+  //
+  //   if (!Object.prototype.hasOwnProperty.call(this.coins, 'BNB')) {
+  //     this.coins.BNB = {}
+  //   }
+  //   this.coins.BNB[type] = getBnbCore(this.hdkey)
+  //   return this.coins.BNB[type]
+  // }
 
   /**
    * The method returns information about child nodes by the derivation path and range

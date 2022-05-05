@@ -6,6 +6,7 @@ import XinfinSync from '@/coins/XDC/sync'
 import BitcoinVaultSync from '@/coins/BTCV/sync'
 import LitecoinSync from '@/coins/LTC/sync'
 import BinanceSync from '@/coins/BNB/sync'
+import EthereumTokensSync from '@/coins/ETH/tokens/sync'
 
 export {
   BitcoinSync,
@@ -15,5 +16,6 @@ export {
   XinfinSync,
   BitcoinVaultSync,
   LitecoinSync,
-  BinanceSync
+  BinanceSync,
+  EthereumTokensSync
 }
