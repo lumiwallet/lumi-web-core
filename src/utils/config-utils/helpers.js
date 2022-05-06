@@ -11,7 +11,8 @@ export const BYTE_DATA = {
     EVER: 0x08,
     ADA: 0x09,
     LTC: 0x10,
-    XDC: 0x11
+    XDC: 0x11,
+    '@G': 0x12
   },
   HD: {
     NONE: 0x00,
@@ -57,7 +58,8 @@ export const DP = {
     EVER: 396,
     LTC: 2,
     XDC: 60,
-    ADA: 1815
+    ADA: 1815,
+    G: 60
   }
 }
 
@@ -90,7 +92,8 @@ export const DATA = {
     '08': 'EVER',
     '09': 'ADA',
     '10': 'LTC',
-    '11': 'XDC'
+    '11': 'XDC',
+    '12': '@G'
   },
   COIN_NAME: {
     BTC: 'Bitcoin',
@@ -103,7 +106,8 @@ export const DATA = {
     EVER: 'Crystal',
     LTC: 'Litecoin',
     XDC: 'XinFin Network',
-    ADA: 'Cardano'
+    ADA: 'Cardano',
+    '@G': 'Graphite'
   }
 }
 
@@ -141,11 +145,11 @@ export function buf2hex(buffer, length = 2) { // buffer is an ArrayBuffer
   return Array.prototype.map.call(new Uint16Array(buffer), x => (prefix + x.toString(16)).slice(-1 * length)).join('')
 }
 
-export function decimalToHex (d) {
+export function decimalToHex(d) {
   return '0x' + Number(d).toString(16).padStart(2, '0')
 }
 
-export function toUTF8Array (str) {
+export function toUTF8Array(str) {
   let utf8 = []
   for (var i = 0; i < str.length; i++) {
     let charcode = str.charCodeAt(i)

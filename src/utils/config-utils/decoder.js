@@ -75,7 +75,6 @@ export function getCurrency(id) {
     core: !NOT_CORE_GENERATION.includes(CURRENCY),
     need_deploy: NEED_DEPLOY.includes(CURRENCY)
   }
-
   item.name = helper.DATA.COIN_NAME[item.coin]
 
   if (id.length > offset) {

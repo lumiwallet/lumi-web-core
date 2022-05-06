@@ -2,7 +2,7 @@ import * as core from '@/services/core' // TODO: wallet core?
 import * as sync from '@/services/sync'
 import * as helpers from '@/helpers/coreHelper'
 import * as coinsCores from '@/coins/cores'
-import * as configUtils from '@/helpers/config-utils'
+import * as configUtils from '@/utils/config-utils'
 
 // import Wrapper from '@/Wrapper'
 // import CustomError from '@/helpers/handleErrors'
@@ -20,7 +20,7 @@ export {
   configUtils
 }
 
-console.log('link core 1')
+console.log('link core 2')
 // /**
 //  * Currencies that are supported in the wallet
 //  */

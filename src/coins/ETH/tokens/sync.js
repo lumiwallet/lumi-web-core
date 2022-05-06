@@ -15,8 +15,7 @@ export default class EthereumTokensSync {
   async Start() {
     await Promise.all([
       this.getBalance(),
-      this.getOutTransactions(),
-      this.getInTransactions(),
+      this.getTransactions()
     ])
   }
 
@@ -36,7 +35,14 @@ export default class EthereumTokensSync {
   }
 
   async getTransactions() {
+    await Promise.all([
+      this.getOutTransactions(),
+      this.getInTransactions()
+    ])
 
+    this.transactions = this.transactions.filter((item, index, self) => {
+      return index === self.findIndex((i) => i.transactionHash === item.transactionHash)
+    })
   }
 
   async getOutTransactions() {
