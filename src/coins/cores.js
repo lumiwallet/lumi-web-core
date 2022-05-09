@@ -15,13 +15,13 @@ function createCoinsCores(hdkey, coins = []) {
     if (!core.hasOwnProperty(coin)) {
       core[coin] = {}
     }
-
+    console.log('createCoinsCores for', coin)
     switch (coin) {
       case 'BTC':
         core[coin][type] = generateBtcCore(hdkey, type)
         break
       case 'ETH':
-        core[coin][type] = generateEthCore(hdkey, type)
+        core[coin] = generateEthCore(hdkey, type)
         break
       case 'BCH':
         core[coin] = generateBchCore(hdkey)
@@ -40,6 +40,9 @@ function createCoinsCores(hdkey, coins = []) {
         break
       case 'BNB':
         core[coin] = generateBnbCore(hdkey)
+        break
+      case '@G':
+        core[coin] = generateEthCore(hdkey)
         break
     }
   }

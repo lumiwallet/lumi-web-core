@@ -43,7 +43,6 @@ export function getId (coin, address_type = 'P2PKH', account = 0) {
   let view = new Uint32Array(5)
   let dp_length, id_dp
   view[0] = helper.BYTE_DATA.VERSION
-
   coin = coin.toUpperCase()
   address_type = address_type ? address_type.toUpperCase() : null
 
@@ -104,6 +103,11 @@ export function getId (coin, address_type = 'P2PKH', account = 0) {
       view[3] = helper.BYTE_DATA.HD.ADA
       dp_length = helper.DP.LENGTH.HD
       id_dp = getDerivationPath('ADA', 'ADA', account, helper.BYTE_DATA.HD.ADA)
+      break
+    case '@G':
+      view[3] = helper.BYTE_DATA.HD.NONE
+      dp_length = helper.DP.LENGTH.NONE_HD
+      id_dp = getDerivationPath('@G', null, account, helper.BYTE_DATA.HD.NONE)
       break
   }
 

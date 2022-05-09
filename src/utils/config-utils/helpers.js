@@ -59,7 +59,7 @@ export const DP = {
     LTC: 2,
     XDC: 60,
     ADA: 1815,
-    G: 60
+    '@G': 60
   }
 }
 

@@ -7,6 +7,7 @@ import BitcoinVaultSync from '@/coins/BTCV/sync'
 import LitecoinSync from '@/coins/LTC/sync'
 import BinanceSync from '@/coins/BNB/sync'
 import EthereumTokensSync from '@/coins/ETH/tokens/sync'
+import GraphiteSync from '@/coins/GR/sync'
 
 export {
   BitcoinSync,
@@ -17,5 +18,6 @@ export {
   BitcoinVaultSync,
   LitecoinSync,
   BinanceSync,
-  EthereumTokensSync
+  EthereumTokensSync,
+  GraphiteSync
 }

@@ -2,17 +2,17 @@ import Request from '@/helpers/Request'
 import {restoreClass} from '@/helpers/sync-utils'
 
 /**
- * Class EthereumSync
- * This class allows you to get information about the balance on an ethereum wallet,
+ * Class GraphiteSync
+ * This class allows you to get information about the balance on a graphite wallet,
  * the list of transactions and optimal gas price
  * @class
  */
 
-export default class EthereumSync {
+export default class GraphiteSync {
   /**
-   * Create a EthereumSync
-   * @param {string} address - Ethereum wallet address
-   * @param {string} api - A URL address of Ethereum explorer
+   * Create a GraphiteSync
+   * @param {string} address - Graphite wallet address
+   * @param {Object} api - URL addresses of Graphite explorer
    * @param {Object} headers - Request headers
    */
   constructor (address, api, headers) {
@@ -21,7 +21,9 @@ export default class EthereumSync {
     this.balance = 0
     this.transactions = []
     this.gasPrice = 0
-    this.request = new Request(this.api, headers)
+    this.request = new Request(this.api.main, headers)
+    this.requestScan = new Request(this.api.scan, headers)
+    console.log('g sync', this)
   }
 
   restore(data = {}) {
@@ -29,7 +31,7 @@ export default class EthereumSync {
   }
 
   /**
-   * The method that starts the synchronization Ethereum part of the wallet
+   * The method that starts the synchronization Graphite part of the wallet
    * @returns {Promise<number>}
    * @constructor
    */
@@ -41,7 +43,7 @@ export default class EthereumSync {
   }
 
   /**
-   * Request to receive a balance of Ethereum wallet
+   * Request to receive a balance of Graphite wallet
    * @returns {Promise<number>}
    */
 
@@ -51,17 +53,16 @@ export default class EthereumSync {
     let params = {
       module: 'account',
       action: 'balance',
-      address: this.address,
-      tag: 'latest'
+      address: this.address
     }
 
-    let res = await this.request.send(params)
+    let res = await this.requestScan.send(params)
 
     return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0
   }
 
   /**
-   * Request to receive Ethereum transaction list
+   * Request to receive Graphite transaction list
    * @returns {Promise<Array>}
    */
 
@@ -71,11 +72,10 @@ export default class EthereumSync {
     let params = {
       module: 'account',
       action: 'txlist',
-      address: this.address,
-      sort: 'asc'
+      address: this.address
     }
 
-    let res = await this.request.send(params)
+    let res = await this.requestScan.send(params)
 
     return res && res.hasOwnProperty('result') && Array.isArray(res.result) ? res.result : []
   }
@@ -87,13 +87,16 @@ export default class EthereumSync {
 
   async getGasPrice () {
     let params = {
-      module: 'proxy',
-      action: 'eth_gasPrice'
+      addressTo: this.address
     }
 
-    let res = await this.request.send(params)
+    let res = await this.request.send(params, 'gas')
 
-    return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 40
+    return res && res.hasOwnProperty('result') ? res.result : {
+      "gasPrice": "19800000000",
+      "estimateGas": "21000",
+      "lastEstimateGas": "42000"
+    }
   }
 
   get DATA () {
