@@ -15,7 +15,7 @@ function createCoinsCores(hdkey, coins = []) {
     if (!core.hasOwnProperty(coin)) {
       core[coin] = {}
     }
-    console.log('createCoinsCores for', coin)
+
     switch (coin) {
       case 'BTC':
         core[coin][type] = generateBtcCore(hdkey, type)
@@ -46,7 +46,7 @@ function createCoinsCores(hdkey, coins = []) {
         break
     }
   }
-  console.log('CORES', core)
+
   return core
 }
 

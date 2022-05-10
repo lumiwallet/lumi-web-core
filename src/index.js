@@ -14,7 +14,6 @@ export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
 export {
   helpers,
-  // BinanceTx,
   core,
   coinsCores,
   sync,
