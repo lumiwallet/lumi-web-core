@@ -21,6 +21,7 @@ export default class EthereumSync {
     this.balance = 0
     this.transactions = []
     this.gasPrice = 0
+    this.blockNumber = 0
     this.request = new Request(this.api, headers)
   }
 
@@ -38,6 +39,7 @@ export default class EthereumSync {
     this.balance = await this.getBalance()
     this.transactions = await this.getTransactions()
     this.gasPrice = await this.getGasPrice()
+    this.blockNumber = await this.getBlockNumber()
   }
 
   /**
@@ -96,12 +98,24 @@ export default class EthereumSync {
     return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 40
   }
 
+  async getBlockNumber () {
+    let params = {
+      module: 'proxy',
+      action: 'eth_blockNumber'
+    }
+
+    let res = await this.request.send(params)
+
+    return res && res.hasOwnProperty('result') ? parseInt(res.result) : 0
+  }
+
   get DATA () {
     return {
       address: this.address,
       balance: this.balance,
       transactions: this.transactions,
-      gasPrice: this.gasPrice
+      gasPrice: this.gasPrice,
+      blockNumber: this.blockNumber
     }
   }
 }
