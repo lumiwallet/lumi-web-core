@@ -4,7 +4,7 @@ import * as helpers from '@/helpers/coreHelper'
 import * as coinsCores from '@/coins/cores'
 import * as configUtils from '@/utils/config-utils'
 import * as web3Utils from 'web3-utils'
-
+import * as addressUtils from '@/utils/address-utils'
 // import Wrapper from '@/Wrapper'
 // import CustomError from '@/helpers/handleErrors'
 // import BinanceTx from '@/class/BNB/transaction'
@@ -18,7 +18,8 @@ export {
   coinsCores,
   sync,
   configUtils,
-  web3Utils
+  web3Utils,
+  addressUtils
 }
 
 console.log('link core 3')
