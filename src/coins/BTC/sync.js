@@ -1,8 +1,9 @@
-import Request from '@/helpers/Request'
 import {getBtcAddress} from './utils'
 import {hdFromXprv} from '@/helpers/core'
 import {restoreClass} from '@/helpers/sync-utils'
+import {Coins} from 'lumi-network'
 
+const requests = Coins.btcRequests
 /**
  * Class BitcoinSync.
  * This class allows you to get information about the balance on a Bitcoin wallet,
@@ -15,14 +16,12 @@ export default class BitcoinSync {
    * Create a BitcoinSync
    * @param {string} externalNodeKey - External Bitcoin node key
    * @param {string} internalNodeKey - Internal Bitcoin node key
-   * @param {Object} api - A set of URLs for getting information about Bitcoin addresses
    * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
    * @param {Object} headers - Request headers
    */
-  constructor (externalNodeKey, internalNodeKey, api, type, headers) {
+  constructor (externalNodeKey, internalNodeKey, type, headers) {
     this.externalNode = hdFromXprv(externalNodeKey)
     this.internalNode = hdFromXprv(internalNodeKey)
-    this.api = api
     this.balance = 0
     this.latestBlock = 0
     this.unspent = []
@@ -42,7 +41,6 @@ export default class BitcoinSync {
     }
     this.fee = []
     this.headers = headers
-    this.request = new Request(this.api.btc, headers)
     this.type = type || 'p2pkh'
   }
 
@@ -64,7 +62,7 @@ export default class BitcoinSync {
     this.unspent = []
     await Promise.all([
       await this.getAddresses(),
-      await this.getFeesRequest()
+      await this.getFees()
     ])
     this.getBalance()
   }
@@ -185,7 +183,7 @@ export default class BitcoinSync {
       )
 
       try {
-        let res = await this.getMultiAddressRequest(addresses)
+        let res = await requests.getMultiAddressRequest(addresses, this.headers)
 
         if (res.hasOwnProperty('utxo')) {
           this.unspent = [...this.unspent, ...res.utxo]
@@ -321,60 +319,8 @@ export default class BitcoinSync {
         balance += +item.value
       }
     })
-    console.log('getBalance', balance)
+
     this.balance = balance
-  }
-
-  /**
-   * Request for information at multiple addresses
-   * @param {Array} addresses - List of addresses to get data from
-   * @returns {Promise<Object>} Address information, including a list of transactions
-   */
-
-  async getMultiAddressRequest (addresses) {
-    if (!addresses) return false
-
-    const OFFSET_STEP = 100
-    const TXS_COUNT = 100
-    let offset = 0
-    let data = {}
-    let txs = []
-
-    const req = async () => {
-      let params = {
-        method: 'all',
-        active: addresses,
-        offset: offset,
-        limit: TXS_COUNT
-      }
-
-      try {
-        let res = await this.request.send(params)
-
-        if (res.status === 'success') {
-          data = res.data || {}
-
-          if (res.data.hasOwnProperty('transactions')) {
-            txs = [...txs, ...res.data.transactions]
-            if (res.data.transactions.length === TXS_COUNT) {
-              offset += OFFSET_STEP
-              await req()
-            }
-          }
-
-          data.transactions = txs
-        } else {
-          console.log('BTC getMultiAddressRequest', res.error)
-        }
-      }
-      catch (err) {
-        console.log('BTC getMultiAddressRequest', err)
-      }
-    }
-
-    await req()
-
-    return data
   }
 
   /**
@@ -382,11 +328,9 @@ export default class BitcoinSync {
    * @returns {Promise<Array>} Set of bitcoin fees
    */
 
-  async getFeesRequest () {
+  async getFees() {
     try {
-      const res = await fetch(this.api.btcFee, {headers: this.headers})
-      const resJson = await res.json()
-      this.fee = resJson.sort((a, b) => b.feePerByte - a.feePerByte)
+      this.fee = await requests.getFeesRequest(this.headers)
     }
     catch (err) {
       console.log('BTC getFeesRequest', err)

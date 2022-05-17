@@ -34,12 +34,12 @@ export default class BitcoinTx {
 
   constructor (data) {
     this.unspent = data.unspent
-    this.internalAddress = data.internalAddress
-    this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
-    this.balance = data.balance
+    // this.internalAddress = data.internalAddress
+    // this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
+    this.balance = this.unspent.reduce((a, b) => a + b.value, 0)
     this.dust = 1000
     this.fee = data.feeList
-    this.customFee = +data.customFee || 0
+    // this.customFee = +data.customFee || 0
     this.nodes = data.nodes || {}
     this.feeList = []
     this.request = new Request(data.api, data.headers)
