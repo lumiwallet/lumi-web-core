@@ -1,5 +1,5 @@
 import {restoreClass} from '@/helpers/sync-utils'
-import {CoinsNetwork} from 'lumi-network'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
 
 const requests = CoinsNetwork.eth
 

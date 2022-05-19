@@ -2,7 +2,7 @@ import converter from '@/helpers/converters'
 import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from './utils'
 import CustomError from '@/helpers/handleErrors'
 import {hdFromXprv} from '@/helpers/core'
-import {CoinsNetwork} from 'lumi-network'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
 
 const request = CoinsNetwork.btc
 
