@@ -1,6 +1,9 @@
-import Request from '@/helpers/Request'
 import {restoreClass} from '@/helpers/sync-utils'
+import {CoinsNetwork} from 'lumi-network'
 
+const requests = CoinsNetwork.eth
+
+console.log('eth req', requests)
 /**
  * Class EthereumSync
  * This class allows you to get information about the balance on an ethereum wallet,
@@ -12,17 +15,18 @@ export default class EthereumSync {
   /**
    * Create a EthereumSync
    * @param {string} address - Ethereum wallet address
-   * @param {string} api - A URL address of Ethereum explorer
    * @param {Object} headers - Request headers
+   * @param {string} env
    */
-  constructor (address, api, headers) {
+  constructor (address = '', headers = {}, env = 'prod') {
+    console.log('eth', address, headers, env)
     this.address = address
-    this.api = api
     this.balance = 0
     this.transactions = []
     this.gasPrice = 0
     this.blockNumber = 0
-    this.request = new Request(this.api, headers)
+    this.headers = headers
+    this.env = env
   }
 
   restore(data = {}) {
@@ -36,10 +40,10 @@ export default class EthereumSync {
    */
 
   async Start () {
-    this.balance = await this.getBalance()
-    this.transactions = await this.getTransactions()
-    this.gasPrice = await this.getGasPrice()
-    this.blockNumber = await this.getBlockNumber()
+    await this.getBalance()
+    await this.getTransactions()
+    await this.getGasPrice()
+    await this.getBlockNumber()
   }
 
   /**
@@ -48,18 +52,7 @@ export default class EthereumSync {
    */
 
   async getBalance () {
-    this.balance = 0
-
-    let params = {
-      module: 'account',
-      action: 'balance',
-      address: this.address,
-      tag: 'latest'
-    }
-
-    let res = await this.request.send(params)
-
-    return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0
+    this.balance = await requests.getBalance(this.address, this.headers, this.env)
   }
 
   /**
@@ -68,45 +61,25 @@ export default class EthereumSync {
    */
 
   async getTransactions () {
-    this.transactions = []
-
-    let params = {
-      module: 'account',
-      action: 'txlist',
-      address: this.address,
-      sort: 'asc'
-    }
-
-    let res = await this.request.send(params)
-
-    return res && res.hasOwnProperty('result') && Array.isArray(res.result) ? res.result : []
+    this.transactions = await requests.getTransactions(this.address, this.headers, this.env)
   }
 
   /**
-   * Request to receive a amount of gas price
+   * Request to receive an amount of gas price
    * @returns {Promise<number>}
    */
 
   async getGasPrice () {
-    let params = {
-      module: 'proxy',
-      action: 'eth_gasPrice'
-    }
-
-    let res = await this.request.send(params)
-
-    return res && res.hasOwnProperty('result') ? parseInt(res.result, 16) : 40
+    this.gasPrice = await requests.getTransactions(this.headers, this.env)
   }
 
+  /**
+   * Request to receive a last block number
+   * @returns {Promise<number>}
+   */
+
   async getBlockNumber () {
-    let params = {
-      module: 'proxy',
-      action: 'eth_blockNumber'
-    }
-
-    let res = await this.request.send(params)
-
-    return res && res.hasOwnProperty('result') ? parseInt(res.result) : 0
+    this.blockNumber = await requests.getBlockNumber(this.headers, this.env)
   }
 
   get DATA () {

@@ -311,7 +311,7 @@ export function makeRawEthTx(data = {}) {
     if (to.startsWith('xdc')) {
       to = to.replace('xdc', '0x')
     }
-    let bigIntValue = BigInt(value)
+    let bigIntValue = new ethUtil.BN(value)
     let params = {
       to: to,
       nonce: ethUtil.intToHex(parseInt(nonce)),
