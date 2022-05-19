@@ -1,4 +1,4 @@
-import Worker from 'worker-loader!./workers/wallet.worker.js'
+import Worker from './workers/wallet.worker.js'
 
 const resolves = {}
 const rejects = {}
@@ -16,7 +16,7 @@ export default class Wrapper {
     this.worker = new Worker()
     this.worker.onmessage = handleMsg
   }
-  
+
   /**
    * Main class method. Send message to the worker
    * @param {string} method - Method name

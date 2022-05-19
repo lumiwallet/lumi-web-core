@@ -41,26 +41,26 @@ export default class DogecoinTx {
     this.request = new Request(data.api, data.headers)
     this.dust = 1000
   }
-  
+
   /**
    * Calculating the fee amount
    * @param {number} size - Transaction size
    * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
    */
-  
+
   async calcFee (size = 0) {
     const fees = [...this.fee.map(item => item.feePerByte), this.customFee]
-    
+
     if (this.amount <= 0 || this.balance < this.amount) {
       return this.calcEmptyFee(fees)
     }
-    
+
     const pArray = fees.map(async fee => {
       return await this.getInputs(fee, size)
     })
-    
+
     const res = await Promise.all(pArray)
-    
+
     this.feeList = res.map((item, i) => {
       return {
         id: FEE_IDS[i],
@@ -73,17 +73,17 @@ export default class DogecoinTx {
         custom: FEE_IDS[i] === 'custom'
       }
     })
-    
+
     return this.feeList
   }
-  
+
   /**
    * Sets an array of zero fees.
    * Used when the user does not have enough funds for the transaction
    * @param {Array} fees - set of commission types
    * @returns {Array} Returns an array with zero fees
    */
-  
+
   calcEmptyFee (fees) {
     this.feeList = fees.map((item, i) => {
       return {
@@ -97,38 +97,38 @@ export default class DogecoinTx {
         custom: FEE_IDS[i] === 'custom'
       }
     })
-    
+
     return this.feeList
   }
-  
+
   /**
    * Finds a list of inputs for a specific transaction
    * @param {number} fee - Fee size
    * @param {number} size - Transaction size
    * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
    */
-  
+
   async getInputs (fee, size) {
     let index = 0
     let inputsAmount = 0
     let inputs = []
     let res = {}
-    
+
     this.dust = size ? 0 : 1000
-    
+
     let req = async () => {
       let item = this.unspent[index]
       let defaultSize = calcBtcTxSize(index + 1, 2)
       let calcFee = size ? size * fee : defaultSize * fee
-      
+
       inputsAmount += item.value
       inputs.push(item)
-      
+
       let total = this.amount + calcFee + this.dust
-      
+
       if (total > inputsAmount) {
         index++
-        
+
         if (index >= this.unspent.length) {
           res = {
             fee: 0,
@@ -147,10 +147,10 @@ export default class DogecoinTx {
       }
     }
     await req()
-    
+
     return res
   }
-  
+
   /**
    * Creating a Dogecoin transaction
    * @param {Object} data - Input data for a transaction
@@ -158,29 +158,29 @@ export default class DogecoinTx {
    * @param {Object} data.fee - The transaction fee and list of inputs
    * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully
    */
-  
+
   async make (data) {
     const {addressTo, fee} = data
-    
+
     if (!this.amount) {
       throw new CustomError('err_tx_doge_amount')
     }
-    
+
     if (isNaN(fee.SAT)) {
       throw new CustomError('err_tx_doge_fee')
     }
-    
+
     const inputsAmount = +fee.inputsAmount
     const amount = +this.amount
     const feeSat = +fee.SAT
     const change = inputsAmount - amount - feeSat
     let inputs = []
     let hashes = []
-    
+
     if (change < 0) {
       throw new CustomError('err_tx_doge_balance')
     }
-    
+
     for (let input of fee.inputs) {
       if (!input.tx) {
         if (input.transaction_hash) {
@@ -190,13 +190,13 @@ export default class DogecoinTx {
         }
       }
     }
-    
+
     const unique_hashes = [...new Set(hashes)]
     const rawTxsData = await this.getRawTxHex(unique_hashes)
-    
+
     for (const utxo of fee.inputs) {
       hashes.push(utxo.transaction_hash)
-      
+
       let item = {
         hash: utxo.transaction_hash,
         index: utxo.index,
@@ -210,10 +210,10 @@ export default class DogecoinTx {
       } else {
         item.tx = utxo.tx
       }
-      
+
       inputs.push(item)
     }
-    
+
     let params = {
       inputs: inputs,
       outputs: [
@@ -223,48 +223,48 @@ export default class DogecoinTx {
         }
       ]
     }
-    
+
     if (change !== 0) {
       params.outputs[1] = {
         address: this.internalAddress,
         value: change
       }
     }
-    
+
     return makeRawDogeTx(params)
   }
-  
-  
+
+
   /**
    * Raw transaction request
    * @param {Array} hashes - List of hashes
    * @returns {Promise<Array>} Array of raw Dogecoin transactions for each hash
    */
-  
+
   async getRawTxHex (hashes) {
     if (!hashes || !hashes.length) return []
-    
+
     const ARRAY_SIZE = 10
     const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)
     let txs = []
     let arrays = []
     let counter = 0
-    
+
     for (let i = 0; i < ARRAYS_COUNT; i++) {
       arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)
     }
-    
+
     const req = async () => {
       try {
         let res = await this.request.send({
           method: 'rawtx',
           txs: arrays[counter]
         })
-        
+
         if (res.status === 'success' && res.data.length) {
           txs = [...txs, ...res.data]
           counter++
-          
+
           if (counter !== ARRAYS_COUNT) {
             await req()
           }
@@ -276,9 +276,9 @@ export default class DogecoinTx {
         throw new CustomError('err_tx_doge_raw_tx')
       }
     }
-    
+
     await req()
-    
+
     return txs
   }
 }

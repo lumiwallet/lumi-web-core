@@ -7,20 +7,19 @@
       }
     ]
   ],
-  "plugins": [
-    "@babel/plugin-syntax-dynamic-import",
-    "@babel/plugin-transform-runtime",
-    ["module-resolver", {
-      "root": ["./src/"],
-      "alias": {
-        "@": "./src/"
-      }
-    }]
-  ],
-  "comments": false,
   "env": {
     "test": {
       "presets": [["@babel/preset-env", { "targets": { "node": "current" } }]]
     }
+  },
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    ["@babel/plugin-proposal-class-properties"]
+  ],
+  "comments": false,
+  "sourceType": "unambiguous",
+  "assumptions": {
+    "setPublicClassFields": true,
+    "privateFieldsAsProperties": true
   }
 }

@@ -3,7 +3,7 @@ import CustomError from '@/helpers/handleErrors'
 import * as helpers from '@/helpers/coreHelper'
 import BinanceTx from '@/class/BNB/transaction'
 
-export {default as mnemonicChecker} from 'bip39-checker'
+export {default as mnemonicChecker} from '@/libs/bip39-checker'
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
 export {
@@ -101,7 +101,6 @@ export default class Wallet {
       },
       api: this.api
     }
-
     this.core = await this.wrapper.method('create', data)
 
     return this.core

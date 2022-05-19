@@ -1,15 +1,20 @@
-import * as bip39 from 'bip39'
-import * as bitcoin from 'bitcoinjs-lib'
-import * as coininfo from 'coininfo'
+import * as bip39      from 'bip39'
+import * as bitcoin    from 'bitcoinjs-lib'
+import * as coininfo   from 'coininfo'
 import Common, {Chain} from '@ethereumjs/common'
-import {Transaction} from '@ethereumjs/tx'
-import * as ethUtil from 'ethereumjs-util'
-import * as HDkey from 'hdkey'
-import wif from 'wif'
-import * as bchaddr from 'bchaddrjs'
-import * as bitcore from 'bitcore-lib-cash'
-import CustomError from '@/helpers/handleErrors'
-import {networks} from '@/helpers/networks'
+import {Transaction}   from '@ethereumjs/tx'
+import * as ethUtil    from 'ethereumjs-util'
+import * as HDkey      from 'hdkey'
+import wif             from 'wif'
+import * as bchaddr    from 'bchaddrjs'
+import * as bitcore    from 'bitcore-lib-cash'
+import CustomError     from '@/helpers/handleErrors'
+import {networks}      from '@/helpers/networks'
+import {ECPairFactory} from '@/libs/ecpair'
+import * as tinysecp   from 'tiny-secp256k1'
+
+const ECPair = ECPairFactory(tinysecp)
+const validator = (pubkey, msghash, signature) => ECPair.fromPublicKey(pubkey).verify(msghash, signature)
 
 /**
  * Generation of mnemonics.
@@ -309,8 +314,7 @@ export function makeRawBtcTx(data = {}) {
 
     inputs.forEach(input => {
       const isSegwit = input.address.substring(0, 3) === 'bc1'
-      const keyPair = bitcoin.ECPair.fromWIF(input.key)
-
+      const keyPair = ECPair.fromWIF(input.key)
       keyPairs.push(keyPair)
 
       let data = {
@@ -343,7 +347,7 @@ export function makeRawBtcTx(data = {}) {
       psbt.signInput(i, key)
     })
 
-    psbt.validateSignaturesOfAllInputs()
+    psbt.validateSignaturesOfAllInputs(validator)
     psbt.finalizeAllInputs()
 
     const transaction = psbt.extractTransaction()
@@ -377,7 +381,7 @@ export function makeRawBtcvTx(data = {}) {
     psbt.setVersion(1)
 
     inputs.forEach(input => {
-      const keyPair = bitcoin.ECPair.fromWIF(input.key, networks.btcv)
+      const keyPair = ECPair.fromWIF(input.key, networks.btcv)
 
       keyPairs.push(keyPair)
 
@@ -409,7 +413,7 @@ export function makeRawBtcvTx(data = {}) {
       psbt.signInput(i, key)
     })
 
-    psbt.validateSignaturesOfAllInputs()
+    psbt.validateSignaturesOfAllInputs(validator)
     psbt.finalizeAllInputs()
 
     const transaction = psbt.extractTransaction()
@@ -459,7 +463,7 @@ export function makeRawEthTx(data = {}) {
     if (to.startsWith('xdc')) {
       to = to.replace('xdc', '0x')
     }
-    let bigIntValue = BigInt(value)
+    let bigIntValue = new ethUtil.BN(value)
     let params = {
       to: to,
       nonce: ethUtil.intToHex(parseInt(nonce)),
@@ -467,7 +471,6 @@ export function makeRawEthTx(data = {}) {
       gasPrice: ethUtil.intToHex(parseInt(gasPrice)),
       gasLimit: ethUtil.intToHex(parseInt(gasLimit))
     }
-
     if (data.hasOwnProperty('from') && data.from) {
       params.from = data.from
     }
@@ -481,7 +484,7 @@ export function makeRawEthTx(data = {}) {
       common = new Common(({chain: Chain.Mainnet}))
     }
 
-    const tx = Transaction.fromTxData(params, { common })
+    const tx = Transaction.fromTxData(params, {common})
 
     let buffer
     if (typeof privateKey === 'string') {
@@ -627,7 +630,7 @@ export function makeRawLtcTx(data = {}) {
     psbt.setVersion(1)
 
     inputs.forEach(input => {
-      const keyPair = bitcoin.ECPair.fromWIF(input.key)
+      const keyPair = ECPair.fromWIF(input.key)
       keyPair.network = netGain
       keyPairs.push(keyPair)
 
@@ -658,7 +661,7 @@ export function makeRawLtcTx(data = {}) {
       psbt.signInput(i, key)
     })
 
-    psbt.validateSignaturesOfAllInputs()
+    psbt.validateSignaturesOfAllInputs(validator)
     psbt.finalizeAllInputs()
 
     const transaction = psbt.extractTransaction()
@@ -721,7 +724,6 @@ export function getLtcAddress(node, childIndex) {
 export function makeRawDogeTx(data = {}) {
   try {
     const {inputs, outputs} = data
-
     let curr = coininfo.dogecoin.main
     let frmt = curr.toBitcoinJS()
     const netGain = {
@@ -739,8 +741,8 @@ export function makeRawDogeTx(data = {}) {
     let keyPairs = []
     psbt.setVersion(1)
 
-    inputs.forEach(input => {
-      const keyPair = bitcoin.ECPair.fromWIF(input.key)
+    for (let [i, input] of inputs.entries()) {
+      const keyPair = ECPair.fromWIF(input.key)
       keyPair.network = netGain
       keyPairs.push(keyPair)
 
@@ -748,11 +750,32 @@ export function makeRawDogeTx(data = {}) {
         hash: input.hash,
         index: input.index
       }
-
       data.nonWitnessUtxo = Buffer.from(input.tx, 'hex')
 
-      psbt.addInput(data)
-    })
+      try {
+        psbt.addInput(data)
+      }
+      catch (e) {
+        console.log('makeRawDogeTx addInput e', e)
+        if (e.message === 'RangeError: value out of range') {
+          delete psbt.data.inputs[i].nonWitnessUtxo
+          const p2pkh = bitcoin.payments.p2pkh({pubkey: keyPair.publicKey, network: netGain})
+          const script = p2pkh.output.toString('hex')
+
+          psbt.updateInput(i, {
+            witnessUtxo: {
+              script: Buffer.from(script, 'hex'),
+              value: input.value
+            }
+          })
+          psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = true
+        } else {
+          console.log('addInput error', e)
+          throw new CustomError(e.message)
+          return
+        }
+      }
+    }
 
     outputs.forEach(output => {
       psbt.addOutput({
@@ -765,7 +788,7 @@ export function makeRawDogeTx(data = {}) {
       psbt.signInput(i, key)
     })
 
-    psbt.validateSignaturesOfAllInputs()
+    psbt.validateSignaturesOfAllInputs(validator)
     psbt.finalizeAllInputs()
 
     const transaction = psbt.extractTransaction()
