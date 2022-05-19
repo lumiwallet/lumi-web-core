@@ -1,9 +1,10 @@
 import {getBtcAddress} from './utils'
 import {hdFromXprv} from '@/helpers/core'
 import {restoreClass} from '@/helpers/sync-utils'
-import {Coins} from 'lumi-network'
+import {CoinsNetwork} from 'lumi-network'
 
-const requests = Coins.btcRequests
+const requests = CoinsNetwork.btc
+console.log('core, btc req', requests)
 /**
  * Class BitcoinSync.
  * This class allows you to get information about the balance on a Bitcoin wallet,
@@ -183,8 +184,8 @@ export default class BitcoinSync {
       )
 
       try {
-        let res = await requests.getMultiAddressRequest(addresses, this.headers)
-
+        let res = await requests.getAddressInfo(addresses, this.headers)
+        console.log('res 1', res)
         if (res.hasOwnProperty('utxo')) {
           this.unspent = [...this.unspent, ...res.utxo]
         }
@@ -330,7 +331,8 @@ export default class BitcoinSync {
 
   async getFees() {
     try {
-      this.fee = await requests.getFeesRequest(this.headers)
+      this.fee = await requests.getFees(this.headers)
+      console.log('res 2', this.fee)
     }
     catch (err) {
       console.log('BTC getFeesRequest', err)

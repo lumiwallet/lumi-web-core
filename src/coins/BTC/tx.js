@@ -1,8 +1,10 @@
 import converter from '@/helpers/converters'
 import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from './utils'
 import CustomError from '@/helpers/handleErrors'
-import Request from '@/helpers/Request'
 import {hdFromXprv} from '@/helpers/core'
+import {CoinsNetwork} from 'lumi-network'
+
+const request = CoinsNetwork.btc
 
 /**
  * List of available commission types for Bitcoin transactions
@@ -18,7 +20,7 @@ const FEE_IDS = ['fast', 'regular', 'custom']
  * @class
  */
 
-export default class BitcoinTx {
+export default class BitcoinTx {m
   /**
    * Create a BitcoinTx
    * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount
@@ -238,7 +240,7 @@ export default class BitcoinTx {
         }
         const unique_hashes = [...new Set(hashes)]
 
-        rawTxsData = await this.getRawTxHex(unique_hashes)
+        rawTxsData = await request.getRawTx(unique_hashes)
 
         for (let input of inputs) {
           let item = {
