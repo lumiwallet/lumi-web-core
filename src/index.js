@@ -1,8 +1,8 @@
 import * as core from '@/services/core' // TODO: wallet core?
 import * as sync from '@/services/sync'
+import * as coinsCores from '@/services/cores'
 import * as tx from '@/services/tx'
 import * as helpers from '@/helpers/coreHelper'
-import * as coinsCores from '@/coins/cores'
 import * as configUtils from '@/utils/config-utils'
 import * as web3Utils from 'web3-utils'
 import * as addressUtils from '@/utils/address-utils'

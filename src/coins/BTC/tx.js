@@ -20,16 +20,13 @@ const FEE_IDS = ['fast', 'regular', 'custom']
  * @class
  */
 
-export default class BitcoinTx {m
+export default class BitcoinTx {
   /**
    * Create a BitcoinTx
    * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount
    * @param {Array} data.unspent - Array of unspent addresses
-   * @param {string} data.internalAddress - Address for change
-   * @param {number} data.amount - Transaction amount
    * @param {number} data.balance - Bitcoin wallet balance
    * @param {Array} data.feeList - Set of bitcoin fees
-   * @param {Object} data.customFee - Custom fee entered by the user
    * @param {Object} data.nodes - External and internal nodes required to generate private keys
    * @param {String} data.type - Bitcoin type. There may be p2pkh or p2wpkh
    * @param {Object} data.headers - Request headers

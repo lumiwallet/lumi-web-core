@@ -70,7 +70,8 @@ export default class EthereumSync {
    */
 
   async getGasPrice () {
-    this.gasPrice = await requests.getTransactions(this.headers, this.env)
+    this.gasPrice = await requests.getGasPrice(this.headers, this.env)
+    console.log('this.gasPrice', this.gasPrice)
   }
 
   /**
@@ -80,6 +81,7 @@ export default class EthereumSync {
 
   async getBlockNumber () {
     this.blockNumber = await requests.getBlockNumber(this.headers, this.env)
+    console.log('this.blockNumber', this.blockNumber)
   }
 
   get DATA () {

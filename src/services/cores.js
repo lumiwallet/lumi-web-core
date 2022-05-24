@@ -1,11 +1,11 @@
-import {generateBtcCore} from './BTC/core'
-import {generateEthCore} from './ETH/core'
-import {generateBchCore} from './BCH/core'
-import {generateDogeCore} from './DOGE/core'
-import {generateLtcCore} from './LTC/core'
-import {generateXdcCore} from './XDC/core'
-import {generateBtcvCore} from './BTCV/core'
-import {generateBnbCore} from './BNB/core'
+import {generateBtcCore} from '@/coins/BTC/core'
+import {generateEthCore} from '@/coins/ETH/core'
+import {generateBchCore} from '@/coins/BCH/core'
+import {generateDogeCore} from '@/coins/DOGE/core'
+import {generateLtcCore} from '@/coins/LTC/core'
+import {generateXdcCore} from '@/coins/XDC/core'
+import {generateBtcvCore} from '@/coins/BTCV/core'
+import {generateBnbCore} from '@/coins/BNB/core'
 
 function createCoinsCores(hdkey, coins = []) {
   let core = {}
