@@ -38,10 +38,12 @@ export default class EthereumSync {
    */
 
   async Start () {
-    await this.getBalance()
-    await this.getTransactions()
-    await this.getGasPrice()
-    await this.getBlockNumber()
+    await Promise.all([
+      await this.getBalance(),
+      await this.getTransactions(),
+      await this.getGasPrice(),
+      await this.getBlockNumber()
+    ])
   }
 
   /**

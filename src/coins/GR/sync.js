@@ -1,5 +1,7 @@
-import Request from '@/helpers/Request'
 import {restoreClass} from '@/helpers/sync-utils'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
+
+const requests = CoinsNetwork.graphite
 
 /**
  * Class GraphiteSync
@@ -15,15 +17,14 @@ export default class GraphiteSync {
    * @param {Object} api - URL addresses of Graphite explorer
    * @param {Object} headers - Request headers
    */
-  constructor (address, api, headers) {
+  constructor (address, api, headers, env = 'prod') {
     this.address = address
     this.api = api
     this.balance = 0
     this.transactions = []
     this.gasPrice = 0
-    this.request = new Request(this.api.main, headers)
-    this.requestScan = new Request(this.api.scan, headers)
-    console.log('g sync', this)
+    this.headers = headers
+    this.env = env
   }
 
   restore(data = {}) {
@@ -37,9 +38,11 @@ export default class GraphiteSync {
    */
 
   async Start () {
-    this.balance = await this.getBalance()
-    this.transactions = await this.getTransactions()
-    this.gasPrice = await this.getGasPrice()
+    await Promise.all([
+      await this.getBalance(),
+      await this.getTransactions(),
+      await this.getGasPrice()
+    ])
   }
 
   /**
@@ -48,17 +51,7 @@ export default class GraphiteSync {
    */
 
   async getBalance () {
-    this.balance = 0
-
-    let params = {
-      module: 'account',
-      action: 'balance',
-      address: this.address
-    }
-
-    let res = await this.requestScan.send(params)
-
-    return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0
+    this.balance = await requests.getBalance(this.address, this.headers, this.env)
   }
 
   /**
@@ -67,17 +60,7 @@ export default class GraphiteSync {
    */
 
   async getTransactions () {
-    this.transactions = []
-
-    let params = {
-      module: 'account',
-      action: 'txlist',
-      address: this.address
-    }
-
-    let res = await this.requestScan.send(params)
-
-    return res && res.hasOwnProperty('result') && Array.isArray(res.result) ? res.result : []
+    this.transactions = await requests.getTransactions(this.address, this.headers, this.env)
   }
 
   /**
@@ -86,17 +69,7 @@ export default class GraphiteSync {
    */
 
   async getGasPrice () {
-    let params = {
-      addressTo: this.address
-    }
-
-    let res = await this.request.send(params, 'gas')
-
-    return res && res.hasOwnProperty('result') ? res.result : {
-      "gasPrice": "19800000000",
-      "estimateGas": "21000",
-      "lastEstimateGas": "42000"
-    }
+    this.gasPrice = await requests.getGasPrice(this.address, this.headers, this.env)
   }
 
   get DATA () {
