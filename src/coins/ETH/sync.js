@@ -3,7 +3,6 @@ import {CoinsNetwork} from '@lumiwallet/lumi-network'
 
 const requests = CoinsNetwork.eth
 
-console.log('eth req', requests)
 /**
  * Class EthereumSync
  * This class allows you to get information about the balance on an ethereum wallet,
@@ -19,7 +18,6 @@ export default class EthereumSync {
    * @param {string} env
    */
   constructor (address = '', headers = {}, env = 'prod') {
-    console.log('eth', address, headers, env)
     this.address = address
     this.balance = 0
     this.transactions = []
@@ -71,7 +69,6 @@ export default class EthereumSync {
 
   async getGasPrice () {
     this.gasPrice = await requests.getGasPrice(this.headers, this.env)
-    console.log('this.gasPrice', this.gasPrice)
   }
 
   /**
@@ -81,7 +78,6 @@ export default class EthereumSync {
 
   async getBlockNumber () {
     this.blockNumber = await requests.getBlockNumber(this.headers, this.env)
-    console.log('this.blockNumber', this.blockNumber)
   }
 
   get DATA () {

@@ -5,7 +5,7 @@ import CustomError from '@/helpers/handleErrors'
 import {CoinsNetwork} from '@lumiwallet/lumi-network'
 
 const requests = CoinsNetwork.eth
-console.log('requests eth', requests)
+
 /**
  * Class EthereumTx.
  * This class is responsible for calculating the fee and generating and signing a Ethereum transaction
@@ -27,7 +27,6 @@ export default class EthereumTx {
     this.gasPrice = data.gasPrice
     this.defaultGasLimit = 21000
     this.feeList = []
-    console.log(this)
   }
 
   /**
@@ -77,21 +76,21 @@ export default class EthereumTx {
 
   async make(data) {
     const {address, amount, fee, privateKey} = data
-    console.log('CORE MAKE TX', data)
     const amountInWei = converter.eth_to_wei(amount)
-    console.log('amountInWei', amountInWei)
     const finalAmount = +bigDecimal.add(amountInWei, fee.value)
-    console.log('finalAmount', finalAmount)
     const surrender = bigDecimal.subtract(this.balance, finalAmount)
-    console.log('surrender?', surrender)
-
 
     if (surrender < 0) {
       throw new CustomError('err_tx_eth_balance')
     }
 
-    const nonce = await requests.getNonce(this.address)
-    console.log('nonce', nonce)
+    let nonce
+    try {
+      nonce = await requests.getNonce(this.address)
+    } catch (e) {
+      throw new Error('getNonce e', e.message)
+    }
+
 
     let params = {
       to: address,
@@ -101,7 +100,6 @@ export default class EthereumTx {
       gasLimit: fee.gasLimit,
       privateKey
     }
-    console.log('params', params)
     return makeRawEthTx(params)
   }
 
