@@ -7,7 +7,7 @@ import * as helper from './helpers'
 const NOT_SUPPORTED_COINS = ['EOS']
 const COINS_WITH_MEMO = ['BNB', 'EOS', 'EVER']
 const NOT_CORE_GENERATION = ['EVER', 'ADA']
-const NEED_DEPLOY = ['EVER']
+const NEED_DEPLOY = ['EVER', '@G']
 
 export function decodeConfig(config) {
   if (!config || !config.length) return {}
@@ -64,7 +64,6 @@ export function getCurrency(id) {
   if (NOT_SUPPORTED_COINS.includes(CURRENCY)) {
     throw new Error('Not supported currency ' + CURRENCY)
   }
-
   const item = {
     id: id,
     coin: CURRENCY,

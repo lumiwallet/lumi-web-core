@@ -115,8 +115,6 @@ export function calcBtcTxSize(i = 1, o = 2, isWitness = false) {
 export function makeRawBtcTx(data = {}) {
   try {
     const {inputs, outputs} = data
-    console.log('inputs', inputs)
-    console.log('outputs', outputs)
     const psbt = new bitcoin.Psbt()
     let keyPairs = []
 

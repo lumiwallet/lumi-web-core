@@ -1,7 +1,7 @@
 import addressValidator from 'multicoin-address-validator'
 
 export const getCoinByAddress = (address) => {
-  const coins = ['BTC', 'ETH', 'BCH', 'DOGE', 'LTC', 'BNB', 'XDC', 'BTCV', 'EVER', 'ADA']
+  const coins = ['BTC', 'ETH', 'BCH', 'DOGE', 'LTC', 'BNB', 'XDC', 'BTCV', 'EVER', 'ADA', '@G']
   let obj = {}
 
   for (const coin of coins) {
@@ -19,6 +19,8 @@ export const checkAddress = (address, coin, network = 'prod') => {
       return isXDC(address)
     case 'EVER':
       return isEVER(address)
+    case '@G':
+      return addressValidator.validate(address, 'ETH', network)
     default:
       return addressValidator.validate(address, coin, network)
   }

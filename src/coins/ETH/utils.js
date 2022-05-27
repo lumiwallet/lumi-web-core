@@ -86,11 +86,10 @@ export function getEthAddressByNode(node) {
  */
 
 export function makeRawEthTx(data = {}) {
-  console.log('makeRawEthTx', data)
   let {to} = data
   const {value, nonce, gasPrice, gasLimit, privateKey, chainId} = data
 
-  if (isNaN(nonce) || isNaN(value) || isNaN(gasPrice) ||
+  if (isNaN(nonce) || isNaN(gasPrice) ||
     isNaN(gasLimit)) {
     throw new CustomError('err_tx_eth_invalid_params')
   }
@@ -118,13 +117,13 @@ export function makeRawEthTx(data = {}) {
     if (data.hasOwnProperty('data') && data.data) {
       params.data = data.data
     }
+
     let common
     if (chainId) {
       common = Common.custom({chainId})
     } else {
       common = new Common(({chain: Chain.Mainnet}))
     }
-
     const tx = Transaction.fromTxData(params, {common})
 
     let buffer

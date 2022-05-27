@@ -1,6 +1,13 @@
 import {restoreClass} from '@/helpers/sync-utils'
 import {CoinsNetwork} from '@lumiwallet/lumi-network'
 
+import {
+  DEFAULT_GAS_LIMIT,
+  DEFAULT_GAS_PRICE,
+  FEE_CONTRACT_ADDR,
+  ACTIVATION_METHOD_SUFFIX
+} from './config'
+
 const requests = CoinsNetwork.graphite
 
 /**
@@ -17,13 +24,15 @@ export default class GraphiteSync {
    * @param {Object} api - URL addresses of Graphite explorer
    * @param {Object} headers - Request headers
    */
-  constructor (address, api, headers, env = 'prod') {
+  constructor(address, api, headers, env = 'prod') {
     this.address = address
     this.api = api
     this.balance = 0
     this.transactions = []
     this.gasPrice = 0
+    this.gasLimit = 0
     this.headers = headers
+    this.accountActivated = false
     this.env = env
   }
 
@@ -37,12 +46,13 @@ export default class GraphiteSync {
    * @constructor
    */
 
-  async Start () {
+  async Start() {
     await Promise.all([
       await this.getBalance(),
       await this.getTransactions(),
-      await this.getGasPrice()
+      await this.getGasInfo()
     ])
+    this.checkAccountActivation()
   }
 
   /**
@@ -50,7 +60,7 @@ export default class GraphiteSync {
    * @returns {Promise<number>}
    */
 
-  async getBalance () {
+  async getBalance() {
     this.balance = await requests.getBalance(this.address, this.headers, this.env)
   }
 
@@ -59,7 +69,7 @@ export default class GraphiteSync {
    * @returns {Promise<Array>}
    */
 
-  async getTransactions () {
+  async getTransactions() {
     this.transactions = await requests.getTransactions(this.address, this.headers, this.env)
   }
 
@@ -68,16 +78,36 @@ export default class GraphiteSync {
    * @returns {Promise<number>}
    */
 
-  async getGasPrice () {
-    this.gasPrice = await requests.getGasPrice(this.address, this.headers, this.env)
+  async getGasInfo() {
+    const res = await requests.getGasPrice(this.address, this.headers, this.env)
+
+    if (res) {
+      this.gasPrice = res.gasPrice || DEFAULT_GAS_PRICE
+      const limit = Math.max(res.estimateGas, res.lastEstimateGas)
+      this.gasLimit = limit > 0 ? limit : DEFAULT_GAS_LIMIT
+    }
   }
 
-  get DATA () {
+  checkAccountActivation() {
+    if (!this.transactions.length) {
+      this.accountActivated = false
+      return
+    }
+    this.accountActivated = !!this.transactions.find(tx =>
+      tx.to === FEE_CONTRACT_ADDR &&
+      tx.input.includes(ACTIVATION_METHOD_SUFFIX) &&
+      (tx.isError === '0' || !tx.isError)
+    )
+  }
+
+  get DATA() {
     return {
       address: this.address,
       balance: this.balance,
       transactions: this.transactions,
-      gasPrice: this.gasPrice
+      gasPrice: this.gasPrice,
+      gasLimit: this.gasLimit,
+      accountActivated: this.accountActivated
     }
   }
 }

@@ -39,7 +39,6 @@ export default class EthereumTokensSync {
       this.getOutTransactions(),
       this.getInTransactions()
     ])
-
     this.transactions = this.transactions.filter((item, index, self) => {
       return index === self.findIndex((i) => i.transactionHash === item.transactionHash)
     })
