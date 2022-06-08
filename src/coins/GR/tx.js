@@ -8,6 +8,7 @@ import {
   NODE_URL,
   DEFAULT_GAS_PRICE,
   DEFAULT_GAS_LIMIT,
+  ACTIVATION_GAS_LIMIT,
   SEPARATOR,
   ENTRYPOINT_NODE_ADDR,
   CHAIN_ID,
@@ -53,12 +54,12 @@ export default class GraphiteTx {
   }
 
   calcActivationAmount() {
-    const value = +bigDecimal.multiply(this.gasPrice, this.gasLimit)
+    const value = +bigDecimal.multiply(this.gasPrice, ACTIVATION_GAS_LIMIT)
     return {
       value,
       coinValue: +converter.wei_to_eth(value),
       gasPrice: this.gasPrice,
-      gasLimit: this.gasLimit
+      gasLimit: ACTIVATION_GAS_LIMIT
     }
   }
 

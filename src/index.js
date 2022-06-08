@@ -6,6 +6,7 @@ import * as helpers from '@/helpers/coreHelper'
 import * as configUtils from '@/utils/config-utils'
 import * as web3Utils from 'web3-utils'
 import * as addressUtils from '@/utils/address-utils'
+import * as utils from '@/services/utils'
 
 export {default as mnemonicChecker} from '@/libs/bip39-checker'
 export {default as converter} from '@/helpers/converters'
@@ -18,7 +19,8 @@ export {
   helpers,
   configUtils,
   web3Utils,
-  addressUtils
+  addressUtils,
+  utils
 }
 
 console.log('link core 0')

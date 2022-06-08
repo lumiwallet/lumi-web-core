@@ -128,7 +128,6 @@ export default class BitcoinTx {
       let item = this.unspent[index]
       let defaultSize = calcBtcTxSize(index + 1, 2, this.type === 'p2wpkh')
       let calcFee = size ? size * fee : defaultSize * fee
-
       inputsAmount += item.value
       inputs.push(item)
 

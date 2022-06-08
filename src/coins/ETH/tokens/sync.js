@@ -29,7 +29,7 @@ export default class EthereumTokensSync {
     }
 
     let res = await this.request.send(params)
-    this.balance = res && res.result ? res.result : 0
+    this.balance = res && res.result ? +res.result : 0
 
     return this.balance
   }

@@ -7,4 +7,5 @@ export const SEPARATOR = [124]
 export const ACTIVATION_METHOD_SUFFIX = '1b9265b8'
 export const DEFAULT_GAS_PRICE = '50000'
 export const DEFAULT_GAS_LIMIT = '21000'
+export const ACTIVATION_GAS_LIMIT = '300000'
 export const CHAIN_ID = 1337
