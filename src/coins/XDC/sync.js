@@ -1,6 +1,7 @@
-import Request from '@/helpers/Request'
 import {restoreClass} from '@/helpers/sync-utils'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
 
+const requests = CoinsNetwork.xdc
 /**
  * Class XinfinSync
  * This class allows you to get information about the balance on a XinFin wallet,
@@ -20,9 +21,8 @@ export default class XinfinSync {
     this.api = api
     this.balance = 0
     this.transactions = []
-    this.request = new Request(this.api, headers)
-    this.txListRequest = new Request(`${ this.api }scan`, headers)
     this.gasPrice = 0
+    this.headers = headers
   }
 
   restore(data = {}) {
@@ -52,14 +52,7 @@ export default class XinfinSync {
   async getBalance() {
     this.balance = 0
 
-    let params = {
-      jsonrpc: '2.0',
-      method: 'eth_getBalance',
-      params: [this.address, 'latest'],
-      id: 1
-    }
-
-    let res = await this.request.send(params)
+    let res = await requests.getBalance(this.address, this.headers)
     return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0
   }
 
@@ -80,7 +73,7 @@ export default class XinfinSync {
     }
 
     let req = async () => {
-      let res = await this.txListRequest.send(params)
+      let res = await requests.getTransactions(params, this.headers)
 
       if (res && res.hasOwnProperty('result') && Array.isArray(res.result)) {
         this.transactions = [...res.result, ...this.transactions]
@@ -101,14 +94,8 @@ export default class XinfinSync {
    */
 
   async getGasPrice() {
-    let params = {
-      jsonrpc: '2.0',
-      method: 'eth_gasPrice',
-      params: [],
-      id: 1
-    }
+    let res = await requests.getGasPrice(this.headers)
 
-    let res = await this.request.send(params)
     return res && res.hasOwnProperty('result') && !isNaN(res.result) ? +res.result : 0
   }
 

@@ -1,4 +1,6 @@
-import Request from '@/helpers/Request'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
+
+const request = CoinsNetwork.ethTokens
 
 export default class EthereumTokensSync {
   constructor(address, token, api, headers) {
@@ -7,7 +9,7 @@ export default class EthereumTokensSync {
     this.api = api
     this.balance = 0
     this.transactions = []
-    this.request = new Request(this.api, headers)
+    this.headers = headers
     this.topic0 = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     this.otherTopics = '0x000000000000000000000000' + this.address.replace('0x', '')
   }
@@ -20,15 +22,7 @@ export default class EthereumTokensSync {
   }
 
   async getBalance() {
-    let params = {
-      module: 'account',
-      action: 'tokenbalance',
-      tag: 'latest',
-      address: this.address,
-      contractaddress: this.token.contract
-    }
-
-    let res = await this.request.send(params)
+    let res = await request.getBalance(this.address, this.token.contract, this.headers)
     this.balance = res && res.result ? res.result : 0
 
     return this.balance
@@ -45,17 +39,7 @@ export default class EthereumTokensSync {
   }
 
   async getOutTransactions() {
-    let params = {
-      module: 'logs',
-      action: 'getLogs',
-      fromBlock: 0,
-      toBlock: 'latest',
-      address: this.token.contract,
-      topic0: this.topic0,
-      topic1: this.otherTopics
-    }
-
-    let res = await this.request.send(params)
+    let res = await request.getOutTransactions(this.token.contract, this.topic0, this.otherTopics, this.headers)
 
     if (res && res.result) {
       this.transactions.push(...res.result)
@@ -63,17 +47,7 @@ export default class EthereumTokensSync {
   }
 
   async getInTransactions() {
-    let params = {
-      module: 'logs',
-      action: 'getLogs',
-      fromBlock: 0,
-      toBlock: 'latest',
-      address: this.token.contract,
-      topic0: this.topic0,
-      topic2: this.otherTopics
-    }
-
-    let res = await this.request.send(params)
+    let res = await request.getInTransactions(this.token.contract,this.topic0,this.otherTopics)
 
     if (res && res.result) {
       this.transactions.push(...res.result)

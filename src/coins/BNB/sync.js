@@ -23,7 +23,6 @@ export default class BinanceSync {
   }
 
   async Start () {
-    console.log('bnb start')
     await Promise.all([
       await this.getInfo(),
       await this.getTransactions(),
@@ -32,13 +31,11 @@ export default class BinanceSync {
   }
 
   async getInfo () {
-    console.log('bnb getInfo')
     this.balance = 0
 
     let res = await requests.getInfo(this.address, this.headers)
 
     if (res.hasOwnProperty('balances')) {
-      console.log('bnb getInfo', res)
       this.balance = +res.balances[0].free || 0
       this.symbol = res.balances[0].symbol || ''
       this.account_number = res.account_number || 0

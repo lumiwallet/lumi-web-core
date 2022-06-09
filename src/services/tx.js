@@ -4,6 +4,9 @@ import GraphiteTx from '@/coins/GR/tx'
 import DogecoinTx from '@/coins/DOGE/tx'
 import BitcoinCashTx from '@/coins/BCH/tx'
 import BinanceTx from '@/coins/BNB/tx'
+import BitcoinVaultTx from '@/coins/BTCV/tx'
+import XinfinTx from '@/coins/XDC/tx'
+import LitecoinTx from '@/coins/LTC/tx'
 
 export {
   BitcoinTx,
@@ -11,5 +14,8 @@ export {
   GraphiteTx,
   DogecoinTx,
   BitcoinCashTx,
-  BinanceTx
+  BinanceTx,
+  BitcoinVaultTx,
+  XinfinTx,
+  LitecoinTx
 }

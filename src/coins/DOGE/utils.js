@@ -1,7 +1,10 @@
 import * as bitcoin from 'bitcoinjs-lib'
 import * as coininfo from 'coininfo'
 import CustomError from '@/helpers/handleErrors'
+import ECPairFactory from 'ecpair'
+import * as tinysecp from "tiny-secp256k1"
 
+const ECPair = ECPairFactory(tinysecp)
 export const validator = (pubkey, msghash, signature) => ECPair.fromPublicKey(pubkey).verify(msghash, signature)
 /**
  * Getting Dogecoin address by node and derivation index

@@ -56,7 +56,6 @@ export default class DogecoinSync {
    */
 
   async Start () {
-    console.log('Doge Start')
     this.transactions = {
       all: [],
       unique: []
@@ -75,7 +74,6 @@ export default class DogecoinSync {
    */
 
   async getAddresses () {
-    console.log('Doge getAddresses')
     this.addresses.external = await this.getAddressesByNode(this.externalNode, 'external')
     this.addresses.internal = await this.getAddressesByNode(this.internalNode, 'internal')
     this.addresses.empty = {
@@ -168,9 +166,7 @@ export default class DogecoinSync {
       )
 
       try {
-        // let res = await this.getMultiAddressRequest(addresses)
         let res = await requests.getAddressInfo(addresses, this.headers)
-        console.log(res)
 
         if (res.hasOwnProperty('utxo')) {
           this.unspent = [...this.unspent, ...res.utxo]

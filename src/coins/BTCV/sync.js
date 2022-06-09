@@ -1,7 +1,9 @@
-import Request from '@/helpers/Request'
 import {hdFromXprv} from '@/helpers/core'
 import {getBtcAddressByPublicKey} from '@/coins/BTC/utils'
 import {restoreClass} from '@/helpers/sync-utils'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
+
+const requests = CoinsNetwork.btcv
 
 /**
  * Class BitcoinVaultSync.
@@ -46,7 +48,7 @@ export default class BitcoinVaultSync {
         name: 'Regular'
       }
     ]
-    this.request = new Request(this.api, headers)
+    this.headers = headers
   }
 
   restore(data = {}) {
@@ -284,14 +286,13 @@ export default class BitcoinVaultSync {
   async getHistoryRequest (addresses) {
     if (!addresses) return []
 
-    try {
-      let res = await this.request.send({
-        addresses: addresses
-      }, 'history')
 
-      if (res.status === 'success') {
-        this.latestBlock = res.data.lastBlock || 0
-        return res.data.txs
+    try {
+      let res = await requests.getHistoryRequest(addresses, this.headers)
+
+      if (res.hasOwnProperty('lastBlock')) {
+        this.latestBlock = res.lastBlock || 0
+        return res.txs
       } else {
         throw new Error(res.error)
       }
@@ -320,24 +321,7 @@ export default class BitcoinVaultSync {
       arrays.push(arr)
     }
 
-    const res = await Promise.all(arrays.map((array) => {
-      return new Promise((resolve) => {
-        const params = {
-          addresses: array
-        }
-
-        this.request.send(params, 'unspent').then(res => {
-          if (res.status === 'success') {
-            return resolve(res.data)
-          } else {
-            throw new Error(res.error)
-          }
-        }).catch(e => {
-          console.log('BTCV getUnspentOutputsRequest error', e)
-          resolve([])
-        })
-      })
-    }))
+    const res = await requests.getUnspent(arrays, this.headers)
 
     return [].concat.apply([], res)
   }
@@ -349,13 +333,8 @@ export default class BitcoinVaultSync {
 
   async getFeesRequest () {
     try {
-      const res = await this.request.send({}, 'fees', 'GET')
-
-      if (res.status === 'success') {
-        this.fee = res.data.sort((a, b) => b.feePerByte - a.feePerByte)
-      }
-    }
-    catch (err) {
+      this.fee = await requests.getFees(this.headers)
+    } catch (err) {
       console.log('BTCV getFeesRequest', err)
     }
   }
