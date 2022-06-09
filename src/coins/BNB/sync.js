@@ -1,4 +1,6 @@
-import Request from '@/helpers/Request'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
+
+const requests = CoinsNetwork.bnb
 
 const DEFAULT_FEE = [
   {
@@ -17,10 +19,11 @@ export default class BinanceSync {
     this.account_number = 0
     this.transactions = []
     this.fee = []
-    this.request = new Request(this.api, headers)
+    this.headers = headers
   }
 
   async Start () {
+    console.log('bnb start')
     await Promise.all([
       await this.getInfo(),
       await this.getTransactions(),
@@ -29,19 +32,17 @@ export default class BinanceSync {
   }
 
   async getInfo () {
+    console.log('bnb getInfo')
     this.balance = 0
 
-    const params = {
-      address: this.address
-    }
+    let res = await requests.getInfo(this.address, this.headers)
 
-    let res = await this.request.send(params, 'balance')
-
-    if (res && res.status === 'success' && res.data?.balances) {
-      this.balance = +res.data?.balances[0]?.free || 0
-      this.symbol = res.data?.balances[0]?.symbol || ''
-      this.account_number = res.data?.account_number || 0
-      this.sequence = res.data?.sequence || 0
+    if (res.hasOwnProperty('balances')) {
+      console.log('bnb getInfo', res)
+      this.balance = +res.balances[0].free || 0
+      this.symbol = res.balances[0].symbol || ''
+      this.account_number = res.account_number || 0
+      this.sequence = res.sequence || 0
     }
   }
 
@@ -52,7 +53,7 @@ export default class BinanceSync {
     const step = 100
 
     const req = async () => {
-      let params = {
+      let addParams = {
         address: this.address,
         startTime,
         endTime,
@@ -60,12 +61,12 @@ export default class BinanceSync {
         limit: step
       }
 
-      let res = await this.request.send(params, 'transactions')
+      let res = await requests.getTxInfo(addParams, this.headers)
 
-      if (res && res?.data?.tx) {
-        this.transactions = [...res.data.tx, ...this.transactions]
-        if (res.data.tx.length < res.data.total) {
-          params.offset += step
+      if (res && res?.tx) {
+        this.transactions = [...res.tx, ...this.transactions]
+        if (res.tx.length < res.total) {
+          addParams.offset += step
           await req()
         }
       }
@@ -75,12 +76,11 @@ export default class BinanceSync {
   }
 
   async getFee () {
-    let res = await this.request.send({}, 'fees', 'GET')
-
-    if (res && res.data) {
-      this.fee = res.data
-    } else {
-      this.fee = DEFAULT_FEE
+    try {
+      this.fee = await requests.getFees(this.headers)
+    }
+    catch (err) {
+      console.log('BNB getFeesRequest', err)
     }
   }
 
