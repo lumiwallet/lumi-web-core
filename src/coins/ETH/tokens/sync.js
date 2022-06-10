@@ -3,10 +3,10 @@ import {CoinsNetwork} from '@lumiwallet/lumi-network'
 const request = CoinsNetwork.ethTokens
 
 export default class EthereumTokensSync {
-  constructor(address, token, api, headers) {
+  constructor(address, token, headers) {
+    console.log(address, token, headers)
     this.address = address
     this.token = token
-    this.api = api
     this.balance = 0
     this.transactions = []
     this.headers = headers
@@ -22,13 +22,14 @@ export default class EthereumTokensSync {
   }
 
   async getBalance() {
-    let res = await request.getBalance(this.address, this.token.contract, this.headers)
-    this.balance = res && res.result ? res.result : 0
+    this.balance = await request.getBalance(this.address, this.token.contract, this.headers)
 
     return this.balance
   }
 
   async getTransactions() {
+    this.transactions = []
+
     await Promise.all([
       this.getOutTransactions(),
       this.getInTransactions()
@@ -41,17 +42,13 @@ export default class EthereumTokensSync {
   async getOutTransactions() {
     let res = await request.getOutTransactions(this.token.contract, this.topic0, this.otherTopics, this.headers)
 
-    if (res && res.result) {
-      this.transactions.push(...res.result)
-    }
+    this.transactions.push(...res)
   }
 
   async getInTransactions() {
     let res = await request.getInTransactions(this.token.contract,this.topic0,this.otherTopics)
 
-    if (res && res.result) {
-      this.transactions.push(...res.result)
-    }
+    this.transactions.push(...res)
   }
 
   get DATA () {

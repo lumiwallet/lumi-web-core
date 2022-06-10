@@ -53,6 +53,8 @@ export default class EthereumSync {
 
   async getBalance () {
     this.balance = await requests.getBalance(this.address, this.headers, this.env)
+
+    return this.balance
   }
 
   /**
@@ -62,6 +64,8 @@ export default class EthereumSync {
 
   async getTransactions () {
     this.transactions = await requests.getTransactions(this.address, this.headers, this.env)
+
+    return this.transactions
   }
 
   /**

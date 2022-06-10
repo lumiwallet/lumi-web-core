@@ -10,9 +10,8 @@ const DEFAULT_FEE = [
 ]
 
 export default class BinanceSync {
-  constructor (address, api, headers) {
+  constructor (address, headers) {
     this.address = address
-    this.api = api
     this.balance = 0
     this.symbol = ''
     this.sequence = 0

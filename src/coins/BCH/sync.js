@@ -17,13 +17,11 @@ export default class BitcoinCashSync {
    * Create a BitcoinCashSync
    * @param {string} externalNodeKey - External Bitcoin Cash node
    * @param {string} internalNodeKey - Internal Bitcoin Cash node
-   * @param {string} api - A URL address of Bitcoin Cash explorer
    * @param {Object} headers - Request headers
    */
-  constructor (externalNodeKey, internalNodeKey, api, headers) {
+  constructor (externalNodeKey, internalNodeKey, headers) {
     this.externalNode = hdFromXprv(externalNodeKey)
     this.internalNode = hdFromXprv(internalNodeKey)
-    this.api = api
     this.balance = 0
     this.latestBlock = 0
     this.unspent = []

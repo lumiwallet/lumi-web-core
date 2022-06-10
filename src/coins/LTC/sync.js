@@ -16,13 +16,11 @@ export default class LitecoinSync {
    * Create a LitecoinSync
    * @param {string} externalNodeKey - External Litecoin node key
    * @param {string} internalNodeKey - Internal Litecoin node key
-   * @param {string} api - A set of URLs for getting information about Litecoin addresses
    * @param {Object} headers - Request headers
    */
-  constructor (externalNodeKey, internalNodeKey, api, headers) {
+  constructor (externalNodeKey, internalNodeKey, headers) {
     this.externalNode = hdFromXprv(externalNodeKey)
     this.internalNode = hdFromXprv(internalNodeKey)
-    this.api = api
     this.balance = 0
     this.latestBlock = 0
     this.unspent = []

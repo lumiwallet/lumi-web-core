@@ -17,13 +17,11 @@ export default class DogecoinSync {
    * Create a DogecoinSync
    * @param {string} externalNodeKey - External Dogecoin node key
    * @param {string} internalNodeKey - Internal Dogecoin node key
-   * @param {Object} api - A set of URLs for getting information about Dogecoin addresses
    * @param {Object} headers - Request headers
    */
-  constructor (externalNodeKey, internalNodeKey, api, headers) {
+  constructor (externalNodeKey, internalNodeKey, headers) {
     this.externalNode = hdFromXprv(externalNodeKey)
     this.internalNode = hdFromXprv(internalNodeKey)
-    this.api = api
     this.balance = 0
     this.latestBlock = 0
     this.unspent = []
@@ -314,9 +312,8 @@ export default class DogecoinSync {
   async getFeesRequest () {
     try {
       this.fee = await requests.getFees(this.headers)
-      // const res = await fetch(this.api.dogeFee, {headers: this.headers})
-      // const resJson = await res.json()
-      // this.fee = resJson.data
+
+      return this.fee
     } catch (err) {
       console.log('DOGE getFeesRequest', err)
     }
