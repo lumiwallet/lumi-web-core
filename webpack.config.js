@@ -10,7 +10,7 @@ module.exports = {
   output: {
     webassemblyModuleFilename: '[hash].wasm',
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: 'core.bundle.js',
     library: 'lumi',
     libraryTarget: 'umd'
   },

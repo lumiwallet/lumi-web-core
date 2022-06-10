@@ -39,3 +39,55 @@ export function convertToCashAddress(address = '') {
     throw new CustomError('err_get_bch_address')
   }
 }
+
+/**
+ * Creating a raw Bitcoin Cash transaction
+ * @param {Object} data - Input data for a transaction
+ * @param {Array} data.inputs - List of inputs
+ * @param {Array} data.outputs - List of outputs
+ * @returns {Object} Returns raw Bitcoin Cash transaction and transaction hash
+ */
+
+export function makeRawBchTx(data = {}) {
+  try {
+    const {inputs, outputs} = data
+    let privateKeys = []
+    let utxos = []
+
+    for (let input of inputs) {
+      let item = {
+        outputIndex: +input.index,
+        satoshis: +input.value,
+        address: convertToCashAddress(input.address),
+        txId: input.hash
+      }
+      item.script = new bitcore.Script.buildPublicKeyHashOut(item.address)
+      let pk = new bitcore.PrivateKey(input.key)
+      privateKeys.push(pk)
+      utxos.push(item)
+    }
+
+    const outputsInCashFormat = outputs.map(output => {
+      return {
+        address: convertToCashAddress(output.address),
+        satoshis: +output.value
+      }
+    })
+
+    const tx = new bitcore.Transaction()
+      .from(utxos)
+      .to(outputsInCashFormat)
+      .sign(privateKeys)
+
+    const txData = tx.serialize()
+
+    return {
+      tx: txData.toString('hex'),
+      hash: tx.hash
+    }
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_tx_bch_build')
+  }
+}

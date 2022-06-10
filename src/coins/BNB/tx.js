@@ -1,12 +1,12 @@
 import bigDecimal from 'js-big-decimal'
 import * as crypto from '@/utils/crypto'
-import {generateSignature, convertToJager, convertToBinance} from '@/class/BNB/utils'
-import {decodeAddress} from '@/class/BNB/address'
+import {generateSignature, convertToJager, convertToBinance} from './utils'
+import {decodeAddress} from './address'
 import {
   convertObjectToSignBytes,
   marshalBinary,
   AminoPrefix
-} from '@/class/BNB/amino'
+} from './amino'
 
 const DEFAULT_CHAIN_ID = 'Binance-Chain-Tigris'
 const DEFAULT_SOURCE = 1

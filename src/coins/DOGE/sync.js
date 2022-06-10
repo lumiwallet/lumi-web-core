@@ -1,7 +1,9 @@
-import Request from '@/helpers/Request'
 import {getDogeAddress} from './utils'
 import {hdFromXprv} from '@/helpers/core'
 import {restoreClass} from '@/helpers/sync-utils'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
+
+const requests = CoinsNetwork.doge
 
 /**
  * Class DogecoinSync.
@@ -15,13 +17,11 @@ export default class DogecoinSync {
    * Create a DogecoinSync
    * @param {string} externalNodeKey - External Dogecoin node key
    * @param {string} internalNodeKey - Internal Dogecoin node key
-   * @param {Object} api - A set of URLs for getting information about Dogecoin addresses
    * @param {Object} headers - Request headers
    */
-  constructor (externalNodeKey, internalNodeKey, api, headers) {
+  constructor (externalNodeKey, internalNodeKey, headers) {
     this.externalNode = hdFromXprv(externalNodeKey)
     this.internalNode = hdFromXprv(internalNodeKey)
-    this.api = api
     this.balance = 0
     this.latestBlock = 0
     this.unspent = []
@@ -40,7 +40,7 @@ export default class DogecoinSync {
       unique: []
     }
     this.fee = []
-    this.request = new Request(this.api.doge, headers)
+    this.headers = headers
   }
 
   restore(data = {}) {
@@ -164,7 +164,7 @@ export default class DogecoinSync {
       )
 
       try {
-        let res = await this.getMultiAddressRequest(addresses)
+        let res = await requests.getAddressInfo(addresses, this.headers)
 
         if (res.hasOwnProperty('utxo')) {
           this.unspent = [...this.unspent, ...res.utxo]
@@ -303,57 +303,6 @@ export default class DogecoinSync {
     this.balance = balance
   }
 
-  /**
-   * Request for information at multiple addresses
-   * @param {Array} addresses - List of addresses to get data from
-   * @returns {Promise<Object>} Address information, including a list of transactions
-   */
-
-  async getMultiAddressRequest (addresses) {
-    if (!addresses) return false
-
-    const OFFSET_STEP = 100
-    const TXS_COUNT = 100
-    let offset = 0
-    let data = {}
-    let txs = []
-
-    const req = async () => {
-      let params = {
-        method: 'all',
-        active: addresses,
-        offset: offset,
-        limit: TXS_COUNT
-      }
-
-      try {
-        let res = await this.request.send(params)
-
-        if (res.status === 'success') {
-          data = res.data || {}
-
-          if (res.data.hasOwnProperty('transactions')) {
-            txs = [...txs, ...res.data.transactions]
-            if (res.data.transactions.length === TXS_COUNT) {
-              offset += OFFSET_STEP
-              await req()
-            }
-          }
-
-          data.transactions = txs
-        } else {
-          console.log('DOGE getAddressTransactions', res.error)
-        }
-      } catch (err) {
-        console.log('DOGE getAddressTransactions', err)
-        return []
-      }
-    }
-
-    await req()
-
-    return data
-  }
 
   /**
    * Request to receive a recommended set of dogecoin fees
@@ -362,9 +311,9 @@ export default class DogecoinSync {
 
   async getFeesRequest () {
     try {
-      const res = await fetch(this.api.dogeFee, {headers: this.headers})
-      const resJson = await res.json()
-      this.fee = resJson.data
+      this.fee = await requests.getFees(this.headers)
+
+      return this.fee
     } catch (err) {
       console.log('DOGE getFeesRequest', err)
     }

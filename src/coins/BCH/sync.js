@@ -1,7 +1,9 @@
-import Request from '@/helpers/Request'
 import {getCashAddress} from './utils'
 import {hdFromXprv} from '@/helpers/core'
 import {restoreClass} from '@/helpers/sync-utils'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
+
+const requests = CoinsNetwork.bch
 
 /**
  * Class BitcoinCashSync.
@@ -15,13 +17,11 @@ export default class BitcoinCashSync {
    * Create a BitcoinCashSync
    * @param {string} externalNodeKey - External Bitcoin Cash node
    * @param {string} internalNodeKey - Internal Bitcoin Cash node
-   * @param {string} api - A URL address of Bitcoin Cash explorer
    * @param {Object} headers - Request headers
    */
-  constructor (externalNodeKey, internalNodeKey, api, headers) {
+  constructor (externalNodeKey, internalNodeKey, headers) {
     this.externalNode = hdFromXprv(externalNodeKey)
     this.internalNode = hdFromXprv(internalNodeKey)
-    this.api = api
     this.balance = 0
     this.latestBlock = 0
     this.unspent = []
@@ -45,8 +45,7 @@ export default class BitcoinCashSync {
         level: 'Regular'
       }
     ]
-
-    this.request = new Request(this.api, headers)
+    this.headers = headers
   }
 
   restore(data = {}) {
@@ -166,7 +165,7 @@ export default class BitcoinCashSync {
       )
 
       try {
-        let res = await this.getMultiAddressRequest(addresses)
+        let res = await requests.getAddressInfo(addresses, this.headers)
 
         if (res.hasOwnProperty('utxo')) {
           this.unspent = [...this.unspent, ...res.utxo]
@@ -304,59 +303,6 @@ export default class BitcoinCashSync {
     })
 
     this.balance = balance
-  }
-
-  /**
-   * Request for information at multiple addresses
-   * @param {Array} addresses - List of addresses to get data from
-   * @returns {Promise<Object>} Address information, including a list of transactions
-   */
-
-  async getMultiAddressRequest (addresses) {
-    if (!addresses) return false
-
-    const OFFSET_STEP = 100
-    const TXS_COUNT = 100
-    let offset = 0
-    let data = {}
-    let txs = []
-
-    const req = async () => {
-      let params = {
-        method: 'all',
-        active: addresses,
-        offset: offset,
-        limit: TXS_COUNT
-      }
-
-      try {
-        let res = await this.request.send(params)
-
-        if (res.status === 'success') {
-          data = res.data || {}
-
-          if (res.data.hasOwnProperty('transactions')) {
-            txs = [...txs, ...res.data.transactions]
-            if (res.data.transactions.length === TXS_COUNT) {
-              offset += OFFSET_STEP
-              await req()
-            }
-          }
-
-          data.transactions = txs
-        } else {
-          console.log('BCH getAddressTransactions', res.error)
-        }
-      }
-      catch (e) {
-        console.log('BCH getAddressTransactions error', e)
-        return []
-      }
-    }
-
-    await req()
-
-    return data
   }
 
   get DATA () {
