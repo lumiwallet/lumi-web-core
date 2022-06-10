@@ -3,10 +3,13 @@ import bigDecimal     from 'js-big-decimal'
 import {makeRawEthTx} from './utils'
 import CustomError    from '@/helpers/handleErrors'
 import {CoinsNetwork} from '@lumiwallet/lumi-network'
+import Web3 from 'web3'
+import abi from './tokens/abi-erc20.json'
 
 const requests = CoinsNetwork.eth
 const DEFAULT_ETH_GAS_LIMIT = 21000
 const DEFAULT_TOKEN_GAS_LIMIT = 250000
+const INFURA_URL = 'https://api.lumiwallet.com/proxy/infura'
 /**
  * Class EthereumTx.
  * This class is responsible for calculating the fee and generating and signing a Ethereum transaction
@@ -29,6 +32,7 @@ export default class EthereumTx {
     this.feeList = []
     this.token = data.token || null
     this.estimateTokenGas = null
+    this.web3 = null
   }
 
   /**
@@ -77,7 +81,7 @@ export default class EthereumTx {
   }
 
   async getEstimateGas(contract) {
-    // TODO: request from network
+    // TODO: request from network AND remove from core
     const myHeaders = new Headers()
     myHeaders.append('Content-Type', 'application/json')
     const data = {
@@ -136,7 +140,6 @@ export default class EthereumTx {
       throw new Error('getNonce e', e.message)
     }
 
-
     let params = {
       to: address,
       value: amountInWei,
@@ -146,6 +149,72 @@ export default class EthereumTx {
       privateKey
     }
     return makeRawEthTx(params)
+  }
+
+  async makeTokenTx(data) {
+    if (!this.web3) {
+      await this.createWeb3()
+    }
+
+    let contract
+    try {
+      contract = new this.web3.eth.Contract(abi, this.token.contract, {from: this.address})
+    }
+    catch (error) {
+      console.log('contract error', error)
+      throw new Error('contract error', error.message)
+    }
+
+    const {address, fee, privateKey} = data
+    let decimals = this.token.decimals
+    let amount = parseFloat(data.amount)
+    const transferAmount = +bigDecimal.multiply(amount, decimals)
+    const surrender = this.balance - transferAmount
+
+    if (surrender < 0) {
+      throw new CustomError('err_tx_eth_balance')
+    }
+
+    let nonce
+    try {
+      nonce = await requests.getNonce(this.address)
+    }
+    catch (e) {
+      throw new Error('getNonce error', e.message)
+    }
+    let decimalsBN, amountBN, amountHex, amountFormat
+
+    if (!Number.isInteger(amount)) {
+      let countDecimals = amount.toString().split('.')[1].length
+      countDecimals = countDecimals < decimals ? countDecimals : decimals
+      amountFormat = Math.floor(amount * Math.pow(10, countDecimals))
+      decimals -= countDecimals
+    } else {
+      amountFormat = amount
+    }
+
+    decimalsBN = this.web3.utils.toBN(decimals)
+    amountBN = this.web3.utils.toBN(amountFormat)
+    amountHex = '0x' + amountBN.mul(this.web3.utils.toBN(10).pow(decimalsBN)).toString('hex')
+
+
+    let params = {
+      from: this.address,
+      to: this.token.contract,
+      gasPrice: fee.gasPrice,
+      gasLimit: fee.gasLimit,
+      data: contract.methods.transfer(address, amountHex).encodeABI(),
+      chainId: 1,
+      value: 0,
+      nonce,
+      privateKey
+    }
+
+    return makeRawEthTx(params)
+  }
+
+  createWeb3() {
+    this.web3 = new Web3(INFURA_URL)
   }
 
   get DATA() {
