@@ -4,7 +4,6 @@ const request = CoinsNetwork.ethTokens
 
 export default class EthereumTokensSync {
   constructor(address, token, headers) {
-    console.log(address, token, headers)
     this.address = address
     this.token = token
     this.balance = 0

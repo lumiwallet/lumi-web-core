@@ -1,15 +1,14 @@
-import converter      from '@/helpers/converters'
-import bigDecimal     from 'js-big-decimal'
+import converter from '@/helpers/converters'
+import CustomError from '@/helpers/handleErrors'
 import {makeRawEthTx} from './utils'
-import CustomError    from '@/helpers/handleErrors'
-import {CoinsNetwork} from '@lumiwallet/lumi-network'
-import Web3 from 'web3'
 import abi from './tokens/abi-erc20.json'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
+import bigDecimal from 'js-big-decimal'
+import Web3 from 'web3'
 
 const requests = CoinsNetwork.eth
 const DEFAULT_ETH_GAS_LIMIT = 21000
-const DEFAULT_TOKEN_GAS_LIMIT = 250000
-const INFURA_URL = 'https://api.lumiwallet.com/proxy/infura'
+// const DEFAULT_TOKEN_GAS_LIMIT = 250000
 /**
  * Class EthereumTx.
  * This class is responsible for calculating the fee and generating and signing a Ethereum transaction
@@ -28,10 +27,10 @@ export default class EthereumTx {
     this.address = data.address
     this.balance = data.balance
     this.gasPrice = data.gasPrice
-    this.defaultGasLimit = data.gasLimit || DEFAULT_ETH_GAS_LIMIT
-    this.feeList = []
+    this.gasLimit = data.gasLimit || DEFAULT_ETH_GAS_LIMIT
     this.token = data.token || null
-    this.estimateTokenGas = null
+    this.infuraUrl = data.infuraUrl
+    this.feeList = []
     this.web3 = null
   }
 
@@ -46,25 +45,15 @@ export default class EthereumTx {
     customGasPriceGwei = +customGasPriceGwei
     customGasLimit = +customGasLimit
     const customGasPriceWei = converter.gwei_to_wei(customGasPriceGwei)
-    let gasLimit = this.defaultGasLimit
-    let gasPrice = this.gasPrice
-
-    if (this.token) {
-      if (!this.estimateTokenGas) {
-        this.estimateTokenGas = await this.getEstimateGas(this.token.contract)
-      }
-      gasLimit = this.estimateTokenGas.gasLimit
-      gasPrice = this.estimateTokenGas.gasPrice
-    }
 
     this.feeList = [
       {
         id: 'optimal',
-        gasPrice,
-        gasLimit,
-        gasPriceGwei: converter.wei_to_gwei(gasPrice),
-        coinValue: +converter.wei_to_eth(+bigDecimal.multiply(gasPrice, gasLimit)),
-        value: +bigDecimal.multiply(gasPrice, gasLimit)
+        gasPrice: this.gasPrice,
+        gasLimit: this.gasLimit,
+        gasPriceGwei: converter.wei_to_gwei(this.gasPrice),
+        coinValue: +converter.wei_to_eth(+bigDecimal.multiply(this.gasPrice, this.gasLimit)),
+        value: +bigDecimal.multiply(this.gasPrice, this.gasLimit)
       },
       {
         custom: true,
@@ -78,38 +67,6 @@ export default class EthereumTx {
     ]
 
     return this.feeList
-  }
-
-  async getEstimateGas(contract) {
-    // TODO: request from network AND remove from core
-    const myHeaders = new Headers()
-    myHeaders.append('Content-Type', 'application/json')
-    const data = {
-      contract,
-      amount: 1,
-      addressTo: '0x0000000000000000000000000000000000000000'
-    }
-
-    const res = await fetch('https://api.lumiwallet.com/proxy/infura/ethGas', {
-      method: 'POST',
-      headers: myHeaders,
-      body: JSON.stringify(data)
-    })
-    const resJson = await res.json()
-
-    if (resJson.status !== 'error') {
-      let limit = Math.max(resJson.data.estimateGas, resJson.data.lastEstimateGas)
-
-      return {
-        gasLimit: limit > 0 ? limit : DEFAULT_TOKEN_GAS_LIMIT,
-        gasPrice: resJson.data.gasPrice
-      }
-    } else {
-      return {
-        gasLimit: DEFAULT_TOKEN_GAS_LIMIT,
-        gasPrice: this.gasPrice
-      }
-    }
   }
 
   /**
@@ -214,7 +171,11 @@ export default class EthereumTx {
   }
 
   createWeb3() {
-    this.web3 = new Web3(INFURA_URL)
+    if (!this.infuraUrl) {
+      throw new Error('No infura url')
+    }
+
+    this.web3 = new Web3(this.infuraUrl)
   }
 
   get DATA() {

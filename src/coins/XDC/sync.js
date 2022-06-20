@@ -16,7 +16,6 @@ export default class XinfinSync {
    * @param {Object} headers - Request headers
    */
   constructor(address, headers) {
-    console.log('XinfinSync', address)
     this.address = address
     this.headers = headers
     this.balance = 0
