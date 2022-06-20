@@ -33,7 +33,7 @@ import Wallet from 'lumi-web-core'
 const WALLET = new Wallet()
 ```
 You can create a new wallet by calling the method `createNew(count)`. Count is the number of words for the new mnemonic.
-By default it is 12. It can be also  12, 15, 18, 21, and 24 words.
+By default, it is 12. It can be also  12, 15, 18, 21, and 24 words.
 ``` js
 // Create a new wallet
 const CORE = await WALLET.createNew(15)
