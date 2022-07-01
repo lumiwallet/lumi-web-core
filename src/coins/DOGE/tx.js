@@ -3,6 +3,7 @@ import {calcBtcTxSize, getBtcPrivateKeyByIndex} from '@/coins/BTC/utils'
 import {makeRawDogeTx} from './utils'
 import CustomError from '@/helpers/handleErrors'
 import {CoinsNetwork} from '@lumiwallet/lumi-network'
+import {hdFromXprv} from "@/helpers/core";
 
 const request = CoinsNetwork.doge
 /**
@@ -33,12 +34,12 @@ export default class DogecoinTx {
    */
   constructor (data) {
     this.unspent = data.unspent
-    this.amount = data.amount ? converter.btc_to_sat(data.amount) : 0
-    this.balance = data.balance
-    this.customFee = +data.customFee ? +data.customFee : 0
-    this.nodes = data.nodes
-    this.internalAddress = data.internalAddress
-    this.fee = data.feeList
+    this.balance = this.unspent.reduce((a, b) => a + b.value, 0)
+    this.nodes = {
+      internal: hdFromXprv(data.nodes.internal),
+      external: hdFromXprv(data.nodes.external)
+    }
+    this.fees = data.feeList
     this.feeList = []
     this.dust = 1000
   }
@@ -49,10 +50,23 @@ export default class DogecoinTx {
    * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
    */
 
-  async calcFee (size = 0) {
-    const fees = [...this.fee.map(item => item.feePerByte), this.customFee]
+  async calcFee (amount = 0, customFee = 0, size = 0) {
+    console.log('DOGE calcFee', amount, customFee, size)
+    console.log('DOGE calcFee', this.fees)
+    let fees = []
+    const amountInSat = converter.btc_to_sat(amount)
 
-    if (this.amount <= 0 || this.balance < this.amount) {
+    for (let item of this.fees) {
+      if (FEE_IDS.includes(item.name.toLowerCase())) {
+        fees.push(item.feePerByte)
+      }
+    }
+    fees.push(parseInt(customFee))
+
+    console.log(amount, this.balance, amountInSat)
+
+    if (amountInSat <= 0 || this.balance < amountInSat) {
+      console.log('BCH call calcEmptyFee')
       return this.calcEmptyFee(fees)
     }
 
@@ -65,10 +79,13 @@ export default class DogecoinTx {
     this.feeList = res.map((item, i) => {
       return {
         id: FEE_IDS[i],
-        SAT: item.fee,
-        DOGE: converter.sat_to_btc(item.fee),
-        fee: fees[i],
-        feeInBTC: converter.sat_to_btc(fees[i]),
+        value: item.fee,
+        coinValue: converter.sat_to_btc(item.fee),
+        feePerByte: fees[i],
+        // SAT: item.fee,
+        // DOGE: converter.sat_to_btc(item.fee),
+        // fee: fees[i],
+        // feeInBTC: converter.sat_to_btc(fees[i]),
         inputs: item.inputs,
         inputsAmount: item.inputsAmount,
         custom: FEE_IDS[i] === 'custom'
@@ -89,10 +106,13 @@ export default class DogecoinTx {
     this.feeList = fees.map((item, i) => {
       return {
         id: FEE_IDS[i],
-        SAT: 0,
-        DOGE: 0,
-        fee: item,
-        feeInBTC: converter.sat_to_btc(item),
+        value: 0,
+        coinValue: 0,
+        feePerByte: item,
+        // SAT: 0,
+        // DOGE: 0,
+        // fee: item,
+        // feeInBTC: converter.sat_to_btc(item),
         inputs: [],
         inputsAmount: 0,
         custom: FEE_IDS[i] === 'custom'
@@ -109,7 +129,7 @@ export default class DogecoinTx {
    * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
    */
 
-  async getInputs (fee, size) {
+  async getInputs (fee, size,amount) {
     let index = 0
     let inputsAmount = 0
     let inputs = []
@@ -125,7 +145,7 @@ export default class DogecoinTx {
       inputsAmount += item.value
       inputs.push(item)
 
-      let total = this.amount + calcFee + this.dust
+      let total = amount + calcFee + this.dust
 
       if (total > inputsAmount) {
         index++
@@ -161,20 +181,18 @@ export default class DogecoinTx {
    */
 
   async make (data= {}) {
-    const {addressTo, fee} = data
+    const {addressTo, amount, fee, changeAddress} = data
 
-    if (!this.amount) {
+    if (!amount) {
       throw new CustomError('err_tx_doge_amount')
     }
 
-    if (isNaN(fee.SAT)) {
+    if (isNaN(fee.value)) {
       throw new CustomError('err_tx_doge_fee')
     }
 
-    const inputsAmount = +fee.inputsAmount
-    const amount = +this.amount
-    const feeSat = +fee.SAT
-    const change = inputsAmount - amount - feeSat
+    const amountInSat = converter.btc_to_sat(amount)
+    const change = fee.inputsAmount - amountInSat - fee.value
     let inputs = []
     let hashes = []
 
@@ -227,7 +245,7 @@ export default class DogecoinTx {
 
     if (change !== 0) {
       params.outputs[1] = {
-        address: this.internalAddress,
+        address: changeAddress,
         value: change
       }
     }

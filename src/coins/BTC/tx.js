@@ -53,6 +53,8 @@ export default class BitcoinTx {
    */
 
   async calcFee (amount = 0, customFee = 0, size = 0) {
+    console.log('BTC calcFee', amount, customFee, size)
+    console.log('BTC calcFee', this.fees)
     let fees = []
     const amountInSat = converter.btc_to_sat(amount)
 
@@ -63,15 +65,20 @@ export default class BitcoinTx {
     }
     fees.push(parseInt(customFee))
 
+    console.log(amount, this.balance, amountInSat)
+
     if (amountInSat <= 0 || this.balance < amountInSat) {
+      console.log('call calcEmptyFee')
       return this.calcEmptyFee(fees)
     }
 
     const pArray = fees.map(async fee => {
+      console.log('call getInputs')
       return await this.getInputs(fee, size, amountInSat)
     })
 
     const res = await Promise.all(pArray)
+    console.log('BTC res fee')
 
     this.feeList = res.map((item, i) => {
       return {
@@ -94,6 +101,7 @@ export default class BitcoinTx {
    */
 
   calcEmptyFee (fees) {
+    console.log('fees', fees)
     this.feeList = fees.map((item, i) => {
       return {
         id: FEE_IDS[i],

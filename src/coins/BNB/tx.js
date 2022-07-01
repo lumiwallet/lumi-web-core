@@ -42,7 +42,6 @@ export default class BinanceTx {
     this.source = Number.isInteger(data.source) || DEFAULT_SOURCE
     this.fee = data.fee || []
     this.balance = convertToJager(data.balance)
-    this.privateKey = data.privateKey
     this.publicKey = data.publicKey
     this.memo = ''
     this.msg = []
@@ -56,15 +55,18 @@ export default class BinanceTx {
    */
 
   calcFee () {
+    console.log('BNB calcFee', this.fee)
     for (let item of this.fee) {
       let fee = {
         id: item.name.toLowerCase(),
         fee: convertToBinance(item.fee),
+        coinValue: convertToBinance(item.fee),
         value: item.fee
       }
 
       this.feeList.push(fee)
     }
+    console.log('this.feeList', this.feeList)
     return this.feeList
   }
 
@@ -79,10 +81,11 @@ export default class BinanceTx {
    **/
 
   make (data) {
+    const {address, amount, fee, privateKey} = data
     this.memo = data.memo || ''
     this.msg = this.getSignMsg(data)
     const signBytes = this.getSignBytes(this.msg)
-    const privKeyBuf = Buffer.from(this.privateKey, 'hex')
+    const privKeyBuf = Buffer.from(privateKey, 'hex')
     const signature = generateSignature(
       signBytes.toString('hex'),
       privKeyBuf
