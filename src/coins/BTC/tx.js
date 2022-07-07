@@ -32,7 +32,7 @@ export default class BitcoinTx {
    * @param {Object} data.headers - Request headers
    */
 
-  constructor (data) {
+  constructor(data) {
     this.unspent = data.unspent
     this.balance = this.unspent.reduce((a, b) => a + b.value, 0)
     this.fees = data.feeList
@@ -52,9 +52,7 @@ export default class BitcoinTx {
    * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
    */
 
-  async calcFee (amount = 0, customFee = 0, size = 0) {
-    console.log('BTC calcFee', amount, customFee, size)
-    console.log('BTC calcFee', this.fees)
+  async calcFee(amount = 0, customFee = 0, size = 0) {
     let fees = []
     const amountInSat = converter.btc_to_sat(amount)
 
@@ -65,20 +63,15 @@ export default class BitcoinTx {
     }
     fees.push(parseInt(customFee))
 
-    console.log(amount, this.balance, amountInSat)
-
     if (amountInSat <= 0 || this.balance < amountInSat) {
-      console.log('call calcEmptyFee')
       return this.calcEmptyFee(fees)
     }
 
     const pArray = fees.map(async fee => {
-      console.log('call getInputs')
       return await this.getInputs(fee, size, amountInSat)
     })
 
     const res = await Promise.all(pArray)
-    console.log('BTC res fee')
 
     this.feeList = res.map((item, i) => {
       return {
@@ -100,8 +93,7 @@ export default class BitcoinTx {
    * @returns {Array} Returns an array with zero fees
    */
 
-  calcEmptyFee (fees) {
-    console.log('fees', fees)
+  calcEmptyFee(fees) {
     this.feeList = fees.map((item, i) => {
       return {
         id: FEE_IDS[i],
@@ -124,7 +116,7 @@ export default class BitcoinTx {
    * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
    */
 
-  async getInputs (fee, size, amount) {
+  async getInputs(fee, size, amount) {
     let index = 0
     let inputsAmount = 0
     let inputs = []
@@ -169,12 +161,12 @@ export default class BitcoinTx {
   /**
    * Creating a Bitcoin transaction
    * @param {Object} data - Input data for a transaction
-   * @param {string} data.addressTo - Recipient address
+   * @param {string} data.address - Recipient address
    * @param {Object} data.fee - The transaction fee and list of inputs
    * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully
    */
 
-  async make (data = {}) {
+  async make(data = {}) {
     const {address, fee, amount, changeAddress} = data
 
     if (!amount) {
@@ -188,6 +180,10 @@ export default class BitcoinTx {
     const change = fee.inputsAmount - amountInSat - fee.value
     let inputs = []
 
+    if (change < 0) {
+      throw new CustomError('err_tx_btc_balance')
+    }
+
     try {
       inputs = await this.getInputsWithTxInfo(fee.inputs)
     }
@@ -195,28 +191,24 @@ export default class BitcoinTx {
       throw new Error(e.message)
     }
 
-    if (change >= 0) {
-      let params = {
-        inputs: inputs,
-        outputs: [
-          {
-            address,
-            value: amountInSat
-          }
-        ]
-      }
-
-      if (change) {
-        params.outputs[1] = {
-          address: changeAddress,
-          value: change
+    let params = {
+      inputs: inputs,
+      outputs: [
+        {
+          address,
+          value: amountInSat
         }
-      }
-
-      return makeRawBtcTx(params)
-    } else {
-      throw new CustomError('err_tx_btc_balance')
+      ]
     }
+
+    if (change) {
+      params.outputs[1] = {
+        address: changeAddress,
+        value: change
+      }
+    }
+
+    return makeRawBtcTx(params)
   }
 
   /**
@@ -225,7 +217,7 @@ export default class BitcoinTx {
    * @returns {Promise<Array>} Returns an array of inputs with a private keys and raw transaction data for p2pkh items
    */
 
-  async getInputsWithTxInfo (inputs) {
+  async getInputsWithTxInfo(inputs) {
     try {
       let rawTxsData = []
       let finalInputs = []
@@ -289,7 +281,7 @@ export default class BitcoinTx {
    * @returns {Promise<Array>} Array of raw Bitcoin transactions for each hash
    */
 
-  async getRawTxHex (hashes) {
+  async getRawTxHex(hashes) {
     if (!hashes || !hashes.length) return []
 
     const ARRAY_SIZE = 10

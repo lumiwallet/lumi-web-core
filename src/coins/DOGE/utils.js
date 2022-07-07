@@ -45,11 +45,10 @@ export function getDogeAddress(node, childIndex, withoutPrefix = true) {
  * @returns {Object} Returns raw Dogecoin transaction and transaction hash
  */
 
-export function makeRawDogeTx(data = {}) {
+export function makeRawDogeTx({inputs = [], outputs = []}) {
   try {
-    const {inputs, outputs} = data
-    let curr = coininfo.dogecoin.main
-    let frmt = curr.toBitcoinJS()
+    const curr = coininfo.dogecoin.main
+    const frmt = curr.toBitcoinJS()
     const netGain = {
       messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
       bip32: {
@@ -80,7 +79,6 @@ export function makeRawDogeTx(data = {}) {
         psbt.addInput(data)
       }
       catch (e) {
-        console.log('makeRawDogeTx addInput e', e)
         if (e.message === 'RangeError: value out of range') {
           delete psbt.data.inputs[i].nonWitnessUtxo
           const p2pkh = bitcoin.payments.p2pkh({pubkey: keyPair.publicKey, network: netGain})
@@ -96,7 +94,6 @@ export function makeRawDogeTx(data = {}) {
         } else {
           console.log('addInput error', e)
           throw new CustomError(e.message)
-          return
         }
       }
     }
@@ -111,10 +108,8 @@ export function makeRawDogeTx(data = {}) {
     keyPairs.forEach((key, i) => {
       psbt.signInput(i, key)
     })
-
     psbt.validateSignaturesOfAllInputs(validator)
     psbt.finalizeAllInputs()
-
     const transaction = psbt.extractTransaction()
     const signedTransaction = transaction.toHex()
     const hash = transaction.getId()
