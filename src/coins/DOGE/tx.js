@@ -43,13 +43,13 @@ export default class DogecoinTx {
     this.feeList = []
     this.dust = 1000
   }
-  
+
   /**
    * Calculating the fee amount
    * @param {number} size - Transaction size
    * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
    */
-  
+
   async calcFee(amount = 0, customFee = 0, size = 0) {
     let fees = []
     const amountInSat = converter.btc_to_sat(amount)
@@ -59,17 +59,17 @@ export default class DogecoinTx {
       }
     }
     fees.push(parseInt(customFee))
-    
+
     if (amountInSat <= 0 || this.balance < amountInSat) {
       return this.calcEmptyFee(fees)
     }
-    
+
     const pArray = fees.map(async fee => {
       return await this.getInputs(fee, size, amountInSat)
     })
-    
+
     const res = await Promise.all(pArray)
-    
+
     this.feeList = res.map((item, i) => {
       return {
         id: FEE_IDS[i],
@@ -81,17 +81,17 @@ export default class DogecoinTx {
         custom: FEE_IDS[i] === 'custom'
       }
     })
-    
+
     return this.feeList
   }
-  
+
   /**
    * Sets an array of zero fees.
    * Used when the user does not have enough funds for the transaction
    * @param {Array} fees - set of commission types
    * @returns {Array} Returns an array with zero fees
    */
-  
+
   calcEmptyFee(fees) {
     this.feeList = fees.map((item, i) => {
       return {
@@ -104,36 +104,36 @@ export default class DogecoinTx {
         custom: FEE_IDS[i] === 'custom'
       }
     })
-    
+
     return this.feeList
   }
-  
+
   /**
    * Finds a list of inputs for a specific transaction
    * @param {number} fee - Fee size
    * @param {number} size - Transaction size
    * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
    */
-  
+
   async getInputs(fee, size, amount) {
     let index = 0
     let inputsAmount = 0
     let inputs = []
     let res = {}
-    
+
     this.dust = size ? 0 : 1000
-    
+
     let req = async () => {
       let item = this.unspent[index]
       let defaultSize = calcBtcTxSize(index + 1, 2)
       let calcFee = size ? size * fee : defaultSize * fee
       inputsAmount += item.value
       inputs.push(item)
-      
+
       let total = amount + calcFee + this.dust
       if (total > inputsAmount) {
         index++
-        
+
         if (index >= this.unspent.length) {
           res = {
             fee: 0,
@@ -152,10 +152,10 @@ export default class DogecoinTx {
       }
     }
     await req()
-    
+
     return res
   }
-  
+
   /**
    * Creating a Dogecoin transaction
    * @param {Object} data - Input data for a transaction
@@ -163,27 +163,27 @@ export default class DogecoinTx {
    * @param {Object} data.fee - The transaction fee and list of inputs
    * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully
    */
-  
+
   async make(data = {}) {
     const {address, amount, fee, changeAddress} = data
     console.log('make', data)
     if (!amount) {
       throw new CustomError('err_tx_doge_amount')
     }
-    
+
     if (isNaN(fee.value)) {
       throw new CustomError('err_tx_doge_fee')
     }
-    
+
     const amountInSat = converter.btc_to_sat(amount)
     const change = fee.inputsAmount - amountInSat - fee.value
     let inputs = []
     let hashes = []
-    
+
     if (change < 0) {
       throw new CustomError('err_tx_doge_balance')
     }
-    
+
     for (let input of fee.inputs) {
       if (!input.tx) {
         if (input.transaction_hash) {
@@ -193,13 +193,13 @@ export default class DogecoinTx {
         }
       }
     }
-    
+
     const unique_hashes = [...new Set(hashes)]
     const rawTxsData = await request.getRawTx(unique_hashes)
-    
+
     for (const utxo of fee.inputs) {
       hashes.push(utxo.transaction_hash)
-      
+
       let item = {
         hash: utxo.transaction_hash,
         index: utxo.index,
@@ -213,10 +213,10 @@ export default class DogecoinTx {
       } else {
         item.tx = utxo.tx
       }
-      
+
       inputs.push(item)
     }
-    
+
     let params = {
       inputs: inputs,
       outputs: [
@@ -226,7 +226,7 @@ export default class DogecoinTx {
         }
       ]
     }
-    
+
     if (change) {
       params.outputs[1] = {
         address: changeAddress,

@@ -46,12 +46,15 @@ export default class BitcoinCashTx {
    * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
    */
 
-  async calcFee (amount = 0, customFee = 0, size = 0) {
-    console.log('BCH calcFee', amount, customFee, size)
-    console.log('BCH calcFee', this.fees)
+  async calcFee (amount = 0, customFee = 0, sendAll = false) {
     let fees = []
-    const amountInSat = converter.btc_to_sat(amount)
+    let amountInSat = 0
 
+    if (!sendAll) {
+      amountInSat = converter.btc_to_sat(amount)
+    } else {
+      amountInSat = this.balance
+    }
     for (let item of this.fees) {
       if (FEE_IDS.includes(item.level.toLowerCase())) {
         fees.push(item.feePerByte)
@@ -59,15 +62,16 @@ export default class BitcoinCashTx {
     }
     fees.push(parseInt(customFee))
 
-    console.log(amount, this.balance, amountInSat)
-
     if (amountInSat <= 0 || this.balance < amountInSat) {
-      console.log('BCH call calcEmptyFee')
       return this.calcEmptyFee(fees)
     }
 
     const pArray = fees.map(async fee => {
-      return await this.getInputs(fee, size)
+      if (sendAll) {
+        return await this.getSendAllInputs(fee, amountInSat)
+      } else {
+        return await this.getInputs(fee, amountInSat)
+      }
     })
 
     const res = await Promise.all(pArray)
@@ -78,10 +82,6 @@ export default class BitcoinCashTx {
         value: item.fee,
         coinValue: converter.sat_to_btc(item.fee),
         feePerByte: fees[i],
-        // SAT: item.fee,
-        // BCH: converter.sat_to_btc(item.fee),
-        // fee: fees[i],
-        // feeInBTC: converter.sat_to_btc(fees[i]),
         inputs: item.inputs,
         inputsAmount: item.inputsAmount,
         custom: FEE_IDS[i] === 'custom'
@@ -99,17 +99,12 @@ export default class BitcoinCashTx {
    */
 
   calcEmptyFee (fees) {
-    console.log('calcEmptyFee', this.fees)
     this.feeList = fees.map((item, i) => {
       return {
         id: FEE_IDS[i],
         value: 0,
         coinValue: 0,
         feePerByte: item,
-        // SAT: 0,
-        // BCH: 0,
-        // fee: item,
-        // feeInBTC: converter.sat_to_btc(item),
         inputs: [],
         inputsAmount: 0,
         custom: FEE_IDS[i] === 'custom'
@@ -119,6 +114,26 @@ export default class BitcoinCashTx {
     return this.feeList
   }
 
+  async getSendAllInputs(fee, balance) {
+    const size = calcBtcTxSize(this.unspent.length, 1)
+    const calcFee = fee * size
+    const amount = balance - calcFee
+
+    if (amount >= 0) {
+      return {
+        fee: calcFee,
+        inputs: this.unspent,
+        inputsAmount: balance
+      }
+    } else {
+      return {
+        fee: 0,
+        inputs: [],
+        inputsAmount: 0
+      }
+    }
+  }
+
   /**
    * Finds a list of inputs for a specific transaction
    * @param {number} fee - Fee size
@@ -126,18 +141,25 @@ export default class BitcoinCashTx {
    * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
    */
 
-  async getInputs (fee, size, amount) {
+  async getInputs (fee, amount) {
+    if (!fee) {
+      return {
+        fee: 0,
+        inputs: [],
+        inputsAmount: 0
+      }
+    }
     let index = 0
     let inputsAmount = 0
     let inputs = []
     let res = {}
 
-    this.dust = size ? 0 : 1000
+    this.dust = 1000
 
     let req = async () => {
       let item = this.unspent[index]
       let defaultSize = calcBtcTxSize(index + 1, 2)
-      let calcFee = size ? size * fee : defaultSize * fee
+      let calcFee = defaultSize * fee
 
       inputsAmount += item.value
       inputs.push(item)
@@ -172,13 +194,13 @@ export default class BitcoinCashTx {
   /**
    * Creating a Bitcoin Cash transaction
    * @param {Object} data - Input data for a transaction
-   * @param {string} data.addressTo - Recipient address
+   * @param {string} data.address - Recipient address
    * @param {Object} data.fee - The transaction fee and list of inputs
    * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully
    */
 
   async make (data) {
-    const {addressTo, amount, fee, changeAddress} = data
+    const {address, amount, fee, changeAddress} = data
 
     if (!amount) {
       throw new CustomError('err_tx_bch_amount')
@@ -212,8 +234,8 @@ export default class BitcoinCashTx {
       inputs: inputs,
       outputs: [
         {
-          address: addressTo,
-          value: amount
+          address,
+          value: amountInSat
         }
       ]
     }
