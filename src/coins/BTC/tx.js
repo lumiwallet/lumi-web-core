@@ -1,17 +1,10 @@
 import converter from '@/helpers/converters'
 import {calcBtcTxSize, getBtcPrivateKeyByIndex, makeRawBtcTx} from './utils'
 import CustomError from '@/helpers/handleErrors'
-import {hdFromXprv} from '@/helpers/core'
 import {CoinsNetwork} from '@lumiwallet/lumi-network'
+import {BitcoinBasedTx} from '@/coins/btc-based-tx'
 
 const request = CoinsNetwork.btc
-
-/**
- * List of available commission types for Bitcoin transactions
- * @type {Array}
- */
-
-const FEE_IDS = ['fast', 'regular', 'custom']
 
 /**
  * Class BitcoinTx.
@@ -20,7 +13,7 @@ const FEE_IDS = ['fast', 'regular', 'custom']
  * @class
  */
 
-export default class BitcoinTx {
+export class BitcoinTx extends BitcoinBasedTx{
   /**
    * Create a BitcoinTx
    * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount
@@ -33,138 +26,11 @@ export default class BitcoinTx {
    */
 
   constructor(data) {
-    this.unspent = data.unspent
-    this.balance = this.unspent.reduce((a, b) => a + b.value, 0)
-    this.fees = data.feeList
-    this.nodes = {
-      internal: hdFromXprv(data.nodes.internal),
-      external: hdFromXprv(data.nodes.external)
-    }
-    this.feeList = []
-    this.request = new Request(data.api, data.headers)
+    super(data)
+    this.feeIds = ['fast', 'regular', 'custom']
+    this.headers = data.headers
     this.type = data.type ? data.type.toLowerCase() : 'p2pkh'
-    this.dust = 1000
   }
-
-  /**
-   * Calculating the fee amount
-   * @param {number} size - Transaction size
-   * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
-   */
-
-  async calcFee(amount = 0, customFee = 0, size = 0) {
-    let fees = []
-    const amountInSat = converter.btc_to_sat(amount)
-
-    for (let item of this.fees) {
-      if (FEE_IDS.includes(item.level.toLowerCase())) {
-        fees.push(item.feePerByte)
-      }
-    }
-    fees.push(parseInt(customFee))
-
-    if (amountInSat <= 0 || this.balance < amountInSat) {
-      return this.calcEmptyFee(fees)
-    }
-
-    const pArray = fees.map(async fee => {
-      return await this.getInputs(fee, size, amountInSat)
-    })
-
-    const res = await Promise.all(pArray)
-
-    this.feeList = res.map((item, i) => {
-      return {
-        id: FEE_IDS[i],
-        value: item.fee,
-        coinValue: converter.sat_to_btc(item.fee),
-        feePerByte: fees[i],
-        inputs: item.inputs,
-        inputsAmount: item.inputsAmount,
-        custom: FEE_IDS[i] === 'custom'
-      }
-    })
-    return this.feeList
-  }
-
-  /**
-   * Sets an array of zero fees.
-   * Used when the user does not have enough funds for the transaction
-   * @returns {Array} Returns an array with zero fees
-   */
-
-  calcEmptyFee(fees) {
-    this.feeList = fees.map((item, i) => {
-      return {
-        id: FEE_IDS[i],
-        value: 0,
-        coinValue: 0,
-        feePerByte: item,
-        inputsAmount: 0,
-        inputs: [],
-        custom: FEE_IDS[i] === 'custom'
-      }
-    })
-
-    return this.feeList
-  }
-
-  /**
-   * Finds a list of inputs for a specific transaction
-   * @param {number} fee - Fee size
-   * @param {number} size - Transaction size
-   * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
-   */
-
-  async getInputs(fee, size, amount) {
-    let index = 0
-    let inputsAmount = 0
-    let inputs = []
-    let res = {}
-
-    this.dust = size ? 0 : 1000
-
-    let req = async () => {
-      let item = this.unspent[index]
-      let defaultSize = calcBtcTxSize(index + 1, 2, this.type === 'p2wpkh')
-      let calcFee = size ? size * fee : defaultSize * fee
-      inputsAmount += item.value
-      inputs.push(item)
-
-      let total = amount + calcFee + this.dust
-
-      if (total > inputsAmount) {
-        index++
-
-        if (index >= this.unspent.length) {
-          res = {
-            fee: 0,
-            inputs: [],
-            inputsAmount: 0
-          }
-        } else {
-          await req()
-        }
-      } else {
-        res = {
-          fee: calcFee,
-          inputs: inputs,
-          inputsAmount: inputsAmount
-        }
-      }
-    }
-    await req()
-
-    return res
-  }
-
-  /**
-   * Creating a Bitcoin transaction
-   * @param {Object} data - Input data for a transaction
-   * @param {string} data.address - Recipient address
-   * @param {Object} data.fee - The transaction fee and list of inputs
-   * @returns {Promise<Object>} Returns the raw transaction and transaction hash if sent successfully
-   */
 
   async make(data = {}) {
     const {address, fee, amount, changeAddress} = data
@@ -236,7 +102,7 @@ export default class BitcoinTx {
         }
         const unique_hashes = [...new Set(hashes)]
 
-        rawTxsData = await request.getRawTx(unique_hashes)
+        rawTxsData = await request.getRawTx(unique_hashes, this.headers)
 
         for (let input of inputs) {
           let item = {
@@ -273,52 +139,5 @@ export default class BitcoinTx {
     catch (e) {
       throw new Error(e.message)
     }
-  }
-
-  /**
-   * Raw transaction request
-   * @param {Array} hashes - List of hashes
-   * @returns {Promise<Array>} Array of raw Bitcoin transactions for each hash
-   */
-
-  async getRawTxHex(hashes) {
-    if (!hashes || !hashes.length) return []
-
-    const ARRAY_SIZE = 10
-    const ARRAYS_COUNT = Math.ceil(hashes.length / ARRAY_SIZE)
-    let txs = []
-    let arrays = []
-    let counter = 0
-
-    for (let i = 0; i < ARRAYS_COUNT; i++) {
-      arrays[i] = hashes.slice((i * ARRAY_SIZE), (i * ARRAY_SIZE) + ARRAY_SIZE)
-    }
-
-    const req = async () => {
-      try {
-        let res = await this.request.send({
-          method: 'rawtx',
-          txs: arrays[counter]
-        })
-
-        if (res.status === 'success' && res.data.length) {
-          txs = [...txs, ...res.data]
-          counter++
-
-          if (counter !== ARRAYS_COUNT) {
-            await req()
-          }
-        } else {
-          throw new CustomError('err_tx_btc_raw_tx')
-        }
-      }
-      catch (e) {
-        throw new CustomError('err_tx_btc_raw_tx')
-      }
-    }
-
-    await req()
-
-    return txs
   }
 }

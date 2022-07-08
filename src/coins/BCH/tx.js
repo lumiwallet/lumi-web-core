@@ -1,16 +1,8 @@
 import converter from '@/helpers/converters'
-import {calcBtcTxSize, getBtcPrivateKeyByIndex} from '@/coins/BTC/utils'
+import {BitcoinBasedTx} from '@/coins/btc-based-tx'
+import {getBtcPrivateKeyByIndex} from '@/coins/BTC/utils'
 import {makeRawBchTx} from './utils'
 import CustomError from '@/helpers/handleErrors'
-import {hdFromXprv} from "@/helpers/core";
-
-
-/**
- * List of available commission types for Bitcoin Cash transactions
- * @type {Array}
- */
-
-const FEE_IDS = ['regular', 'custom']
 
 /**
  * Class BitcoinCashTx.
@@ -19,7 +11,7 @@ const FEE_IDS = ['regular', 'custom']
  * @class
  */
 
-export default class BitcoinCashTx {
+export class BitcoinCashTx extends BitcoinBasedTx {
   /**
    * Create a BitcoinCashTx
    * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount
@@ -29,166 +21,9 @@ export default class BitcoinCashTx {
    * @param {Object} data.nodes - External and internal Bitcoin Cash nodes
    */
   constructor (data) {
-    this.unspent = data.unspent
-    this.balance = this.unspent.reduce((a, b) => a + b.value, 0)
-    this.nodes = {
-      internal: hdFromXprv(data.nodes.internal),
-      external: hdFromXprv(data.nodes.external)
-    }
-    this.fees = data.feeList
-    this.feeList = []
-    this.dust = 1000
-  }
-
-  /**
-   * Calculating the fee amount
-   * @param {number} size - Transaction size
-   * @returns {Promise<Array>} Returns a set of fees for a specific transaction amount
-   */
-
-  async calcFee (amount = 0, customFee = 0, sendAll = false) {
-    let fees = []
-    let amountInSat = 0
-
-    if (!sendAll) {
-      amountInSat = converter.btc_to_sat(amount)
-    } else {
-      amountInSat = this.balance
-    }
-    for (let item of this.fees) {
-      if (FEE_IDS.includes(item.level.toLowerCase())) {
-        fees.push(item.feePerByte)
-      }
-    }
-    fees.push(parseInt(customFee))
-
-    if (amountInSat <= 0 || this.balance < amountInSat) {
-      return this.calcEmptyFee(fees)
-    }
-
-    const pArray = fees.map(async fee => {
-      if (sendAll) {
-        return await this.getSendAllInputs(fee, amountInSat)
-      } else {
-        return await this.getInputs(fee, amountInSat)
-      }
-    })
-
-    const res = await Promise.all(pArray)
-
-    this.feeList = res.map((item, i) => {
-      return {
-        id: FEE_IDS[i],
-        value: item.fee,
-        coinValue: converter.sat_to_btc(item.fee),
-        feePerByte: fees[i],
-        inputs: item.inputs,
-        inputsAmount: item.inputsAmount,
-        custom: FEE_IDS[i] === 'custom'
-      }
-    })
-
-    return this.feeList
-  }
-
-  /**
-   * Sets an array of zero fees.
-   * Used when the user does not have enough funds for the transaction
-   * @param {Array} fees - set of commission types
-   * @returns {Array} Returns an array with zero fees
-   */
-
-  calcEmptyFee (fees) {
-    this.feeList = fees.map((item, i) => {
-      return {
-        id: FEE_IDS[i],
-        value: 0,
-        coinValue: 0,
-        feePerByte: item,
-        inputs: [],
-        inputsAmount: 0,
-        custom: FEE_IDS[i] === 'custom'
-      }
-    })
-
-    return this.feeList
-  }
-
-  async getSendAllInputs(fee, balance) {
-    const size = calcBtcTxSize(this.unspent.length, 1)
-    const calcFee = fee * size
-    const amount = balance - calcFee
-
-    if (amount >= 0) {
-      return {
-        fee: calcFee,
-        inputs: this.unspent,
-        inputsAmount: balance
-      }
-    } else {
-      return {
-        fee: 0,
-        inputs: [],
-        inputsAmount: 0
-      }
-    }
-  }
-
-  /**
-   * Finds a list of inputs for a specific transaction
-   * @param {number} fee - Fee size
-   * @param {number} size - Transaction size
-   * @returns {Promise<Object>} Returns an object with a list of inputs, the total fee amount, and the total amount of all inputs
-   */
-
-  async getInputs (fee, amount) {
-    if (!fee) {
-      return {
-        fee: 0,
-        inputs: [],
-        inputsAmount: 0
-      }
-    }
-    let index = 0
-    let inputsAmount = 0
-    let inputs = []
-    let res = {}
-
-    this.dust = 1000
-
-    let req = async () => {
-      let item = this.unspent[index]
-      let defaultSize = calcBtcTxSize(index + 1, 2)
-      let calcFee = defaultSize * fee
-
-      inputsAmount += item.value
-      inputs.push(item)
-
-      let total = amount + calcFee + this.dust
-
-      if (total > inputsAmount) {
-        index++
-
-        if (index >= this.unspent.length) {
-          res = {
-            fee: 0,
-            inputs: [],
-            inputsAmount: 0
-          }
-        } else {
-          await req()
-        }
-      } else {
-        res = {
-          fee: calcFee,
-          inputs: inputs,
-          inputsAmount: inputsAmount
-        }
-      }
-    }
-    await req()
-
-    return res
+    super(data)
+    this.feeIds = ['regular', 'custom']
+    this.type = 'p2pkh'
   }
 
   /**
