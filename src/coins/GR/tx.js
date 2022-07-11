@@ -107,8 +107,16 @@ export default class GraphiteTx {
       data: web3.utils.bytesToHex(txData),
       chainId: CHAIN_ID
     }
-
     return makeRawEthTx(params)
+  }
+
+  sendTransaction(rawTx) {
+    try {
+      return web3.eth.sendSignedTransaction(rawTx)
+    }
+    catch (e) {
+      console.log('sendTransaction e', e)
+    }
   }
 
   async getNonce() {
