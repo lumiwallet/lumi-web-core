@@ -5,25 +5,24 @@ import CustomError from '@/helpers/handleErrors'
 import FeeContractAbi from './abi/activate_account.json'
 import Web3 from 'web3'
 import {
-  NODE_URL,
   DEFAULT_GAS_PRICE,
   DEFAULT_GAS_LIMIT,
   ACTIVATION_GAS_LIMIT,
   SEPARATOR,
-  ENTRYPOINT_NODE_ADDR,
   CHAIN_ID,
   FEE_CONTRACT_ADDR
 } from './config'
 
-export const web3 = new Web3(NODE_URL)
+export const web3 = new Web3()
 
 export default class GraphiteTx {
-  constructor({address, balance, gasPrice, gasLimit}) {
+  constructor({address, balance, gasPrice, gasLimit, entrypointNode}) {
     this.address = address
     this.balance = balance
     this.gasPrice = gasPrice || DEFAULT_GAS_PRICE
     this.gasLimit = gasLimit || DEFAULT_GAS_LIMIT
     this.feeList = []
+    this.entrypointNode = entrypointNode
   }
 
   calcFee(customGasPriceGwei = 0, customGasLimit = 0) {
@@ -63,13 +62,12 @@ export default class GraphiteTx {
     }
   }
 
-  async activateAccount({privateKey}) {
+  async activateAccount({privateKey, nonce}) {
     const fee = this.calcActivationAmount()
     const feeContract = new web3.eth.Contract(FeeContractAbi, FEE_CONTRACT_ADDR)
     const tx = feeContract.methods.pay()
     const methodEncoded = tx.encodeABI()
-    const data = SEPARATOR.concat(web3.utils.hexToBytes(ENTRYPOINT_NODE_ADDR)).concat(web3.utils.hexToBytes(methodEncoded))
-    const nonce = await this.getNonce()
+    const data = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypointNode)).concat(web3.utils.hexToBytes(methodEncoded))
     const params = {
       from: this.address,
       to: FEE_CONTRACT_ADDR,
@@ -84,7 +82,7 @@ export default class GraphiteTx {
     return makeRawEthTx(params)
   }
 
-  async make({address, amount, fee, privateKey}) {
+  async make({address, amount, fee, privateKey, nonce}) {
     const amountInWei = converter.eth_to_wei(amount)
     const finalAmount = +bigDecimal.add(amountInWei, fee.value)
     const surrender = bigDecimal.subtract(this.balance, finalAmount)
@@ -93,8 +91,7 @@ export default class GraphiteTx {
       throw new CustomError('err_tx_eth_balance')
     }
 
-    const nonce = await this.getNonce()
-    const txData = SEPARATOR.concat(web3.utils.hexToBytes(ENTRYPOINT_NODE_ADDR))
+    const txData = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypointNode))
 
     const params = {
       from: this.address,
@@ -116,18 +113,6 @@ export default class GraphiteTx {
     }
     catch (e) {
       console.log('sendTransaction e', e)
-    }
-  }
-
-  async getNonce() {
-    let nonce
-    try {
-      nonce = await web3.eth.getTransactionCount(this.address)
-
-      return nonce
-    }
-    catch (e) {
-      throw new Error('getNonce e', e.message)
     }
   }
 
