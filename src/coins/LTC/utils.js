@@ -18,7 +18,7 @@ export function getLtcAddress(node, childIndex) {
   try {
     let curr = coininfo.litecoin.main
     let frmt = curr.toBitcoinJS()
-    const ltc_testnet = {
+    const netGain = {
       messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
       bech32: 'ltc',
       bip32: {
@@ -30,7 +30,7 @@ export function getLtcAddress(node, childIndex) {
       wif: frmt.wif
     }
 
-    const address = bitcoin.payments.p2wpkh({pubkey: node.deriveChild(childIndex).publicKey, network: ltc_testnet})
+    const address = bitcoin.payments.p2wpkh({pubkey: node.deriveChild(childIndex).publicKey, network: netGain})
     return address.address
   }
   catch (e) {
@@ -79,7 +79,7 @@ export function makeRawLtcTx(data = {}) {
         index: input.index
       }
 
-      const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: networks.ltc})
+      const p2wpkh = bitcoin.payments.p2wpkh({pubkey: keyPair.publicKey, network: netGain})
       const script = p2wpkh.output.toString('hex')
 
       data.witnessUtxo = {
