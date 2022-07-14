@@ -1,7 +1,8 @@
-import * as bitcoin from "bitcoinjs-lib"
-import * as tinysecp from "tiny-secp256k1"
+import * as bitcoin from 'bitcoinjs-lib'
+import * as tinysecp from 'tiny-secp256k1'
 import ECPairFactory from 'ecpair'
 import CustomError from '@/helpers/handleErrors'
+import {networks} from '@/helpers/networks'
 
 const ECPair = ECPairFactory(tinysecp)
 const validator = (pubkey, msghash, signature) => ECPair.fromPublicKey(pubkey).verify(msghash, signature)

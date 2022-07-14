@@ -18,12 +18,8 @@ export class DogecoinTx extends BitcoinBasedTx {
    * Create a DogecoinTx
    * @param {Object} data - Input data for generating a transaction, calculating a fee or available amount
    * @param {Array} data.unspent - Array of unspent addresses
-   * @param {number} data.amount - Transaction amount
-   * @param {number} data.balance - Dogecoin wallet balance
    * @param {Array} data.feeList - Set of rawDogecoin fees
-   * @param {Object} data.customFee - Custom fee entered by the user
    * @param {Object} data.nodes - External and internal Dogecoin nodes
-   * @param {string} data.internalAddress - Address for change
    */
   constructor(data) {
     super(data)

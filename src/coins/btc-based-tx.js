@@ -1,6 +1,6 @@
-import converter       from '@/helpers/converters'
+import converter from '@/helpers/converters'
 import {calcBtcTxSize} from '@/coins/BTC/utils'
-import {hdFromXprv}    from '@/helpers/core'
+import {hdFromXprv} from '@/helpers/core'
 
 export class BitcoinBasedTx {
   constructor(data) {
@@ -11,6 +11,7 @@ export class BitcoinBasedTx {
       external: hdFromXprv(data.nodes.external)
     }
     this.fees = data.feeList
+    this.type = data.type
     this.feeList = []
     this.dust = 1000
     this.feeIds = ['fast', 'regular', 'custom']
@@ -78,7 +79,7 @@ export class BitcoinBasedTx {
   }
 
   async getSendAllInputs(fee, balance) {
-    const size = calcBtcTxSize(this.unspent.length, 1)
+    const size = calcBtcTxSize(this.unspent.length, 1, this.type === 'p2wpkh')
     const calcFee = fee * size
     const amount = balance - calcFee
 
