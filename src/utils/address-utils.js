@@ -17,8 +17,8 @@ export const checkAddress = (address, coin, network = 'prod') => {
       return isBTCV(address)
     case 'XDC':
       return isXDC(address)
-    case 'EVER':
-      return isEVER(address)
+    case 'BNB':
+      return isBNB(address)
     case '@G':
       return addressValidator.validate(address, 'ETH', network)
     default:

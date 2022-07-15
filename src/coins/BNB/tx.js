@@ -55,7 +55,6 @@ export default class BinanceTx {
    */
 
   calcFee () {
-    console.log('BNB calcFee', this.fee)
     for (let item of this.fee) {
       let fee = {
         id: item.name.toLowerCase(),
@@ -66,7 +65,7 @@ export default class BinanceTx {
 
       this.feeList.push(fee)
     }
-    console.log('this.feeList', this.feeList)
+
     return this.feeList
   }
 
