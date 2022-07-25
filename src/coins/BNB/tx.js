@@ -38,7 +38,7 @@ export default class BinanceTx {
     this.chain_id = data.chain_id || DEFAULT_CHAIN_ID
     this.address = data.address
     this.account_number = data.account_number || 0
-    this.sequence = data.sequence
+    // this.sequence = data.sequence
     this.source = Number.isInteger(data.source) || DEFAULT_SOURCE
     this.fee = data.fee || []
     this.balance = convertToJager(data.balance)
@@ -80,17 +80,21 @@ export default class BinanceTx {
    **/
 
   make (data) {
-    const {address, amount, fee, privateKey} = data
+    const {address, amount, fee, privateKey, sequence} = data
     this.memo = data.memo || ''
     this.msg = this.getSignMsg(data)
-    const signBytes = this.getSignBytes(this.msg)
+    const signBytes = this.getSignBytes(this.msg, sequence)
     const privKeyBuf = Buffer.from(privateKey, 'hex')
     const signature = generateSignature(
       signBytes.toString('hex'),
       privKeyBuf
     )
-    this.addSignature(this.publicKey, signature)
-    return this
+    this.addSignature(this.publicKey, signature, sequence)
+
+    const rawTx = this.serialize()
+    const hash = this.getHash()
+
+    return {tx: rawTx, hash}
   }
 
   /**
@@ -99,7 +103,7 @@ export default class BinanceTx {
    */
 
   getSignMsg (data) {
-    const {addressTo, amount, fee} = data
+    const {address, amount, fee} = data
     const feeInJager = convertToJager(fee)
     const amountInJager = convertToJager(amount)
     const fullAmount = bigDecimal.add(feeInJager, amountInJager)
@@ -123,7 +127,7 @@ export default class BinanceTx {
 
     const outputs = [
       {
-        address: addressTo,
+        address: address,
         coins: [
           {
             denom: 'BNB',
@@ -168,14 +172,14 @@ export default class BinanceTx {
    * @return {Buffer}
    */
 
-  getSignBytes (msg) {
+  getSignBytes (msg, sequence) {
     const signMsg = {
       account_number: this.account_number.toString(),
       chain_id: this.chain_id,
       data: null,
       memo: this.memo,
       msgs: [msg],
-      sequence: this.sequence.toString(),
+      sequence: sequence.toString(),
       source: this.source.toString()
     }
     return convertObjectToSignBytes(signMsg)
@@ -187,15 +191,14 @@ export default class BinanceTx {
    * @param {Buffer} signature
    */
 
-  addSignature (pubKey, signature) {
+  addSignature (pubKey, signature, sequence) {
     const pubKeyBuf = this._serializePubKey(Buffer.from(this.publicKey, 'hex')) // => Buffer
-
     this.signatures = [
       {
         pub_key: pubKeyBuf,
         signature: signature,
         account_number: this.account_number,
-        sequence: this.sequence
+        sequence: sequence
       }
     ]
 
