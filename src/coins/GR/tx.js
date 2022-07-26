@@ -12,7 +12,9 @@ import {
   CHAIN_ID,
   FEE_CONTRACT_ADDR
 } from './config'
+import {CoinsNetwork} from '@lumiwallet/lumi-network'
 
+const requests = CoinsNetwork.graphite
 export const web3 = new Web3()
 
 export default class GraphiteTx {
@@ -52,23 +54,26 @@ export default class GraphiteTx {
     return this.feeList
   }
 
-  calcActivationAmount() {
+  async calcActivationAmount() {
     const value = +bigDecimal.multiply(this.gasPrice, ACTIVATION_GAS_LIMIT)
+    const initialFee = +await requests.getInitialFee()
     return {
       value,
-      coinValue: +converter.wei_to_eth(value),
+      initialFee,
+      coinValue: +converter.wei_to_eth(value) + converter.wei_to_eth(initialFee),
       gasPrice: this.gasPrice,
       gasLimit: ACTIVATION_GAS_LIMIT
     }
   }
 
   async activateAccount({privateKey, nonce}) {
-    const fee = this.calcActivationAmount()
+    const fee = await this.calcActivationAmount()
     const feeContract = new web3.eth.Contract(FeeContractAbi, FEE_CONTRACT_ADDR)
     const tx = feeContract.methods.pay()
     const methodEncoded = tx.encodeABI()
     const data = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypointNode)).concat(web3.utils.hexToBytes(methodEncoded))
     const params = {
+      value: fee.initialFee,
       from: this.address,
       to: FEE_CONTRACT_ADDR,
       nonce,
@@ -78,7 +83,6 @@ export default class GraphiteTx {
       data: web3.utils.bytesToHex(data),
       chainId: CHAIN_ID
     }
-
     return makeRawEthTx(params)
   }
 
