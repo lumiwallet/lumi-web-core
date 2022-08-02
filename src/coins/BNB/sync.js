@@ -1,4 +1,5 @@
-import {CoinsNetwork} from '@lumiwallet/lumi-network'
+import {CoinsNetwork}                            from '@lumiwallet/lumi-network'
+import {getCurrentTimestamp, getOffsetTimestamp} from '@/helpers/timestamp'
 
 const requests = CoinsNetwork.bnb
 
@@ -35,8 +36,8 @@ export default class BinanceSync {
     let res = await requests.getInfo(this.address, this.headers)
 
     if (res.hasOwnProperty('balances')) {
-      this.balance = +res.balances[0].free || 0
-      this.symbol = res.balances[0].symbol || ''
+      this.balance = res.balances.length ? +res.balances[0].free || 0: 0
+      this.symbol = res.balances.length ? res.balances[0].symbol || '': ''
       this.account_number = res.account_number || 0
       this.sequence = res.sequence || 0
     }
@@ -44,9 +45,9 @@ export default class BinanceSync {
 
   async getTransactions () {
     this.transactions = []
-    const startTime = 1496264400
-    const endTime = Math.round(new Date().getTime() / 1000)
-    const step = 100
+    const startTime = getOffsetTimestamp(7)
+    const endTime = getCurrentTimestamp()
+    const step = 50
 
     const req = async () => {
       let addParams = {
