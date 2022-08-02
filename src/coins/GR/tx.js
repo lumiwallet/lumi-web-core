@@ -57,10 +57,11 @@ export default class GraphiteTx {
   async calcActivationAmount() {
     const value = +bigDecimal.multiply(this.gasPrice, ACTIVATION_GAS_LIMIT)
     const initialFee = +await requests.getInitialFee()
+
     return {
       value,
       initialFee,
-      coinValue: +converter.wei_to_eth(value) + converter.wei_to_eth(initialFee),
+      coinValue: +converter.wei_to_eth(value + initialFee),
       gasPrice: this.gasPrice,
       gasLimit: ACTIVATION_GAS_LIMIT
     }
