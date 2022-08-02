@@ -10,7 +10,7 @@ module.exports = {
   output: {
     webassemblyModuleFilename: '[hash].wasm',
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: 'core.bundle.js',
     library: 'lumi',
     libraryTarget: 'umd'
   },
@@ -26,25 +26,29 @@ module.exports = {
       'crypto': require.resolve('crypto-browserify'),
       'assert': require.resolve('assert'),
       'url': require.resolve('url'),
-      'process': require.resolve('process')
+      'process': require.resolve('process'),
+      'https': require.resolve('https-browserify'),
+      "http": require.resolve("stream-http"),
+      "os": require.resolve("os-browserify/browser")
     }
   },
+  devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
         use: ['babel-loader']
-      },
-      {
-        test: /\.worker\.js$/,
-        use: {
-          loader: 'worker-loader',
-          options: {
-            inline: 'fallback'
-          }
-        }
       }
+      // {
+      //   test: /\.worker\.js$/,
+      //   use: {
+      //     loader: 'worker-loader',
+      //     options: {
+      //       inline: 'fallback'
+      //     }
+      //   }
+      // }
     ]
   },
   plugins: [
@@ -67,5 +71,10 @@ module.exports = {
   optimization: {
     chunkIds: 'deterministic',
     minimize: false
+  },
+  experiments: {
+    asyncWebAssembly: true,
+    syncWebAssembly: true,
+    topLevelAwait: true
   }
 }
