@@ -62,7 +62,7 @@ export default class XinfinTx {
    */
 
   async make(data) {
-    const {addressTo, amount, fee, privateKey} = data
+    const {address, amount, fee, privateKey} = data
     const amountInWei = converter.eth_to_wei(amount)
     const finalAmount = +bigDecimal.add(amountInWei, fee.value)
     const surrender = bigDecimal.subtract(this.balance, finalAmount)
@@ -79,7 +79,7 @@ export default class XinfinTx {
     }
 
     let params = {
-      to: addressTo,
+      to: address,
       value: amountInWei,
       nonce,
       gasPrice: this.gasPrice,
