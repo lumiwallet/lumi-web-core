@@ -38,7 +38,6 @@ export default class BinanceTx {
     this.chain_id = data.chain_id || DEFAULT_CHAIN_ID
     this.address = data.address
     this.account_number = data.account_number || 0
-    // this.sequence = data.sequence
     this.source = Number.isInteger(data.source) || DEFAULT_SOURCE
     this.fee = data.fee || []
     this.balance = convertToJager(data.balance)
