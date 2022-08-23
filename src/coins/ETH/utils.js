@@ -52,6 +52,26 @@ export function getEthAddress(publicKey) {
   }
 }
 
+export function toChecksumAddress(address) {
+  if (!address) return ''
+  try {
+    return ethUtil.toChecksumAddress(address)
+  }
+  catch (e) {
+    console.log('Invalid address', e)
+  }
+}
+
+export function isValidChecksumAddress(address) {
+  if (!address) return false
+  try {
+    return ethUtil.isValidChecksumAddress(address)
+  }
+  catch (e) {
+    console.log('Invalid address', e)
+  }
+}
+
 /**
  * Getting Ethereum wallet address by node
  * @param {Object} node - Ethereum node

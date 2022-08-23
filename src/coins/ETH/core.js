@@ -1,5 +1,6 @@
-import {derive} from '@/helpers/core'
-import * as utils from './utils'
+import {derive}            from '@/helpers/core'
+import {toChecksumAddress} from './utils'
+import * as utils          from './utils'
 
 /**
  * Creating a core for Ethereum.
@@ -11,7 +12,7 @@ import * as utils from './utils'
  * @private
  */
 
-export function generateEthCore (hdkey, type = 0) {
+export function generateEthCore (hdkey, type = 0, checksumAddress = false) {
   if (!Number.isInteger(type)) {
     type = 0
   }
@@ -24,6 +25,9 @@ export function generateEthCore (hdkey, type = 0) {
   item.privateKeyHex = '0x' + item.privateKey.toString('hex')
   item.publicKey = utils.getEthPublicKey(item.privateKey)
   item.externalAddress = utils.getEthAddress(item.publicKey)
+  if (checksumAddress) {
+    item.externalAddress = utils.toChecksumAddress(item.externalAddress)
+  }
   // item.dp = ethereum_path
 
   return item

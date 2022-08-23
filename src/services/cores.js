@@ -42,7 +42,7 @@ function createCoinsCores(hdkey, coins = []) {
         core[coin] = generateBnbCore(hdkey)
         break
       case '@G':
-        core[coin] = generateEthCore(hdkey)
+        core[coin] = generateEthCore(hdkey, 0, true)
         break
     }
   }
