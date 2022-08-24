@@ -18,13 +18,16 @@ const requests = CoinsNetwork.graphite
 export const web3 = new Web3()
 
 export default class GraphiteTx {
-  constructor({address, balance, gasPrice, gasLimit, entrypointNode}) {
+  constructor({address, balance, gasPrice, gasLimit, entrypoint = {}}) {
     this.address = address
     this.balance = balance
     this.gasPrice = gasPrice || DEFAULT_GAS_PRICE
     this.gasLimit = gasLimit || DEFAULT_GAS_LIMIT
     this.feeList = []
-    this.entrypointNode = entrypointNode
+    this.entrypoint = {
+      isAnonymousNode: entrypoint.isAnonymousNode,
+      entrypointNode: entrypoint.entrypointNode
+    }
   }
 
   calcFee(customGasPriceGwei = 0, customGasLimit = 0) {
@@ -56,7 +59,7 @@ export default class GraphiteTx {
 
   async calcActivationAmount() {
     const value = +bigDecimal.multiply(this.gasPrice, ACTIVATION_GAS_LIMIT)
-    const initialFee = +await requests.getInitialFee()
+    const initialFee = await requests.getInitialFee()
 
     return {
       value,
@@ -72,7 +75,12 @@ export default class GraphiteTx {
     const feeContract = new web3.eth.Contract(FeeContractAbi, FEE_CONTRACT_ADDR)
     const tx = feeContract.methods.pay()
     const methodEncoded = tx.encodeABI()
-    const data = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypointNode)).concat(web3.utils.hexToBytes(methodEncoded))
+
+    let data = ''
+    if (!this.entrypoint.isAnonymousNode) {
+      data = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypoint.entrypointNode)).concat(web3.utils.hexToBytes(methodEncoded))
+    }
+
     const params = {
       value: fee.initialFee,
       from: this.address,
@@ -81,9 +89,10 @@ export default class GraphiteTx {
       gasPrice: fee.gasPrice,
       gasLimit: fee.gasLimit,
       privateKey,
-      data: web3.utils.bytesToHex(data),
+      data: data ? web3.utils.bytesToHex(data) : '',
       chainId: CHAIN_ID
     }
+
     return makeRawEthTx(params)
   }
 
@@ -96,7 +105,10 @@ export default class GraphiteTx {
       throw new CustomError('err_tx_eth_balance')
     }
 
-    const txData = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypointNode))
+    let data = ''
+    if (!this.entrypoint.isAnonymousNode) {
+      data = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypoint.entrypointNode))
+    }
 
     const params = {
       from: this.address,
@@ -106,19 +118,11 @@ export default class GraphiteTx {
       gasPrice: fee.gasPrice,
       gasLimit: fee.gasLimit,
       privateKey,
-      data: web3.utils.bytesToHex(txData),
+      data: data ? web3.utils.bytesToHex(data) : '',
       chainId: CHAIN_ID
     }
-    return makeRawEthTx(params)
-  }
 
-  sendTransaction(rawTx) {
-    try {
-      return web3.eth.sendSignedTransaction(rawTx)
-    }
-    catch (e) {
-      console.log('sendTransaction e', e)
-    }
+    return makeRawEthTx(params)
   }
 
   get DATA() {
