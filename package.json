@@ -27,7 +27,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@ethereumjs/tx": "^3.3.0",
-    "@lumiwallet/lumi-network": "1.0.11",
+    "@lumiwallet/lumi-network": "1.0.12",
     "assert": "^2.0.0",
     "bchaddrjs": "^0.5.2",
     "bech32": "^2.0.0",
