@@ -10,7 +10,8 @@ import {
   ACTIVATION_GAS_LIMIT,
   SEPARATOR,
   CHAIN_ID,
-  FEE_CONTRACT_ADDR
+  FEE_CONTRACT_ADDR,
+  LEVELS
 } from './config'
 import {CoinsNetwork} from '@lumiwallet/lumi-network'
 
@@ -18,7 +19,7 @@ const requests = CoinsNetwork.graphite
 export const web3 = new Web3()
 
 export default class GraphiteTx {
-  constructor({address, balance, gasPrice, gasLimit, entrypoint = {}}) {
+  constructor({address, balance, gasPrice, gasLimit, header, entrypoint = {}}) {
     this.address = address
     this.balance = balance
     this.gasPrice = gasPrice || DEFAULT_GAS_PRICE
@@ -28,6 +29,7 @@ export default class GraphiteTx {
       isAnonymousNode: entrypoint.isAnonymousNode,
       entrypointNode: entrypoint.entrypointNode
     }
+    this.header = header || {}
   }
 
   calcFee(customGasPriceGwei = 0, customGasLimit = 0) {
@@ -59,15 +61,68 @@ export default class GraphiteTx {
 
   async calcActivationAmount() {
     const value = +bigDecimal.multiply(this.gasPrice, ACTIVATION_GAS_LIMIT)
-    const initialFee = await requests.getInitialFee()
+    const initialFee = await requests.getInitialFee(this.header)
 
     return {
-      value,
+      value, // TODO: check value + initialFee
       initialFee,
       coinValue: +converter.wei_to_eth(value + initialFee),
       gasPrice: this.gasPrice,
       gasLimit: ACTIVATION_GAS_LIMIT
     }
+  }
+
+  async getDataForKycRequest(level) {
+    if (!LEVELS.includes(+level)) {
+      throw Error('Level must be a number from 1 to 3')
+    }
+    try {
+      const data = await requests.createKycRequest(this.address, level, this.header)
+      const fee = +data.gas * this.gasPrice
+      const finalValue = +data.value + fee
+      data.coinValue = +converter.wei_to_eth(finalValue)
+
+      return data
+    }
+    catch (e) {
+      console.log('getDataForKycRequest e', e.message)
+      return e.message
+    }
+  }
+
+  async getDataForFilterRequest(level) {
+    if (!LEVELS.includes(+level)) {
+      throw Error('Level must be a number from 0 to 3')
+    }
+    try {
+      const data = await requests.createFilterRequest(this.address, level, this.header)
+      const fee = +data.gas * this.gasPrice
+      data.coinValue = +converter.wei_to_eth(fee)
+
+      return data
+    }
+    catch (e) {
+      console.log('getDataForFilterRequest e', e.message)
+      return e.message
+    }
+  }
+
+  async changeKycOrFilterLevel(reqData = {}, privateKey, nonce) {
+    const {data, from, gas, to, value} = reqData
+
+    const params = {
+      value: value || '',
+      from,
+      to,
+      nonce,
+      gasPrice: this.gasPrice,
+      gasLimit: gas,
+      privateKey,
+      data,
+      chainId: CHAIN_ID
+    }
+
+    return makeRawEthTx(params)
   }
 
   async activateAccount({privateKey, nonce}) {
