@@ -7,6 +7,20 @@ import * as tinysecp from "tiny-secp256k1"
 const ECPair = ECPairFactory(tinysecp)
 export const validator = (pubkey, msghash, signature) => ECPair.fromPublicKey(pubkey).verify(msghash, signature)
 
+let LTC = coininfo.litecoin.main
+let FORMAT = LTC.toBitcoinJS()
+const NET_GAIN = {
+  messagePrefix: '\x19' + FORMAT.name + ' Signed Message:\n',
+  bech32: 'ltc',
+  bip32: {
+    public: FORMAT.bip32.public,
+    private: FORMAT.bip32.private
+  },
+  pubKeyHash: FORMAT.pubKeyHash,
+  scriptHash: FORMAT.scriptHash,
+  wif: FORMAT.wif
+}
+
 /**
  * Getting Litecoin address by node and derivation index
  * @param {Object} node - Input data for a transaction
@@ -16,21 +30,19 @@ export const validator = (pubkey, msghash, signature) => ECPair.fromPublicKey(pu
 
 export function getLtcAddress(node, childIndex) {
   try {
-    let curr = coininfo.litecoin.main
-    let frmt = curr.toBitcoinJS()
-    const netGain = {
-      messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
-      bech32: 'ltc',
-      bip32: {
-        public: frmt.bip32.public,
-        private: frmt.bip32.private
-      },
-      pubKeyHash: frmt.pubKeyHash,
-      scriptHash: frmt.scriptHash,
-      wif: frmt.wif
-    }
+    const pubKey = node.deriveChild(childIndex).publicKey
+    const address = bitcoin.payments.p2wpkh({pubkey: pubKey, network: NET_GAIN})
+    return address.address
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_core_ltc_address')
+  }
+}
 
-    const address = bitcoin.payments.p2wpkh({pubkey: node.deriveChild(childIndex).publicKey, network: netGain})
+export function getLtcAddressBuyPublicKey(pubKey) {
+  try {
+    const address = bitcoin.payments.p2wpkh({pubkey: pubKey, network: NET_GAIN})
     return address.address
   }
   catch (e) {

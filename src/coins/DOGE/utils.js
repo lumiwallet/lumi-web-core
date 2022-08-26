@@ -6,29 +6,41 @@ import * as tinysecp from "tiny-secp256k1"
 
 const ECPair = ECPairFactory(tinysecp)
 export const validator = (pubkey, msghash, signature) => ECPair.fromPublicKey(pubkey).verify(msghash, signature)
+
+const DOGE = coininfo.dogecoin.main
+const FORMAT = DOGE.toBitcoinJS()
+const NET_GAIN = {
+  messagePrefix: '\x19' + FORMAT.name + ' Signed Message:\n',
+  bip32: {
+    public: FORMAT.bip32.public,
+    private: FORMAT.bip32.private
+  },
+  pubKeyHash: FORMAT.pubKeyHash,
+  scriptHash: FORMAT.scriptHash,
+  wif: FORMAT.wif
+}
 /**
  * Getting Dogecoin address by node and derivation index
  * @param {Object} node - Input data for a transaction
  * @param {number} childIndex - Derivation index
- * @param {boolean} withoutPrefix - Flag for prefix
  * @returns {string} Returns address
  */
 
-export function getDogeAddress(node, childIndex, withoutPrefix = true) {
+export function getDogeAddress(node, childIndex) {
   try {
-    let curr = coininfo.dogecoin.main
-    let frmt = curr.toBitcoinJS()
-    const netGain = {
-      messagePrefix: '\x19' + frmt.name + ' Signed Message:\n',
-      bip32: {
-        public: frmt.bip32.public,
-        private: frmt.bip32.private
-      },
-      pubKeyHash: frmt.pubKeyHash,
-      scriptHash: frmt.scriptHash,
-      wif: frmt.wif
-    }
-    const address = bitcoin.payments.p2pkh({pubkey: node.deriveChild(childIndex).publicKey, network: netGain})
+    const pubKey = node.deriveChild(childIndex).publicKey
+    const address = bitcoin.payments.p2pkh({pubkey: pubKey, network: NET_GAIN})
+    return address.address
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_core_doge_address')
+  }
+}
+
+export function getDogeAddressBuyPublicKey(pubKey) {
+  try {
+    const address = bitcoin.payments.p2pkh({pubkey: pubKey, network: NET_GAIN})
     return address.address
   }
   catch (e) {

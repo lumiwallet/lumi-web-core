@@ -6,6 +6,21 @@ import {generateLtcCore} from '@/coins/LTC/core'
 import {generateXdcCore} from '@/coins/XDC/core'
 import {generateBtcvCore} from '@/coins/BTCV/core'
 import {generateBnbCore} from '@/coins/BNB/core'
+import * as PATH from '@/helpers/configs/hd-paths'
+import {derive, hdFromXprv} from '@/helpers/core'
+
+import {getBtcAddressByPublicKey} from '@/coins/BTC/utils'
+import {getBchAddressByPublicKey} from '@/coins/BCH/utils'
+import {getDogeAddressBuyPublicKey} from '@/coins/DOGE/utils'
+import {getLtcAddressBuyPublicKey} from '@/coins/LTC/utils'
+
+const addressMethod = {
+  'BTC': (pubKey, addressType) => getBtcAddressByPublicKey(pubKey, addressType),
+  'BTCV': (pubKey) => getBtcAddressByPublicKey(pubKey, 'p2wpkh', 'btcv'),
+  'BCH': (pubKey) => getBchAddressByPublicKey(pubKey),
+  'DOGE': (pubKey) => getDogeAddressBuyPublicKey(pubKey),
+  'LTC': (pubKey) => getLtcAddressBuyPublicKey(pubKey)
+}
 
 function createCoinsCores(hdkey, coins = []) {
   let core = {}
@@ -50,9 +65,58 @@ function createCoinsCores(hdkey, coins = []) {
   return core
 }
 
+function createCoreWithAddresses({
+  xprv = '',
+  coin = '',
+  addressType = '',
+  pathType = 0,
+  from = 0,
+  to = 20
+}) {
+  const pathName = `${ coin }_PATH`
+  let path = PATH[pathName] ? (PATH[pathName][addressType] ? PATH[pathName][addressType] : PATH[pathName]) : null
+
+  if (!path) {
+    throw Error('Currency not supported')
+  }
+  path += '/' + pathType
+
+  if (!xprv) {
+    throw Error('xprv is undefined')
+  }
+
+  let hdkey = hdFromXprv(xprv)
+  let node = derive(hdkey, path)
+  const info = {
+    node: {
+      privateExtendedKey: node.privateExtendedKey,
+      publicExtendedKey: node.publicExtendedKey
+    },
+    list: []
+  }
+
+  const addressFn = addressMethod[coin]
+
+  for (let i = from; i <= to; i++) {
+    const child = {}
+    const deriveChild = node.deriveChild(i)
+    child.path = `${ path }/${ i }`
+    child.privateKey = deriveChild.privateKey.toString('hex')
+    // child.privateKey = core.privateKeyToWIF(deriveChild.privateKey)
+    const publicKey = deriveChild.publicKey
+    child.publicKey = publicKey.toString('hex')
+    child.address = addressFn(publicKey, addressType)
+    info.list.push(child)
+  }
+  hdkey = node = null
+
+  return info
+}
+
 
 export {
   createCoinsCores,
+  createCoreWithAddresses,
   generateBtcCore,
   generateEthCore,
   generateBchCore,

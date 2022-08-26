@@ -21,7 +21,6 @@ export function generateDogeCore (hdkey) {
   item.internalNode = internalNode.privateExtendedKey
   item.externalAddress = getDogeAddress(externalNode, 0)
   item.internalAddress = getDogeAddress(internalNode, 0)
-  // item.dp = {external: dogecoin_external_path, internal: dogecoin_internal_path}
   externalNode = internalNode = null
 
   return item

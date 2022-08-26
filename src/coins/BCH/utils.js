@@ -22,6 +22,20 @@ export function getCashAddress(node, childIndex, withoutPrefix = true) {
   }
 }
 
+export function getBchAddressByPublicKey(pubKey, withoutPrefix = true) {
+  if (!pubKey) return ''
+
+  try {
+    const bitcorePubKey = new bitcore.PublicKey(pubKey)
+    let address = new bitcore.Address.fromPublicKey(bitcorePubKey)
+    return address.toCashAddress(withoutPrefix)
+  }
+  catch (e) {
+    console.log(e)
+    throw new CustomError('err_core_bch_address')
+  }
+}
+
 /**
  * Convert a Bitcoin Cash address from Legacy format to CashAddr format
  * @param {string} address - Bitcoin Cash address in Legacy format
