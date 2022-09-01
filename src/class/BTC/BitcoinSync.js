@@ -1,4 +1,4 @@
-import Request from '@/helpers/Request'
+import Request         from '@/helpers/Request'
 import {getBtcAddress} from '@/helpers/coreHelper'
 
 /**
@@ -17,7 +17,7 @@ export default class BitcoinSync {
    * @param {string} type - Bitcoin type. There may be p2pkh or p2wpkh
    * @param {Object} headers - Request headers
    */
-  constructor (externalNode, internalNode, api, type, headers) {
+  constructor(externalNode, internalNode, api, type, headers) {
     this.externalNode = externalNode
     this.internalNode = internalNode
     this.api = api
@@ -50,7 +50,7 @@ export default class BitcoinSync {
    * @constructor
    */
 
-  async Start () {
+  async Start() {
     this.transactions = {
       all: [],
       unique: []
@@ -68,7 +68,7 @@ export default class BitcoinSync {
    * @returns {Promise<boolean>}
    */
 
-  async getAddresses () {
+  async getAddresses() {
     const nodeData = [
       {
         node: this.externalNode,
@@ -109,7 +109,7 @@ export default class BitcoinSync {
    * @private
    */
 
-  async _getArrayOfAddresses (node, type, from, to) {
+  async _getArrayOfAddresses(node, type, from, to) {
     let addresses = []
 
     for (let i = from; i < to; i++) {
@@ -133,7 +133,7 @@ export default class BitcoinSync {
    * @param {string} address - Legacy Bitcoin address
    */
 
-  _getDeriveIndexByAddress (address) {
+  _getDeriveIndexByAddress(address) {
     let find = this.addresses.external.find(item => item.address === address)
     let node = 'external'
 
@@ -156,7 +156,7 @@ export default class BitcoinSync {
    * @returns {Promise<Array>} A list of addresses with transactions
    */
 
-  async getAddressesByNode (node, type) {
+  async getAddressesByNode(node, type) {
     const CONTROL_COUNT = 100
     let list = []
     let counter = 0
@@ -193,7 +193,7 @@ export default class BitcoinSync {
           this.transactions.all = [...this.transactions.all, ...res.transactions]
 
           for (let i = data.from; i < data.to; i++) {
-            const index = i < CONTROL_COUNT ? i : i - CONTROL_COUNT
+            const index = i < CONTROL_COUNT ? i : i - data.from
             let address = addresses[index]
             let find = res.transactions.find((itm) => itm.address === address)
             let item = {
@@ -201,7 +201,6 @@ export default class BitcoinSync {
               derive_index,
               address
             }
-
             if (find) {
               counter = 0
               list.push(item)
@@ -214,7 +213,6 @@ export default class BitcoinSync {
             }
             derive_index++
           }
-          console.log(counter, CONTROL_COUNT)
           if (counter < CONTROL_COUNT) {
             data.from += CONTROL_COUNT
             data.to += CONTROL_COUNT
@@ -256,7 +254,7 @@ export default class BitcoinSync {
    * getting balance, hash, time and block id
    */
 
-  async processTransactions () {
+  async processTransactions() {
     const hashes = this.transactions.all.map(item => item.hash)
     const unique_hashes = [...new Set(hashes)]
 
@@ -280,7 +278,7 @@ export default class BitcoinSync {
    * Gets information necessary to create a Bitcoin transaction
    */
 
-  async getTxInfoForUnspent () {
+  async getTxInfoForUnspent() {
     if (!this.unspent.length) return
     const unspent = []
 
@@ -291,7 +289,6 @@ export default class BitcoinSync {
       }
 
       const derivationInfo = this._getDeriveIndexByAddress(item.address)
-
       if (derivationInfo.index === null) continue
 
       item.derive_index = derivationInfo.index
@@ -306,7 +303,7 @@ export default class BitcoinSync {
    * Getting a balance of Bitcoin wallet from a list of unspent
    */
 
-  getBalance () {
+  getBalance() {
     let balance = 0
 
     this.unspent.forEach((item) => {
@@ -324,7 +321,7 @@ export default class BitcoinSync {
    * @returns {Promise<Object>} Address information, including a list of transactions
    */
 
-  async getMultiAddressRequest (addresses) {
+  async getMultiAddressRequest(addresses) {
     if (!addresses) return false
 
     const OFFSET_STEP = 100
@@ -375,7 +372,7 @@ export default class BitcoinSync {
    * @returns {Promise<Array>} Set of bitcoin fees
    */
 
-  async getFeesRequest () {
+  async getFeesRequest() {
     try {
       const res = await fetch(this.api.btcFee, {headers: this.headers})
       const resJson = await res.json()
@@ -392,7 +389,7 @@ export default class BitcoinSync {
    * @constructor
    */
 
-  get DATA () {
+  get DATA() {
     return {
       addresses: this.addresses,
       transactions: this.transactions,
