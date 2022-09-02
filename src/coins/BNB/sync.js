@@ -44,9 +44,9 @@ export default class BinanceSync {
 
   async getTransactions () {
     this.transactions = []
-    const startTime = 1496264400
     const endTime = Math.round(new Date().getTime() / 1000)
-    const step = 100
+    const startTime = endTime - (60*60*24*7)
+    const step = 50
 
     const req = async () => {
       let addParams = {

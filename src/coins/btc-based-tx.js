@@ -14,7 +14,7 @@ export class BitcoinBasedTx {
     this.type = data.type
     this.feeList = []
     this.dust = 1000
-    this.feeIds = ['fast', 'regular', 'custom']
+    this.feeIds = ['fast', 'medium','regular', 'custom']
   }
 
   async calcFee(amount = 0, customFee = 0, sendAll = false) {

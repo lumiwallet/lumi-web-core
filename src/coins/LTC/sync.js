@@ -38,12 +38,7 @@ export default class LitecoinSync {
       all: [],
       unique: []
     }
-    this.fee = [
-      {
-        feePerByte: 3,
-        level: 'Regular'
-      }
-    ]
+    this.fee = []
     this.headers = headers
   }
 
@@ -63,7 +58,10 @@ export default class LitecoinSync {
       unique: []
     }
     this.unspent = []
-    await this.getAddresses()
+    await Promise.all([
+      await this.getAddresses(),
+      await this.getFeesRequest()
+    ])
     this.getBalance()
   }
 
@@ -312,6 +310,7 @@ export default class LitecoinSync {
   async getFeesRequest () {
     try {
       this.fee = await requests.getFees(this.headers)
+      console.log('core this.fee', this.fee)
     } catch (err) {
       console.log('LTC getFeesRequest', err)
     }
