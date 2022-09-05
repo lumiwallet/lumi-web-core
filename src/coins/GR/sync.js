@@ -32,7 +32,11 @@ export default class GraphiteSync {
     this.gasPrice = 0
     this.gasLimit = 0
     this.headers = headers
-    this.accountActivated = false
+    this.info = {
+      active: false,
+      kycFilterLevel: 0,
+      kycLevel: 0
+    }
     this.env = env
   }
 
@@ -48,11 +52,10 @@ export default class GraphiteSync {
 
   async Start() {
     await Promise.all([
-      await this.getBalance(),
+      await this.getAddressInfo(),
       await this.getTransactions(),
-      await this.getGasInfo()
+      await this.getGasInfo(),
     ])
-    this.checkAccountActivation()
   }
 
   /**
@@ -88,16 +91,15 @@ export default class GraphiteSync {
     }
   }
 
-  checkAccountActivation() {
-    if (!this.transactions.length) {
-      this.accountActivated = false
-      return
-    }
-    this.accountActivated = !!this.transactions.find(tx =>
-      tx.to === FEE_CONTRACT_ADDR &&
-      tx.input.includes(ACTIVATION_METHOD_SUFFIX) &&
-      (tx.isError === '0' || !tx.isError)
-    )
+  /**
+   * Request to receive an info about Graphite wallet
+   * @returns {Promise<Object>}
+   */
+
+  async getAddressInfo() {
+    const {balance, ...info} = await requests.getAddressInfo(this.address, this.headers, this.env)
+    this.balance = parseInt(balance)
+    this.info = info
   }
 
   get DATA() {
@@ -107,7 +109,7 @@ export default class GraphiteSync {
       transactions: this.transactions,
       gasPrice: this.gasPrice,
       gasLimit: this.gasLimit,
-      accountActivated: this.accountActivated
+      info: this.info
     }
   }
 }

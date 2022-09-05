@@ -27,7 +27,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@ethereumjs/tx": "^3.3.0",
-    "@lumiwallet/lumi-network": "^1.0.8",
+    "@lumiwallet/lumi-network": "1.0.14",
     "assert": "^2.0.0",
     "bchaddrjs": "^0.5.2",
     "bech32": "^2.0.0",
@@ -57,8 +57,7 @@
     "web3": "^1.7.3",
     "web3-utils": "^1.7.3",
     "webpack": "^5.69.0",
-    "wif": "^2.0.6",
-    "worker-loader": "^3.0.8"
+    "wif": "^2.0.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",

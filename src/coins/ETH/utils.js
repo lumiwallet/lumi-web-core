@@ -52,6 +52,26 @@ export function getEthAddress(publicKey) {
   }
 }
 
+export function toChecksumAddress(address) {
+  if (!address) return ''
+  try {
+    return ethUtil.toChecksumAddress(address)
+  }
+  catch (e) {
+    console.log('Invalid address', e)
+  }
+}
+
+export function isValidChecksumAddress(address) {
+  if (!address) return false
+  try {
+    return ethUtil.isValidChecksumAddress(address)
+  }
+  catch (e) {
+    console.log('Invalid address', e)
+  }
+}
+
 /**
  * Getting Ethereum wallet address by node
  * @param {Object} node - Ethereum node
@@ -102,7 +122,7 @@ export function makeRawEthTx(data = {}) {
     if (to.startsWith('xdc')) {
       to = to.replace('xdc', '0x')
     }
-    let bigIntValue = new ethUtil.BN(value)
+    let bigIntValue = new ethUtil.BN(value.toString())
     let params = {
       to,
       nonce: ethUtil.intToHex(parseInt(nonce)),
@@ -110,20 +130,19 @@ export function makeRawEthTx(data = {}) {
       gasPrice: ethUtil.intToHex(parseInt(gasPrice)),
       gasLimit: ethUtil.intToHex(parseInt(gasLimit))
     }
-
     if (data.hasOwnProperty('from') && data.from) {
       params.from = data.from
     }
     if (data.hasOwnProperty('data') && data.data) {
       params.data = data.data
     }
-
     let common
     if (chainId) {
       common = Common.custom({chainId})
     } else {
       common = new Common(({chain: Chain.Mainnet}))
     }
+
     const tx = Transaction.fromTxData(params, {common})
 
     let buffer

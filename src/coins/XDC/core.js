@@ -13,6 +13,7 @@ export function generateXdcCore (hdkey) {
 
   item.node = derive(hdkey, XDC_PATH)
   item.privateKey = getEthPrivateKey(item.node)
+  item.privateKeyHex = '0x' + item.privateKey.toString('hex')
   item.publicKey = getEthPublicKey(item.privateKey)
   item.externalAddress = getEthAddress(item.publicKey).replace('0x', 'xdc')
 

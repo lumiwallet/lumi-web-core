@@ -1,4 +1,5 @@
 import addressValidator from 'multicoin-address-validator'
+import {isValidChecksumAddress} from '@/coins/ETH/utils'
 
 export const getCoinByAddress = (address) => {
   const coins = ['BTC', 'ETH', 'BCH', 'DOGE', 'LTC', 'BNB', 'XDC', 'BTCV', 'EVER', 'ADA', '@G']
@@ -20,7 +21,7 @@ export const checkAddress = (address, coin, network = 'prod') => {
     case 'BNB':
       return isBNB(address)
     case '@G':
-      return addressValidator.validate(address, 'ETH', network)
+      return addressValidator.validate(address, 'ETH', network) && isValidChecksumAddress(address)
     default:
       return addressValidator.validate(address, coin, network)
   }

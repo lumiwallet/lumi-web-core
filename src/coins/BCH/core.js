@@ -1,6 +1,6 @@
-import {derive} from '@/helpers/core'
-import {BCH_PATH} from '@/helpers/configs/hd-paths'
-import {getBtcAddress} from '@/coins/BTC/utils'
+import {derive}         from '@/helpers/core'
+import {BCH_PATH}       from '@/helpers/configs/hd-paths'
+import {getCashAddress} from './utils'
 
 /**
  * Creating a core for Bitcoin Cash.
@@ -11,7 +11,7 @@ import {getBtcAddress} from '@/coins/BTC/utils'
  * @private
  */
 
-export function generateBchCore (hdkey) {
+export function generateBchCore(hdkey) {
   const bitcoincash_external_path = BCH_PATH + `/0`
   const bitcoincash_internal_path = BCH_PATH + `/1`
 
@@ -20,9 +20,8 @@ export function generateBchCore (hdkey) {
   let internalNode = derive(hdkey, bitcoincash_internal_path)
   item.externalNode = externalNode.privateExtendedKey
   item.internalNode = internalNode.privateExtendedKey
-  item.externalAddress = getBtcAddress(externalNode, 0)
-  item.internalAddress = getBtcAddress(internalNode, 0)
-  // item.dp = {external: bitcoincash_external_path, internal: bitcoincash_internal_path}
+  item.externalAddress = getCashAddress(externalNode, 0)
+  item.internalAddress = getCashAddress(internalNode, 0)
   externalNode = internalNode = null
 
   return item

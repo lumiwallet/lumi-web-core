@@ -1,5 +1,5 @@
-import {BTCV_PATH} from '@/helpers/configs/hd-paths'
-import {derive} from '@/helpers/core'
+import {BTCV_PATH}     from '@/helpers/configs/hd-paths'
+import {derive}        from '@/helpers/core'
 import {getBtcAddress} from '@/coins/BTC/utils'
 
 /**
@@ -11,11 +11,11 @@ import {getBtcAddress} from '@/coins/BTC/utils'
  * @private
  */
 
-export function generateBtcvCore (hdkey) {
+export function generateBtcvCore(hdkey) {
   const network = 'btcv'
   const type = 'p2wpkh'
   const bitcoinvault_external_path = BTCV_PATH + `/0`
-  const bitcoinvault_internal_path = BTCV_PATH+ `/1`
+  const bitcoinvault_internal_path = BTCV_PATH + `/1`
 
   let item = {}
   let externalNode = derive(hdkey, bitcoinvault_external_path)

@@ -8,9 +8,9 @@ export function generateBnbCore (hdkey) {
 
   item.node = node.privateExtendedKey
   item.privateKey = node._privateKey.toString('hex')
-  // item.privateKeyHex = item.privateKey.toString('hex')
+  item.privateKeyHex = item.privateKey.toString('hex')
   item.publicKey = node._publicKey
-  // item.publicKeyHex = item.node._publicKey.toString('hex')
+  item.publicKeyHex = node._publicKey.toString('hex')
   item.externalAddress = getBnbAddressByPublicKey(item.publicKey.toString('hex'))
   node = null
 
