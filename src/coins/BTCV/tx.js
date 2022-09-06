@@ -21,11 +21,7 @@ export default class BitcoinVaultTx extends BitcoinBasedTx{
    */
   constructor (data) {
     super(data)
-    this.fees = data.feeList.map(item => {
-      item.level = item.name
-      return item
-    })
-    this.feeIds = ['regular', 'custom']
+    this.feeIds = ['optimal', 'custom']
     this.type = 'p2wpkh'
   }
 

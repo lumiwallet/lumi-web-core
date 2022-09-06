@@ -11,7 +11,7 @@ const DEFAULT_FEE = [
 ]
 
 export default class BinanceSync {
-  constructor (address, headers) {
+  constructor(address, headers) {
     this.address = address
     this.balance = 0
     this.symbol = ''
@@ -22,7 +22,7 @@ export default class BinanceSync {
     this.headers = headers
   }
 
-  async Start () {
+  async Start() {
     await Promise.all([
       await this.getInfo(),
       await this.getTransactions(),
@@ -30,23 +30,23 @@ export default class BinanceSync {
     ])
   }
 
-  async getInfo () {
+  async getInfo() {
     this.balance = 0
 
     let res = await requests.getInfo(this.address, this.headers)
 
     if (res.hasOwnProperty('balances')) {
-      this.balance = res.balances.length ? +res.balances[0].free || 0: 0
-      this.symbol = res.balances.length ? res.balances[0].symbol || '': ''
+      this.balance = res.balances.length ? +res.balances[0].free || 0 : 0
+      this.symbol = res.balances.length ? res.balances[0].symbol || '' : ''
       this.account_number = res.account_number || 0
       this.sequence = res.sequence || 0
     }
   }
 
-  async getTransactions () {
+  async getTransactions() {
     this.transactions = []
-    const startTime = getOffsetTimestamp(7)
     const endTime = getCurrentTimestamp()
+    const startTime = endTime - (60 * 60 * 24 * 7)
     const step = 50
 
     const req = async () => {
@@ -72,7 +72,7 @@ export default class BinanceSync {
     await req()
   }
 
-  async getFee () {
+  async getFee() {
     try {
       this.fee = await requests.getFees(this.headers)
     }
@@ -81,7 +81,7 @@ export default class BinanceSync {
     }
   }
 
-  get DATA () {
+  get DATA() {
     return {
       address: this.address,
       balance: this.balance,
