@@ -198,8 +198,7 @@ export default class BitcoinSync {
           this.transactions.all = [...this.transactions.all, ...res.transactions]
 
           for (let i = data.from; i < data.to; i++) {
-            if (counter >= CONTROL_COUNT) break
-            const index = i < CONTROL_COUNT ? i : i - CONTROL_COUNT
+            const index = i < CONTROL_COUNT ? i : i - data.from
             let address = addresses[index]
             let find = res.transactions.find((itm) => itm.address === address)
             let item = {
