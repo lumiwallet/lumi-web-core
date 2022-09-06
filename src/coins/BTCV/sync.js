@@ -40,12 +40,7 @@ export default class BitcoinVaultSync {
       all: [],
       unique: []
     }
-    this.fee = [
-      {
-        feePerByte: 3,
-        name: 'Regular'
-      }
-    ]
+    this.fee = []
     this.headers = headers
   }
 
@@ -235,18 +230,18 @@ export default class BitcoinVaultSync {
 
   async getUnspent () {
     let res = await this.getUnspentOutputsRequest(this.addresses.list.all)
-
     res.forEach(item => {
       let {address, unspent} = item
 
       if (unspent.length) {
         let derivationInfo = this._getDeriveIndexByAddress(address)
-        this.unspent = unspent.map(utxo => {
+        let utxos = unspent.map(utxo => {
           utxo.address = address
           utxo.deriveIndex = derivationInfo.index
           utxo.nodeType = derivationInfo.node
           return utxo
         })
+        this.unspent.push(...utxos)
       }
     })
     this.unspent = this.unspent.sort((a, b) => b.value - a.value)
@@ -263,7 +258,6 @@ export default class BitcoinVaultSync {
     if (!Array.isArray(unspent)) {
       return 0
     }
-
     let balance = 0
 
     unspent.forEach((item) => {
@@ -271,7 +265,6 @@ export default class BitcoinVaultSync {
         balance += +item.value
       }
     })
-
     return balance
   }
 

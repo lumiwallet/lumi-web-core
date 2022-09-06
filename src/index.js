@@ -23,4 +23,4 @@ export {
   utils
 }
 
-console.log('link core 0')
+console.log('link core')

@@ -39,12 +39,7 @@ export default class BitcoinCashSync {
       all: [],
       unique: []
     }
-    this.fee = [
-      {
-        feePerByte: 3,
-        level: 'Regular'
-      }
-    ]
+    this.fee = []
     this.headers = headers
   }
 
@@ -64,7 +59,10 @@ export default class BitcoinCashSync {
       unique: []
     }
     this.unspent = []
-    await this.getAddresses()
+    await Promise.all([
+      await this.getAddresses(),
+      await this.getFeesRequest()
+    ])
     this.getBalance()
   }
 
@@ -303,6 +301,19 @@ export default class BitcoinCashSync {
     })
 
     this.balance = balance
+  }
+
+  /**
+   * Request to receive a recommended set of bitcoin cash fees
+   * @returns {Promise<Array>} Set of Bitcoin Cash fees
+   */
+
+  async getFeesRequest () {
+    try {
+      this.fee = await requests.getFees(this.headers)
+    } catch (err) {
+      console.log('BCH getFeesRequest', err)
+    }
   }
 
   get DATA () {

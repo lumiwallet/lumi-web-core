@@ -22,7 +22,7 @@ export class BitcoinCashTx extends BitcoinBasedTx {
    */
   constructor (data) {
     super(data)
-    this.feeIds = ['regular', 'custom']
+    this.feeIds = ['optimal', 'custom']
     this.type = 'p2pkh'
   }
 
