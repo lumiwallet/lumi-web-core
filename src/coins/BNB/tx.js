@@ -79,7 +79,7 @@ export default class BinanceTx {
    **/
 
   make (data) {
-    const {address, amount, fee, privateKey, sequence} = data
+    const {privateKey, sequence} = data
     this.memo = data.memo || ''
     this.msg = this.getSignMsg(data)
     const signBytes = this.getSignBytes(this.msg, sequence)
@@ -89,7 +89,6 @@ export default class BinanceTx {
       privKeyBuf
     )
     this.addSignature(this.publicKey, signature, sequence)
-
     const rawTx = this.serialize()
     const hash = this.getHash()
 
