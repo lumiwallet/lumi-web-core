@@ -26,6 +26,7 @@ export default class XinfinTx {
     this.address = data.address
     this.balance = data.balance
     this.gasPrice = data.gasPrice || 250000000
+    this.gasPriceGwei = converter.wei_to_gwei(this.gasPrice, 2)
     this.gasLimit = DEFAULT_ETH_GAS_LIMIT
     this.feeInGwei = +bigDecimal.multiply(this.gasPrice, this.gasLimit)
     this.finalFee = +converter.wei_to_eth(this.feeInGwei, 14, false)
@@ -43,7 +44,7 @@ export default class XinfinTx {
         id: 'optimal',
         gasPrice: this.gasPrice,
         gasLimit: this.gasLimit,
-        gasPriceGwei: converter.wei_to_gwei(this.gasPrice),
+        gasPriceGwei: this.gasPriceGwei,
         fee: this.finalFee,
         coinValue: this.finalFee,
         value: this.feeInGwei

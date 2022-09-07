@@ -52,12 +52,12 @@ export default {
     let num = n1.divide(n2, customPrecision || PRECISION)
     return returnNumber ? +num.value : removeLastZero(num.value)
   },
-  wei_to_gwei(wei) {
+  wei_to_gwei(wei, precision = 0) {
     if (!+wei) return 0
     wei = wei.toString()
     let n1 = new bigDecimal(wei)
     let n2 = new bigDecimal(GWEI_FACTOR)
-    let num = n1.divide(n2, 0)
+    let num = n1.divide(n2, precision)
     return +num.value
   },
   gwei_to_wei (gwei) {
