@@ -1,14 +1,7 @@
-import {CoinsNetwork}                            from '@lumiwallet/lumi-network'
-import {getCurrentTimestamp, getOffsetTimestamp} from '@/helpers/timestamp'
+import {CoinsNetwork}        from '@lumiwallet/lumi-network'
+import {getCurrentTimestamp} from '@/helpers/timestamp'
 
 const requests = CoinsNetwork.bnb
-
-const DEFAULT_FEE = [
-  {
-    'name': 'Regular',
-    'fee': 7500
-  }
-]
 
 export default class BinanceSync {
   constructor(address, headers) {
@@ -60,9 +53,9 @@ export default class BinanceSync {
 
       let res = await requests.getTxInfo(addParams, this.headers)
 
-      if (res && res?.tx) {
-        this.transactions = [...res.tx, ...this.transactions]
-        if (res.tx.length < res.total) {
+      if (res && res?.txs) {
+        this.transactions = [...res.txs, ...this.transactions]
+        if (res.txs.length < res.total) {
           addParams.offset += step
           await req()
         }
