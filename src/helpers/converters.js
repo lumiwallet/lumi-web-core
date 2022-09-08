@@ -5,6 +5,7 @@ import bigDecimal from 'js-big-decimal'
  */
 const BTC_FACTOR = Math.pow(10, 8)
 const ETH_FACTOR = Math.pow(10, 18)
+const GWEI_FACTOR = Math.pow(10, 9)
 const PRECISION = 10
 
 export default {
@@ -50,6 +51,21 @@ export default {
     let n2 = new bigDecimal(ETH_FACTOR)
     let num = n1.divide(n2, customPrecision || PRECISION)
     return returnNumber ? +num.value : removeLastZero(num.value)
+  },
+  wei_to_gwei(wei, precision = 0) {
+    if (!+wei) return 0
+    wei = wei.toString()
+    let n1 = new bigDecimal(wei)
+    let n2 = new bigDecimal(GWEI_FACTOR)
+    let num = n1.divide(n2, precision)
+    return +num.value
+  },
+  gwei_to_wei (gwei) {
+    if (!+gwei) return 0
+    let n1 = new bigDecimal(gwei)
+    let n2 = new bigDecimal(GWEI_FACTOR)
+    let num = n1.multiply(n2)
+    return +bigDecimal.floor(num.value)
   },
   /**
    * Convert Ethereum to WEI
