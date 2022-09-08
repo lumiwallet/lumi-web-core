@@ -35,9 +35,7 @@ export default class GraphiteTx {
     customGasPriceGwei = +customGasPriceGwei
     customGasLimit = +customGasLimit
     const customGasPriceWei = converter.gwei_to_wei(customGasPriceGwei)
-    const estimateGas = await this.getEstimateGas({
-      method: 'calcFee'
-    })
+    const estimateGas = await this.getEstimateGas({})
 
     this.feeList = [
       {
@@ -61,8 +59,7 @@ export default class GraphiteTx {
     return this.feeList
   }
 
-  async getEstimateGas({to = '', value = '', data = '', method = ''}) {
-    console.log('CORE start getEstimateGas', method)
+  async getEstimateGas({to = '', value = '', data = ''}) {
     try {
       if (!data) {
         if (!this.entrypoint.isAnonymousNode) {
@@ -77,9 +74,8 @@ export default class GraphiteTx {
         to: to || this.address,
         data
       }
-      console.log('params for gas', params)
       const gasAmount = await requests.getEstimateGas(params, this.header)
-      console.log('gasAmount =', gasAmount)
+
       return gasAmount || DEFAULT_GAS_LIMIT
     } catch (e) {
       console.log('getEstimateGas e', e)
@@ -155,14 +151,11 @@ export default class GraphiteTx {
 
   async calcActivationAmount() {
     const data = this.getActivateAccountData()
-    console.log('CORE calcActivationAmount', data)
     const initialFee = await requests.getInitialFee(this.header)
-    console.log('initialFee', initialFee)
     const estimateGas = await this.getEstimateGas({
       data,
       to: FEE_CONTRACT_ADDR,
-      value: web3.utils.toHex(initialFee),
-      method: 'calcActivationAmount'
+      value: web3.utils.toHex(initialFee)
     })
     const value = +bigDecimal.multiply(this.gasPrice, estimateGas)
 
@@ -176,11 +169,8 @@ export default class GraphiteTx {
   }
 
   async activateAccount({privateKey, nonce}) {
-    console.log('start activateAccount')
     const data = this.getActivateAccountData()
-    console.log('--data', data)
     const fee = await this.calcActivationAmount(data)
-    console.log('--fee', fee)
     const params = {
       from: this.address,
       to: FEE_CONTRACT_ADDR,
