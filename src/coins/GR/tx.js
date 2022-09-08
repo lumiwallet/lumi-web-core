@@ -7,7 +7,6 @@ import Web3 from 'web3'
 import {
   DEFAULT_GAS_PRICE,
   DEFAULT_GAS_LIMIT,
-  ACTIVATION_GAS_LIMIT,
   SEPARATOR,
   CHAIN_ID,
   FEE_CONTRACT_ADDR,
@@ -32,19 +31,20 @@ export default class GraphiteTx {
     this.header = header || {}
   }
 
-  calcFee(customGasPriceGwei = 0, customGasLimit = 0) {
+  async calcFee(customGasPriceGwei = 0, customGasLimit = 0) {
     customGasPriceGwei = +customGasPriceGwei
     customGasLimit = +customGasLimit
     const customGasPriceWei = converter.gwei_to_wei(customGasPriceGwei)
+    const estimateGas = await this.getEstimateGas({})
 
     this.feeList = [
       {
         id: 'optimal',
         gasPrice: this.gasPrice,
         gasPriceGwei: converter.wei_to_gwei(this.gasPrice),
-        gasLimit: this.gasLimit,
-        coinValue: +converter.wei_to_eth(+bigDecimal.multiply(this.gasPrice, this.gasLimit)),
-        value: +bigDecimal.multiply(this.gasPrice, this.gasLimit)
+        gasLimit: estimateGas,
+        coinValue: +converter.wei_to_eth(+bigDecimal.multiply(this.gasPrice, estimateGas)),
+        value: +bigDecimal.multiply(this.gasPrice, estimateGas)
       },
       {
         custom: true,
@@ -59,16 +59,26 @@ export default class GraphiteTx {
     return this.feeList
   }
 
-  async calcActivationAmount() {
-    const value = +bigDecimal.multiply(this.gasPrice, ACTIVATION_GAS_LIMIT)
-    const initialFee = await requests.getInitialFee(this.header)
+  async getEstimateGas({to = '', value = '', data = ''}) {
+    try {
+      if (!data) {
+        if (!this.entrypoint.isAnonymousNode) {
+          data = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypoint.entrypointNode))
+          data = web3.utils.bytesToHex(data)
+        }
+      }
 
-    return {
-      value, // TODO: check value + initialFee
-      initialFee,
-      coinValue: +converter.wei_to_eth(value + initialFee),
-      gasPrice: this.gasPrice,
-      gasLimit: ACTIVATION_GAS_LIMIT
+      const params = {
+        from: this.address,
+        value: value || '0x0',
+        to: to || this.address,
+        data
+      }
+      const gasAmount = await requests.getEstimateGas(params, this.header)
+
+      return gasAmount || DEFAULT_GAS_LIMIT
+    } catch (e) {
+      console.log('getEstimateGas e', e)
     }
   }
 
@@ -125,8 +135,7 @@ export default class GraphiteTx {
     return makeRawEthTx(params)
   }
 
-  async activateAccount({privateKey, nonce}) {
-    const fee = await this.calcActivationAmount()
+  getActivateAccountData() {
     const feeContract = new web3.eth.Contract(FeeContractAbi, FEE_CONTRACT_ADDR)
     const tx = feeContract.methods.pay()
     const methodEncoded = tx.encodeABI()
@@ -134,18 +143,44 @@ export default class GraphiteTx {
     let data = ''
     if (!this.entrypoint.isAnonymousNode) {
       data = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypoint.entrypointNode)).concat(web3.utils.hexToBytes(methodEncoded))
+      data = web3.utils.bytesToHex(data)
     }
 
+    return data
+  }
+
+  async calcActivationAmount() {
+    const data = this.getActivateAccountData()
+    const initialFee = await requests.getInitialFee(this.header)
+    const estimateGas = await this.getEstimateGas({
+      data,
+      to: FEE_CONTRACT_ADDR,
+      value: web3.utils.toHex(initialFee)
+    })
+    const value = +bigDecimal.multiply(this.gasPrice, estimateGas)
+
+    return {
+      value, // TODO: check value + initialFee
+      initialFee,
+      coinValue: +converter.wei_to_eth(value + initialFee),
+      gasPrice: this.gasPrice,
+      gasLimit: estimateGas
+    }
+  }
+
+  async activateAccount({privateKey, nonce}) {
+    const data = this.getActivateAccountData()
+    const fee = await this.calcActivationAmount(data)
     const params = {
-      value: fee.initialFee,
       from: this.address,
       to: FEE_CONTRACT_ADDR,
-      nonce,
+      chainId: CHAIN_ID,
+      value: fee.initialFee,
       gasPrice: fee.gasPrice,
       gasLimit: fee.gasLimit,
+      nonce,
       privateKey,
-      data: data ? web3.utils.bytesToHex(data) : '',
-      chainId: CHAIN_ID
+      data
     }
 
     return makeRawEthTx(params)

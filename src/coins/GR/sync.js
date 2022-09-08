@@ -31,6 +31,7 @@ export default class GraphiteSync {
     this.transactions = []
     this.gasPrice = 0
     this.gasLimit = 0
+    this.latestBlock = 0
     this.headers = headers
     this.info = {
       active: false,
@@ -55,6 +56,7 @@ export default class GraphiteSync {
       await this.getAddressInfo(),
       await this.getTransactions(),
       await this.getGasInfo(),
+      await this.getLatestBlock()
     ])
   }
 
@@ -102,6 +104,10 @@ export default class GraphiteSync {
     this.info = info
   }
 
+  async getLatestBlock() {
+    this.latestBlock = await requests.getLatestBlock(this.headers, this.env)
+  }
+
   get DATA() {
     return {
       address: this.address,
@@ -109,7 +115,8 @@ export default class GraphiteSync {
       transactions: this.transactions,
       gasPrice: this.gasPrice,
       gasLimit: this.gasLimit,
-      info: this.info
+      info: this.info,
+      latestBlock: this.latestBlock
     }
   }
 }
