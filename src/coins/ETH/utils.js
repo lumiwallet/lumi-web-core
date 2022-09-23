@@ -156,10 +156,16 @@ export function makeRawEthTx(data = {}) {
     const signedTx = tx.sign(privateKeyBuffer)
     const serializedTx = signedTx.serialize()
     const hash = signedTx.hash().toString('hex')
-
+    const txData = {
+      gasLimit: gasLimit.toString(),
+      gasPrice: gasPrice.toString(),
+      value: value.toString(),
+      input: data.data
+    }
     return {
       hash: `0x${ hash }`,
-      tx: `0x${ serializedTx.toString('hex') }`
+      tx: `0x${ serializedTx.toString('hex') }`,
+      txData
     }
   }
   catch (e) {
