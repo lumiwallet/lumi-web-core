@@ -1,4 +1,5 @@
-import {CoinsNetwork} from '@lumiwallet/lumi-network'
+import {CoinsNetwork}    from '@lumiwallet/lumi-network'
+import {toDecimal, toBN} from 'web3-utils'
 
 const request = CoinsNetwork.ethTokens
 
@@ -30,11 +31,11 @@ export default class EthereumTokensSync {
     this.transactions = []
 
     await Promise.all([
-      this.getOutTransactions(),
+      // this.getOutTransactions(),
       this.getInTransactions()
     ])
     this.transactions = this.transactions.filter((item, index, self) => {
-      return index === self.findIndex((i) => i.transactionHash === item.transactionHash)
+      return index === self.findIndex((i) => i.hash === item.hash)
     })
   }
 
@@ -45,15 +46,34 @@ export default class EthereumTokensSync {
   }
 
   async getInTransactions() {
-    let res = await request.getInTransactions(this.token.contract,this.topic0,this.otherTopics)
+    let res = await request.getInTransactions(this.token.contract, this.topic0, this.otherTopics, this.headers)
+    let formatedTxs = this.processTransactions(res)
 
-    this.transactions.push(...res)
+    this.transactions.push(...formatedTxs)
   }
 
-  get DATA () {
+  processTransactions(txs) {
+    return txs.map(item => {
+      const fromAddress = item.topics[1].replace('0x000000000000000000000000', '0x')
+
+      return {
+        to: this.address,
+        from: fromAddress,
+        hash: item.transactionHash,
+        gasPrice: toDecimal(item.gasPrice),
+        gasUsed: toDecimal(item.gasUsed),
+        timeStamp: toDecimal(item.timeStamp),
+        blockNumber: toDecimal(item.blockNumber),
+        amount: toBN(item.data).toString(),
+        action: 'incoming'
+      }
+    })
+  }
+
+  get DATA() {
     return {
       balance: this.balance,
-      transactions: this.transactions,
+      transactions: this.transactions
     }
   }
 }

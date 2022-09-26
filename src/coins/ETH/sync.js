@@ -1,7 +1,9 @@
 import {restoreClass} from '@/helpers/sync-utils'
 import {CoinsNetwork} from '@lumiwallet/lumi-network'
+import {decodeInputData} from './utils.js'
 
 const requests = CoinsNetwork.eth
+const EMPTY_INPUT_MARKER = '0x'
 
 /**
  * Class EthereumSync
@@ -63,7 +65,13 @@ export default class EthereumSync {
    */
 
   async getTransactions () {
-    this.transactions = await requests.getTransactions(this.address, this.headers, this.env)
+    this.transactions = await requests.getAllTransactions(this.address, this.headers, this.env)
+
+    for (let tx of this.transactions) {
+      if (tx.input !== EMPTY_INPUT_MARKER) {
+        tx.decodedInput = decodeInputData(tx.input)
+      }
+    }
 
     return this.transactions
   }

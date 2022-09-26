@@ -154,7 +154,6 @@ export default class EthereumTx {
     amountBN = this.web3.utils.toBN(amountFormat)
     amountHex = '0x' + amountBN.mul(this.web3.utils.toBN(10).pow(decimalsBN)).toString('hex')
 
-
     let params = {
       from: this.address,
       to: this.token.contract,
