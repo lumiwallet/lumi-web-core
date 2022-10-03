@@ -1,8 +1,8 @@
 import Common, {Chain} from '@ethereumjs/common'
 import {Transaction}   from '@ethereumjs/tx'
 import * as ethUtil    from 'ethereumjs-util'
-import CustomError from '@/helpers/handleErrors'
-import Web3 from 'web3'
+import CustomError     from '@/helpers/handleErrors'
+import Web3            from 'web3'
 const web3 = new Web3()
 const decodeParams = [
   {
@@ -167,7 +167,6 @@ export function makeRawEthTx(data = {}) {
     } else {
       common = new Common(({chain: Chain.Mainnet}))
     }
-
     const tx = Transaction.fromTxData(params, {common})
 
     let buffer
@@ -197,4 +196,9 @@ export function makeRawEthTx(data = {}) {
     console.log(e)
     throw new CustomError('err_tx_eth_build')
   }
+}
+
+export const getEntrypointTxData = (separator = [], nodeAddress) => {
+  const data = separator.concat(web3.utils.hexToBytes(nodeAddress))
+  return web3.utils.bytesToHex(data)
 }

@@ -310,7 +310,6 @@ export default class LitecoinSync {
   async getFeesRequest () {
     try {
       this.fee = await requests.getFees(this.headers)
-      console.log('core this.fee', this.fee)
     } catch (err) {
       console.log('LTC getFeesRequest', err)
     }
