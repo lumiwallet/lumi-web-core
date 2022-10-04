@@ -168,7 +168,7 @@ export default class GraphiteTx {
     }
   }
 
-  async activateAccount({privateKey, nonce}) {
+  async activateAccount({privateKey, nonce, getParams = false}) {
     const data = this.getActivateAccountData()
     const fee = await this.calcActivationAmount(data)
     const params = {
@@ -183,10 +183,14 @@ export default class GraphiteTx {
       data
     }
 
-    return makeRawEthTx(params)
+    if (getParams) {
+      return params
+    } else {
+      return makeRawEthTx(params)
+    }
   }
 
-  async make({address, amount, fee, privateKey, nonce}) {
+  async make({address, amount, fee, privateKey, nonce, data}) {
     const amountInWei = converter.eth_to_wei(amount)
     const finalAmount = +bigDecimal.add(amountInWei, fee.value)
     const surrender = bigDecimal.subtract(this.balance, finalAmount)
@@ -195,9 +199,15 @@ export default class GraphiteTx {
       throw new CustomError('err_tx_eth_balance')
     }
 
-    let data = ''
-    if (!this.entrypoint.isAnonymousNode) {
-      data = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypoint.entrypointNode))
+    let finalData = ''
+    if (data) {
+      finalData = data
+    } else if (!this.entrypoint.isAnonymousNode) {
+      finalData = SEPARATOR.concat(web3.utils.hexToBytes(this.entrypoint.entrypointNode))
+    }
+
+    if (finalData && typeof finalData !== 'string') {
+      finalData = web3.utils.bytesToHex(finalData)
     }
 
     const params = {
@@ -208,7 +218,7 @@ export default class GraphiteTx {
       gasPrice: fee.gasPrice,
       gasLimit: fee.gasLimit,
       privateKey,
-      data: data ? web3.utils.bytesToHex(data) : '',
+      data: finalData,
       chainId: CHAIN_ID
     }
 
