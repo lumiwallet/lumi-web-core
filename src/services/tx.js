@@ -12,10 +12,10 @@ export {
   BitcoinTx,
   EthereumTx,
   GraphiteTx,
+  XinfinTx,
   DogecoinTx,
   BitcoinCashTx,
   BinanceTx,
   BitcoinVaultTx,
-  XinfinTx,
   LitecoinTx
 }

@@ -2,32 +2,20 @@ import Common, {Chain} from '@ethereumjs/common'
 import {Transaction}   from '@ethereumjs/tx'
 import * as ethUtil    from 'ethereumjs-util'
 import CustomError     from '@/helpers/handleErrors'
-import Web3            from 'web3'
-const web3 = new Web3()
+import Web3 from 'web3'
+export const web3 = new Web3()
+
 const decodeParams = [
   {
-    type: "address",
-    name: "receiver"
-  },{
-    type: "uint256",
-    name: "amount"
+    type: 'address',
+    name: 'receiver'
+  }, {
+    type: 'uint256',
+    name: 'amount'
   }
 ]
 const TRANSFER_METHOD_ID = '0xa9059cbb'
 
-export function decodeInputData(input) {
-  try {
-    let input_data = '0x' + input.slice(10)
-    let decode = web3.eth.abi.decodeParameters(decodeParams, input_data)
-    if (!input.startsWith(TRANSFER_METHOD_ID)) {
-      decode.amount = 0
-    }
-    return decode
-  } catch (e) {
-    console.log('decodeInputData error', e.message)
-    return {}
-  }
-}
 /**
  * Getting a Ethereum private key by node
  * @param {Object} node - Ethereum node
@@ -195,6 +183,21 @@ export function makeRawEthTx(data = {}) {
   catch (e) {
     console.log(e)
     throw new CustomError('err_tx_eth_build')
+  }
+}
+
+export function decodeInputData(input) {
+  try {
+    let input_data = '0x' + input.slice(10)
+    let decode = web3.eth.abi.decodeParameters(decodeParams, input_data)
+    if (!input.startsWith(TRANSFER_METHOD_ID)) {
+      decode.amount = 0
+    }
+    return decode
+  }
+  catch (e) {
+    console.log('decodeInputData error', e.message)
+    return {}
   }
 }
 

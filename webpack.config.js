@@ -8,8 +8,8 @@ module.exports = {
     main: path.resolve(__dirname, './src/index.js')
   },
   output: {
-    globalObject: "this",
-    webassemblyModuleFilename: '[hash].wasm',
+    globalObject: 'self',
+    // webassemblyModuleFilename: '[hash].wasm',
     path: path.resolve(__dirname, 'dist'),
     filename: 'core.bundle.js',
     library: 'lumi',
@@ -29,8 +29,8 @@ module.exports = {
       'url': require.resolve('url'),
       'process': require.resolve('process'),
       'https': require.resolve('https-browserify'),
-      "http": require.resolve("stream-http"),
-      "os": require.resolve("os-browserify/browser")
+      'http': require.resolve('stream-http'),
+      'os': require.resolve('os-browserify/browser')
     }
   },
   devtool: 'source-map',
@@ -41,15 +41,6 @@ module.exports = {
         exclude: /node_modules/,
         use: ['babel-loader']
       }
-      // {
-      //   test: /\.worker\.js$/,
-      //   use: {
-      //     loader: 'worker-loader',
-      //     options: {
-      //       inline: 'fallback'
-      //     }
-      //   }
-      // }
     ]
   },
   plugins: [
@@ -73,9 +64,9 @@ module.exports = {
     chunkIds: 'deterministic',
     minimize: false
   },
-  experiments: {
-    asyncWebAssembly: true,
-    syncWebAssembly: true,
-    topLevelAwait: true
-  }
+  // experiments: {
+  //   asyncWebAssembly: true,
+  //   syncWebAssembly: true,
+  //   topLevelAwait: true
+  // }
 }

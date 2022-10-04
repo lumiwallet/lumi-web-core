@@ -1,6 +1,6 @@
 import {restoreClass} from '@/helpers/sync-utils'
 import {CoinsNetwork} from '@lumiwallet/lumi-network'
-import {decodeInputData} from './utils.js'
+import {decodeInputData} from './utils'
 
 const requests = CoinsNetwork.eth
 const EMPTY_INPUT_MARKER = '0x'

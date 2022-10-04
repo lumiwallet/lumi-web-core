@@ -7,10 +7,10 @@ import * as configUtils from '@/utils/config-utils'
 import * as web3Utils from 'web3-utils'
 import * as addressUtils from '@/utils/address-utils'
 import * as utils from '@/services/utils'
-
 export {default as mnemonicChecker} from '@/libs/bip39-checker'
 export {default as converter} from '@/helpers/converters'
 export {default as toDecimal} from '@/helpers/toFormatDecimal'
+
 export {
   core,
   coinsCores,
