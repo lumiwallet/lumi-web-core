@@ -24,7 +24,7 @@ export class DogecoinTx extends BitcoinBasedTx {
   constructor(data) {
     super(data)
     this.headers = data.headers
-    this.feeIds = ['medium', 'custom']
+    this.feeIds = ['optimal', 'custom']
     this.type = 'p2pkh'
   }
 

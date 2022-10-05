@@ -22,5 +22,3 @@ export {
   addressUtils,
   utils
 }
-
-console.log('link core')

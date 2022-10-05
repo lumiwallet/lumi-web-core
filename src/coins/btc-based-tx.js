@@ -1,6 +1,6 @@
-import converter from '@/helpers/converters'
+import converter       from '@/helpers/converters'
 import {calcBtcTxSize} from '@/coins/BTC/utils'
-import {hdFromXprv} from '@/helpers/core'
+import {hdFromXprv}    from '@/helpers/core'
 
 export class BitcoinBasedTx {
   constructor(data) {
@@ -14,7 +14,7 @@ export class BitcoinBasedTx {
     this.type = data.type
     this.feeList = []
     this.dust = 1000
-    this.feeIds = ['fast', 'medium','regular', 'custom']
+    this.feeIds = ['fast', 'medium', 'custom']
   }
 
   async calcFee(amount = 0, customFee = 0, sendAll = false) {
@@ -27,9 +27,7 @@ export class BitcoinBasedTx {
       amountInSat = this.balance
     }
     for (let item of this.fees) {
-      if (this.feeIds.includes(item.level.toLowerCase())) {
-        fees.push(item.feePerByte)
-      }
+      fees.push(item.feePerByte)
     }
     fees.push(parseInt(customFee))
 

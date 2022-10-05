@@ -22,7 +22,7 @@ export default class LitecoinTx extends BitcoinBasedTx{
    */
   constructor (data) {
     super(data)
-    this.feeIds = ['medium', 'custom']
+    this.feeIds = ['optimal', 'custom']
     this.type = 'p2wpkh'
   }
 
