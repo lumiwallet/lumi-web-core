@@ -46,6 +46,9 @@ export default class BinanceTx {
     this.msg = []
     this.signatures = []
     this.feeList = []
+    this.feeIds = {
+      1: 'optimal'
+    }
   }
 
   /**
@@ -56,10 +59,10 @@ export default class BinanceTx {
   calcFee () {
     for (let item of this.fee) {
       let fee = {
-        id: item.name.toLowerCase(),
-        fee: convertToBinance(item.fee),
-        coinValue: convertToBinance(item.fee),
-        value: item.fee
+        id: this.feeIds[item.level],
+        fee: convertToBinance(item.baseFee),
+        coinValue: convertToBinance(item.baseFee),
+        value: item.baseFee
       }
 
       this.feeList.push(fee)
