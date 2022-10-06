@@ -57,6 +57,8 @@ export default class BinanceTx {
    */
 
   calcFee () {
+    this.feeList = []
+
     for (let item of this.fee) {
       let fee = {
         id: this.feeIds[item.level],
@@ -67,7 +69,6 @@ export default class BinanceTx {
 
       this.feeList.push(fee)
     }
-
     return this.feeList
   }
 
