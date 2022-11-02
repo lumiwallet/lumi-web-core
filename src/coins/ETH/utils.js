@@ -2,18 +2,10 @@ import Common, {Chain} from '@ethereumjs/common'
 import {Transaction}   from '@ethereumjs/tx'
 import * as ethUtil    from 'ethereumjs-util'
 import CustomError     from '@/helpers/handleErrors'
-import Web3 from 'web3'
+import Web3            from 'web3'
+
 export const web3 = new Web3()
 
-const decodeParams = [
-  {
-    type: 'address',
-    name: 'receiver'
-  }, {
-    type: 'uint256',
-    name: 'amount'
-  }
-]
 const TRANSFER_METHOD_ID = '0xa9059cbb'
 
 /**
@@ -155,8 +147,8 @@ export function makeRawEthTx(data = {}) {
     } else {
       common = new Common(({chain: Chain.Mainnet}))
     }
+    console.log('tx params', params)
     const tx = Transaction.fromTxData(params, {common})
-
     let buffer
     if (typeof privateKey === 'string') {
       buffer = Buffer.from(privateKey?.replace('0x', ''), 'hex')
@@ -186,10 +178,20 @@ export function makeRawEthTx(data = {}) {
   }
 }
 
-export function decodeInputData(input) {
+const DEFAULT_DECODE_PARAMS = [
+  {
+    type: 'address',
+    name: 'receiver'
+  }, {
+    type: 'uint256',
+    name: 'amount'
+  }
+]
+
+export function decodeInputData(input, decodeParams) {
   try {
     let input_data = '0x' + input.slice(10)
-    let decode = web3.eth.abi.decodeParameters(decodeParams, input_data)
+    let decode = web3.eth.abi.decodeParameters(decodeParams || DEFAULT_DECODE_PARAMS, input_data)
     if (!input.startsWith(TRANSFER_METHOD_ID)) {
       decode.amount = 0
     }
@@ -204,4 +206,15 @@ export function decodeInputData(input) {
 export const getEntrypointTxData = (separator = [], nodeAddress) => {
   const data = separator.concat(web3.utils.hexToBytes(nodeAddress))
   return web3.utils.bytesToHex(data)
+}
+
+export const signMessage = (data, key) => {
+  const buffer = Buffer.from(data)
+  const message = ethUtil.toBuffer(buffer)
+  const msgHash = ethUtil.hashPersonalMessage(message)
+  let privateKeyBuff = new Buffer(key.replace('0x', ''), 'hex')
+  let signedMessage = ethUtil.ecsign(msgHash, privateKeyBuff)
+  privateKeyBuff = null
+  let signedHash = ethUtil.toRpcSig(signedMessage.v, signedMessage.r, signedMessage.s).toString('hex')
+  return signedHash
 }
