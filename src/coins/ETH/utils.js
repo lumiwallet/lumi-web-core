@@ -147,7 +147,6 @@ export function makeRawEthTx(data = {}) {
     } else {
       common = new Common(({chain: Chain.Mainnet}))
     }
-    console.log('tx params', params)
     const tx = Transaction.fromTxData(params, {common})
     let buffer
     if (typeof privateKey === 'string') {
