@@ -18,8 +18,8 @@ export function encodeConfig(list = []) {
   for (let item of list) {
     let new_item = {
       sort: item.sort,
-      group_sort: item.groupSort,
-      name: item.walletName || ''
+      // group_sort: item.groupSort,
+      // name: item.walletName || ''
     }
 
     if (item.category === 'coin') {
