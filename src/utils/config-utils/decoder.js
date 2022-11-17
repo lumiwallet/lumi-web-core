@@ -29,9 +29,8 @@ export function decodeConfig(config) {
     }
 
     currency.sort = item.sort
-    // currency.group_sort = item.group_sort
 
-    // if (item.name) currency.wallet_name = item.name
+    if (item.name) currency.wallet_name = item.name
 
     if (!(currency.coin in list)) {
       list[currency.coin] = []
