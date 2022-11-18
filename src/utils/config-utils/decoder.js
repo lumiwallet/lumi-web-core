@@ -8,6 +8,10 @@ const NOT_SUPPORTED_COINS = ['EOS']
 const COINS_WITH_MEMO = ['BNB', 'EOS', 'EVER']
 const NOT_CORE_GENERATION = ['EVER', 'ADA']
 const NEED_DEPLOY = ['EVER', '@G']
+const BTC_WALLET_NAMES = {
+  'P2PKH': 'Legacy',
+  'P2WPKH': 'Segwit'
+}
 
 export function decodeConfig(config) {
   if (!config || !config.length) return {}
@@ -93,6 +97,10 @@ export function getCurrency(id) {
   } else {
     item.category = 'coin'
     item.value = helper.getHash(id)
+
+    if (CURRENCY === 'BTC') {
+      item.wallet_name = BTC_WALLET_NAMES[item.address_type]
+    }
   }
 
   return item
