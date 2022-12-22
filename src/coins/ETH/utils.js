@@ -164,7 +164,9 @@ export function makeRawEthTx(data = {}) {
       gasPrice: gasPrice.toString(),
       value: value.toString(),
       input: data.data,
-      nonce
+      from: params.from,
+      nonce,
+      to
     }
     return {
       hash: `0x${ hash }`,
