@@ -11,6 +11,7 @@ export {
   BinanceTx
 }
 
+console.log('core installed')
 /**
  * Currencies that are supported in the wallet
  */
