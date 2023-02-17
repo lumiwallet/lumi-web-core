@@ -157,7 +157,8 @@ export default class BitcoinSync {
    */
 
   async getAddressesByNode(node, type) {
-    const CONTROL_COUNT = 100
+    const STEP = 100
+    const CONTROL_COUNT = 102
     let list = []
     let counter = 0
     let derive_index = 0
@@ -167,7 +168,7 @@ export default class BitcoinSync {
     }
     let data = {
       from: 0,
-      to: CONTROL_COUNT
+      to: STEP
     }
 
     const req = async () => {
@@ -177,7 +178,6 @@ export default class BitcoinSync {
         data.from,
         data.to
       )
-
       try {
         let res = await this.getMultiAddressRequest(addresses)
 
@@ -189,11 +189,12 @@ export default class BitcoinSync {
           this.latestBlock = res.lastblock
         }
 
-        if (res.hasOwnProperty('transactions') && res.transactions.length) {
+        if (res.hasOwnProperty('transactions')) {
           this.transactions.all = [...this.transactions.all, ...res.transactions]
 
           for (let i = data.from; i < data.to; i++) {
-            const index = i < CONTROL_COUNT ? i : i - data.from
+            if (counter >= CONTROL_COUNT) break
+            const index = i < STEP ? i : i - data.from
             let address = addresses[index]
             let find = res.transactions.find((itm) => itm.address === address)
             let item = {
@@ -214,8 +215,8 @@ export default class BitcoinSync {
             derive_index++
           }
           if (counter < CONTROL_COUNT) {
-            data.from += CONTROL_COUNT
-            data.to += CONTROL_COUNT
+            data.from += STEP
+            data.to += STEP
             await req()
           } else {
             list.push(empty.data)
@@ -245,7 +246,7 @@ export default class BitcoinSync {
     }
 
     await req()
-
+    console.log('final counter', type, counter)
     return list
   }
 
